@@ -10,10 +10,11 @@ import {
   duplicateNode,
   findNode,
   setNodeGeometry,
+  setNodeStyle,
 } from "./document/commands";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "./document/history";
 import { openDocumentFile, saveDocumentFile } from "./document/persistence";
-import type { Document, DocumentNode, Geometry } from "./document/types";
+import type { Document, DocumentNode, Geometry, RectangleNode, RectangleStyle } from "./document/types";
 import { clampZoom, screenDeltaToDocument } from "./document/viewport";
 import { documentFiles } from "./ipc/documentFiles";
 import "./App.css";
@@ -60,6 +61,21 @@ function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange: (geo
           />
         </label>
       ))}
+    </div>
+  );
+}
+
+function StyleEditor({ node, onChange }: { node: RectangleNode; onChange: (style: Partial<RectangleStyle>) => void }) {
+  const [fill, setFill] = useState(node.fill);
+  const [stroke, setStroke] = useState(node.stroke);
+  const [strokeWidth, setStrokeWidth] = useState(String(node.strokeWidth));
+  const [cornerRadius, setCornerRadius] = useState(String(node.cornerRadius));
+  return (
+    <div className="style-fields">
+      <label>塗り <input type="color" value={fill} onChange={(event) => setFill(event.currentTarget.value)} onBlur={() => { if (fill !== node.fill) onChange({ fill }); }} /></label>
+      <label>線 <input type="color" value={stroke} onChange={(event) => setStroke(event.currentTarget.value)} onBlur={() => { if (stroke !== node.stroke) onChange({ stroke }); }} /></label>
+      <label>線幅 <input type="number" min="0" step="any" value={strokeWidth} onChange={(event) => setStrokeWidth(event.currentTarget.value)} onBlur={() => { if (strokeWidth !== String(node.strokeWidth)) onChange({ strokeWidth: strokeWidth.trim() === "" ? NaN : Number(strokeWidth) }); }} /></label>
+      <label>角丸 <input type="number" min="0" step="any" value={cornerRadius} onChange={(event) => setCornerRadius(event.currentTarget.value)} onBlur={() => { if (cornerRadius !== String(node.cornerRadius)) onChange({ cornerRadius: cornerRadius.trim() === "" ? NaN : Number(cornerRadius) }); }} /></label>
     </div>
   );
 }
@@ -425,7 +441,8 @@ function App() {
       <button
         key={node.id} type="button"
         className={`canvas-node${selectedId === node.id ? " is-selected" : ""}`}
-        aria-label={node.name} aria-pressed={selectedId === node.id} style={style}
+        aria-label={node.name} aria-pressed={selectedId === node.id}
+        style={{ ...style, background: node.fill, borderColor: node.stroke, borderWidth: node.strokeWidth, borderRadius: node.cornerRadius }}
         onPointerDown={(event) => startDrag(event, node)} onPointerMove={continueDrag}
         onPointerUp={(event) => finishDrag(event.pointerId)}
         onPointerCancel={(event) => finishDrag(event.pointerId)}
@@ -538,6 +555,16 @@ function App() {
                 node={selected}
                 onChange={(geometry) => applyDocument(setNodeGeometry(designRef.current, selected.id, geometry))}
               />
+              {selected.type === "rectangle" && (
+                <>
+                  <div className="field-label">スタイル</div>
+                  <StyleEditor
+                    key={`${selected.id}:${selected.fill}:${selected.stroke}:${selected.strokeWidth}:${selected.cornerRadius}`}
+                    node={selected}
+                    onChange={(style) => applyDocument(setNodeStyle(designRef.current, selected.id, style))}
+                  />
+                </>
+              )}
               <div className="property-divider" />
               <div className="field-label">要素 ID</div>
               <code className="node-id">{selected.id}</code>

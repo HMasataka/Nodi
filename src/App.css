@@ -358,6 +358,10 @@ button {
 .geometry-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
 .geometry-field { display: flex; align-items: center; gap: 5px; border: 1px solid #e4e3dc; border-radius: 4px; padding: 0 6px; color: #858981; font: 11px ui-monospace, monospace; }
 .geometry-field input { min-width: 0; width: 100%; padding: 8px 0; border: 0; background: transparent; color: var(--ink); font: inherit; }
+.style-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.style-fields label { display: flex; align-items: center; justify-content: space-between; gap: 5px; font-size: 11px; color: #858981; }
+.style-fields input { width: 58px; min-width: 0; padding: 3px; border: 1px solid #e4e3dc; border-radius: 4px; background: white; }
+.style-fields input[type="color"] { width: 36px; height: 28px; padding: 2px; cursor: pointer; }
 .node-id {
   display: block;
   border: 1px solid #e4e3dc;
