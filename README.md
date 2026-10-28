@@ -1,6 +1,6 @@
 # Nodi
 
-Tauri v2 と Vanilla TypeScript (Vite) のデスクトップアプリです。
+Tauri v2 と React / TypeScript (Vite) のデスクトップアプリです。
 
 ## 開発
 
