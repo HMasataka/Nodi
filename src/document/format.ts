@@ -1,3 +1,4 @@
+import { Result } from "@praha/byethrow";
 import { z } from "zod";
 import type { Document, DocumentNode } from "./types.ts";
 
@@ -43,11 +44,19 @@ export const documentSchema = z
     visit(document.children, ["children"]);
   });
 
-export function parseDocument(json: string): Document {
-  const value: unknown = JSON.parse(json);
-  return documentSchema.parse(value);
+const parseJson = Result.fn({
+  try: (json: string): unknown => JSON.parse(json),
+  catch: (error) => new Error(`JSON を読み取れません: ${error instanceof Error ? error.message : String(error)}`),
+});
+
+export function parseDocument(json: string) {
+  const parsed = parseJson(json);
+  if (Result.isFailure(parsed)) return parsed;
+  return Result.parse(documentSchema, parsed.value);
 }
 
-export function serializeDocument(document: Document): string {
-  return JSON.stringify(documentSchema.parse(document), null, 2);
+export function serializeDocument(document: Document) {
+  const parsed = Result.parse(documentSchema, document);
+  if (Result.isFailure(parsed)) return parsed;
+  return Result.succeed(JSON.stringify(parsed.value, null, 2));
 }

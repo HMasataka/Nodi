@@ -1,0 +1,6 @@
+{
+  "jsPlugins": ["./scripts/no-throw.js"],
+  "rules": {
+    "nodi/no-throw": "error"
+  }
+}
