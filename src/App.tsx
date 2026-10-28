@@ -1,12 +1,11 @@
 import { Result } from "@praha/byethrow";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { createAgentApi } from "./document/agent";
 import {
-  addNode,
   createDocument,
   deleteNode,
   duplicateNode,
   findNode,
-  renameNode,
   setNodeGeometry,
 } from "./document/commands";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "./document/history";
@@ -118,6 +117,12 @@ function App() {
     setError(null);
   }
 
+  const agentApi = createAgentApi({
+    getDocument: () => designRef.current,
+    getSelectedId: () => selectedId,
+    apply: recordDocument,
+  });
+
   function applyDocument(result: Result.Result<Document, Error>) {
     if (Result.isFailure(result)) {
       setError(result.error.message);
@@ -129,7 +134,7 @@ function App() {
   function addRectangle() {
     const index = designRef.current.children.length;
     const parentId = selected?.type === "frame" ? selected.id : undefined;
-    const result = addNode(designRef.current, {
+    const result = agentApi.add({
       type: "rectangle",
       parentId,
       x: parentId ? 24 : 80 + (index % 8) * 28,
@@ -141,19 +146,17 @@ function App() {
       setError(result.error.message);
       return;
     }
-    recordDocument(result.value.document);
-    setSelectedId(result.value.node.id);
+    setSelectedId(result.value.id);
   }
 
   function addFrame() {
     const index = designRef.current.children.length;
-    const result = addNode(designRef.current, {
+    const result = agentApi.add({
       type: "frame", x: 80 + (index % 6) * 28, y: 80 + (index % 6) * 28,
       width: 360, height: 260,
     });
     if (Result.isFailure(result)) { setError(result.error.message); return; }
-    recordDocument(result.value.document);
-    setSelectedId(result.value.node.id);
+    setSelectedId(result.value.id);
   }
 
   function deleteSelected() {
@@ -501,11 +504,10 @@ function App() {
               <NameEditor
                 key={`${selected.id}:${selected.name}`}
                 node={selected}
-                onRename={(name) =>
-                  applyDocument(
-                    renameNode(designRef.current, selected.id, name),
-                  )
-                }
+                onRename={(name) => {
+                  const result = agentApi.rename(selected.id, name);
+                  if (Result.isFailure(result)) setError(result.error.message);
+                }}
               />
               <div className="property-divider" />
               <div className="field-label">位置・サイズ</div>
