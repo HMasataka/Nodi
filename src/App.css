@@ -222,6 +222,7 @@ button {
   background-size: 24px 24px;
   background-position: -1px -1px;
 }
+.canvas-world { position: relative; width: 1200px; height: 900px; transform-origin: top left; }
 .canvas-hint {
   position: absolute;
   top: 35%;
@@ -296,9 +297,9 @@ button {
     monospace;
   box-shadow: 0 2px 8px #3c3c3512;
 }
-.canvas-scale span {
-  color: #b8b7af;
-}
+.canvas-scale { display: inline-flex; align-items: center; gap: 8px; }
+.canvas-scale button { border: 0; background: transparent; color: var(--ink); font: 16px ui-monospace, monospace; }
+.canvas-scale span { min-width: 40px; text-align: center; }
 
 .properties {
   padding: 20px;
