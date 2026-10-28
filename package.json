@@ -13,6 +13,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
     "@praha/byethrow": "^0.12.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "~2.8.3",
@@ -22,6 +23,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
     "@tauri-apps/cli": "^2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
