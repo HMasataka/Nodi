@@ -1,49 +1,281 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { Result } from "@praha/byethrow";
+import { useRef, useState, type PointerEvent } from "react";
+import {
+  addNode,
+  createDocument,
+  findNode,
+  moveNode,
+  renameNode,
+} from "./document/commands";
+import type { Document, DocumentNode } from "./document/types";
 import "./App.css";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+interface DragState {
+  id: string;
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+  x: number;
+  y: number;
+}
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+function NameEditor({
+  node,
+  onRename,
+}: {
+  node: DocumentNode;
+  onRename: (name: string) => void;
+}) {
+  const [draft, setDraft] = useState(node.name);
+
+  return (
+    <input
+      id="node-name"
+      value={draft}
+      onChange={(event) => setDraft(event.currentTarget.value)}
+      onBlur={() => {
+        if (draft !== node.name) onRename(draft);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") event.currentTarget.blur();
+      }}
+      spellCheck={false}
+    />
+  );
+}
+
+function App() {
+  const [design, setDesign] = useState<Document>(createDocument);
+  const designRef = useRef(design);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const drag = useRef<DragState | null>(null);
+  const selected = selectedId ? findNode(design, selectedId) : undefined;
+
+  function applyDocument(result: Result.Result<Document, Error>) {
+    if (Result.isFailure(result)) {
+      setError(result.error.message);
+      return;
+    }
+    designRef.current = result.value;
+    setDesign(result.value);
+    setError(null);
+  }
+
+  function addRectangle() {
+    const index = designRef.current.children.length;
+    const result = addNode(designRef.current, {
+      type: "rectangle",
+      x: 80 + (index % 8) * 28,
+      y: 80 + (index % 8) * 28,
+      width: 184,
+      height: 112,
+    });
+    if (Result.isFailure(result)) {
+      setError(result.error.message);
+      return;
+    }
+    designRef.current = result.value.document;
+    setDesign(result.value.document);
+    setSelectedId(result.value.node.id);
+    setError(null);
+  }
+
+  function startDrag(
+    event: PointerEvent<HTMLButtonElement>,
+    node: DocumentNode,
+  ) {
+    if (event.button !== 0 || drag.current) return;
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = {
+      id: node.id,
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      x: node.x,
+      y: node.y,
+    };
+    setSelectedId(node.id);
+  }
+
+  function continueDrag(event: PointerEvent<HTMLButtonElement>) {
+    const active = drag.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    applyDocument(
+      moveNode(
+        designRef.current,
+        active.id,
+        active.x + event.clientX - active.clientX,
+        active.y + event.clientY - active.clientY,
+      ),
+    );
+  }
+
+  function stopDrag(event: PointerEvent<HTMLButtonElement>) {
+    if (drag.current?.pointerId === event.pointerId) drag.current = null;
   }
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <main className="app-shell">
+      <header className="topbar">
+        <div className="brand">
+          <span className="brand-mark">N</span>
+          <span>Nodi</span>
+          <span className="brand-divider" />{" "}
+          <span className="document-title">無題のドキュメント</span>
+        </div>
+        <span className="topbar-note">DOCUMENT / 001</span>
+        <button className="add-button" type="button" onClick={addRectangle}>
+          <span aria-hidden="true">＋</span> 矩形を追加
+        </button>
+      </header>
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="workspace">
+        <aside className="sidebar layers" aria-label="レイヤー">
+          <div className="panel-heading">
+            <h2>レイヤー</h2>
+            <span>{design.children.length.toString().padStart(2, "0")}</span>
+          </div>
+          {design.children.length === 0 ? (
+            <p className="panel-empty">
+              まだ要素がありません。
+              <br />
+              矩形を追加して始めましょう。
+            </p>
+          ) : (
+            <div className="layer-list">
+              {design.children.map((node) => (
+                <button
+                  key={node.id}
+                  type="button"
+                  className={`layer-row${selectedId === node.id ? " is-selected" : ""}`}
+                  aria-pressed={selectedId === node.id}
+                  onClick={() => setSelectedId(node.id)}
+                >
+                  <span className="layer-icon" aria-hidden="true" />
+                  <span className="layer-name">{node.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </aside>
+
+        <section className="canvas-viewport" aria-label="キャンバス">
+          <div
+            className="canvas-surface"
+            onPointerDown={(event) => {
+              if (event.target === event.currentTarget) setSelectedId(null);
+            }}
+          >
+            {design.children.length === 0 && (
+              <div className="canvas-hint" aria-hidden="true">
+                <span className="hint-symbol">＋</span>
+                <span>ここから、かたちをつくる。</span>
+              </div>
+            )}
+            {design.children.map((node) => (
+              <button
+                key={node.id}
+                type="button"
+                className={`canvas-node${selectedId === node.id ? " is-selected" : ""}`}
+                aria-label={node.name}
+                aria-pressed={selectedId === node.id}
+                style={{
+                  left: node.x,
+                  top: node.y,
+                  width: node.width,
+                  height: node.height,
+                }}
+                onPointerDown={(event) => startDrag(event, node)}
+                onPointerMove={continueDrag}
+                onPointerUp={stopDrag}
+                onPointerCancel={stopDrag}
+                onLostPointerCapture={() => {
+                  drag.current = null;
+                }}
+              >
+                <span className="node-label">{node.name}</span>
+              </button>
+            ))}
+          </div>
+          <div className="canvas-scale">
+            100% <span>・</span> キャンバス
+          </div>
+        </section>
+
+        <aside className="sidebar inspector" aria-label="プロパティ">
+          <div className="panel-heading">
+            <h2>プロパティ</h2>
+            <span>01</span>
+          </div>
+          {selected ? (
+            <div className="properties">
+              <div className="selection-type">
+                <span className="layer-icon" aria-hidden="true" />{" "}
+                {selected.type === "rectangle" ? "矩形" : "フレーム"}
+              </div>
+              <label className="field-label" htmlFor="node-name">
+                名前
+              </label>
+              <NameEditor
+                key={selected.id}
+                node={selected}
+                onRename={(name) =>
+                  applyDocument(
+                    renameNode(designRef.current, selected.id, name),
+                  )
+                }
+              />
+              <div className="property-divider" />
+              <div className="field-label">位置</div>
+              <div className="measure-row">
+                <span>X&nbsp; {Math.round(selected.x)}</span>
+                <span>Y&nbsp; {Math.round(selected.y)}</span>
+              </div>
+              <div className="field-label">サイズ</div>
+              <div className="measure-row">
+                <span>W&nbsp; {selected.width}</span>
+                <span>H&nbsp; {selected.height}</span>
+              </div>
+              <div className="property-divider" />
+              <div className="field-label">要素 ID</div>
+              <code className="node-id">{selected.id}</code>
+              <p className="property-help">
+                名前は変更できます。ID
+                はこの要素を正確に指すために変わりません。
+              </p>
+            </div>
+          ) : (
+            <p className="panel-empty">
+              キャンバス上の要素を選択すると、ここに詳細が表示されます。
+            </p>
+          )}
+        </aside>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
+      <footer className="statusbar">
+        <span>
+          <span className="status-dot" /> 未保存のドキュメント
+        </span>
+        <span>
+          {selected
+            ? `${selected.name} · ${selected.id}`
+            : "要素が選択されていません"}
+        </span>
+      </footer>
+      {error && (
+        <div className="error-toast" role="alert">
+          {error}
+          <button
+            type="button"
+            onClick={() => setError(null)}
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </main>
   );
 }
