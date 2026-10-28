@@ -61,7 +61,7 @@ test("不正なファイルや読み書きエラーは失敗を返し、元の�
   const current = success(addNode(createDocument(), {
     type: "rectangle", x: 0, y: 0, width: 10, height: 10,
   })).document;
-  access.files.set("broken.nodi", '{"version":3,"children":[]}');
+  access.files.set("broken.nodi", '{"version":2,"children":[]}');
   access.select("broken.nodi");
   assert.match(failure(await openDocumentFile(access)).message, /version/);
   access.select("missing.nodi");
@@ -69,5 +69,5 @@ test("不正なファイルや読み書きエラーは失敗を返し、元の�
   access.write = async () => Promise.reject(new Error("書き込めません"));
   assert.match(failure(await saveDocumentFile(access, current, "design.nodi")).message, /書き込めません/);
   assert.equal(current.children.length, 1);
-  assert.equal(access.files.get("broken.nodi"), '{"version":3,"children":[]}');
+  assert.equal(access.files.get("broken.nodi"), '{"version":2,"children":[]}');
 });

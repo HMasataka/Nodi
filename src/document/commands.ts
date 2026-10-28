@@ -2,7 +2,7 @@ import { Result } from "@praha/byethrow";
 import { DEFAULT_RECTANGLE_STYLE, type Document, type DocumentNode, type Geometry, type RectangleStyle } from "./types.ts";
 
 export function createDocument(): Document {
-  return { version: 2, children: [] };
+  return { version: 1, children: [] };
 }
 
 export function findNode(document: Document, id: string): DocumentNode | undefined {
