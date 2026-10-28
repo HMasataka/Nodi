@@ -6,22 +6,56 @@ import {
   deleteNode,
   duplicateNode,
   findNode,
-  moveNode,
   renameNode,
+  setNodeGeometry,
 } from "./document/commands";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "./document/history";
 import { openDocumentFile, saveDocumentFile } from "./document/persistence";
-import type { Document, DocumentNode } from "./document/types";
+import type { Document, DocumentNode, Geometry } from "./document/types";
 import { documentFiles } from "./ipc/documentFiles";
 import "./App.css";
 
 interface DragState {
+  mode: "move" | "resize";
   id: string;
   pointerId: number;
   clientX: number;
   clientY: number;
   x: number;
   y: number;
+  width: number;
+  height: number;
+}
+
+function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange: (geometry: Geometry) => void }) {
+  const [draft, setDraft] = useState<Record<keyof Geometry, string>>({
+    x: String(node.x), y: String(node.y), width: String(node.width), height: String(node.height),
+  });
+  const fields: { key: keyof Geometry; label: string }[] = [
+    { key: "x", label: "X" }, { key: "y", label: "Y" },
+    { key: "width", label: "W" }, { key: "height", label: "H" },
+  ];
+  return (
+    <div className="geometry-fields">
+      {fields.map(({ key, label }) => (
+        <label key={key} className="geometry-field">
+          <span>{label}</span>
+          <input
+            type="number"
+            step="any"
+            value={draft[key]}
+            onChange={(event) => setDraft({ ...draft, [key]: event.currentTarget.value })}
+            onBlur={() => {
+              if (draft[key] !== String(node[key])) {
+                onChange({ ...node, [key]: draft[key].trim() === "" ? NaN : Number(draft[key]) });
+              }
+            }}
+            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+          />
+        </label>
+      ))}
+    </div>
+  );
 }
 
 function NameEditor({
@@ -129,12 +163,28 @@ function App() {
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     drag.current = {
+      mode: "move",
       id: node.id,
       pointerId: event.pointerId,
       clientX: event.clientX,
       clientY: event.clientY,
       x: node.x,
       y: node.y,
+      width: node.width,
+      height: node.height,
+    };
+    setSelectedId(node.id);
+  }
+
+  function startResize(event: PointerEvent<HTMLSpanElement>, node: DocumentNode) {
+    if (event.button !== 0 || drag.current) return;
+    event.stopPropagation();
+    event.preventDefault();
+    event.currentTarget.parentElement?.setPointerCapture(event.pointerId);
+    drag.current = {
+      mode: "resize", id: node.id, pointerId: event.pointerId,
+      clientX: event.clientX, clientY: event.clientY,
+      x: node.x, y: node.y, width: node.width, height: node.height,
     };
     setSelectedId(node.id);
   }
@@ -142,11 +192,14 @@ function App() {
   function continueDrag(event: PointerEvent<HTMLButtonElement>) {
     const active = drag.current;
     if (!active || active.pointerId !== event.pointerId) return;
-    const x = active.x + event.clientX - active.clientX;
-    const y = active.y + event.clientY - active.clientY;
+    const dx = event.clientX - active.clientX;
+    const dy = event.clientY - active.clientY;
+    const geometry = active.mode === "resize"
+      ? { x: active.x, y: active.y, width: Math.max(1, active.width + dx), height: Math.max(1, active.height + dy) }
+      : { x: active.x + dx, y: active.y + dy, width: active.width, height: active.height };
     const current = findNode(designRef.current, active.id);
-    if (current?.x === x && current.y === y) return;
-    const moved = moveNode(designRef.current, active.id, x, y);
+    if (current && current.x === geometry.x && current.y === geometry.y && current.width === geometry.width && current.height === geometry.height) return;
+    const moved = setNodeGeometry(designRef.current, active.id, geometry);
     if (Result.isFailure(moved)) {
       setError(moved.error.message);
       return;
@@ -162,7 +215,7 @@ function App() {
     if (!active || active.pointerId !== pointerId) return;
     drag.current = null;
     const final = findNode(designRef.current, active.id);
-    if (final && (final.x !== active.x || final.y !== active.y)) {
+    if (final && (final.x !== active.x || final.y !== active.y || final.width !== active.width || final.height !== active.height)) {
       const next = commit(historyRef.current, designRef.current);
       historyRef.current = next;
       setHistory(next);
@@ -331,6 +384,7 @@ function App() {
                 onLostPointerCapture={(event) => finishDrag(event.pointerId)}
               >
                 <span className="node-label">{node.name}</span>
+                {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
               </button>
             ))}
           </div>
@@ -363,16 +417,12 @@ function App() {
                 }
               />
               <div className="property-divider" />
-              <div className="field-label">位置</div>
-              <div className="measure-row">
-                <span>X&nbsp; {Math.round(selected.x)}</span>
-                <span>Y&nbsp; {Math.round(selected.y)}</span>
-              </div>
-              <div className="field-label">サイズ</div>
-              <div className="measure-row">
-                <span>W&nbsp; {selected.width}</span>
-                <span>H&nbsp; {selected.height}</span>
-              </div>
+              <div className="field-label">位置・サイズ</div>
+              <GeometryEditor
+                key={`${selected.id}:${selected.x}:${selected.y}:${selected.width}:${selected.height}`}
+                node={selected}
+                onChange={(geometry) => applyDocument(setNodeGeometry(designRef.current, selected.id, geometry))}
+              />
               <div className="property-divider" />
               <div className="field-label">要素 ID</div>
               <code className="node-id">{selected.id}</code>

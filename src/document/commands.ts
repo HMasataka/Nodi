@@ -117,6 +117,16 @@ export function moveNode(document: Document, id: string, x: number, y: number): 
   return updateNode(document, id, (node) => ({ ...node, x, y }));
 }
 
+export function setNodeGeometry(
+  document: Document,
+  id: string,
+  geometry: Geometry,
+): Result.Result<Document, Error> {
+  const validated = validateGeometry(geometry);
+  if (Result.isFailure(validated)) return validated;
+  return updateNode(document, id, (node) => ({ ...node, ...geometry }));
+}
+
 export function deleteNode(document: Document, id: string): Result.Result<Document, Error> {
   let found = false;
   function remove(nodes: DocumentNode[]): DocumentNode[] {
