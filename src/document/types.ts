@@ -35,6 +35,6 @@ export interface FrameNode extends Geometry {
 export type DocumentNode = FrameNode | RectangleNode;
 
 export interface Document {
-  version: 2;
+  version: 1;
   children: DocumentNode[];
 }

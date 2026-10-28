@@ -19,20 +19,20 @@ const rectangle = {
   fill: "#f3d9c8", stroke: "#d9bbaa", strokeWidth: 1, cornerRadius: 2,
 };
 const valid = {
-  version: 2,
+  version: 1,
   children: [{
     id: "nd_screen", name: "ログイン画面", type: "frame",
     x: 0, y: 0, width: 390, height: 844, children: [rectangle],
   }],
 };
 
-test("v2 の JSON を読み書きすると ID、名前、階層、スタイルが保たれる", () => {
+test("v1 の JSON を読み書きすると ID、名前、階層、スタイルが保たれる", () => {
   assert.deepEqual(success(parseDocument(success(serializeDocument(valid)))), valid);
 });
 
 test("未知の項目、型の変換、不正な数値と無名の要素を拒否する", () => {
   for (const invalid of [
-    { ...valid, version: 3 },
+    { ...valid, version: 2 },
     { ...valid, extra: true },
     { ...valid, children: [{ ...rectangle, children: [] }] },
     { ...valid, children: [{ ...rectangle, width: "342" }] },
@@ -52,13 +52,11 @@ test("未知の項目、型の変換、不正な数値と無名の要素を拒�
   assert.match(failure(parseDocument("{invalid")).message, /JSON/);
 });
 
-test("v1 の階層を v2 へ移行し、ID と名前を維持する", () => {
-  const old = { version: 1, children: [{ ...valid.children[0], children: [{
+test("スタイル項目の欠けた古い形のデータは移行せず拒否する", () => {
+  const incomplete = { version: 1, children: [{ ...valid.children[0], children: [{
     id: "nd_button", name: "ログインボタン", type: "rectangle", x: 24, y: 680, width: 342, height: 48,
   }] }] };
-  const migrated = success(parseDocument(JSON.stringify(old)));
-  assert.deepEqual(migrated, valid);
-  assert.equal(JSON.parse(success(serializeDocument(migrated))).version, 2);
+  assert.ok(Array.isArray(failure(parseDocument(JSON.stringify(incomplete)))));
 });
 
 test("子孫を含む ID 重複は問題のパスとともに報告する", () => {
