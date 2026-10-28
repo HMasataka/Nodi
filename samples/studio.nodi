@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "children": [
+    {
+      "id": "nd_sample_studio",
+      "name": "Studio / デスクトップ",
+      "type": "frame",
+      "x": 80,
+      "y": 70,
+      "width": 960,
+      "height": 710,
+      "children": [
+        {
+          "id": "nd_sample_header",
+          "name": "ヘッダー",
+          "type": "rectangle",
+          "x": 20,
+          "y": 44,
+          "width": 920,
+          "height": 68,
+          "fill": "#d9e8e1",
+          "stroke": "#a8bfb2",
+          "strokeWidth": 1,
+          "cornerRadius": 10
+        },
+        {
+          "id": "nd_sample_sidebar",
+          "name": "ナビゲーション",
+          "type": "rectangle",
+          "x": 20,
+          "y": 130,
+          "width": 194,
+          "height": 550,
+          "fill": "#e8e8e0",
+          "stroke": "#c9cbc2",
+          "strokeWidth": 1,
+          "cornerRadius": 10
+        },
+        {
+          "id": "nd_sample_overview",
+          "name": "概要エリア",
+          "type": "frame",
+          "x": 232,
+          "y": 130,
+          "width": 708,
+          "height": 550,
+          "children": [
+            {
+              "id": "nd_sample_intro",
+              "name": "イントロ",
+              "type": "rectangle",
+              "x": 18,
+              "y": 42,
+              "width": 672,
+              "height": 76,
+              "fill": "#f1e1d5",
+              "stroke": "#d5b9a5",
+              "strokeWidth": 1,
+              "cornerRadius": 12
+            },
+            {
+              "id": "nd_sample_metric_a",
+              "name": "アクティブ",
+              "type": "rectangle",
+              "x": 18,
+              "y": 136,
+              "width": 210,
+              "height": 118,
+              "fill": "#e0e9dc",
+              "stroke": "#b2c8ae",
+              "strokeWidth": 2,
+              "cornerRadius": 12
+            },
+            {
+              "id": "nd_sample_metric_b",
+              "name": "進行中",
+              "type": "rectangle",
+              "x": 248,
+              "y": 136,
+              "width": 210,
+              "height": 118,
+              "fill": "#e4e6f0",
+              "stroke": "#b6bcd4",
+              "strokeWidth": 2,
+              "cornerRadius": 12
+            },
+            {
+              "id": "nd_sample_metric_c",
+              "name": "完了",
+              "type": "rectangle",
+              "x": 478,
+              "y": 136,
+              "width": 212,
+              "height": 118,
+              "fill": "#f1e7cf",
+              "stroke": "#d7c79b",
+              "strokeWidth": 2,
+              "cornerRadius": 12
+            },
+            {
+              "id": "nd_sample_activity",
+              "name": "アクティビティ",
+              "type": "frame",
+              "x": 18,
+              "y": 276,
+              "width": 440,
+              "height": 252,
+              "children": [
+                {
+                  "id": "nd_sample_activity_row_1",
+                  "name": "カード",
+                  "type": "rectangle",
+                  "x": 16,
+                  "y": 48,
+                  "width": 406,
+                  "height": 52,
+                  "fill": "#ecede6",
+                  "stroke": "#d4d7cb",
+                  "strokeWidth": 1,
+                  "cornerRadius": 7
+                },
+                {
+                  "id": "nd_sample_activity_row_2",
+                  "name": "カード",
+                  "type": "rectangle",
+                  "x": 16,
+                  "y": 116,
+                  "width": 406,
+                  "height": 52,
+                  "fill": "#ecede6",
+                  "stroke": "#d4d7cb",
+                  "strokeWidth": 1,
+                  "cornerRadius": 7
+                }
+              ]
+            },
+            {
+              "id": "nd_sample_tools",
+              "name": "ツールパネル",
+              "type": "frame",
+              "x": 478,
+              "y": 276,
+              "width": 212,
+              "height": 252,
+              "children": [
+                {
+                  "id": "nd_sample_primary_action",
+                  "name": "メインボタン",
+                  "type": "rectangle",
+                  "x": 16,
+                  "y": 50,
+                  "width": 178,
+                  "height": 52,
+                  "fill": "#f3d9c8",
+                  "stroke": "#c77852",
+                  "strokeWidth": 2,
+                  "cornerRadius": 10
+                },
+                {
+                  "id": "nd_sample_secondary_action",
+                  "name": "サブボタン",
+                  "type": "rectangle",
+                  "x": 16,
+                  "y": 120,
+                  "width": 178,
+                  "height": 52,
+                  "fill": "#f9f7f0",
+                  "stroke": "#b8b7a9",
+                  "strokeWidth": 1,
+                  "cornerRadius": 10
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

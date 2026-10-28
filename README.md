@@ -21,6 +21,8 @@ pnpm tauri dev
 
 外部 AI クライアントとの接続は [MCP の手順](docs/mcp.md) を参照してください。
 
+現在作成できる画面の例は [サンプル](samples/README.md) から開けます。新しい描画機能を追加するときはサンプルも更新します。
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
