@@ -1,8 +1,8 @@
 import { Result } from "@praha/byethrow";
-import type { Document, DocumentNode, Geometry } from "./types.ts";
+import { DEFAULT_RECTANGLE_STYLE, type Document, type DocumentNode, type Geometry, type RectangleStyle } from "./types.ts";
 
 export function createDocument(): Document {
-  return { version: 1, children: [] };
+  return { version: 2, children: [] };
 }
 
 export function findNode(document: Document, id: string): DocumentNode | undefined {
@@ -92,7 +92,7 @@ export function addNode(
   const geometry = { x: input.x, y: input.y, width: input.width, height: input.height };
   const node: DocumentNode = input.type === "frame"
     ? { id, name, type: "frame", ...geometry, children: [] }
-    : { id, name, type: "rectangle", ...geometry };
+    : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
 
   if (parent === undefined) {
     return Result.succeed({ document: { ...document, children: [...document.children, node] }, node });
@@ -125,6 +125,24 @@ export function setNodeGeometry(
   const validated = validateGeometry(geometry);
   if (Result.isFailure(validated)) return validated;
   return updateNode(document, id, (node) => ({ ...node, ...geometry }));
+}
+
+export function setNodeStyle(
+  document: Document,
+  id: string,
+  patch: Partial<RectangleStyle>,
+): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "rectangle") return Result.fail(new Error(`矩形が見つかりません: ${id}`));
+  const style = { fill: patch.fill ?? node.fill, stroke: patch.stroke ?? node.stroke,
+    strokeWidth: patch.strokeWidth ?? node.strokeWidth, cornerRadius: patch.cornerRadius ?? node.cornerRadius };
+  if (!/^#[0-9a-fA-F]{6}$/.test(style.fill) || !/^#[0-9a-fA-F]{6}$/.test(style.stroke)) {
+    return Result.fail(new Error("色は #RRGGBB 形式で指定してください"));
+  }
+  if (![style.strokeWidth, style.cornerRadius].every((value) => Number.isFinite(value) && value >= 0)) {
+    return Result.fail(new Error("線幅と角丸は 0 以上の有限の数値で指定してください"));
+  }
+  return updateNode(document, id, (current) => ({ ...current, ...style }));
 }
 
 export function deleteNode(document: Document, id: string): Result.Result<Document, Error> {
