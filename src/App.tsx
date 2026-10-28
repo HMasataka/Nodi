@@ -7,7 +7,9 @@ import {
   moveNode,
   renameNode,
 } from "./document/commands";
+import { openDocumentFile, saveDocumentFile } from "./document/persistence";
 import type { Document, DocumentNode } from "./document/types";
+import { documentFiles } from "./ipc/documentFiles";
 import "./App.css";
 
 interface DragState {
@@ -49,6 +51,12 @@ function App() {
   const designRef = useRef(design);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [filePath, setFilePath] = useState<string | null>(null);
+  const [isDirty, setIsDirty] = useState(true);
+  const dirtyRef = useRef(true);
+  const [isBusy, setIsBusy] = useState(false);
+  const revision = useRef(0);
+  const fileOperation = useRef(false);
   const drag = useRef<DragState | null>(null);
   const selected = selectedId ? findNode(design, selectedId) : undefined;
 
@@ -59,6 +67,9 @@ function App() {
     }
     designRef.current = result.value;
     setDesign(result.value);
+    revision.current += 1;
+    dirtyRef.current = true;
+    setIsDirty(true);
     setError(null);
   }
 
@@ -77,6 +88,9 @@ function App() {
     }
     designRef.current = result.value.document;
     setDesign(result.value.document);
+    revision.current += 1;
+    dirtyRef.current = true;
+    setIsDirty(true);
     setSelectedId(result.value.node.id);
     setError(null);
   }
@@ -102,12 +116,16 @@ function App() {
   function continueDrag(event: PointerEvent<HTMLButtonElement>) {
     const active = drag.current;
     if (!active || active.pointerId !== event.pointerId) return;
+    const x = active.x + event.clientX - active.clientX;
+    const y = active.y + event.clientY - active.clientY;
+    const current = findNode(designRef.current, active.id);
+    if (current?.x === x && current.y === y) return;
     applyDocument(
       moveNode(
         designRef.current,
         active.id,
-        active.x + event.clientX - active.clientX,
-        active.y + event.clientY - active.clientY,
+        x,
+        y,
       ),
     );
   }
@@ -116,6 +134,55 @@ function App() {
     if (drag.current?.pointerId === event.pointerId) drag.current = null;
   }
 
+  async function openFile() {
+    if (fileOperation.current) return;
+    if (dirtyRef.current && designRef.current.children.length > 0 && !window.confirm("未保存の変更があります。別のドキュメントを開きますか？")) return;
+    fileOperation.current = true;
+    setIsBusy(true);
+    const startedAt = revision.current;
+    const result = await openDocumentFile(documentFiles);
+    fileOperation.current = false;
+    setIsBusy(false);
+    if (Result.isFailure(result)) {
+      setError(result.error.message);
+      return;
+    }
+    if (result.value === null) return;
+    if (revision.current !== startedAt) {
+      setError("読み込み中に編集されたため、現在のドキュメントを維持しました");
+      return;
+    }
+    designRef.current = result.value.document;
+    setDesign(result.value.document);
+    setFilePath(result.value.path);
+    setSelectedId(null);
+    dirtyRef.current = false;
+    setIsDirty(false);
+    revision.current += 1;
+    setError(null);
+  }
+
+  async function saveFile() {
+    if (fileOperation.current) return;
+    fileOperation.current = true;
+    setIsBusy(true);
+    const startedAt = revision.current;
+    const result = await saveDocumentFile(documentFiles, designRef.current, filePath);
+    fileOperation.current = false;
+    setIsBusy(false);
+    if (Result.isFailure(result)) {
+      setError(result.error.message);
+      return;
+    }
+    if (result.value === null) return;
+    setFilePath(result.value);
+    dirtyRef.current = revision.current !== startedAt;
+    setIsDirty(dirtyRef.current);
+    setError(null);
+  }
+
+  const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -123,9 +190,11 @@ function App() {
           <span className="brand-mark">N</span>
           <span>Nodi</span>
           <span className="brand-divider" />{" "}
-          <span className="document-title">無題のドキュメント</span>
+          <span className="document-title" title={filePath ?? undefined}>{fileName}</span>
         </div>
         <span className="topbar-note">DOCUMENT / 001</span>
+        <button className="file-button" type="button" onClick={openFile} disabled={isBusy}>開く</button>
+        <button className="file-button" type="button" onClick={saveFile} disabled={isBusy}>保存</button>
         <button className="add-button" type="button" onClick={addRectangle}>
           <span aria-hidden="true">＋</span> 矩形を追加
         </button>
@@ -256,7 +325,7 @@ function App() {
 
       <footer className="statusbar">
         <span>
-          <span className="status-dot" /> 未保存のドキュメント
+          <span className={`status-dot${isDirty ? " is-dirty" : ""}`} /> {isDirty ? "未保存の変更" : "保存済み"}
         </span>
         <span>
           {selected
