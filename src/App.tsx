@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   addNode,
   createDocument,
@@ -7,6 +7,7 @@ import {
   moveNode,
   renameNode,
 } from "./document/commands";
+import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "./document/history";
 import { openDocumentFile, saveDocumentFile } from "./document/persistence";
 import type { Document, DocumentNode } from "./document/types";
 import { documentFiles } from "./ipc/documentFiles";
@@ -47,30 +48,36 @@ function NameEditor({
 }
 
 function App() {
-  const [design, setDesign] = useState<Document>(createDocument);
+  const [history, setHistory] = useState(() => createHistory(createDocument()));
+  const historyRef = useRef(history);
+  const [design, setDesign] = useState<Document>(history.present);
   const designRef = useRef(design);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
-  const [isDirty, setIsDirty] = useState(true);
-  const dirtyRef = useRef(true);
   const [isBusy, setIsBusy] = useState(false);
   const revision = useRef(0);
   const fileOperation = useRef(false);
   const drag = useRef<DragState | null>(null);
   const selected = selectedId ? findNode(design, selectedId) : undefined;
+  const isDirty = isDocumentDirty(history, design);
+
+  function recordDocument(document: Document) {
+    const next = commit(historyRef.current, document);
+    historyRef.current = next;
+    setHistory(next);
+    designRef.current = document;
+    setDesign(document);
+    revision.current += 1;
+    setError(null);
+  }
 
   function applyDocument(result: Result.Result<Document, Error>) {
     if (Result.isFailure(result)) {
       setError(result.error.message);
       return;
     }
-    designRef.current = result.value;
-    setDesign(result.value);
-    revision.current += 1;
-    dirtyRef.current = true;
-    setIsDirty(true);
-    setError(null);
+    recordDocument(result.value);
   }
 
   function addRectangle() {
@@ -86,13 +93,8 @@ function App() {
       setError(result.error.message);
       return;
     }
-    designRef.current = result.value.document;
-    setDesign(result.value.document);
-    revision.current += 1;
-    dirtyRef.current = true;
-    setIsDirty(true);
+    recordDocument(result.value.document);
     setSelectedId(result.value.node.id);
-    setError(null);
   }
 
   function startDrag(
@@ -120,23 +122,59 @@ function App() {
     const y = active.y + event.clientY - active.clientY;
     const current = findNode(designRef.current, active.id);
     if (current?.x === x && current.y === y) return;
-    applyDocument(
-      moveNode(
-        designRef.current,
-        active.id,
-        x,
-        y,
-      ),
-    );
+    const moved = moveNode(designRef.current, active.id, x, y);
+    if (Result.isFailure(moved)) {
+      setError(moved.error.message);
+      return;
+    }
+    designRef.current = moved.value;
+    setDesign(moved.value);
+    revision.current += 1;
+    setError(null);
   }
 
-  function stopDrag(event: PointerEvent<HTMLButtonElement>) {
-    if (drag.current?.pointerId === event.pointerId) drag.current = null;
+  function finishDrag(pointerId: number) {
+    const active = drag.current;
+    if (!active || active.pointerId !== pointerId) return;
+    drag.current = null;
+    const final = findNode(designRef.current, active.id);
+    if (final && (final.x !== active.x || final.y !== active.y)) {
+      const next = commit(historyRef.current, designRef.current);
+      historyRef.current = next;
+      setHistory(next);
+    } else {
+      designRef.current = historyRef.current.present;
+      setDesign(historyRef.current.present);
+    }
   }
+
+  function stepHistory(direction: "undo" | "redo") {
+    if (drag.current) return;
+    const next = direction === "undo" ? undo(historyRef.current) : redo(historyRef.current);
+    if (next === historyRef.current) return;
+    historyRef.current = next;
+    setHistory(next);
+    designRef.current = next.present;
+    setDesign(next.present);
+    if (selectedId && !findNode(next.present, selectedId)) setSelectedId(null);
+    revision.current += 1;
+    setError(null);
+  }
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey || event.key.toLowerCase() !== "z") return;
+      if (event.target instanceof HTMLElement && event.target.closest("input, textarea, [contenteditable]")) return;
+      event.preventDefault();
+      stepHistory(event.shiftKey ? "redo" : "undo");
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
 
   async function openFile() {
     if (fileOperation.current) return;
-    if (dirtyRef.current && designRef.current.children.length > 0 && !window.confirm("未保存の変更があります。別のドキュメントを開きますか？")) return;
+    if (isDocumentDirty(historyRef.current, designRef.current) && designRef.current.children.length > 0 && !window.confirm("未保存の変更があります。別のドキュメントを開きますか？")) return;
     fileOperation.current = true;
     setIsBusy(true);
     const startedAt = revision.current;
@@ -152,12 +190,13 @@ function App() {
       setError("読み込み中に編集されたため、現在のドキュメントを維持しました");
       return;
     }
+    const next = createHistory(result.value.document, true);
+    historyRef.current = next;
+    setHistory(next);
     designRef.current = result.value.document;
     setDesign(result.value.document);
     setFilePath(result.value.path);
     setSelectedId(null);
-    dirtyRef.current = false;
-    setIsDirty(false);
     revision.current += 1;
     setError(null);
   }
@@ -166,8 +205,8 @@ function App() {
     if (fileOperation.current) return;
     fileOperation.current = true;
     setIsBusy(true);
-    const startedAt = revision.current;
-    const result = await saveDocumentFile(documentFiles, designRef.current, filePath);
+    const snapshot = designRef.current;
+    const result = await saveDocumentFile(documentFiles, snapshot, filePath);
     fileOperation.current = false;
     setIsBusy(false);
     if (Result.isFailure(result)) {
@@ -176,8 +215,9 @@ function App() {
     }
     if (result.value === null) return;
     setFilePath(result.value);
-    dirtyRef.current = revision.current !== startedAt;
-    setIsDirty(dirtyRef.current);
+    const next = markSaved(historyRef.current, snapshot);
+    historyRef.current = next;
+    setHistory(next);
     setError(null);
   }
 
@@ -193,6 +233,10 @@ function App() {
           <span className="document-title" title={filePath ?? undefined}>{fileName}</span>
         </div>
         <span className="topbar-note">DOCUMENT / 001</span>
+        <div className="history-controls" aria-label="編集履歴">
+          <button className="file-button" type="button" onClick={() => stepHistory("undo")} disabled={history.past.length === 0 || !!drag.current} title="元に戻す (⌘/Ctrl+Z)">元に戻す</button>
+          <button className="file-button" type="button" onClick={() => stepHistory("redo")} disabled={history.future.length === 0 || !!drag.current} title="やり直す (⌘/Ctrl+Shift+Z)">やり直す</button>
+        </div>
         <button className="file-button" type="button" onClick={openFile} disabled={isBusy}>開く</button>
         <button className="file-button" type="button" onClick={saveFile} disabled={isBusy}>保存</button>
         <button className="add-button" type="button" onClick={addRectangle}>
@@ -258,11 +302,9 @@ function App() {
                 }}
                 onPointerDown={(event) => startDrag(event, node)}
                 onPointerMove={continueDrag}
-                onPointerUp={stopDrag}
-                onPointerCancel={stopDrag}
-                onLostPointerCapture={() => {
-                  drag.current = null;
-                }}
+                onPointerUp={(event) => finishDrag(event.pointerId)}
+                onPointerCancel={(event) => finishDrag(event.pointerId)}
+                onLostPointerCapture={(event) => finishDrag(event.pointerId)}
               >
                 <span className="node-label">{node.name}</span>
               </button>
@@ -288,7 +330,7 @@ function App() {
                 名前
               </label>
               <NameEditor
-                key={selected.id}
+                key={`${selected.id}:${selected.name}`}
                 node={selected}
                 onRename={(name) =>
                   applyDocument(
