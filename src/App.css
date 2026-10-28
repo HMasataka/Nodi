@@ -76,6 +76,11 @@ button {
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0;
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
 }
 .topbar-note {
   margin-left: auto;
@@ -97,10 +102,22 @@ button {
   font-weight: 700;
   box-shadow: 0 2px 4px #d56d4522;
 }
+.file-button {
+  flex: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 12px;
+}
+.file-button:hover { border-color: var(--accent); }
+.file-button:disabled { cursor: wait; opacity: .55; }
 .add-button:hover {
   background: #ba5532;
 }
 .add-button:focus-visible,
+.file-button:focus-visible,
 .layer-row:focus-visible,
 .canvas-node:focus-visible,
 .properties input:focus-visible {
@@ -380,6 +397,7 @@ button {
   border-radius: 50%;
   background: #8b9b75;
 }
+.status-dot.is-dirty { background: var(--accent); }
 .error-toast {
   position: fixed;
   right: 20px;
@@ -412,7 +430,20 @@ button {
     display: none;
   }
   .add-button {
-    margin-left: auto;
+    padding-inline: 10px;
+  }
+  .file-button {
+    padding-inline: 9px;
+  }
+  .topbar {
+    gap: 8px;
+    padding-inline: 12px;
+  }
+  .brand {
+    margin-right: auto;
+  }
+  .document-title {
+    max-width: 90px;
   }
   .panel-heading,
   .properties {

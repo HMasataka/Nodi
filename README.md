@@ -13,6 +13,8 @@ pnpm tauri dev
 
 フロントエンドのみの確認は `pnpm dev`、配布用アプリの生成は `pnpm tauri build` で行います。
 
+エディタの「保存」「開く」は Tauri のデスクトップアプリで使用します。`.nodi` ファイルの中身は JSON（`docs/document-format.md` の v1）です。以前の `.json` ファイルも開けます。読み込みに失敗した場合は編集中のドキュメントを維持します。
+
 `pnpm test` でドキュメントモデルのテストを実行します。`pnpm lint` は TypeScript/JavaScript の `throw` 文を禁止し、`pnpm build` でも lint を実行します。失敗する操作は `@praha/byethrow` の `Result` で返します。
 
 ## Recommended IDE Setup
