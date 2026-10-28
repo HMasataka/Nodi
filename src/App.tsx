@@ -3,6 +3,8 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   addNode,
   createDocument,
+  deleteNode,
+  duplicateNode,
   findNode,
   moveNode,
   renameNode,
@@ -89,6 +91,28 @@ function App() {
       width: 184,
       height: 112,
     });
+    if (Result.isFailure(result)) {
+      setError(result.error.message);
+      return;
+    }
+    recordDocument(result.value.document);
+    setSelectedId(result.value.node.id);
+  }
+
+  function deleteSelected() {
+    if (!selectedId) return;
+    const result = deleteNode(designRef.current, selectedId);
+    if (Result.isFailure(result)) {
+      setError(result.error.message);
+      return;
+    }
+    recordDocument(result.value);
+    setSelectedId(null);
+  }
+
+  function duplicateSelected() {
+    if (!selectedId) return;
+    const result = duplicateNode(designRef.current, selectedId);
     if (Result.isFailure(result)) {
       setError(result.error.message);
       return;
@@ -356,6 +380,10 @@ function App() {
                 名前は変更できます。ID
                 はこの要素を正確に指すために変わりません。
               </p>
+              <div className="node-actions">
+                <button type="button" className="file-button" onClick={duplicateSelected}>複製</button>
+                <button type="button" className="file-button" onClick={deleteSelected}>削除</button>
+              </div>
             </div>
           ) : (
             <p className="panel-empty">

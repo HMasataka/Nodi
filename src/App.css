@@ -368,6 +368,8 @@ button {
   font-size: 11px;
   line-height: 1.7;
 }
+.node-actions { display: flex; gap: 8px; margin-top: 20px; }
+.node-actions .file-button { flex: 1; }
 
 .statusbar {
   display: flex;
