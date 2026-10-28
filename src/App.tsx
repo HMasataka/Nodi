@@ -104,6 +104,9 @@ function App() {
   const [zoom, setZoom] = useState(1);
   const selected = selectedId ? findNode(design, selectedId) : undefined;
   const isDirty = isDocumentDirty(history, design);
+  const layerCount = (function count(nodes: DocumentNode[]): number {
+    return nodes.reduce((total, node) => total + 1 + (node.type === "frame" ? count(node.children) : 0), 0);
+  })(design.children);
 
   function recordDocument(document: Document) {
     const next = commit(historyRef.current, document);
@@ -125,10 +128,12 @@ function App() {
 
   function addRectangle() {
     const index = designRef.current.children.length;
+    const parentId = selected?.type === "frame" ? selected.id : undefined;
     const result = addNode(designRef.current, {
       type: "rectangle",
-      x: 80 + (index % 8) * 28,
-      y: 80 + (index % 8) * 28,
+      parentId,
+      x: parentId ? 24 : 80 + (index % 8) * 28,
+      y: parentId ? 50 : 80 + (index % 8) * 28,
       width: 184,
       height: 112,
     });
@@ -136,6 +141,17 @@ function App() {
       setError(result.error.message);
       return;
     }
+    recordDocument(result.value.document);
+    setSelectedId(result.value.node.id);
+  }
+
+  function addFrame() {
+    const index = designRef.current.children.length;
+    const result = addNode(designRef.current, {
+      type: "frame", x: 80 + (index % 6) * 28, y: 80 + (index % 6) * 28,
+      width: 360, height: 260,
+    });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
     recordDocument(result.value.document);
     setSelectedId(result.value.node.id);
   }
@@ -163,7 +179,7 @@ function App() {
   }
 
   function startDrag(
-    event: PointerEvent<HTMLButtonElement>,
+    event: PointerEvent<HTMLElement>,
     node: DocumentNode,
   ) {
     if (event.button !== 0 || drag.current || spacePressed.current) return;
@@ -197,7 +213,7 @@ function App() {
     setSelectedId(node.id);
   }
 
-  function continueDrag(event: PointerEvent<HTMLButtonElement>) {
+  function continueDrag(event: PointerEvent<HTMLElement>) {
     const active = drag.current;
     if (!active || active.pointerId !== event.pointerId) return;
     const dx = screenDeltaToDocument(event.clientX - active.clientX, active.zoom);
@@ -344,6 +360,58 @@ function App() {
 
   const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
 
+  function renderLayer(node: DocumentNode, depth = 0): React.ReactNode {
+    return (
+      <div key={node.id}>
+        <button
+          type="button"
+          className={`layer-row${selectedId === node.id ? " is-selected" : ""}`}
+          style={{ paddingLeft: 11 + depth * 18 }}
+          aria-pressed={selectedId === node.id}
+          onClick={() => setSelectedId(node.id)}
+        >
+          <span className="layer-icon" aria-hidden="true" />
+          <span className="layer-name">{node.name}</span>
+        </button>
+        {node.type === "frame" && node.children.map((child) => renderLayer(child, depth + 1))}
+      </div>
+    );
+  }
+
+  function renderNode(node: DocumentNode): React.ReactNode {
+    const style = { left: node.x, top: node.y, width: node.width, height: node.height };
+    if (node.type === "frame") return (
+      <div
+        key={node.id}
+        className={`canvas-frame${selectedId === node.id ? " is-selected" : ""}`}
+        style={style}
+        onPointerDown={(event) => { if (event.target === event.currentTarget) startDrag(event, node); }}
+        onPointerMove={continueDrag}
+        onPointerUp={(event) => finishDrag(event.pointerId)}
+        onPointerCancel={(event) => finishDrag(event.pointerId)}
+        onLostPointerCapture={(event) => finishDrag(event.pointerId)}
+      >
+        <button type="button" className="frame-label" onPointerDown={(event) => startDrag(event, node)}>{node.name}</button>
+        {node.children.map(renderNode)}
+        {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
+      </div>
+    );
+    return (
+      <button
+        key={node.id} type="button"
+        className={`canvas-node${selectedId === node.id ? " is-selected" : ""}`}
+        aria-label={node.name} aria-pressed={selectedId === node.id} style={style}
+        onPointerDown={(event) => startDrag(event, node)} onPointerMove={continueDrag}
+        onPointerUp={(event) => finishDrag(event.pointerId)}
+        onPointerCancel={(event) => finishDrag(event.pointerId)}
+        onLostPointerCapture={(event) => finishDrag(event.pointerId)}
+      >
+        <span className="node-label">{node.name}</span>
+        {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
+      </button>
+    );
+  }
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -363,13 +431,14 @@ function App() {
         <button className="add-button" type="button" onClick={addRectangle}>
           <span aria-hidden="true">＋</span> 矩形を追加
         </button>
+        <button className="file-button" type="button" onClick={addFrame}>フレームを追加</button>
       </header>
 
       <div className="workspace">
         <aside className="sidebar layers" aria-label="レイヤー">
           <div className="panel-heading">
             <h2>レイヤー</h2>
-            <span>{design.children.length.toString().padStart(2, "0")}</span>
+            <span>{layerCount.toString().padStart(2, "0")}</span>
           </div>
           {design.children.length === 0 ? (
             <p className="panel-empty">
@@ -379,18 +448,7 @@ function App() {
             </p>
           ) : (
             <div className="layer-list">
-              {design.children.map((node) => (
-                <button
-                  key={node.id}
-                  type="button"
-                  className={`layer-row${selectedId === node.id ? " is-selected" : ""}`}
-                  aria-pressed={selectedId === node.id}
-                  onClick={() => setSelectedId(node.id)}
-                >
-                  <span className="layer-icon" aria-hidden="true" />
-                  <span className="layer-name">{node.name}</span>
-                </button>
-              ))}
+              {design.children.map((node) => renderLayer(node))}
             </div>
           )}
         </aside>
@@ -416,29 +474,7 @@ function App() {
                 <span>ここから、かたちをつくる。</span>
               </div>
             )}
-            {design.children.map((node) => (
-              <button
-                key={node.id}
-                type="button"
-                className={`canvas-node${selectedId === node.id ? " is-selected" : ""}`}
-                aria-label={node.name}
-                aria-pressed={selectedId === node.id}
-                style={{
-                  left: node.x,
-                  top: node.y,
-                  width: node.width,
-                  height: node.height,
-                }}
-                onPointerDown={(event) => startDrag(event, node)}
-                onPointerMove={continueDrag}
-                onPointerUp={(event) => finishDrag(event.pointerId)}
-                onPointerCancel={(event) => finishDrag(event.pointerId)}
-                onLostPointerCapture={(event) => finishDrag(event.pointerId)}
-              >
-                <span className="node-label">{node.name}</span>
-                {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
-              </button>
-            ))}
+            {design.children.map(renderNode)}
             </div>
           </div>
           <div className="canvas-scale">
