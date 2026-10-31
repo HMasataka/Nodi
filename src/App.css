@@ -228,6 +228,12 @@ button {
   background-position: -1px -1px;
 }
 .canvas-world { position: relative; width: 1200px; height: 900px; transform-origin: top left; }
+.canvas-world.is-drawing { cursor: crosshair; }
+.drawing-tools { display: flex; gap: 4px; flex: none; }
+.drawing-tools button { border: 1px solid var(--line); border-radius: 5px; padding: 8px; background: white; color: var(--ink); font-size: 11px; white-space: nowrap; }
+.drawing-tools button[aria-pressed="true"] { border-color: var(--accent); background: #f7e9e2; color: #a84728; }
+.draw-preview { position: absolute; border: 2px dashed var(--accent); border-radius: 2px; background: #d56d4526; pointer-events: none; z-index: 10; }
+.draw-preview.is-ellipse { border-radius: 50%; }
 .canvas-hint {
   position: absolute;
   top: 35%;

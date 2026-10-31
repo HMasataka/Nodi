@@ -4,6 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { createAgentApi } from "./document/agent";
 import { dispatchAgentRequest } from "./document/agentBridge";
+import { drawingGeometry, frameOrigin, pointOnCanvas, type Point } from "./document/drawing";
 import {
   createDocument,
   deleteNode,
@@ -35,6 +36,8 @@ interface DragState {
 }
 
 interface PanState { pointerId: number; clientX: number; clientY: number; scrollLeft: number; scrollTop: number }
+type DrawTool = "select" | "rectangle" | "ellipse";
+interface DrawingState { pointerId: number; tool: Exclude<DrawTool, "select">; start: Point; end: Point; parentId: string | null; parentOrigin: Point }
 
 function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange: (geometry: Geometry) => void }) {
   const [draft, setDraft] = useState<Record<keyof Geometry, string>>({
@@ -158,6 +161,9 @@ function App() {
   const pan = useRef<PanState | null>(null);
   const spacePressed = useRef(false);
   const [zoom, setZoom] = useState(1);
+  const [drawTool, setDrawTool] = useState<DrawTool>("select");
+  const [drawing, setDrawing] = useState<DrawingState | null>(null);
+  const drawingRef = useRef<DrawingState | null>(null);
   const selected = selectedId ? findNode(design, selectedId) : undefined;
   const isDirty = isDocumentDirty(history, design);
   const layerCount = (function count(nodes: DocumentNode[]): number {
@@ -287,7 +293,7 @@ function App() {
     event: PointerEvent<HTMLElement>,
     node: DocumentNode,
   ) {
-    if (event.button !== 0 || drag.current || spacePressed.current) return;
+    if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     drag.current = {
@@ -306,7 +312,7 @@ function App() {
   }
 
   function startResize(event: PointerEvent<HTMLSpanElement>, node: DocumentNode) {
-    if (event.button !== 0 || drag.current || spacePressed.current) return;
+    if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
     event.stopPropagation();
     event.preventDefault();
     event.currentTarget.parentElement?.setPointerCapture(event.pointerId);
@@ -388,8 +394,55 @@ function App() {
     if (pan.current?.pointerId === pointerId) pan.current = null;
   }
 
+  function beginDrawing(event: PointerEvent<HTMLDivElement>) {
+    if (drawTool === "select" || event.button !== 0 || spacePressed.current || pan.current || drawingRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const frameId = event.target instanceof Element ? event.target.closest("[data-frame-id]")?.getAttribute("data-frame-id") ?? null : null;
+    const origin = frameId ? frameOrigin(designRef.current, frameId) : { x: 0, y: 0 };
+    if (!origin) return;
+    const start = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const next = { pointerId: event.pointerId, tool: drawTool, start, end: start, parentId: frameId, parentOrigin: origin };
+    drawingRef.current = next;
+    setDrawing(next);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function updateDrawing(event: PointerEvent<HTMLDivElement>) {
+    const active = drawingRef.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    const next = { ...active, end: pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom) };
+    drawingRef.current = next;
+    setDrawing(next);
+  }
+
+  function cancelDrawing(pointerId?: number) {
+    if (!drawingRef.current || (pointerId !== undefined && drawingRef.current.pointerId !== pointerId)) return;
+    drawingRef.current = null;
+    setDrawing(null);
+  }
+
+  function finishDrawing(event: PointerEvent<HTMLDivElement>) {
+    const active = drawingRef.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    const end = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const geometry = drawingGeometry(active.start, end, active.parentOrigin);
+    cancelDrawing(event.pointerId);
+    if (geometry.width < 4 || geometry.height < 4) return;
+    const result = agentApi.add({ type: active.tool, parentId: active.parentId ?? undefined, ...geometry });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    setSelectedId(result.value.id);
+    setDrawTool("select");
+  }
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && drawingRef.current) {
+        cancelDrawing();
+        setDrawTool("select");
+        event.preventDefault();
+        return;
+      }
       const target = event.target instanceof HTMLElement ? event.target : null;
       const editing = target?.closest("input, textarea, [contenteditable]");
       const toolbarButton = target?.closest("button:not(.canvas-node)");
@@ -553,6 +606,10 @@ function App() {
           <span aria-hidden="true">＋</span> 矩形を追加
         </button>
         <button className="file-button" type="button" onClick={addEllipse}>楕円を追加</button>
+        <div className="drawing-tools" aria-label="描画ツール">
+          <button type="button" aria-pressed={drawTool === "rectangle"} onClick={() => setDrawTool(drawTool === "rectangle" ? "select" : "rectangle")}>矩形を描く</button>
+          <button type="button" aria-pressed={drawTool === "ellipse"} onClick={() => setDrawTool(drawTool === "ellipse" ? "select" : "ellipse")}>楕円を描く</button>
+        </div>
         <button className="file-button" type="button" onClick={addFrame}>フレームを追加</button>
         <button className="file-button" type="button" onClick={addText}>テキストを追加</button>
       </header>
@@ -588,9 +645,12 @@ function App() {
             className="canvas-surface"
             style={{ width: `max(100%, ${1200 * zoom}px)`, height: `max(100%, ${900 * zoom}px)`, backgroundSize: `${24 * zoom}px ${24 * zoom}px` }}
           >
-            <div className="canvas-world" style={{ transform: `scale(${zoom})` }} onPointerDown={(event) => {
-              if (event.target === event.currentTarget && !spacePressed.current && event.button === 0) setSelectedId(null);
-            }}>
+            <div className={`canvas-world${drawTool !== "select" ? " is-drawing" : ""}`} style={{ transform: `scale(${zoom})` }} onPointerDown={(event) => {
+              if (drawTool !== "select") beginDrawing(event);
+              else if (event.target === event.currentTarget && !spacePressed.current && event.button === 0) setSelectedId(null);
+            }} onPointerMove={updateDrawing} onPointerUp={finishDrawing}
+              onPointerCancel={(event) => cancelDrawing(event.pointerId)}
+              onLostPointerCapture={(event) => cancelDrawing(event.pointerId)}>
             {design.children.length === 0 && (
               <div className="canvas-hint" aria-hidden="true">
                 <span className="hint-symbol">＋</span>
@@ -598,6 +658,11 @@ function App() {
               </div>
             )}
             {design.children.map(renderNode)}
+            {drawing && (() => {
+              const geometry = drawingGeometry(drawing.start, drawing.end, drawing.parentOrigin);
+              return <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
+                style={{ left: geometry.x + drawing.parentOrigin.x, top: geometry.y + drawing.parentOrigin.y, width: geometry.width, height: geometry.height }} />;
+            })()}
             </div>
           </div>
           <div className="canvas-scale">
