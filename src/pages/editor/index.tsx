@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   deleteNode,
   duplicateNode,
@@ -9,6 +9,9 @@ import {
   setTextStyle,
 } from "../../document/commands";
 import { readImageFile } from "../../ipc/imageFiles";
+import { pngFiles } from "../../ipc/pngFiles";
+import { renderFramePng } from "../../export/framePng";
+import { savePng } from "../../export/savePng";
 import { Canvas } from "./components/organisms/Canvas";
 import { Inspector } from "./components/organisms/Inspector";
 import { LayersPanel } from "./components/organisms/LayersPanel";
@@ -30,6 +33,8 @@ function EditorPage() {
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing,
   } = useCanvasInteraction(session);
   const imageInput = useRef<HTMLInputElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const exporting = useRef(false);
 
   function addRectangle() {
     const index = designRef.current.children.length;
@@ -121,6 +126,23 @@ function EditorPage() {
     setSelectedId(result.value.node.id);
   }
 
+  async function exportSelectedFrame() {
+    if (selected?.type !== "frame" || exporting.current) return;
+    exporting.current = true;
+    setIsExporting(true);
+    try {
+      const rendered = await renderFramePng(selected);
+      if (Result.isFailure(rendered)) { setError(rendered.error.message); return; }
+      const name = selected.name.trim().replace(/[\\/:*?"<>|]/g, "_") || "frame";
+      const saved = await savePng(pngFiles, rendered.value, `${name}.png`);
+      if (Result.isFailure(saved)) setError(saved.error.message);
+      else if (saved.value !== null) setError(null);
+    } finally {
+      exporting.current = false;
+      setIsExporting(false);
+    }
+  }
+
   const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
 
   return (
@@ -186,6 +208,8 @@ function EditorPage() {
           onShapeStyle={(style) => { if (selected) applyDocument(setNodeStyle(designRef.current, selected.id, style)); }}
           onDuplicate={duplicateSelected}
           onDelete={deleteSelected}
+          onExportFrame={() => { void exportSelectedFrame(); }}
+          isExporting={isExporting}
         />
       </div>
 

@@ -20,6 +20,11 @@ fn write_document(path: String, contents: String) -> Result<(), String> {
     std::fs::write(path, contents).map_err(|error| error.to_string())
 }
 
+#[tauri::command]
+fn write_png(path: String, bytes: Vec<u8>) -> Result<(), String> {
+    std::fs::write(path, bytes).map_err(|error| error.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -28,6 +33,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             read_document,
             write_document,
+            write_png,
             resolve_mcp_request
         ])
         .setup(|app| {

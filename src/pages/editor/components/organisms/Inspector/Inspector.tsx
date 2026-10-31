@@ -15,9 +15,11 @@ interface InspectorProps {
   onShapeStyle(style: Partial<RectangleStyle>): void;
   onDuplicate(): void;
   onDelete(): void;
+  onExportFrame(): void;
+  isExporting: boolean;
 }
 
-export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onDuplicate, onDelete }: InspectorProps) {
+export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onDuplicate, onDelete, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -58,6 +60,9 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
             <button type="button" className="file-button" onClick={onDuplicate}>複製</button>
             <button type="button" className="file-button" onClick={onDelete}>削除</button>
           </div>
+          {selected.type === "frame" && <button type="button" className="file-button export-button" onClick={onExportFrame} disabled={isExporting}>
+            {isExporting ? "PNG を生成中…" : "PNG に書き出す"}
+          </button>}
         </div>
       ) : <p className="panel-empty">キャンバス上の要素を選択すると、ここに詳細が表示されます。</p>}
     </aside>
