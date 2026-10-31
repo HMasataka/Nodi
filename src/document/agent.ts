@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { addNode, moveNode, renameNode, type AddNodeInput } from "./commands.ts";
+import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "./commands.ts";
 import type { Document, DocumentNode } from "./types.ts";
 
 export interface ElementReference {
@@ -12,6 +12,10 @@ export interface ElementReference {
   y: number;
   width: number;
   height: number;
+  content?: string;
+  fontSize?: number;
+  color?: string;
+  textAlign?: "left" | "center" | "right";
 }
 
 export interface EditorPort {
@@ -28,6 +32,7 @@ export function listElements(document: Document): ElementReference[] {
       elements.push({
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
         x: node.x, y: node.y, width: node.width, height: node.height,
+        ...(node.type === "text" ? { content: node.content, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign } : {}),
       });
       if (node.type === "frame") visit(node.children, path, node.id);
     }
@@ -64,6 +69,12 @@ export function createAgentApi(port: EditorPort) {
     },
     move(id: string, x: number, y: number): Result.Result<ElementReference, Error> {
       const result = moveNode(port.getDocument(), id, x, y);
+      if (Result.isFailure(result)) return result;
+      port.apply(result.value);
+      return getElement(id);
+    },
+    setTextContent(id: string, content: string): Result.Result<ElementReference, Error> {
+      const result = setTextContent(port.getDocument(), id, content);
       if (Result.isFailure(result)) return result;
       port.apply(result.value);
       return getElement(id);

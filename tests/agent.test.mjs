@@ -40,3 +40,18 @@ test("存在しない ID や無効な入力は失敗し、履歴を変更しな�
   assert.equal(history.past.length, 0);
   assert.equal(isDirty(history), false);
 });
+
+test("テキストの本文と表示属性を階層付きで参照・編集できる", () => {
+  let history = createHistory(createDocument(), true);
+  const api = createAgentApi({ getDocument: () => history.present, getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
+  const frame = success(api.add({ type: "frame", name: "画面", x: 0, y: 0, width: 400, height: 300 }));
+  const text = success(api.add({ type: "text", parentId: frame.id, name: "見出し", content: "Hello", x: 10, y: 50, width: 200, height: 40 }));
+  assert.equal(text.path, "画面 › 見出し");
+  assert.equal(text.content, "Hello");
+  assert.equal(text.fontSize, 16);
+  assert.equal(text.textAlign, "left");
+  assert.equal(success(api.setTextContent(text.id, "Nodi")).content, "Nodi");
+  assert.equal(api.setTextContent(frame.id, "invalid").type, "Failure");
+  assert.equal(history.past.length, 3);
+  assert.ok(isDirty(history));
+});
