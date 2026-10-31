@@ -24,7 +24,7 @@ function EditorPage() {
   const session = useEditorDocument();
   const {
     history, design, designRef, selectedId, setSelectedId, selected,
-    error, setError, filePath, isBusy, isDirty, agentApi,
+    error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery,
     recordDocument, applyDocument, openFile, saveFile,
   } = session;
   const {
@@ -217,7 +217,7 @@ function EditorPage() {
 
       <footer className="statusbar">
         <span>
-          <span className={`status-dot${isDirty ? " is-dirty" : ""}`} /> {isDirty ? "未保存の変更" : "保存済み"}
+          <span className={`status-dot${isDirty ? " is-dirty" : ""}`} /> {isDirty ? "未保存の変更" : filePath ? "保存済み" : "変更なし"}
         </span>
         <span>
           {selected
@@ -235,6 +235,32 @@ function EditorPage() {
           >
             ×
           </button>
+        </div>
+      )}
+      {recoveryStatus.kind !== "none" && (
+        <div className="recovery-scrim">
+          <section className="recovery-dialog" role="dialog" aria-modal="true" aria-labelledby="recovery-title">
+            <span className="recovery-eyebrow">DOCUMENT / RECOVERY</span>
+            <h2 id="recovery-title">{recoveryStatus.kind === "checking" ? "作業内容を確認中" : recoveryStatus.kind === "error" ? "復元データを読み取れません" : "未保存の編集が見つかりました"}</h2>
+            {recoveryStatus.kind === "available" && (
+              <>
+                <p>前回の異常終了時に残った編集内容です。復元しても元のファイルは上書きされません。保存時に新しい保存先を選べます。</p>
+                {recoveryStatus.draft.sourcePath && <code className="recovery-path">元のファイル: {recoveryStatus.draft.sourcePath}</code>}
+                <div className="recovery-actions">
+                  <button type="button" className="add-button" onClick={restoreRecovery}>編集を復元</button>
+                  <button type="button" className="file-button" onClick={() => { void discardRecovery(); }}>破棄して開始</button>
+                </div>
+              </>
+            )}
+            {recoveryStatus.kind === "error" && (
+              <>
+                <p role="alert">{recoveryStatus.message}</p>
+                <p>復元データを破棄すると、新しい空のドキュメントから開始します。</p>
+                <div className="recovery-actions"><button type="button" className="file-button" onClick={() => { void discardRecovery(); }}>破棄して開始</button></div>
+              </>
+            )}
+            {recoveryStatus.kind === "checking" && <p>前回の編集内容を探しています…</p>}
+          </section>
         </div>
       )}
     </main>

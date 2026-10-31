@@ -4,9 +4,11 @@ import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import type { AgentApi } from "@/agent/api";
 import { dispatchAgentRequest } from "@/agent/bridge";
 
-export function useMcpBridge(agentApi: AgentApi, setError: Dispatch<SetStateAction<string | null>>) {
+export function useMcpBridge(agentApi: AgentApi, setError: Dispatch<SetStateAction<string | null>>, enabled = true) {
   const apiRef = useRef(agentApi);
+  const enabledRef = useRef(enabled);
   apiRef.current = agentApi;
+  enabledRef.current = enabled;
 
   useEffect(() => {
     if (!isTauri()) return;
@@ -14,7 +16,9 @@ export function useMcpBridge(agentApi: AgentApi, setError: Dispatch<SetStateActi
     let active = true;
     void listen<{ id: string; method: string; args: unknown }>("nodi:mcp-request", (event) => {
       const { id, method, args } = event.payload;
-      const response = dispatchAgentRequest(apiRef.current, method, args);
+      const response = enabledRef.current
+        ? dispatchAgentRequest(apiRef.current, method, args)
+        : { ok: false, error: "復元データの確認が完了するまで編集できません" };
       void invoke("resolve_mcp_request", { id, response }).catch((error: unknown) => {
         setError(`MCP 応答に失敗しました: ${String(error)}`);
       });

@@ -451,6 +451,14 @@ button {
   color: inherit;
   font-size: 18px;
 }
+.recovery-scrim { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: #272b29a8; }
+.recovery-dialog { width: min(100%, 460px); border: 1px solid #e6d9cc; border-radius: 9px; padding: 28px; background: #fbfaf6; box-shadow: 0 28px 70px #1d211f45; }
+.recovery-eyebrow { color: var(--accent); font: 10px ui-monospace, monospace; letter-spacing: .16em; }
+.recovery-dialog h2 { margin: 12px 0; color: var(--ink); font-size: 21px; letter-spacing: -.04em; }
+.recovery-dialog p { color: #626761; font-size: 12px; line-height: 1.8; }
+.recovery-path { display: block; margin-top: 16px; padding: 10px; border-radius: 4px; background: #f0eee8; color: #555a55; font: 11px/1.5 ui-monospace, monospace; overflow-wrap: anywhere; }
+.recovery-actions { display: flex; gap: 10px; margin-top: 24px; }
+.recovery-actions button { flex: 1; }
 
 @media (max-width: 840px) {
   .workspace {

@@ -16,7 +16,7 @@
 | `src/document/types.ts` | ドキュメントの型・既定値 |
 | `src/document/commands/` | ツリー走査と作成・更新・スタイル・構造変更。`index.ts` が公開操作の入口 |
 | `src/document/history.ts`・`measure.ts` | 編集履歴と履歴時点の数値計測 |
-| `src/persistence/` | 保存形式の検証・JSON 変換とファイル選択・読み書き |
+| `src/persistence/` | 保存形式の検証・JSON 変換、ファイル選択・読み書き、復元データの検証 |
 | `src/agent/` | ドキュメント操作を MCP 用の参照・要求・応答へ変換 |
 | `src/export/` | フレームの画像描画とファイル保存処理 |
 | `src/ipc/` | Tauri のダイアログ・コマンドとブラウザの画像読み込みを扱う境界 |
