@@ -476,6 +476,8 @@ function App() {
       <div
         key={node.id}
         className={`canvas-frame${selectedId === node.id ? " is-selected" : ""}`}
+        role="group"
+        aria-label={node.name}
         style={style}
         onPointerDown={(event) => { if (event.target === event.currentTarget) startDrag(event, node); }}
         onPointerMove={continueDrag}
@@ -483,7 +485,6 @@ function App() {
         onPointerCancel={(event) => finishDrag(event.pointerId)}
         onLostPointerCapture={(event) => finishDrag(event.pointerId)}
       >
-        <button type="button" className="frame-label" onPointerDown={(event) => startDrag(event, node)}>{node.name}</button>
         {node.children.map(renderNode)}
         {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
       </div>
@@ -514,7 +515,6 @@ function App() {
         onPointerCancel={(event) => finishDrag(event.pointerId)}
         onLostPointerCapture={(event) => finishDrag(event.pointerId)}
       >
-        <span className="node-label">{node.name}</span>
         {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
       </button>
     );
