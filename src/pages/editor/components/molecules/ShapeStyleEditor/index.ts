@@ -1,0 +1,1 @@
+export { ShapeStyleEditor } from "./ShapeStyleEditor";
