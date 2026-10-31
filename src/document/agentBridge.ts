@@ -15,6 +15,9 @@ const addInput = z.discriminatedUnion("type", [
 const renameInput = z.strictObject({ id: z.string().min(1), name: z.string() });
 const moveInput = z.strictObject({ id: z.string().min(1), x: z.number(), y: z.number() });
 const contentInput = z.strictObject({ id: z.string().min(1), content: z.string() });
+const revisionElementInput = z.strictObject({ revisionId: z.string().min(1), elementId: z.string().min(1) });
+const compareInput = z.strictObject({ fromRevisionId: z.string().min(1), toRevisionId: z.string().min(1), elementId: z.string().min(1) });
+const relativeInput = z.strictObject({ revisionId: z.string().min(1), firstId: z.string().min(1), secondId: z.string().min(1) });
 
 export function dispatchAgentRequest(api: AgentApi, method: string, args: unknown) {
   const input = (() => {
@@ -23,6 +26,22 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "get_element": {
         const parsed = idInput.safeParse(args);
         return parsed.success ? Result.succeed(api.getElement(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
+      case "list_revisions": {
+        const parsed = z.strictObject({}).safeParse(args);
+        return parsed.success ? Result.succeed(api.listRevisions()) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
+      case "get_revision_element": {
+        const parsed = revisionElementInput.safeParse(args);
+        return parsed.success ? Result.succeed(api.getRevisionElement(parsed.data.revisionId, parsed.data.elementId)) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
+      case "compare_revisions": {
+        const parsed = compareInput.safeParse(args);
+        return parsed.success ? Result.succeed(api.compareRevisions(parsed.data.fromRevisionId, parsed.data.toRevisionId, parsed.data.elementId)) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
+      case "measure_elements": {
+        const parsed = relativeInput.safeParse(args);
+        return parsed.success ? Result.succeed(api.measureElements(parsed.data.revisionId, parsed.data.firstId, parsed.data.secondId)) : Result.fail(new Error(parsed.error.issues[0].message));
       }
       case "add_element": {
         const parsed = addInput.safeParse(args);

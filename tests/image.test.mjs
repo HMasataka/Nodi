@@ -19,7 +19,7 @@ test("フレーム内の画像は移動・サイズ変更・複製・削除・Un
   const copied = success(duplicateNode(resized, added.node.id));
   assert.notEqual(copied.node.id, added.node.id);
   assert.equal(copied.node.source, source);
-  const api = createAgentApi({ getDocument: () => copied.document, getSelectedId: () => null, apply: () => {} });
+  const api = createAgentApi({ getDocument: () => copied.document, getHistory: () => createHistory(copied.document), getSelectedId: () => null, apply: () => {} });
   assert.equal(success(api.getElement(copied.node.id)).source, source);
   assert.equal(success(api.getState()).elements.find((item) => item.id === copied.node.id).source, undefined);
   const deleted = success(deleteNode(copied.document, added.node.id));

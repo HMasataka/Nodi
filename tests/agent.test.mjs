@@ -11,6 +11,7 @@ test("AI API の変更は同じ履歴に入り、名前と ID を階層付きで
   let selectedId = null;
   const api = createAgentApi({
     getDocument: () => history.present,
+    getHistory: () => history,
     getSelectedId: () => selectedId,
     apply: (document) => { history = commit(history, document); },
   });
@@ -32,7 +33,7 @@ test("AI API の変更は同じ履歴に入り、名前と ID を階層付きで
 
 test("存在しない ID や無効な入力は失敗し、履歴を変更しない", () => {
   let history = createHistory(createDocument(), true);
-  const api = createAgentApi({ getDocument: () => history.present, getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
+  const api = createAgentApi({ getDocument: () => history.present, getHistory: () => history, getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
   assert.equal(api.getElement("missing").type, "Failure");
   assert.equal(api.rename("missing", "名前").type, "Failure");
   assert.equal(api.move("missing", 0, 0).type, "Failure");
@@ -43,7 +44,7 @@ test("存在しない ID や無効な入力は失敗し、履歴を変更しな�
 
 test("テキストの本文と表示属性を階層付きで参照・編集できる", () => {
   let history = createHistory(createDocument(), true);
-  const api = createAgentApi({ getDocument: () => history.present, getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
+  const api = createAgentApi({ getDocument: () => history.present, getHistory: () => history, getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
   const frame = success(api.add({ type: "frame", name: "画面", x: 0, y: 0, width: 400, height: 300 }));
   const text = success(api.add({ type: "text", parentId: frame.id, name: "見出し", content: "Hello", x: 10, y: 50, width: 200, height: 40 }));
   assert.equal(text.path, "画面 › 見出し");

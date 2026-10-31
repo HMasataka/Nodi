@@ -34,6 +34,7 @@ export function useEditorDocument() {
 
   const agentApi = createAgentApi({
     getDocument: () => designRef.current,
+    getHistory: () => historyRef.current,
     getSelectedId: () => selectedId,
     apply: recordDocument,
   });
