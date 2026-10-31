@@ -32,7 +32,19 @@ export interface FrameNode extends Geometry {
   children: DocumentNode[];
 }
 
-export interface TextNode extends Geometry {
+export interface TextStyle {
+  fontSize: number;
+  color: string;
+  textAlign: "left" | "center" | "right";
+}
+
+export const DEFAULT_TEXT_STYLE: TextStyle = {
+  fontSize: 16,
+  color: "#272b29",
+  textAlign: "left",
+};
+
+export interface TextNode extends Geometry, TextStyle {
   id: string;
   name: string;
   type: "text";

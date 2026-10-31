@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { DEFAULT_RECTANGLE_STYLE, type Document, type DocumentNode, type Geometry, type RectangleStyle } from "./types.ts";
+import { DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type Geometry, type RectangleStyle, type TextStyle } from "./types.ts";
 
 export function createDocument(): Document {
   return { version: 1, children: [] };
@@ -97,7 +97,7 @@ export function addNode(
   const node: DocumentNode = input.type === "frame"
     ? { id, name, type: "frame", ...geometry, children: [] }
     : input.type === "text"
-      ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト" }
+      ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", ...DEFAULT_TEXT_STYLE }
       : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
 
   if (parent === undefined) {
@@ -156,6 +156,16 @@ export function setTextContent(document: Document, id: string, content: string):
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
   if (typeof content !== "string") return Result.fail(new Error("本文は文字列で指定してください"));
   return updateNode(document, id, (current) => ({ ...current, content }));
+}
+
+export function setTextStyle(document: Document, id: string, patch: Partial<TextStyle>): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
+  const style = { fontSize: patch.fontSize ?? node.fontSize, color: patch.color ?? node.color, textAlign: patch.textAlign ?? node.textAlign };
+  if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) return Result.fail(new Error("文字サイズは正の有限値で指定してください"));
+  if (!/^#[0-9a-fA-F]{6}$/.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB 形式で指定してください"));
+  if (!["left", "center", "right"].includes(style.textAlign)) return Result.fail(new Error("文字揃えが不正です"));
+  return updateNode(document, id, (current) => ({ ...current, ...style }));
 }
 
 export function deleteNode(document: Document, id: string): Result.Result<Document, Error> {
