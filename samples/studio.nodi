@@ -9,6 +9,8 @@
       "y": 70,
       "width": 960,
       "height": 710,
+      "background": "#fbfaf7",
+      "clipContent": true,
       "children": [
         {
           "id": "nd_sample_header",
@@ -67,6 +69,8 @@
           "y": 130,
           "width": 708,
           "height": 550,
+          "background": "#ffffff",
+          "clipContent": true,
           "children": [
             {
               "id": "nd_sample_intro",
@@ -166,6 +170,8 @@
               "y": 276,
               "width": 440,
               "height": 252,
+              "background": "#f6f3ec",
+              "clipContent": true,
               "children": [
                 {
                   "id": "nd_sample_activity_row_1",
@@ -203,6 +209,8 @@
               "y": 276,
               "width": 212,
               "height": 252,
+              "background": "#f9f7f0",
+              "clipContent": false,
               "children": [
                 {
                   "id": "nd_sample_primary_action",

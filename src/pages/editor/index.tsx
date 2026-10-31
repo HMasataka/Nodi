@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import {
   deleteNode,
   duplicateNode,
+  setFrameStyle,
   setNodeGeometry,
   setNodeStyle,
   setTextContent,
@@ -206,6 +207,7 @@ function EditorPage() {
           onTextContent={(content) => { if (selected) applyDocument(setTextContent(designRef.current, selected.id, content)); }}
           onTextStyle={(style) => { if (selected) applyDocument(setTextStyle(designRef.current, selected.id, style)); }}
           onShapeStyle={(style) => { if (selected) applyDocument(setNodeStyle(designRef.current, selected.id, style)); }}
+          onFrameStyle={(style) => { if (selected) applyDocument(setFrameStyle(designRef.current, selected.id, style)); }}
           onDuplicate={duplicateSelected}
           onDelete={deleteSelected}
           onExportFrame={() => { void exportSelectedFrame(); }}

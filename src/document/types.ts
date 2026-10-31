@@ -43,7 +43,14 @@ export interface ImageNode extends Geometry {
 export const IMAGE_SOURCE_PATTERN = /^data:image\/(?:png|jpeg|webp|svg\+xml)(?:;base64)?,.+$/s;
 export const MAX_IMAGE_SOURCE_LENGTH = 8_000_000;
 
-export interface FrameNode extends Geometry {
+export interface FrameStyle {
+  background: string;
+  clipContent: boolean;
+}
+
+export const DEFAULT_FRAME_STYLE: FrameStyle = { background: "#ffffff", clipContent: true };
+
+export interface FrameNode extends Geometry, FrameStyle {
   id: string;
   name: string;
   type: "frame";
