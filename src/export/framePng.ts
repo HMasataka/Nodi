@@ -38,6 +38,13 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
   ctx.translate(node.x, node.y);
   try {
     if (node.type === "frame") {
+      ctx.fillStyle = node.background;
+      ctx.fillRect(0, 0, node.width, node.height);
+      if (node.clipContent) {
+        ctx.beginPath();
+        ctx.rect(0, 0, node.width, node.height);
+        ctx.clip();
+      }
       for (const child of node.children) {
         const painted = await paintNode(ctx, child, loadImage);
         if (Result.isFailure(painted)) return painted;
@@ -96,7 +103,7 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     canvas.height = Math.round(frame.height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = frame.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);

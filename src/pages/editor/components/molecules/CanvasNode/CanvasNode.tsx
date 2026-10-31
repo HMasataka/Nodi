@@ -31,10 +31,12 @@ export function CanvasNode({ node, selectedId, interaction }: CanvasNodeProps) {
 
   if (node.type === "frame") return (
     <div className={`canvas-frame${selectedId === node.id ? " is-selected" : ""}`}
-      data-frame-id={node.id} role="group" aria-label={node.name} style={style}
+      data-frame-id={node.id} role="group" aria-label={node.name} style={{ ...style, background: node.background }}
       onPointerDown={(event) => { if (event.target === event.currentTarget) onNodePointerDown(event, node); }}
       {...pointerEvents}>
-      {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} interaction={interaction} />)}
+      <div className="frame-contents" style={{ overflow: node.clipContent ? "hidden" : "visible" }}>
+        {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} interaction={interaction} />)}
+      </div>
       {handle}
     </div>
   );

@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type Document, type DocumentNode, type Geometry, type RectangleStyle, type TextStyle } from "@/document/types.ts";
+import { DEFAULT_FRAME_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type Document, type DocumentNode, type FrameStyle, type Geometry, type RectangleStyle, type TextStyle } from "@/document/types.ts";
 
 export function createDocument(): Document {
   return { version: 1, children: [] };
@@ -97,7 +97,7 @@ export function addNode(
 
   const geometry = { x: input.x, y: input.y, width: input.width, height: input.height };
   const node: DocumentNode = input.type === "frame"
-    ? { id, name, type: "frame", ...geometry, children: [] }
+    ? { id, name, type: "frame", ...geometry, ...DEFAULT_FRAME_STYLE, children: [] }
     : input.type === "text"
       ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", ...DEFAULT_TEXT_STYLE }
       : input.type === "image"
@@ -157,6 +157,18 @@ export function setNodeStyle(
     return Result.fail(new Error("線幅と角丸は 0 以上の有限の数値で指定してください"));
   }
   return updateNode(document, id, (current) => ({ ...current, ...style, ...(cornerRadius === undefined ? {} : { cornerRadius }) }));
+}
+
+export function setFrameStyle(document: Document, id: string, patch: Partial<FrameStyle>): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "frame") return Result.fail(new Error(`フレームが見つかりません: ${id}`));
+  if (patch.background !== undefined && (typeof patch.background !== "string" || !/^#[0-9a-fA-F]{6}$/.test(patch.background))) {
+    return Result.fail(new Error("背景色は #RRGGBB 形式で指定してください"));
+  }
+  if (patch.clipContent !== undefined && typeof patch.clipContent !== "boolean") return Result.fail(new Error("はみ出し表示の設定が不正です"));
+  const background = patch.background ?? node.background;
+  const clipContent = patch.clipContent ?? node.clipContent;
+  return updateNode(document, id, (current) => ({ ...current, background, clipContent }));
 }
 
 export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {

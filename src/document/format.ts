@@ -15,7 +15,7 @@ const nodeSchema: z.ZodType<DocumentNode> = z.lazy(() =>
     z.strictObject({ id, name, type: z.literal("rectangle"), ...geometry, ...style }),
     z.strictObject({ id, name, type: z.literal("ellipse"), ...geometry, fill: color, stroke: color, strokeWidth: style.strokeWidth }),
     z.strictObject({ id, name, type: z.literal("image"), ...geometry, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-    z.strictObject({ id, name, type: z.literal("frame"), ...geometry, children: z.array(nodeSchema) }),
+    z.strictObject({ id, name, type: z.literal("frame"), ...geometry, background: color, clipContent: z.boolean(), children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string(), fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]) }),
   ]),
 );

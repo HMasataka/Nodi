@@ -1,8 +1,9 @@
-import type { DocumentNode, Geometry, RectangleStyle, TextStyle } from "@/document/types";
+import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
+import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
 import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
 import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 
@@ -13,13 +14,14 @@ interface InspectorProps {
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
   onShapeStyle(style: Partial<RectangleStyle>): void;
+  onFrameStyle(style: Partial<FrameStyle>): void;
   onDuplicate(): void;
   onDelete(): void;
   onExportFrame(): void;
   isExporting: boolean;
 }
 
-export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onDuplicate, onDelete, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -50,6 +52,12 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
               <div className="field-label">スタイル</div>
               <ShapeStyleEditor key={`${selected.id}:${selected.fill}:${selected.stroke}:${selected.strokeWidth}:${selected.type === "rectangle" ? selected.cornerRadius : "ellipse"}`}
                 node={selected} onChange={onShapeStyle} />
+            </>
+          )}
+          {selected.type === "frame" && (
+            <>
+              <div className="field-label">フレームの見た目</div>
+              <FrameStyleEditor key={`${selected.id}:${selected.background}:${selected.clipContent}`} node={selected} onChange={onFrameStyle} />
             </>
           )}
           <div className="property-divider" />

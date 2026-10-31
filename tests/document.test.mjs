@@ -22,7 +22,7 @@ const valid = {
   version: 1,
   children: [{
     id: "nd_screen", name: "ログイン画面", type: "frame",
-    x: 0, y: 0, width: 390, height: 844, children: [rectangle],
+    x: 0, y: 0, width: 390, height: 844, background: "#ffffff", clipContent: true, children: [rectangle],
   }],
 };
 
