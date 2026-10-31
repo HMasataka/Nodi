@@ -105,7 +105,7 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
         <div className="properties">
           <div className="selection-type">
             <span className="layer-icon" aria-hidden="true" />{" "}
-            {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "text" ? "テキスト" : "フレーム"}
+            {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : "フレーム"}
           </div>
           <label className="field-label" htmlFor="node-name">名前</label>
           <NameEditor key={`${selected.id}:${selected.name}`} node={selected} onRename={onRename} />
@@ -113,6 +113,7 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
           <div className="field-label">位置・サイズ</div>
           <GeometryEditor key={`${selected.id}:${selected.x}:${selected.y}:${selected.width}:${selected.height}`}
             node={selected} onChange={onGeometry} />
+          {selected.type === "image" && <p className="property-help">画像データは `.nodi` ファイル内に埋め込まれています。</p>}
           {selected.type === "text" && (
             <>
               <div className="field-label">本文</div>

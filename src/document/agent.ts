@@ -20,6 +20,7 @@ export interface ElementReference {
   stroke?: string;
   strokeWidth?: number;
   cornerRadius?: number;
+  source?: string;
 }
 
 export interface EditorPort {
@@ -28,7 +29,7 @@ export interface EditorPort {
   apply(document: Document): void;
 }
 
-export function listElements(document: Document): ElementReference[] {
+export function listElements(document: Document, includeImageSource = false): ElementReference[] {
   const elements: ElementReference[] = [];
   function visit(nodes: DocumentNode[], names: string[], parentId: string | null) {
     for (const node of nodes) {
@@ -39,6 +40,7 @@ export function listElements(document: Document): ElementReference[] {
         ...(node.type === "text" ? { content: node.content, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign } : {}),
         ...(node.type === "rectangle" || node.type === "ellipse" ? { fill: node.fill, stroke: node.stroke, strokeWidth: node.strokeWidth } : {}),
         ...(node.type === "rectangle" ? { cornerRadius: node.cornerRadius } : {}),
+        ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
       });
       if (node.type === "frame") visit(node.children, path, node.id);
     }
@@ -49,7 +51,7 @@ export function listElements(document: Document): ElementReference[] {
 
 export function createAgentApi(port: EditorPort) {
   function getElement(id: string): Result.Result<ElementReference, Error> {
-    const element = listElements(port.getDocument()).find((item) => item.id === id);
+    const element = listElements(port.getDocument(), true).find((item) => item.id === id);
     return element ? Result.succeed(element) : Result.fail(new Error(`要素が見つかりません: ${id}`));
   }
 

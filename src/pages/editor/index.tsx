@@ -12,6 +12,7 @@ import {
 } from "../../document/commands";
 import type { DocumentNode } from "../../document/types";
 import { screenDeltaToDocument } from "../../document/viewport";
+import { readImageFile } from "../../ipc/imageFiles";
 import { Canvas } from "./components/Canvas";
 import { Inspector } from "./components/Inspector";
 import { LayersPanel } from "./components/LayersPanel";
@@ -33,6 +34,7 @@ function EditorPage() {
   const [drawTool, setDrawTool] = useState<DrawTool>("select");
   const [drawing, setDrawing] = useState<DrawingState | null>(null);
   const drawingRef = useRef<DrawingState | null>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
 
   function addRectangle() {
     const index = designRef.current.children.length;
@@ -83,6 +85,20 @@ function EditorPage() {
       x: parentId ? 24 : 80 + (index % 8) * 28,
       y: parentId ? 50 : 80 + (index % 8) * 28,
       width: 220, height: 48,
+    });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    setSelectedId(result.value.id);
+  }
+
+  async function importImage(file: File) {
+    const parentId = selected?.type === "frame" ? selected.id : undefined;
+    const imported = await readImageFile(file);
+    if (Result.isFailure(imported)) { setError(imported.error.message); return; }
+    const index = designRef.current.children.length;
+    const result = agentApi.add({
+      type: "image", source: imported.value, name: file.name.replace(/\.[^.]+$/, "") || "画像",
+      parentId, x: parentId ? 24 : 80 + (index % 8) * 28,
+      y: parentId ? 50 : 80 + (index % 8) * 28, width: 240, height: 160,
     });
     if (Result.isFailure(result)) { setError(result.error.message); return; }
     setSelectedId(result.value.id);
@@ -298,6 +314,13 @@ function EditorPage() {
         </div>
         <button className="file-button" type="button" onClick={addFrame}>フレームを追加</button>
         <button className="file-button" type="button" onClick={addText}>テキストを追加</button>
+        <button className="file-button" type="button" onClick={() => imageInput.current?.click()}>画像を追加</button>
+        <input ref={imageInput} className="image-file-input" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          aria-label="画像ファイル" onChange={(event) => {
+            const input = event.currentTarget;
+            const file = input.files?.[0];
+            if (file) void importImage(file).finally(() => { input.value = ""; });
+          }} />
       </header>
 
       <div className="workspace">
@@ -315,6 +338,7 @@ function EditorPage() {
           }}
           onWorldPointerMove={updateDrawing} onWorldPointerUp={finishDrawing}
           onWorldPointerCancel={cancelDrawing}
+          onImageError={(id) => setError(`画像を表示できません: ${id}`)}
         />
 
         <Inspector

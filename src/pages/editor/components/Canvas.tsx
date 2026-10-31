@@ -22,6 +22,7 @@ interface CanvasProps {
   onWorldPointerMove(event: PointerEvent<HTMLDivElement>): void;
   onWorldPointerUp(event: PointerEvent<HTMLDivElement>): void;
   onWorldPointerCancel(pointerId: number): void;
+  onImageError(id: string): void;
 }
 
 export function Canvas(props: CanvasProps) {
@@ -29,7 +30,7 @@ export function Canvas(props: CanvasProps) {
     design, selectedId, zoom, setZoom, drawTool, drawing,
     onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp,
     onPanPointerDown, onPanPointerMove, onPanPointerUp,
-    onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
+    onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel, onImageError,
   } = props;
 
   function renderNode(node: DocumentNode): React.ReactNode {
@@ -55,6 +56,18 @@ export function Canvas(props: CanvasProps) {
         onPointerCancel={(event) => onNodePointerUp(event.pointerId)}
         onLostPointerCapture={(event) => onNodePointerUp(event.pointerId)}>
         {node.content}
+        {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => onResizePointerDown(event, node)} />}
+      </button>
+    );
+    if (node.type === "image") return (
+      <button key={node.id} type="button"
+        className={`canvas-image${selectedId === node.id ? " is-selected" : ""}`}
+        aria-label={node.name} aria-pressed={selectedId === node.id} style={style}
+        onPointerDown={(event) => onNodePointerDown(event, node)} onPointerMove={onNodePointerMove}
+        onPointerUp={(event) => onNodePointerUp(event.pointerId)}
+        onPointerCancel={(event) => onNodePointerUp(event.pointerId)}
+        onLostPointerCapture={(event) => onNodePointerUp(event.pointerId)}>
+        <img src={node.source} alt="" draggable={false} onError={() => onImageError(node.id)} />
         {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => onResizePointerDown(event, node)} />}
       </button>
     );

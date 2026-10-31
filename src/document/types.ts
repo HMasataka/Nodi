@@ -33,6 +33,16 @@ export interface EllipseNode extends Geometry, ShapeStyle {
   type: "ellipse";
 }
 
+export interface ImageNode extends Geometry {
+  id: string;
+  name: string;
+  type: "image";
+  source: string;
+}
+
+export const IMAGE_SOURCE_PATTERN = /^data:image\/(?:png|jpeg|webp|svg\+xml)(?:;base64)?,.+$/s;
+export const MAX_IMAGE_SOURCE_LENGTH = 8_000_000;
+
 export interface FrameNode extends Geometry {
   id: string;
   name: string;
@@ -59,7 +69,7 @@ export interface TextNode extends Geometry, TextStyle {
   content: string;
 }
 
-export type DocumentNode = FrameNode | RectangleNode | EllipseNode | TextNode;
+export type DocumentNode = FrameNode | RectangleNode | EllipseNode | TextNode | ImageNode;
 
 export interface Document {
   version: 1;
