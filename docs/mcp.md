@@ -27,7 +27,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 
 - `get_state`: 開いているドキュメント・選択要素・要素一覧。
 - `get_element`: ID で要素を参照。
-- `add_element`: `type`、`name`、`x`、`y`、`width`、`height`（必要なら `parentId`）を指定して追加。テキストの場合は `type: "text"` と `content` も必須。
+- `add_element`: `type`（`frame`・`rectangle`・`ellipse`・`text`）、`name`、`x`、`y`、`width`、`height`（必要なら `parentId`）を指定して追加。テキストの場合は `content` も必須。
 - `rename_element`: ID と新しい名前で改名。
 - `move_element`: ID と親基準の X・Y で移動。
 - `set_text_content`: ID と本文でテキストを変更。

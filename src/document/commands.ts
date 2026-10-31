@@ -76,7 +76,7 @@ export function addNode(
     return Result.fail(new Error(`親フレームが見つかりません: ${input.parentId}`));
   }
 
-  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : "矩形";
+  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : input.type === "ellipse" ? "楕円" : "矩形";
   const names = new Set(existing.map((node) => node.name));
   let number = 1;
   while (names.has(`${baseName} ${number}`)) number++;
@@ -98,7 +98,9 @@ export function addNode(
     ? { id, name, type: "frame", ...geometry, children: [] }
     : input.type === "text"
       ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", ...DEFAULT_TEXT_STYLE }
-      : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
+      : input.type === "ellipse"
+        ? { id, name, type: "ellipse", ...geometry, fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: DEFAULT_RECTANGLE_STYLE.stroke, strokeWidth: DEFAULT_RECTANGLE_STYLE.strokeWidth }
+        : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
 
   if (parent === undefined) {
     return Result.succeed({ document: { ...document, children: [...document.children, node] }, node });
@@ -139,16 +141,18 @@ export function setNodeStyle(
   patch: Partial<RectangleStyle>,
 ): Result.Result<Document, Error> {
   const node = findNode(document, id);
-  if (!node || node.type !== "rectangle") return Result.fail(new Error(`矩形が見つかりません: ${id}`));
+  if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`図形が見つかりません: ${id}`));
+  if (node.type === "ellipse" && patch.cornerRadius !== undefined) return Result.fail(new Error("楕円に角丸は設定できません"));
   const style = { fill: patch.fill ?? node.fill, stroke: patch.stroke ?? node.stroke,
-    strokeWidth: patch.strokeWidth ?? node.strokeWidth, cornerRadius: patch.cornerRadius ?? node.cornerRadius };
+    strokeWidth: patch.strokeWidth ?? node.strokeWidth };
   if (!/^#[0-9a-fA-F]{6}$/.test(style.fill) || !/^#[0-9a-fA-F]{6}$/.test(style.stroke)) {
     return Result.fail(new Error("色は #RRGGBB 形式で指定してください"));
   }
-  if (![style.strokeWidth, style.cornerRadius].every((value) => Number.isFinite(value) && value >= 0)) {
+  const cornerRadius = node.type === "rectangle" ? patch.cornerRadius ?? node.cornerRadius : undefined;
+  if (![style.strokeWidth, cornerRadius ?? 0].every((value) => Number.isFinite(value) && value >= 0)) {
     return Result.fail(new Error("線幅と角丸は 0 以上の有限の数値で指定してください"));
   }
-  return updateNode(document, id, (current) => ({ ...current, ...style }));
+  return updateNode(document, id, (current) => ({ ...current, ...style, ...(cornerRadius === undefined ? {} : { cornerRadius }) }));
 }
 
 export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {

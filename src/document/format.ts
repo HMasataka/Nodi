@@ -13,6 +13,7 @@ const style = { fill: color, stroke: color, strokeWidth: z.number().finite().non
 const nodeSchema: z.ZodType<DocumentNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
     z.strictObject({ id, name, type: z.literal("rectangle"), ...geometry, ...style }),
+    z.strictObject({ id, name, type: z.literal("ellipse"), ...geometry, fill: color, stroke: color, strokeWidth: style.strokeWidth }),
     z.strictObject({ id, name, type: z.literal("frame"), ...geometry, children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string(), fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]) }),
   ]),

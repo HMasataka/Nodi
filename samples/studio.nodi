@@ -111,6 +111,18 @@
               "cornerRadius": 12
             },
             {
+              "id": "nd_sample_status_dot",
+              "name": "アクティブ状態",
+              "type": "ellipse",
+              "x": 188,
+              "y": 152,
+              "width": 24,
+              "height": 24,
+              "fill": "#7bb591",
+              "stroke": "#4e8b68",
+              "strokeWidth": 2
+            },
+            {
               "id": "nd_sample_metric_b",
               "name": "進行中",
               "type": "rectangle",

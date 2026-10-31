@@ -9,6 +9,7 @@ const geometryInput = {
 const addInput = z.discriminatedUnion("type", [
   z.strictObject({ type: z.literal("frame"), name: z.string().optional(), parentId: z.string().optional(), ...geometryInput }),
   z.strictObject({ type: z.literal("rectangle"), name: z.string().optional(), parentId: z.string().optional(), ...geometryInput }),
+  z.strictObject({ type: z.literal("ellipse"), name: z.string().optional(), parentId: z.string().optional(), ...geometryInput }),
   z.strictObject({ type: z.literal("text"), name: z.string().min(1), content: z.string(), parentId: z.string().optional(), ...geometryInput }),
 ]);
 const renameInput = z.strictObject({ id: z.string().min(1), name: z.string() });
