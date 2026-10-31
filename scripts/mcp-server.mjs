@@ -36,12 +36,15 @@ export function createNodiMcpServer(request = callNodi) {
   }
   tool("get_state", "開いている Nodi ドキュメントと選択要素、名前と ID の一覧を取得", z.object({}));
   tool("get_element", "ID で要素を取得", z.object({ id: z.string() }));
-  tool("add_element", "名前付き要素を追加", z.object({
-    type: z.enum(["rectangle", "frame"]), name: z.string().optional(), parentId: z.string().optional(),
-    x: z.number(), y: z.number(), width: z.number(), height: z.number(),
-  }));
+  const geometry = { x: z.number(), y: z.number(), width: z.number(), height: z.number() };
+  tool("add_element", "名前付き要素を追加", z.discriminatedUnion("type", [
+    z.object({ type: z.literal("rectangle"), name: z.string().optional(), parentId: z.string().optional(), ...geometry }),
+    z.object({ type: z.literal("frame"), name: z.string().optional(), parentId: z.string().optional(), ...geometry }),
+    z.object({ type: z.literal("text"), name: z.string(), content: z.string(), parentId: z.string().optional(), ...geometry }),
+  ]));
   tool("rename_element", "ID で要素を改名", z.object({ id: z.string(), name: z.string() }));
   tool("move_element", "ID で要素を移動", z.object({ id: z.string(), x: z.number(), y: z.number() }));
+  tool("set_text_content", "ID でテキスト本文を変更", z.object({ id: z.string(), content: z.string() }));
   return server;
 }
 

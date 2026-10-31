@@ -54,7 +54,19 @@ test("MCP クライアントから参照・追加・改名・移動でき、画�
     assert.equal(JSON.parse(renamed.content[0].text).path, "送信");
     const missing = await client.callTool({ name: "get_element", arguments: { id: "missing" } });
     assert.equal(missing.isError, true);
-    assert.equal(history.past.length, 3);
+    const frame = await client.callTool({ name: "add_element", arguments: { type: "frame", name: "画面", x: 0, y: 0, width: 400, height: 300 } });
+    const frameId = JSON.parse(frame.content[0].text).id;
+    const addedText = await client.callTool({ name: "add_element", arguments: { type: "text", parentId: frameId, name: "見出し", content: "Hello", x: 10, y: 50, width: 200, height: 40 } });
+    assert.equal(addedText.isError, false);
+    const text = JSON.parse(addedText.content[0].text);
+    assert.equal(text.path, "画面 › 見出し");
+    assert.equal(text.content, "Hello");
+    assert.equal(text.fontSize, 16);
+    const updated = await client.callTool({ name: "set_text_content", arguments: { id: text.id, content: "Nodi" } });
+    assert.equal(JSON.parse(updated.content[0].text).content, "Nodi");
+    const invalid = await client.callTool({ name: "set_text_content", arguments: { id: frameId, content: "invalid" } });
+    assert.equal(invalid.isError, true);
+    assert.equal(history.past.length, 6);
     assert.ok(isDirty(history));
   } finally {
     await client.close();
