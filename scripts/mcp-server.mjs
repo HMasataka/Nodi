@@ -43,6 +43,10 @@ export function createNodiMcpServer(request = callNodi) {
   }
   tool("get_state", "開いている Nodi ドキュメントと選択要素、名前と ID の一覧を取得", z.object({}));
   tool("get_element", "ID で要素を取得", z.object({ id: z.string() }));
+  tool("list_revisions", "現在のドキュメントのリビジョン ID・親 ID・現在/保存済み状態を作成順に取得", z.strictObject({}));
+  tool("get_revision_element", "指定時点の要素 ID・名前・親階層と親基準/ドキュメント基準の座標・境界を px で取得", z.strictObject({ revisionId: z.string().min(1), elementId: z.string().min(1) }));
+  tool("compare_revisions", "同じ要素の2時点の座標・寸法の符号付き差分を px で取得", z.strictObject({ fromRevisionId: z.string().min(1), toRevisionId: z.string().min(1), elementId: z.string().min(1) }));
+  tool("measure_elements", "指定時点の2要素間のドキュメント基準の距離・方向・重なりを px で取得", z.strictObject({ revisionId: z.string().min(1), firstId: z.string().min(1), secondId: z.string().min(1) }));
   const geometry = { x: z.number(), y: z.number(), width: z.number(), height: z.number() };
   tool("add_element", "名前付き要素を追加", z.discriminatedUnion("type", [
     z.object({ type: z.literal("rectangle"), name: z.string().optional(), parentId: z.string().optional(), ...geometry }),

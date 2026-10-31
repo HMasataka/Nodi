@@ -1,5 +1,7 @@
 import { Result } from "@praha/byethrow";
 import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "./commands.ts";
+import { listRevisions, type DocumentHistory } from "./history.ts";
+import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "./measure.ts";
 import type { Document, DocumentNode } from "./types.ts";
 
 export interface ElementReference {
@@ -25,9 +27,12 @@ export interface ElementReference {
 
 export interface EditorPort {
   getDocument(): Document;
+  getHistory(): DocumentHistory;
   getSelectedId(): string | null;
   apply(document: Document): void;
 }
+
+const coordinates = { unit: "px", localOrigin: "parent", absoluteOrigin: "document" } as const;
 
 export function listElements(document: Document, includeImageSource = false): ElementReference[] {
   const elements: ElementReference[] = [];
@@ -63,6 +68,21 @@ export function createAgentApi(port: EditorPort) {
       return Result.succeed({ document: structuredClone(document), selected, elements });
     },
     getElement,
+    listRevisions() {
+      return Result.succeed({ revisions: listRevisions(port.getHistory()) });
+    },
+    getRevisionElement(revisionId: string, elementId: string) {
+      const result = measureElementAtRevision(port.getHistory(), revisionId, elementId);
+      return Result.isFailure(result) ? result : Result.succeed({ ...result.value, ...coordinates });
+    },
+    compareRevisions(fromRevisionId: string, toRevisionId: string, elementId: string) {
+      const result = compareElementRevisions(port.getHistory(), fromRevisionId, toRevisionId, elementId);
+      return Result.isFailure(result) ? result : Result.succeed({ ...result.value, ...coordinates });
+    },
+    measureElements(revisionId: string, firstId: string, secondId: string) {
+      const result = measureRelativeAtRevision(port.getHistory(), revisionId, firstId, secondId);
+      return Result.isFailure(result) ? result : Result.succeed({ ...result.value, ...coordinates });
+    },
     add(input: AddNodeInput): Result.Result<ElementReference, Error> {
       const result = addNode(port.getDocument(), input);
       if (Result.isFailure(result)) return result;

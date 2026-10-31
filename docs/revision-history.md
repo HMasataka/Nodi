@@ -18,4 +18,4 @@
 - `compareElementRevisions` は同じ要素 ID の2時点を比較し、`to - from` の符号付き差分を `local` と `absolute` で返す。親フレームだけが移動した場合はローカル差分が 0、絶対差分が移動量になる。
 - `measureRelativeAtRevision` は同じ時点の2要素を絶対境界で比較する。`centerDelta` は `second - first`、`gapX` と `gapY` は離れている軸の非負の距離（重なる軸は 0）、`overlap.area` は重なり面積。`horizontal` と `vertical` は2番目の要素が1番目から見てどちら側にあるかを示す。
 
-存在しないリビジョン、該当時点に存在しない要素、同じ要素 ID を2つ指定した相対計測は失敗を返す。計測で現在の編集内容や履歴は変わらない。MCP からの照会は後続の機能で追加する。
+存在しないリビジョン、該当時点に存在しない要素、同じ要素 ID を2つ指定した相対計測は失敗を返す。計測で現在の編集内容や履歴は変わらない。MCP からは `list_revisions`・`get_revision_element`・`compare_revisions`・`measure_elements` で照会できる（[接続と利用例](mcp.md)）。
