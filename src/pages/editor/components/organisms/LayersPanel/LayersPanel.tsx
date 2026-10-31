@@ -1,4 +1,5 @@
-import type { DocumentNode } from "../../../document/types";
+import type { DocumentNode } from "../../../../../document/types";
+import { LayerIcon } from "../../atoms/LayerIcon";
 
 interface LayersPanelProps {
   nodes: DocumentNode[];
@@ -17,7 +18,7 @@ export function LayersPanel({ nodes, selectedId, onSelect }: LayersPanelProps) {
         <button type="button" className={`layer-row${selectedId === node.id ? " is-selected" : ""}`}
           style={{ paddingLeft: 11 + depth * 18 }} aria-pressed={selectedId === node.id}
           onClick={() => onSelect(node.id)}>
-          <span className={`layer-icon${node.type === "ellipse" ? " ellipse-icon" : ""}`} aria-hidden="true">{node.type === "text" ? "T" : node.type === "image" ? "▧" : ""}</span>
+          <LayerIcon type={node.type} />
           <span className="layer-name">{node.name}</span>
         </button>
         {node.type === "frame" && node.children.map((child) => renderLayer(child, depth + 1))}
