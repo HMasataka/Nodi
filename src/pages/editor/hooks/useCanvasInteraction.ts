@@ -1,9 +1,9 @@
 import { Result } from "@praha/byethrow";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { findNode, setNodeGeometry } from "@/document/commands";
-import { drawingGeometry, frameOrigin, pointOnCanvas } from "@/document/drawing";
+import { findNode, setNodeGeometry } from "@/document/commands/index.ts";
+import { drawingGeometry, frameOrigin, pointOnCanvas } from "@/pages/editor/geometry";
 import type { DocumentNode } from "@/document/types";
-import { screenDeltaToDocument } from "@/document/viewport";
+import { screenDeltaToDocument } from "@/pages/editor/viewport";
 import type { DragState, DrawingState, DrawTool, PanState } from "@/pages/editor/types";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 

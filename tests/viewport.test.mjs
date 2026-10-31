@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { clampZoom, screenDeltaToDocument } from "../src/document/viewport.ts";
-import { createDocument } from "../src/document/commands.ts";
+import { clampZoom, screenDeltaToDocument } from "../src/pages/editor/viewport.ts";
+import { createDocument } from "../src/document/commands/index.ts";
 import { createHistory, isDirty } from "../src/document/history.ts";
 
 test("ズーム中のドラッグとリサイズはドキュメント座標に変換する", () => {

@@ -8,7 +8,7 @@ import {
   setNodeStyle,
   setTextContent,
   setTextStyle,
-} from "@/document/commands";
+} from "@/document/commands/index.ts";
 import { readImageFile } from "@/ipc/imageFiles";
 import { pngFiles } from "@/ipc/pngFiles";
 import { renderFramePng } from "@/export/framePng";

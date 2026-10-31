@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { parseDocument } from "../src/document/format.ts";
+import { parseDocument } from "../src/persistence/format.ts";
 import { renderFramePng, wrapText } from "../src/export/framePng.ts";
 import { savePng } from "../src/export/savePng.ts";
 

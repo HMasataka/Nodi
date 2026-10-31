@@ -6,9 +6,9 @@ import { join, resolve } from "node:path";
 import test from "node:test";
 import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
-import { createAgentApi } from "../src/document/agent.ts";
-import { dispatchAgentRequest } from "../src/document/agentBridge.ts";
-import { createDocument } from "../src/document/commands.ts";
+import { createAgentApi } from "../src/agent/api.ts";
+import { dispatchAgentRequest } from "../src/agent/bridge.ts";
+import { createDocument } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, undo } from "../src/document/history.ts";
 
 test("MCP クライアントから編集と履歴の数値照会ができ、照会は履歴を変えない", { timeout: 20000 }, async () => {

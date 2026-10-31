@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { addNode, createDocument, deleteNode, moveNode, renameNode, setNodeGeometry } from "../src/document/commands.ts";
+import { addNode, createDocument, deleteNode, moveNode, renameNode, setNodeGeometry } from "../src/document/commands/index.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "../src/document/measure.ts";
 

@@ -3,11 +3,11 @@ import { copyFile, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { addNode, createDocument, deleteNode, duplicateNode, findNode, setNodeGeometry } from "../src/document/commands.ts";
-import { parseDocument, serializeDocument } from "../src/document/format.ts";
+import { addNode, createDocument, deleteNode, duplicateNode, findNode, setNodeGeometry } from "../src/document/commands/index.ts";
+import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { readImageFile, validateImageFile } from "../src/ipc/imageFiles.ts";
-import { createAgentApi } from "../src/document/agent.ts";
+import { createAgentApi } from "../src/agent/api.ts";
 
 const source = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7+R7sAAAAASUVORK5CYII=";
 function success(result) { assert.equal(result.type, "Success"); return result.value; }

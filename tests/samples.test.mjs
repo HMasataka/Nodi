@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
-import { parseDocument, serializeDocument } from "../src/document/format.ts";
+import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
 test("全サンプルを現行形式で開いて保存し直せる", async () => {
   const directory = new URL("../samples/", import.meta.url);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAgentApi } from "../src/document/agent.ts";
-import { createDocument } from "../src/document/commands.ts";
+import { createAgentApi } from "../src/agent/api.ts";
+import { createDocument } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, undo } from "../src/document/history.ts";
 
 function success(result) { assert.equal(result.type, "Success"); return result.value; }

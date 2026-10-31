@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
-import type { AgentApi } from "@/document/agent.ts";
+import type { AgentApi } from "@/agent/api.ts";
 
 const idInput = z.strictObject({ id: z.string().min(1) });
 const geometryInput = {

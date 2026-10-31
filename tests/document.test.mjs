@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { addNode, createDocument, findNode, moveNode, renameNode } from "../src/document/commands.ts";
-import { parseDocument, serializeDocument } from "../src/document/format.ts";
+import { addNode, createDocument, findNode, moveNode, renameNode } from "../src/document/commands/index.ts";
+import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
 function success(result) {
   assert.equal(result.type, "Success");
