@@ -21,6 +21,8 @@ pnpm tauri dev
 
 編集は「元に戻す」「やり直す」ボタン、または `⌘/Ctrl+Z` と `⌘/Ctrl+Shift+Z` で取り消し・再実行できます。
 
+起動中の履歴には [安定したリビジョン ID](docs/revision-history.md) が付きます。
+
 `pnpm test` でドキュメントモデルのテストを実行します。`pnpm lint` は TypeScript/JavaScript の `throw` 文を禁止し、`pnpm build` でも lint を実行します。失敗する操作は `@praha/byethrow` の `Result` で返します。
 
 外部 AI クライアントとの接続は [MCP の手順](docs/mcp.md) を参照してください。
