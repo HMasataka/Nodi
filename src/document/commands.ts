@@ -61,6 +61,7 @@ export interface AddNodeInput extends Geometry {
   type: DocumentNode["type"];
   parentId?: string;
   name?: string;
+  content?: string;
 }
 
 export function addNode(
@@ -75,13 +76,16 @@ export function addNode(
     return Result.fail(new Error(`親フレームが見つかりません: ${input.parentId}`));
   }
 
-  const baseName = input.type === "frame" ? "フレーム" : "矩形";
+  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : "矩形";
   const names = new Set(existing.map((node) => node.name));
   let number = 1;
   while (names.has(`${baseName} ${number}`)) number++;
   const name = input.name ?? `${baseName} ${number}`;
   const nameResult = validateName(name);
   if (Result.isFailure(nameResult)) return nameResult;
+  if (input.type === "text" && input.content !== undefined && typeof input.content !== "string") {
+    return Result.fail(new Error("本文は文字列で指定してください"));
+  }
 
   const ids = new Set(existing.map((node) => node.id));
   let id: string;
@@ -92,7 +96,9 @@ export function addNode(
   const geometry = { x: input.x, y: input.y, width: input.width, height: input.height };
   const node: DocumentNode = input.type === "frame"
     ? { id, name, type: "frame", ...geometry, children: [] }
-    : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
+    : input.type === "text"
+      ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト" }
+      : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
 
   if (parent === undefined) {
     return Result.succeed({ document: { ...document, children: [...document.children, node] }, node });
@@ -143,6 +149,13 @@ export function setNodeStyle(
     return Result.fail(new Error("線幅と角丸は 0 以上の有限の数値で指定してください"));
   }
   return updateNode(document, id, (current) => ({ ...current, ...style }));
+}
+
+export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
+  if (typeof content !== "string") return Result.fail(new Error("本文は文字列で指定してください"));
+  return updateNode(document, id, (current) => ({ ...current, content }));
 }
 
 export function deleteNode(document: Document, id: string): Result.Result<Document, Error> {

@@ -32,7 +32,14 @@ export interface FrameNode extends Geometry {
   children: DocumentNode[];
 }
 
-export type DocumentNode = FrameNode | RectangleNode;
+export interface TextNode extends Geometry {
+  id: string;
+  name: string;
+  type: "text";
+  content: string;
+}
+
+export type DocumentNode = FrameNode | RectangleNode | TextNode;
 
 export interface Document {
   version: 1;

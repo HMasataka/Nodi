@@ -14,6 +14,7 @@ const nodeSchema: z.ZodType<DocumentNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
     z.strictObject({ id, name, type: z.literal("rectangle"), ...geometry, ...style }),
     z.strictObject({ id, name, type: z.literal("frame"), ...geometry, children: z.array(nodeSchema) }),
+    z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string() }),
   ]),
 );
 
