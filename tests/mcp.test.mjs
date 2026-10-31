@@ -39,8 +39,11 @@ test("MCP クライアントから参照・追加・改名・移動でき、画�
   });
   try {
     await client.connect(transport);
+    assert.match(client.getInstructions(), /変更前と変更後の実画面スクリーンショット/);
+    assert.match(client.getInstructions(), /数値とテスト/);
     const tools = await client.listTools();
     assert.ok(tools.tools.some((tool) => tool.name === "add_element"));
+    assert.match(tools.tools.find((tool) => tool.name === "add_element").description, /Before\/After/);
     const added = await client.callTool({ name: "add_element", arguments: { type: "rectangle", name: "ボタン", x: 0, y: 0, width: 100, height: 40 } });
     assert.equal(added.isError, false);
     const element = JSON.parse(added.content[0].text);
