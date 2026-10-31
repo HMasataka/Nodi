@@ -1,9 +1,9 @@
 import { Result } from "@praha/byethrow";
 import { useRef, useState } from "react";
-import { createAgentApi } from "@/document/agent";
-import { createDocument, findNode } from "@/document/commands";
+import { createAgentApi } from "@/agent/api";
+import { createDocument, findNode } from "@/document/commands/index.ts";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
-import { openDocumentFile, saveDocumentFile } from "@/document/persistence";
+import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
 import type { Document } from "@/document/types";
 import { documentFiles } from "@/ipc/documentFiles";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";

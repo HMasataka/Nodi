@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "@/document/commands.ts";
+import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "@/document/commands/index.ts";
 import { listRevisions, type DocumentHistory } from "@/document/history.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import type { Document, DocumentNode } from "@/document/types.ts";

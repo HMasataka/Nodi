@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { addNode, createDocument, moveNode, renameNode } from "../src/document/commands.ts";
+import { addNode, createDocument, moveNode, renameNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, markSaved, redo, undo } from "../src/document/history.ts";
 
 function success(result) {
