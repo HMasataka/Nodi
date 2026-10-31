@@ -66,7 +66,13 @@ test("MCP クライアントから参照・追加・改名・移動でき、画�
     assert.equal(JSON.parse(updated.content[0].text).content, "Nodi");
     const invalid = await client.callTool({ name: "set_text_content", arguments: { id: frameId, content: "invalid" } });
     assert.equal(invalid.isError, true);
-    assert.equal(history.past.length, 6);
+    const ellipse = await client.callTool({ name: "add_element", arguments: { type: "ellipse", name: "状態", x: 10, y: 10, width: 24, height: 24 } });
+    assert.equal(ellipse.isError, false);
+    const ellipseId = JSON.parse(ellipse.content[0].text).id;
+    const ellipseRef = await client.callTool({ name: "get_element", arguments: { id: ellipseId } });
+    assert.equal(JSON.parse(ellipseRef.content[0].text).type, "ellipse");
+    assert.equal(JSON.parse(ellipseRef.content[0].text).fill, "#f3d9c8");
+    assert.equal(history.past.length, 7);
     assert.ok(isDirty(history));
   } finally {
     await client.close();

@@ -16,7 +16,7 @@ import {
 } from "./document/commands";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "./document/history";
 import { openDocumentFile, saveDocumentFile } from "./document/persistence";
-import type { Document, DocumentNode, Geometry, RectangleNode, RectangleStyle, TextNode, TextStyle } from "./document/types";
+import type { Document, DocumentNode, EllipseNode, Geometry, RectangleNode, RectangleStyle, TextNode, TextStyle } from "./document/types";
 import { clampZoom, screenDeltaToDocument } from "./document/viewport";
 import { documentFiles } from "./ipc/documentFiles";
 import "./App.css";
@@ -67,17 +67,17 @@ function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange: (geo
   );
 }
 
-function StyleEditor({ node, onChange }: { node: RectangleNode; onChange: (style: Partial<RectangleStyle>) => void }) {
+function StyleEditor({ node, onChange }: { node: RectangleNode | EllipseNode; onChange: (style: Partial<RectangleStyle>) => void }) {
   const [fill, setFill] = useState(node.fill);
   const [stroke, setStroke] = useState(node.stroke);
   const [strokeWidth, setStrokeWidth] = useState(String(node.strokeWidth));
-  const [cornerRadius, setCornerRadius] = useState(String(node.cornerRadius));
+  const [cornerRadius, setCornerRadius] = useState(node.type === "rectangle" ? String(node.cornerRadius) : "");
   return (
     <div className="style-fields">
       <label>塗り <input type="color" value={fill} onChange={(event) => setFill(event.currentTarget.value)} onBlur={() => { if (fill !== node.fill) onChange({ fill }); }} /></label>
       <label>線 <input type="color" value={stroke} onChange={(event) => setStroke(event.currentTarget.value)} onBlur={() => { if (stroke !== node.stroke) onChange({ stroke }); }} /></label>
       <label>線幅 <input type="number" min="0" step="any" value={strokeWidth} onChange={(event) => setStrokeWidth(event.currentTarget.value)} onBlur={() => { if (strokeWidth !== String(node.strokeWidth)) onChange({ strokeWidth: strokeWidth.trim() === "" ? NaN : Number(strokeWidth) }); }} /></label>
-      <label>角丸 <input type="number" min="0" step="any" value={cornerRadius} onChange={(event) => setCornerRadius(event.currentTarget.value)} onBlur={() => { if (cornerRadius !== String(node.cornerRadius)) onChange({ cornerRadius: cornerRadius.trim() === "" ? NaN : Number(cornerRadius) }); }} /></label>
+      {node.type === "rectangle" && <label>角丸 <input type="number" min="0" step="any" value={cornerRadius} onChange={(event) => setCornerRadius(event.currentTarget.value)} onBlur={() => { if (cornerRadius !== String(node.cornerRadius)) onChange({ cornerRadius: cornerRadius.trim() === "" ? NaN : Number(cornerRadius) }); }} /></label>}
     </div>
   );
 }
@@ -222,6 +222,19 @@ function App() {
       setError(result.error.message);
       return;
     }
+    setSelectedId(result.value.id);
+  }
+
+  function addEllipse() {
+    const index = designRef.current.children.length;
+    const parentId = selected?.type === "frame" ? selected.id : undefined;
+    const result = agentApi.add({
+      type: "ellipse", parentId,
+      x: parentId ? 24 : 80 + (index % 8) * 28,
+      y: parentId ? 50 : 80 + (index % 8) * 28,
+      width: 112, height: 112,
+    });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
     setSelectedId(result.value.id);
   }
 
@@ -462,7 +475,7 @@ function App() {
           aria-pressed={selectedId === node.id}
           onClick={() => setSelectedId(node.id)}
         >
-          <span className="layer-icon" aria-hidden="true">{node.type === "text" ? "T" : ""}</span>
+          <span className={`layer-icon${node.type === "ellipse" ? " ellipse-icon" : ""}`} aria-hidden="true">{node.type === "text" ? "T" : ""}</span>
           <span className="layer-name">{node.name}</span>
         </button>
         {node.type === "frame" && node.children.map((child) => renderLayer(child, depth + 1))}
@@ -507,9 +520,9 @@ function App() {
     return (
       <button
         key={node.id} type="button"
-        className={`canvas-node${selectedId === node.id ? " is-selected" : ""}`}
+        className={`canvas-node${node.type === "ellipse" ? " canvas-ellipse" : ""}${selectedId === node.id ? " is-selected" : ""}`}
         aria-label={node.name} aria-pressed={selectedId === node.id}
-        style={{ ...style, background: node.fill, borderColor: node.stroke, borderWidth: node.strokeWidth, borderRadius: node.cornerRadius }}
+        style={{ ...style, background: node.fill, borderColor: node.stroke, borderWidth: node.strokeWidth, borderRadius: node.type === "ellipse" ? "50%" : node.cornerRadius }}
         onPointerDown={(event) => startDrag(event, node)} onPointerMove={continueDrag}
         onPointerUp={(event) => finishDrag(event.pointerId)}
         onPointerCancel={(event) => finishDrag(event.pointerId)}
@@ -539,6 +552,7 @@ function App() {
         <button className="add-button" type="button" onClick={addRectangle}>
           <span aria-hidden="true">＋</span> 矩形を追加
         </button>
+        <button className="file-button" type="button" onClick={addEllipse}>楕円を追加</button>
         <button className="file-button" type="button" onClick={addFrame}>フレームを追加</button>
         <button className="file-button" type="button" onClick={addText}>テキストを追加</button>
       </header>
@@ -602,7 +616,7 @@ function App() {
             <div className="properties">
               <div className="selection-type">
                 <span className="layer-icon" aria-hidden="true" />{" "}
-                {selected.type === "rectangle" ? "矩形" : selected.type === "text" ? "テキスト" : "フレーム"}
+                {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "text" ? "テキスト" : "フレーム"}
               </div>
               <label className="field-label" htmlFor="node-name">
                 名前
@@ -638,11 +652,11 @@ function App() {
                   />
                 </>
               )}
-              {selected.type === "rectangle" && (
+              {(selected.type === "rectangle" || selected.type === "ellipse") && (
                 <>
                   <div className="field-label">スタイル</div>
                   <StyleEditor
-                    key={`${selected.id}:${selected.fill}:${selected.stroke}:${selected.strokeWidth}:${selected.cornerRadius}`}
+                    key={`${selected.id}:${selected.fill}:${selected.stroke}:${selected.strokeWidth}:${selected.type === "rectangle" ? selected.cornerRadius : "ellipse"}`}
                     node={selected}
                     onChange={(style) => applyDocument(setNodeStyle(designRef.current, selected.id, style))}
                   />

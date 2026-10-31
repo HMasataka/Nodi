@@ -16,6 +16,10 @@ export interface ElementReference {
   fontSize?: number;
   color?: string;
   textAlign?: "left" | "center" | "right";
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+  cornerRadius?: number;
 }
 
 export interface EditorPort {
@@ -33,6 +37,8 @@ export function listElements(document: Document): ElementReference[] {
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
         x: node.x, y: node.y, width: node.width, height: node.height,
         ...(node.type === "text" ? { content: node.content, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign } : {}),
+        ...(node.type === "rectangle" || node.type === "ellipse" ? { fill: node.fill, stroke: node.stroke, strokeWidth: node.strokeWidth } : {}),
+        ...(node.type === "rectangle" ? { cornerRadius: node.cornerRadius } : {}),
       });
       if (node.type === "frame") visit(node.children, path, node.id);
     }

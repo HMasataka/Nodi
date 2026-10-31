@@ -25,6 +25,14 @@ export interface RectangleNode extends Geometry, RectangleStyle {
   type: "rectangle";
 }
 
+export type ShapeStyle = Omit<RectangleStyle, "cornerRadius">;
+
+export interface EllipseNode extends Geometry, ShapeStyle {
+  id: string;
+  name: string;
+  type: "ellipse";
+}
+
 export interface FrameNode extends Geometry {
   id: string;
   name: string;
@@ -51,7 +59,7 @@ export interface TextNode extends Geometry, TextStyle {
   content: string;
 }
 
-export type DocumentNode = FrameNode | RectangleNode | TextNode;
+export type DocumentNode = FrameNode | RectangleNode | EllipseNode | TextNode;
 
 export interface Document {
   version: 1;

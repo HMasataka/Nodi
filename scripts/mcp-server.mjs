@@ -39,6 +39,7 @@ export function createNodiMcpServer(request = callNodi) {
   const geometry = { x: z.number(), y: z.number(), width: z.number(), height: z.number() };
   tool("add_element", "名前付き要素を追加", z.discriminatedUnion("type", [
     z.object({ type: z.literal("rectangle"), name: z.string().optional(), parentId: z.string().optional(), ...geometry }),
+    z.object({ type: z.literal("ellipse"), name: z.string().optional(), parentId: z.string().optional(), ...geometry }),
     z.object({ type: z.literal("frame"), name: z.string().optional(), parentId: z.string().optional(), ...geometry }),
     z.object({ type: z.literal("text"), name: z.string(), content: z.string(), parentId: z.string().optional(), ...geometry }),
   ]));
