@@ -47,7 +47,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - ルートは `version: 1` とトップレベルの `children` 配列を持つ。トップレベル要素の座標はドキュメント上の座標。
 - 各要素は `id`、`name`、`type`、`x`、`y`、`width`、`height` を持つ。子要素の座標は親フレームの左上を基準とする。
 - v1 の `type` は `frame`、`rectangle`、`text`。`frame` は `children` 配列を持ち、矩形とテキストは子を持たない。
-- `text` も子を持たず、要素名 `name` とは別の文字列 `content` を必ず持つ。本文には空文字や改行も使用できる。
+- `text` も子を持たず、要素名 `name` とは別の文字列 `content`、正の有限値 `fontSize`、`#RRGGBB` 形式の `color`、`left`・`center`・`right` の `textAlign` を必ず持つ。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
 - 矩形は `fill` と `stroke`（`#RRGGBB` 形式）、`strokeWidth` と `cornerRadius`（0 以上の有限値）を必ず持つ。フレームはこれらの項目を持たない。
 

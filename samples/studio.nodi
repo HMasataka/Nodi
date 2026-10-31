@@ -31,7 +31,10 @@
           "y": 60,
           "width": 300,
           "height": 34,
-          "content": "ATLAS STUDIO"
+          "content": "ATLAS STUDIO",
+          "fontSize": 22,
+          "color": "#24383a",
+          "textAlign": "left"
         },
         {
           "id": "nd_sample_sidebar",
@@ -67,6 +70,32 @@
               "stroke": "#d5b9a5",
               "strokeWidth": 1,
               "cornerRadius": 12
+            },
+            {
+              "id": "nd_sample_overview_title",
+              "name": "概要の見出し",
+              "type": "text",
+              "x": 36,
+              "y": 55,
+              "width": 360,
+              "height": 30,
+              "content": "Overview",
+              "fontSize": 20,
+              "color": "#44352c",
+              "textAlign": "left"
+            },
+            {
+              "id": "nd_sample_overview_subtitle",
+              "name": "概要の説明",
+              "type": "text",
+              "x": 36,
+              "y": 86,
+              "width": 600,
+              "height": 22,
+              "content": "作業状況をひと目で確認する",
+              "fontSize": 12,
+              "color": "#6a5a50",
+              "textAlign": "left"
             },
             {
               "id": "nd_sample_metric_a",
