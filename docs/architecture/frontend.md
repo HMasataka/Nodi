@@ -13,6 +13,7 @@
 | `src/pages/editor/hooks/useCanvasInteraction.ts` | ポインター操作、パン・ズーム、描画ツールとショートカット |
 | `src/pages/editor/hooks/useMcpBridge.ts` | 実行中のアプリへの MCP 要求を編集 API に渡す |
 | `src/document/` | React や Tauri に依存しない保存形式、編集操作、履歴、エージェント API |
+| `src/export/` | フレームの画像描画とファイル保存処理 |
 | `src/ipc/` | Tauri のダイアログ・コマンドとブラウザの画像読み込みを扱う境界 |
 
 依存方向は `atoms ← molecules ← organisms ← page`。下位のコンポーネントから上位のコンポーネントを import しない。各コンポーネントは専用フォルダに実装と re-export 専用の `index.ts` を置き、層全体のバレルは作らない。ページ固有の部品はまずそのページの `components/` に置く。

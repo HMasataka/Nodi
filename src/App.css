@@ -392,6 +392,7 @@ button {
 }
 .node-actions { display: flex; gap: 8px; margin-top: 20px; }
 .node-actions .file-button { flex: 1; }
+.export-button { width: 100%; margin-top: 12px; }
 
 .statusbar {
   display: flex;
