@@ -11,10 +11,11 @@ import {
   findNode,
   setNodeGeometry,
   setNodeStyle,
+  setTextContent,
 } from "./document/commands";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "./document/history";
 import { openDocumentFile, saveDocumentFile } from "./document/persistence";
-import type { Document, DocumentNode, Geometry, RectangleNode, RectangleStyle } from "./document/types";
+import type { Document, DocumentNode, Geometry, RectangleNode, RectangleStyle, TextNode } from "./document/types";
 import { clampZoom, screenDeltaToDocument } from "./document/viewport";
 import { documentFiles } from "./ipc/documentFiles";
 import "./App.css";
@@ -77,6 +78,18 @@ function StyleEditor({ node, onChange }: { node: RectangleNode; onChange: (style
       <label>線幅 <input type="number" min="0" step="any" value={strokeWidth} onChange={(event) => setStrokeWidth(event.currentTarget.value)} onBlur={() => { if (strokeWidth !== String(node.strokeWidth)) onChange({ strokeWidth: strokeWidth.trim() === "" ? NaN : Number(strokeWidth) }); }} /></label>
       <label>角丸 <input type="number" min="0" step="any" value={cornerRadius} onChange={(event) => setCornerRadius(event.currentTarget.value)} onBlur={() => { if (cornerRadius !== String(node.cornerRadius)) onChange({ cornerRadius: cornerRadius.trim() === "" ? NaN : Number(cornerRadius) }); }} /></label>
     </div>
+  );
+}
+
+function ContentEditor({ node, onChange }: { node: TextNode; onChange: (content: string) => void }) {
+  const [draft, setDraft] = useState(node.content);
+  return (
+    <textarea
+      className="content-editor" value={draft}
+      onChange={(event) => setDraft(event.currentTarget.value)}
+      onBlur={() => { if (draft !== node.content) onChange(draft); }}
+      aria-label="テキスト本文"
+    />
   );
 }
 
@@ -192,6 +205,19 @@ function App() {
     const result = agentApi.add({
       type: "frame", x: 80 + (index % 6) * 28, y: 80 + (index % 6) * 28,
       width: 360, height: 260,
+    });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    setSelectedId(result.value.id);
+  }
+
+  function addText() {
+    const index = designRef.current.children.length;
+    const parentId = selected?.type === "frame" ? selected.id : undefined;
+    const result = agentApi.add({
+      type: "text", parentId, content: "テキスト",
+      x: parentId ? 24 : 80 + (index % 8) * 28,
+      y: parentId ? 50 : 80 + (index % 8) * 28,
+      width: 220, height: 48,
     });
     if (Result.isFailure(result)) { setError(result.error.message); return; }
     setSelectedId(result.value.id);
@@ -411,7 +437,7 @@ function App() {
           aria-pressed={selectedId === node.id}
           onClick={() => setSelectedId(node.id)}
         >
-          <span className="layer-icon" aria-hidden="true" />
+          <span className="layer-icon" aria-hidden="true">{node.type === "text" ? "T" : ""}</span>
           <span className="layer-name">{node.name}</span>
         </button>
         {node.type === "frame" && node.children.map((child) => renderLayer(child, depth + 1))}
@@ -436,6 +462,20 @@ function App() {
         {node.children.map(renderNode)}
         {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
       </div>
+    );
+    if (node.type === "text") return (
+      <button
+        key={node.id} type="button"
+        className={`canvas-text${selectedId === node.id ? " is-selected" : ""}`}
+        aria-label={node.name} aria-pressed={selectedId === node.id} style={style}
+        onPointerDown={(event) => startDrag(event, node)} onPointerMove={continueDrag}
+        onPointerUp={(event) => finishDrag(event.pointerId)}
+        onPointerCancel={(event) => finishDrag(event.pointerId)}
+        onLostPointerCapture={(event) => finishDrag(event.pointerId)}
+      >
+        {node.content}
+        {selectedId === node.id && <span className="resize-handle" aria-hidden="true" onPointerDown={(event) => startResize(event, node)} />}
+      </button>
     );
     return (
       <button
@@ -474,6 +514,7 @@ function App() {
           <span aria-hidden="true">＋</span> 矩形を追加
         </button>
         <button className="file-button" type="button" onClick={addFrame}>フレームを追加</button>
+        <button className="file-button" type="button" onClick={addText}>テキストを追加</button>
       </header>
 
       <div className="workspace">
@@ -535,7 +576,7 @@ function App() {
             <div className="properties">
               <div className="selection-type">
                 <span className="layer-icon" aria-hidden="true" />{" "}
-                {selected.type === "rectangle" ? "矩形" : "フレーム"}
+                {selected.type === "rectangle" ? "矩形" : selected.type === "text" ? "テキスト" : "フレーム"}
               </div>
               <label className="field-label" htmlFor="node-name">
                 名前
@@ -555,6 +596,16 @@ function App() {
                 node={selected}
                 onChange={(geometry) => applyDocument(setNodeGeometry(designRef.current, selected.id, geometry))}
               />
+              {selected.type === "text" && (
+                <>
+                  <div className="field-label">本文</div>
+                  <ContentEditor
+                    key={`${selected.id}:${selected.content}`}
+                    node={selected}
+                    onChange={(content) => applyDocument(setTextContent(designRef.current, selected.id, content))}
+                  />
+                </>
+              )}
               {selected.type === "rectangle" && (
                 <>
                   <div className="field-label">スタイル</div>
