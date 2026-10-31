@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
-import { getRevision, type DocumentHistory } from "./history.ts";
-import type { Document, DocumentNode, Geometry } from "./types.ts";
+import { getRevision, type DocumentHistory } from "@/document/history.ts";
+import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
 export interface Bounds extends Geometry {
   left: number;

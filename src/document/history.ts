@@ -1,4 +1,4 @@
-import type { Document } from "./types.ts";
+import type { Document } from "@/document/types.ts";
 
 export interface DocumentRevision {
   id: string;

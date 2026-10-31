@@ -1,6 +1,6 @@
 import type { PointerEvent } from "react";
-import type { DocumentNode } from "../../../../../document/types";
-import { ResizeHandle } from "../../atoms/ResizeHandle";
+import type { DocumentNode } from "@/document/types";
+import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 
 export interface NodeInteraction {
   onNodePointerDown(event: PointerEvent<HTMLElement>, node: DocumentNode): void;

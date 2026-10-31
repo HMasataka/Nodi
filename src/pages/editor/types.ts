@@ -1,4 +1,4 @@
-import type { Point } from "../../document/drawing";
+import type { Point } from "@/document/drawing";
 
 export interface DragState {
   mode: "move" | "resize";

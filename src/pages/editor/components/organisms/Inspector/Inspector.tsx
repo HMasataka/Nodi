@@ -1,10 +1,10 @@
-import type { DocumentNode, Geometry, RectangleStyle, TextStyle } from "../../../../../document/types";
-import { ContentEditor } from "../../atoms/ContentEditor";
-import { LayerIcon } from "../../atoms/LayerIcon";
-import { NameEditor } from "../../atoms/NameEditor";
-import { GeometryEditor } from "../../molecules/GeometryEditor";
-import { ShapeStyleEditor } from "../../molecules/ShapeStyleEditor";
-import { TextStyleEditor } from "../../molecules/TextStyleEditor";
+import type { DocumentNode, Geometry, RectangleStyle, TextStyle } from "@/document/types";
+import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
+import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
+import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
+import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
+import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
+import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 
 interface InspectorProps {
   selected?: DocumentNode;

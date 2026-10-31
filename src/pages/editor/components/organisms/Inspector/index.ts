@@ -1,1 +1,1 @@
-export { Inspector } from "./Inspector";
+export { Inspector } from "@/pages/editor/components/organisms/Inspector/Inspector";

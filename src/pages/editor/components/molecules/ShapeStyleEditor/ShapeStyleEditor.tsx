@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { EllipseNode, RectangleNode, RectangleStyle } from "../../../../../document/types";
+import type { EllipseNode, RectangleNode, RectangleStyle } from "@/document/types";
 
 export function ShapeStyleEditor({ node, onChange }: { node: RectangleNode | EllipseNode; onChange(style: Partial<RectangleStyle>): void }) {
   const [fill, setFill] = useState(node.fill);

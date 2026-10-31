@@ -1,4 +1,4 @@
-import type { Document, DocumentNode, Geometry } from "./types.ts";
+import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
 export interface Point { x: number; y: number }
 

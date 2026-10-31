@@ -1,8 +1,8 @@
 import { Result } from "@praha/byethrow";
-import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "./commands.ts";
-import { listRevisions, type DocumentHistory } from "./history.ts";
-import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "./measure.ts";
-import type { Document, DocumentNode } from "./types.ts";
+import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "@/document/commands.ts";
+import { listRevisions, type DocumentHistory } from "@/document/history.ts";
+import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
+import type { Document, DocumentNode } from "@/document/types.ts";
 
 export interface ElementReference {
   id: string;
