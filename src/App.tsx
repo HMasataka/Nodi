@@ -1,4 +1,4 @@
-import EditorPage from "./pages/editor";
+import EditorPage from "@/pages/editor";
 
 export default function App() {
   return <EditorPage />;

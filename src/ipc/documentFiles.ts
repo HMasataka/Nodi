@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import type { DocumentFileAccess } from "../document/persistence.ts";
+import type { DocumentFileAccess } from "@/document/persistence.ts";
 
 const nodiFilter = { name: "Nodi ドキュメント", extensions: ["nodi"] };
 

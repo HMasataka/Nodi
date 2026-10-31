@@ -1,12 +1,12 @@
 import { Result } from "@praha/byethrow";
 import { useRef, useState } from "react";
-import { createAgentApi } from "../../../document/agent";
-import { createDocument, findNode } from "../../../document/commands";
-import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "../../../document/history";
-import { openDocumentFile, saveDocumentFile } from "../../../document/persistence";
-import type { Document } from "../../../document/types";
-import { documentFiles } from "../../../ipc/documentFiles";
-import { useMcpBridge } from "./useMcpBridge";
+import { createAgentApi } from "@/document/agent";
+import { createDocument, findNode } from "@/document/commands";
+import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
+import { openDocumentFile, saveDocumentFile } from "@/document/persistence";
+import type { Document } from "@/document/types";
+import { documentFiles } from "@/ipc/documentFiles";
+import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
 
 export function useEditorDocument() {
   const [history, setHistory] = useState(() => createHistory(createDocument()));

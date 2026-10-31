@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { MAX_IMAGE_SOURCE_LENGTH } from "../document/types.ts";
+import { MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
 
 const allowedTypes = new Set(["image/png", "image/jpeg", "image/webp", "image/svg+xml"]);
 const maxBytes = 5_000_000;

@@ -1,9 +1,9 @@
 import type { Dispatch, PointerEvent, SetStateAction } from "react";
-import { drawingGeometry } from "../../../../../document/drawing";
-import type { Document } from "../../../../../document/types";
-import { clampZoom } from "../../../../../document/viewport";
-import { CanvasNode, type NodeInteraction } from "../../molecules/CanvasNode";
-import type { DrawingState, DrawTool } from "../../../types";
+import { drawingGeometry } from "@/document/drawing";
+import type { Document } from "@/document/types";
+import { clampZoom } from "@/document/viewport";
+import { CanvasNode, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
+import type { DrawingState, DrawTool } from "@/pages/editor/types";
 
 interface CanvasProps extends NodeInteraction {
   design: Document;

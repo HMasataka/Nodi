@@ -1,1 +1,1 @@
-export { ContentEditor } from "./ContentEditor";
+export { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor/ContentEditor";

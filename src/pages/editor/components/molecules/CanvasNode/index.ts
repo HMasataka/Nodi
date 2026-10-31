@@ -1,2 +1,2 @@
-export { CanvasNode } from "./CanvasNode";
-export type { NodeInteraction } from "./CanvasNode";
+export { CanvasNode } from "@/pages/editor/components/molecules/CanvasNode/CanvasNode";
+export type { NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode/CanvasNode";

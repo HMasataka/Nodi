@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import type { DocumentNode, FrameNode } from "../document/types.ts";
+import type { DocumentNode, FrameNode } from "@/document/types.ts";
 
 export interface PngRenderEnvironment {
   createCanvas(): HTMLCanvasElement;

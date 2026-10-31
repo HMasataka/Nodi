@@ -1,1 +1,1 @@
-export { LayersPanel } from "./LayersPanel";
+export { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel/LayersPanel";

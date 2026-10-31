@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TextNode } from "../../../../../document/types";
+import type { TextNode } from "@/document/types";
 
 export function ContentEditor({ node, onChange }: { node: TextNode; onChange(content: string): void }) {
   const [draft, setDraft] = useState(node.content);

@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
-import { parseDocument, serializeDocument } from "./format.ts";
-import type { Document } from "./types.ts";
+import { parseDocument, serializeDocument } from "@/document/format.ts";
+import type { Document } from "@/document/types.ts";
 
 export interface DocumentFileAccess {
   pickOpen(): Promise<string | null>;

@@ -2,11 +2,10 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import test from "node:test";
-import react from "@vitejs/plugin-react";
 import { createServer } from "vite";
 
 test("分割後のキャンバス・レイヤー・プロパティが同じ要素を表示する", async () => {
-  const vite = await createServer({ configFile: false, plugins: [react()], server: { middlewareMode: true } });
+  const vite = await createServer({ server: { middlewareMode: true } });
   try {
     const { Canvas } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/Canvas/Canvas.tsx");
     const { LayersPanel } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/LayersPanel/LayersPanel.tsx");

@@ -1,8 +1,8 @@
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
-import type { AgentApi } from "../../../document/agent";
-import { dispatchAgentRequest } from "../../../document/agentBridge";
+import type { AgentApi } from "@/document/agent";
+import { dispatchAgentRequest } from "@/document/agentBridge";
 
 export function useMcpBridge(agentApi: AgentApi, setError: Dispatch<SetStateAction<string | null>>) {
   const apiRef = useRef(agentApi);

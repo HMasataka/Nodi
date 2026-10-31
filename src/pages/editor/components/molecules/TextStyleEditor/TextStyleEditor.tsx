@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TextNode, TextStyle } from "../../../../../document/types";
+import type { TextNode, TextStyle } from "@/document/types";
 
 export function TextStyleEditor({ node, onChange }: { node: TextNode; onChange(style: Partial<TextStyle>): void }) {
   const [fontSize, setFontSize] = useState(String(node.fontSize));

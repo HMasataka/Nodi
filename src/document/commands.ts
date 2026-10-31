@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type Document, type DocumentNode, type Geometry, type RectangleStyle, type TextStyle } from "./types.ts";
+import { DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type Document, type DocumentNode, type Geometry, type RectangleStyle, type TextStyle } from "@/document/types.ts";
 
 export function createDocument(): Document {
   return { version: 1, children: [] };

@@ -1,5 +1,5 @@
-import type { DocumentNode } from "../../../../../document/types";
-import { LayerIcon } from "../../atoms/LayerIcon";
+import type { DocumentNode } from "@/document/types";
+import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 
 interface LayersPanelProps {
   nodes: DocumentNode[];

@@ -1,11 +1,11 @@
 import { Result } from "@praha/byethrow";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { findNode, setNodeGeometry } from "../../../document/commands";
-import { drawingGeometry, frameOrigin, pointOnCanvas } from "../../../document/drawing";
-import type { DocumentNode } from "../../../document/types";
-import { screenDeltaToDocument } from "../../../document/viewport";
-import type { DragState, DrawingState, DrawTool, PanState } from "../types";
-import type { useEditorDocument } from "./useEditorDocument";
+import { findNode, setNodeGeometry } from "@/document/commands";
+import { drawingGeometry, frameOrigin, pointOnCanvas } from "@/document/drawing";
+import type { DocumentNode } from "@/document/types";
+import { screenDeltaToDocument } from "@/document/viewport";
+import type { DragState, DrawingState, DrawTool, PanState } from "@/pages/editor/types";
+import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {

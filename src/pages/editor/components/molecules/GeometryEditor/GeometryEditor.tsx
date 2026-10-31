@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { DocumentNode, Geometry } from "../../../../../document/types";
+import type { DocumentNode, Geometry } from "@/document/types";
 
 export function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange(geometry: Geometry): void }) {
   const [draft, setDraft] = useState<Record<keyof Geometry, string>>({

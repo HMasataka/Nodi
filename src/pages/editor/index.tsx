@@ -7,17 +7,17 @@ import {
   setNodeStyle,
   setTextContent,
   setTextStyle,
-} from "../../document/commands";
-import { readImageFile } from "../../ipc/imageFiles";
-import { pngFiles } from "../../ipc/pngFiles";
-import { renderFramePng } from "../../export/framePng";
-import { savePng } from "../../export/savePng";
-import { Canvas } from "./components/organisms/Canvas";
-import { Inspector } from "./components/organisms/Inspector";
-import { LayersPanel } from "./components/organisms/LayersPanel";
-import { useCanvasInteraction } from "./hooks/useCanvasInteraction";
-import { useEditorDocument } from "./hooks/useEditorDocument";
-import "../../App.css";
+} from "@/document/commands";
+import { readImageFile } from "@/ipc/imageFiles";
+import { pngFiles } from "@/ipc/pngFiles";
+import { renderFramePng } from "@/export/framePng";
+import { savePng } from "@/export/savePng";
+import { Canvas } from "@/pages/editor/components/organisms/Canvas";
+import { Inspector } from "@/pages/editor/components/organisms/Inspector";
+import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
+import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
+import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import "@/App.css";
 
 function EditorPage() {
   const session = useEditorDocument();
