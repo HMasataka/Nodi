@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { addNode, createDocument, moveNode, renameNode } from "../src/document/commands/index.ts";
+import { commit, createHistory, isDirty } from "../src/document/history.ts";
 import { openDocumentFile, saveDocumentFile } from "../src/persistence/documentFile.ts";
 
 function success(result) {
@@ -70,4 +71,16 @@ test("不正なファイルや読み書きエラーは失敗を返し、元の�
   assert.match(failure(await saveDocumentFile(access, current, "design.nodi")).message, /書き込めません/);
   assert.equal(current.children.length, 1);
   assert.equal(access.files.get("broken.nodi"), '{"version":2,"children":[]}');
+});
+
+test("上書き中の失敗で既存ファイルを維持し、保存済み状態にしない", async () => {
+  const access = memoryFiles();
+  const initial = success(addNode(createDocument(), { type: "rectangle", x: 0, y: 0, width: 10, height: 10 }));
+  access.files.set("design.nodi", JSON.stringify(initial.document));
+  const previous = access.files.get("design.nodi");
+  const history = commit(createHistory(initial.document, true), success(moveNode(initial.document, initial.node.id, 20, 30)));
+  access.write = async () => Promise.reject(new Error("置換前に失敗"));
+  assert.equal((await saveDocumentFile(access, history.present, "design.nodi")).type, "Failure");
+  assert.equal(access.files.get("design.nodi"), previous);
+  assert.equal(isDirty(history), true);
 });

@@ -1,15 +1,20 @@
 import { Result } from "@praha/byethrow";
-import { useRef, useState } from "react";
+import { isTauri } from "@tauri-apps/api/core";
+import { useEffect, useRef, useState } from "react";
 import { createAgentApi } from "@/agent/api";
 import { createDocument, findNode } from "@/document/commands/index.ts";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
 import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
 import type { Document } from "@/document/types";
 import { documentFiles } from "@/ipc/documentFiles";
+import { recoveryFiles } from "@/ipc/recoveryFiles";
+import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft, type RecoveryDraft } from "@/persistence/recovery";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
 
+type RecoveryStatus = { kind: "checking" | "none" } | { kind: "available"; draft: RecoveryDraft } | { kind: "error"; message: string };
+
 export function useEditorDocument() {
-  const [history, setHistory] = useState(() => createHistory(createDocument()));
+  const [history, setHistory] = useState(() => createHistory(createDocument(), true));
   const historyRef = useRef(history);
   const [design, setDesign] = useState<Document>(history.present);
   const designRef = useRef(design);
@@ -19,8 +24,58 @@ export function useEditorDocument() {
   const [isBusy, setIsBusy] = useState(false);
   const revision = useRef(0);
   const fileOperation = useRef(false);
+  const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus>(() => isTauri() ? { kind: "checking" } : { kind: "none" });
+  const recoveryQueue = useRef(Promise.resolve());
   const selected = selectedId ? findNode(design, selectedId) : undefined;
   const isDirty = isDocumentDirty(history, design);
+
+  function queueRecovery(action: () => Promise<Result.Result<void, Error>>) {
+    recoveryQueue.current = recoveryQueue.current.then(async () => {
+      const result = await action();
+      if (Result.isFailure(result)) setError(result.error.message);
+    }).catch((error: unknown) => { setError(`復元データの処理に失敗しました: ${String(error)}`); });
+  }
+
+  useEffect(() => {
+    if (!isTauri()) return;
+    let active = true;
+    void readRecoveryDraft(recoveryFiles).then((result) => {
+      if (!active) return;
+      if (Result.isFailure(result)) setRecoveryStatus({ kind: "error", message: result.error.message });
+      else setRecoveryStatus(result.value ? { kind: "available", draft: result.value } : { kind: "none" });
+    });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!isTauri() || recoveryStatus.kind !== "none" || history.present !== design) return;
+    if (isDocumentDirty(history, design)) {
+      queueRecovery(() => writeRecoveryDraft(recoveryFiles, { document: design, sourcePath: filePath }));
+    } else {
+      queueRecovery(() => clearRecoveryDraft(recoveryFiles));
+    }
+  }, [history, design, filePath, recoveryStatus.kind]);
+
+  function restoreRecovery() {
+    if (recoveryStatus.kind !== "available") return;
+    const next = createHistory(recoveryStatus.draft.document);
+    historyRef.current = next;
+    setHistory(next);
+    designRef.current = next.present;
+    setDesign(next.present);
+    setFilePath(null);
+    setSelectedId(null);
+    revision.current += 1;
+    setRecoveryStatus({ kind: "none" });
+    setError(null);
+  }
+
+  async function discardRecovery() {
+    const result = await clearRecoveryDraft(recoveryFiles);
+    if (Result.isFailure(result)) { setRecoveryStatus({ kind: "error", message: result.error.message }); return; }
+    setRecoveryStatus({ kind: "none" });
+    setError(null);
+  }
 
   function recordDocument(document: Document) {
     const next = commit(historyRef.current, document);
@@ -38,7 +93,7 @@ export function useEditorDocument() {
     getSelectedId: () => selectedId,
     apply: recordDocument,
   });
-  useMcpBridge(agentApi, setError);
+  useMcpBridge(agentApi, setError, recoveryStatus.kind === "none");
 
   function applyDocument(result: Result.Result<Document, Error>) {
     if (Result.isFailure(result)) { setError(result.error.message); return; }
@@ -96,6 +151,7 @@ export function useEditorDocument() {
     setSelectedId(null);
     revision.current += 1;
     setError(null);
+    queueRecovery(() => clearRecoveryDraft(recoveryFiles));
   }
 
   async function saveFile() {
@@ -113,11 +169,15 @@ export function useEditorDocument() {
     historyRef.current = next;
     setHistory(next);
     setError(null);
+    const current = designRef.current;
+    queueRecovery(() => isDocumentDirty(next, current)
+      ? writeRecoveryDraft(recoveryFiles, { document: current, sourcePath: result.value })
+      : clearRecoveryDraft(recoveryFiles));
   }
 
   return {
     history, design, designRef, selectedId, setSelectedId, selected,
-    error, setError, filePath, isBusy, isDirty, agentApi,
+    error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery,
     recordDocument, applyDocument, previewDocument, finishPreview, stepHistory, openFile, saveFile,
   };
 }
