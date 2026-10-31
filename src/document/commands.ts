@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type Geometry, type RectangleStyle, type TextStyle } from "./types.ts";
+import { DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type Document, type DocumentNode, type Geometry, type RectangleStyle, type TextStyle } from "./types.ts";
 
 export function createDocument(): Document {
   return { version: 1, children: [] };
@@ -57,12 +57,11 @@ function updateNode(
   return Result.succeed({ ...document, children });
 }
 
-export interface AddNodeInput extends Geometry {
-  type: DocumentNode["type"];
-  parentId?: string;
-  name?: string;
-  content?: string;
-}
+export type AddNodeInput = Geometry & { parentId?: string; name?: string } & (
+  | { type: "frame" | "rectangle" | "ellipse" }
+  | { type: "text"; content?: string }
+  | { type: "image"; source: string }
+);
 
 export function addNode(
   document: Document,
@@ -76,7 +75,7 @@ export function addNode(
     return Result.fail(new Error(`親フレームが見つかりません: ${input.parentId}`));
   }
 
-  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : input.type === "ellipse" ? "楕円" : "矩形";
+  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : input.type === "ellipse" ? "楕円" : input.type === "image" ? "画像" : "矩形";
   const names = new Set(existing.map((node) => node.name));
   let number = 1;
   while (names.has(`${baseName} ${number}`)) number++;
@@ -85,6 +84,9 @@ export function addNode(
   if (Result.isFailure(nameResult)) return nameResult;
   if (input.type === "text" && input.content !== undefined && typeof input.content !== "string") {
     return Result.fail(new Error("本文は文字列で指定してください"));
+  }
+  if (input.type === "image" && (typeof input.source !== "string" || input.source.length > MAX_IMAGE_SOURCE_LENGTH || !IMAGE_SOURCE_PATTERN.test(input.source))) {
+    return Result.fail(new Error("画像データが不正です"));
   }
 
   const ids = new Set(existing.map((node) => node.id));
@@ -98,6 +100,8 @@ export function addNode(
     ? { id, name, type: "frame", ...geometry, children: [] }
     : input.type === "text"
       ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", ...DEFAULT_TEXT_STYLE }
+      : input.type === "image"
+        ? { id, name, type: "image", ...geometry, source: input.source }
       : input.type === "ellipse"
         ? { id, name, type: "ellipse", ...geometry, fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: DEFAULT_RECTANGLE_STYLE.stroke, strokeWidth: DEFAULT_RECTANGLE_STYLE.strokeWidth }
         : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };

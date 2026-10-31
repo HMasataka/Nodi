@@ -50,6 +50,16 @@
           "cornerRadius": 10
         },
         {
+          "id": "nd_sample_landscape",
+          "name": "ナビゲーションの風景",
+          "type": "image",
+          "x": 36,
+          "y": 180,
+          "width": 162,
+          "height": 102,
+          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20320%20200'%3E%3Crect%20width='320'%20height='200'%20fill='%23d9e8e1'/%3E%3Ccircle%20cx='220'%20cy='75'%20r='35'%20fill='%23f1e1d5'/%3E%3Cpath%20d='M0%20175L80%2090L145%20150L220%2070L320%20180V200H0Z'%20fill='%2386a992'/%3E%3C/svg%3E"
+        },
+        {
           "id": "nd_sample_overview",
           "name": "概要エリア",
           "type": "frame",
