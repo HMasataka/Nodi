@@ -79,6 +79,12 @@ export function createAgentApi(port: EditorPort) {
     return getElement(id);
   }
 
+  function applyNewNode(result: Result.Result<{ document: Document; node: DocumentNode }, Error>): Result.Result<ElementReference, Error> {
+    if (Result.isFailure(result)) return result;
+    port.apply(result.value.document);
+    return getElement(result.value.node.id);
+  }
+
   return {
     getState() {
       const document = port.getDocument();
@@ -110,16 +116,10 @@ export function createAgentApi(port: EditorPort) {
       return Result.isFailure(result) ? result : Result.succeed({ ...result.value, ...coordinates });
     },
     add(input: AddNodeInput): Result.Result<ElementReference, Error> {
-      const result = addNode(port.getDocument(), input);
-      if (Result.isFailure(result)) return result;
-      port.apply(result.value.document);
-      return getElement(result.value.node.id);
+      return applyNewNode(addNode(port.getDocument(), input));
     },
     rename(id: string, name: string): Result.Result<ElementReference, Error> {
-      const result = renameNode(port.getDocument(), id, name);
-      if (Result.isFailure(result)) return result;
-      port.apply(result.value);
-      return getElement(id);
+      return applyToElement(id, renameNode(port.getDocument(), id, name));
     },
     move(id: string, x: number, y: number): Result.Result<ElementReference, Error> {
       return applyToElement(id, moveNode(port.getDocument(), id, x, y));
@@ -145,16 +145,10 @@ export function createAgentApi(port: EditorPort) {
       return Result.succeed({ ...element.value, deleted: true });
     },
     duplicate(id: string) {
-      const result = duplicateNode(port.getDocument(), id);
-      if (Result.isFailure(result)) return result;
-      port.apply(result.value.document);
-      return getElement(result.value.node.id);
+      return applyNewNode(duplicateNode(port.getDocument(), id));
     },
     setTextContent(id: string, content: string): Result.Result<ElementReference, Error> {
-      const result = setTextContent(port.getDocument(), id, content);
-      if (Result.isFailure(result)) return result;
-      port.apply(result.value);
-      return getElement(id);
+      return applyToElement(id, setTextContent(port.getDocument(), id, content));
     },
   };
 }

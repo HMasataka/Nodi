@@ -12,6 +12,8 @@ export interface RectangleStyle {
   cornerRadius: number;
 }
 
+export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+
 export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   fill: "#f3d9c8",
   stroke: "#d9bbaa",

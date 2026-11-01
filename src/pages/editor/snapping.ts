@@ -1,5 +1,5 @@
-import { locateSelection } from "@/document/geometry.ts";
-import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+import type { Document, Geometry } from "@/document/types.ts";
+import { locateSelection, walkLocatedNodes } from "@/document/geometry.ts";
 
 export interface SnapGuide { orientation: "vertical" | "horizontal"; position: number; from: number; to: number }
 
@@ -15,17 +15,11 @@ const SNAP_DISTANCE_ON_SCREEN = 8;
 function otherElementBounds(document: Document, selectedIds: string[]): Geometry[] {
   const selectedRoots = new Set(locateSelection(document, new Set(selectedIds)).map(({ node }) => node.id));
   const bounds: Geometry[] = [];
-  function visit(nodes: DocumentNode[], parentX: number, parentY: number) {
-    for (const node of nodes) {
-      // 選択フレームの子にも自分自身をスナップさせない。
-      if (selectedRoots.has(node.id)) continue;
-      const x = parentX + node.x;
-      const y = parentY + node.y;
-      bounds.push({ x, y, width: node.width, height: node.height });
-      if (node.type === "frame") visit(node.children, x, y);
-    }
-  }
-  visit(document.children, 0, 0);
+  walkLocatedNodes(document, ({ node, absolute }) => {
+    // 選択フレームの子にも自分自身をスナップさせない。
+    if (selectedRoots.has(node.id)) return "skipChildren";
+    bounds.push(absolute);
+  });
   return bounds;
 }
 

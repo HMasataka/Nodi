@@ -24,88 +24,40 @@ const hasChange = (value: { id: string }) => Object.keys(value).some((key) => ke
 const shapeStyleInput = z.strictObject({ id: z.string().min(1), fill: z.string().optional(), stroke: z.string().optional(), strokeWidth: z.number().optional(), cornerRadius: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const frameStyleInput = z.strictObject({ id: z.string().min(1), background: z.string().optional(), clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional() }).refine(hasChange, "変更するスタイルを指定してください");
+const emptyInput = z.strictObject({});
+
+function withInput<Input, Output>(
+  schema: z.ZodType<Input>,
+  args: unknown,
+  action: (input: Input) => Result.Result<Output, Error>,
+): Result.Result<Output, Error> {
+  const parsed = schema.safeParse(args);
+  return parsed.success ? action(parsed.data) : Result.fail(new Error(parsed.error.issues[0].message));
+}
 
 export function dispatchAgentRequest(api: AgentApi, method: string, args: unknown) {
-  const input = (() => {
+  const result = (() => {
     switch (method) {
-      case "get_state": return Result.succeed(api.getState());
-      case "get_element": {
-        const parsed = idInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.getElement(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "select_element": {
-        const parsed = idInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.select(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "list_revisions": {
-        const parsed = z.strictObject({}).safeParse(args);
-        return parsed.success ? Result.succeed(api.listRevisions()) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "get_revision_element": {
-        const parsed = revisionElementInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.getRevisionElement(parsed.data.revisionId, parsed.data.elementId)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "compare_revisions": {
-        const parsed = compareInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.compareRevisions(parsed.data.fromRevisionId, parsed.data.toRevisionId, parsed.data.elementId)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "measure_elements": {
-        const parsed = relativeInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.measureElements(parsed.data.revisionId, parsed.data.firstId, parsed.data.secondId)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "add_element": {
-        const parsed = addInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.add(parsed.data)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "rename_element": {
-        const parsed = renameInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.rename(parsed.data.id, parsed.data.name)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "move_element": {
-        const parsed = moveInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.move(parsed.data.id, parsed.data.x, parsed.data.y)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "set_text_content": {
-        const parsed = contentInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.setTextContent(parsed.data.id, parsed.data.content)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "set_element_geometry": {
-        const parsed = setGeometryInput.safeParse(args);
-        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
-        const { id, ...geometry } = parsed.data;
-        return Result.succeed(api.setGeometry(id, geometry));
-      }
-      case "set_shape_style": {
-        const parsed = shapeStyleInput.safeParse(args);
-        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
-        const { id, ...style } = parsed.data;
-        return Result.succeed(api.setShapeStyle(id, style));
-      }
-      case "set_frame_style": {
-        const parsed = frameStyleInput.safeParse(args);
-        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
-        const { id, ...style } = parsed.data;
-        return Result.succeed(api.setFrameStyle(id, style));
-      }
-      case "set_text_style": {
-        const parsed = textStyleInput.safeParse(args);
-        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
-        const { id, ...style } = parsed.data;
-        return Result.succeed(api.setTextStyle(id, style));
-      }
-      case "delete_element": {
-        const parsed = idInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.delete(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
-      case "duplicate_element": {
-        const parsed = idInput.safeParse(args);
-        return parsed.success ? Result.succeed(api.duplicate(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
-      }
+      case "get_state": return api.getState();
+      case "get_element": return withInput(idInput, args, ({ id }) => api.getElement(id));
+      case "select_element": return withInput(idInput, args, ({ id }) => api.select(id));
+      case "list_revisions": return withInput(emptyInput, args, () => api.listRevisions());
+      case "get_revision_element": return withInput(revisionElementInput, args, ({ revisionId, elementId }) => api.getRevisionElement(revisionId, elementId));
+      case "compare_revisions": return withInput(compareInput, args, ({ fromRevisionId, toRevisionId, elementId }) => api.compareRevisions(fromRevisionId, toRevisionId, elementId));
+      case "measure_elements": return withInput(relativeInput, args, ({ revisionId, firstId, secondId }) => api.measureElements(revisionId, firstId, secondId));
+      case "add_element": return withInput(addInput, args, (input) => api.add(input));
+      case "rename_element": return withInput(renameInput, args, ({ id, name }) => api.rename(id, name));
+      case "move_element": return withInput(moveInput, args, ({ id, x, y }) => api.move(id, x, y));
+      case "set_text_content": return withInput(contentInput, args, ({ id, content }) => api.setTextContent(id, content));
+      case "set_element_geometry": return withInput(setGeometryInput, args, ({ id, ...geometry }) => api.setGeometry(id, geometry));
+      case "set_shape_style": return withInput(shapeStyleInput, args, ({ id, ...style }) => api.setShapeStyle(id, style));
+      case "set_frame_style": return withInput(frameStyleInput, args, ({ id, ...style }) => api.setFrameStyle(id, style));
+      case "set_text_style": return withInput(textStyleInput, args, ({ id, ...style }) => api.setTextStyle(id, style));
+      case "delete_element": return withInput(idInput, args, ({ id }) => api.delete(id));
+      case "duplicate_element": return withInput(idInput, args, ({ id }) => api.duplicate(id));
       default: return Result.fail(new Error(`未知の操作です: ${method}`));
     }
   })();
-  if (Result.isFailure(input)) return { ok: false, error: input.error.message };
-  const result = input.value;
   return Result.isFailure(result)
     ? { ok: false, error: result.error.message }
     : { ok: true, data: result.value };
