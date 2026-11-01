@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { addNode, createDocument } from "../src/document/commands/index.ts";
-import { drawingGeometry, frameOrigin, pointOnCanvas } from "../src/pages/editor/geometry.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
+import { drawingGeometry, frameOrigin, pointOnCanvas } from "../src/pages/editor/geometry.ts";
 
 function success(result) { assert.equal(result.type, "Success"); return result.value; }
 

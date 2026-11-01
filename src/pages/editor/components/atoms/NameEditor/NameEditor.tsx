@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import type { DocumentNode } from "@/document/types";
 
 export function NameEditor({ node, onRename }: { node: DocumentNode; onRename(name: string): void }) {

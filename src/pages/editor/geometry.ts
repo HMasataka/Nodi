@@ -1,4 +1,5 @@
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+
 export { absoluteGeometry } from "@/document/geometry.ts";
 
 export interface Point { x: number; y: number }

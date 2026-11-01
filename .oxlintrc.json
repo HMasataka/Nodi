@@ -1,6 +1,24 @@
 {
   "jsPlugins": ["./scripts/no-throw.js"],
   "rules": {
-    "nodi/no-throw": "error"
-  }
+    "nodi/no-throw": "error",
+    "sort-imports": ["error", {
+      "allowSeparatedGroups": true,
+      "ignoreCase": true,
+      "memberSyntaxSortOrder": ["single", "multiple", "all", "none"]
+    }]
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": ["error", {
+          "patterns": [{
+            "regex": "^\\.\\.?/",
+            "message": "src 内の import は相対パスではなく @/ から指定してください"
+          }]
+        }]
+      }
+    }
+  ]
 }

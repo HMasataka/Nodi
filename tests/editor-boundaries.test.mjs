@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { dirname, join, resolve } from "node:path";
+import { readdir, readFile } from "node:fs/promises";
 
 const root = fileURLToPath(new URL("../src/pages/editor/components/", import.meta.url));
 const srcRoot = fileURLToPath(new URL("../src/", import.meta.url));

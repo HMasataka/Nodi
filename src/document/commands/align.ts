@@ -1,4 +1,5 @@
 import { Result } from "@praha/byethrow";
+
 import { findNode } from "@/document/commands/tree.ts";
 import { locateSelection } from "@/document/geometry.ts";
 import type { Document, DocumentNode } from "@/document/types.ts";

@@ -1,10 +1,11 @@
 import type { Dispatch, PointerEvent, Ref, SetStateAction } from "react";
-import { drawingGeometry } from "@/pages/editor/geometry";
+
 import type { Document } from "@/document/types";
+import { drawingGeometry } from "@/pages/editor/geometry";
+import type { SnapGuide } from "@/pages/editor/snapping";
 import { canvasExtent, clampZoom } from "@/pages/editor/viewport";
 import { CanvasNode, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
 import type { DrawingState, DrawTool } from "@/pages/editor/types";
-import type { SnapGuide } from "@/pages/editor/snapping";
 
 interface CanvasProps extends NodeInteraction {
   design: Document;

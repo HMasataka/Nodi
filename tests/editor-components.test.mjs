@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import test from "node:test";
+
+import { createElement } from "react";
 import { createServer } from "vite";
+import { renderToStaticMarkup } from "react-dom/server";
+
 import { reorderNode } from "../src/document/commands/index.ts";
 
 test("分割後のキャンバス・レイヤー・プロパティが同じ要素を表示する", async () => {

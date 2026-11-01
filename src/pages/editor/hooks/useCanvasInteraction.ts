@@ -1,14 +1,15 @@
-import { Result } from "@praha/byethrow";
 import { flushSync } from "react-dom";
-import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
-import { absoluteGeometry, drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
-import { toggleSelection } from "@/pages/editor/selection";
-import { snapMove, snapResize, type SnapGuide } from "@/pages/editor/snapping";
+import { Result } from "@praha/byethrow";
+import { type PointerEvent, useEffect, useRef, useState } from "react";
+
 import type { DocumentNode } from "@/document/types";
+import { toggleSelection } from "@/pages/editor/selection";
+import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import { absoluteGeometry, drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
 import { canvasExtent, focusViewport, screenDeltaToDocument } from "@/pages/editor/viewport";
 import type { DragState, DrawingState, DrawTool, PanState, SelectionRegion } from "@/pages/editor/types";
-import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
+import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {

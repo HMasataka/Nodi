@@ -1,7 +1,8 @@
 import { Result } from "@praha/byethrow";
+
+import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
-import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
 export function moveNodes(document: Document, ids: string[], dx: number, dy: number): Result.Result<Document, Error> {
   if (!Number.isFinite(dx) || !Number.isFinite(dy)) return Result.fail(new Error("移動量は有限の数値で指定してください"));

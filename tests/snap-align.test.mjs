@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { addNode, alignNodes, createDocument, findNode } from "../src/document/commands/index.ts";
+
 import { absoluteGeometry } from "../src/document/geometry.ts";
+import { addNode, alignNodes, createDocument, findNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
-import { snapMove, snapResize } from "../src/pages/editor/snapping.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
+import { snapMove, snapResize } from "../src/pages/editor/snapping.ts";
 
 function success(result) { assert.equal(result.type, "Success"); return result.value; }
 

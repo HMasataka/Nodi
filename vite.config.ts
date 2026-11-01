@@ -1,7 +1,8 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import process from "node:process";
 import { fileURLToPath } from "node:url";
+import process from "node:process";
+import react from "@vitejs/plugin-react";
+
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/

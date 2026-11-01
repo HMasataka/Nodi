@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
+
 import type { AgentApi } from "@/agent/api.ts";
 
 const idInput = z.strictObject({ id: z.string().min(1) });
