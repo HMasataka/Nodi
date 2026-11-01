@@ -1,11 +1,11 @@
+import type { Alignment, LayerDirection } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
-import type { LayerDirection } from "@/document/commands/index.ts";
-import type { Alignment } from "@/document/commands/index.ts";
+
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
+import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
+import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
-import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
-import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
 import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
 import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 

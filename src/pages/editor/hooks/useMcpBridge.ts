@@ -1,6 +1,7 @@
-import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef } from "react";
+import { invoke, isTauri } from "@tauri-apps/api/core";
+
 import type { AgentApi } from "@/agent/api";
 import { dispatchAgentRequest } from "@/agent/bridge";
 

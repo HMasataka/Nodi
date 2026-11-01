@@ -1,6 +1,7 @@
 import { Result } from "@praha/byethrow";
-import { findNode, updateNode } from "@/document/commands/tree.ts";
+
 import type { Document, FrameStyle, RectangleStyle, TextStyle } from "@/document/types.ts";
+import { findNode, updateNode } from "@/document/commands/tree.ts";
 
 export function setNodeStyle(
   document: Document,

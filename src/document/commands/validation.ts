@@ -1,4 +1,5 @@
 import { Result } from "@praha/byethrow";
+
 import type { Geometry } from "@/document/types.ts";
 
 export function validateName(name: string): Result.Result<string, Error> {

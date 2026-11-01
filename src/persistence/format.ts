@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
-import { IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type Document, type DocumentNode } from "@/document/types.ts";
+import { type Document, type DocumentNode, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");

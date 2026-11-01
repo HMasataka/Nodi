@@ -1,6 +1,6 @@
-export { addNode, createDocument, type AddNodeInput } from "@/document/commands/create.ts";
-export { alignNodes, type Alignment } from "@/document/commands/align.ts";
-export { deleteNode, deleteNodes, duplicateNode, reorderNode, type LayerDirection } from "@/document/commands/structure.ts";
+export { type Alignment, alignNodes } from "@/document/commands/align.ts";
+export { type AddNodeInput, addNode, createDocument } from "@/document/commands/create.ts";
+export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNode } from "@/document/commands/structure.ts";
 export { setFrameStyle, setNodeStyle, setTextContent, setTextStyle } from "@/document/commands/style.ts";
 export { findNode } from "@/document/commands/tree.ts";
 export { moveNode, moveNodes, renameNode, setNodeGeometry } from "@/document/commands/update.ts";

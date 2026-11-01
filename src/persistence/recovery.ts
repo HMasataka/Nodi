@@ -1,7 +1,8 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
-import { parseDocument, serializeDocument } from "@/persistence/format.ts";
+
 import type { Document } from "@/document/types.ts";
+import { parseDocument, serializeDocument } from "@/persistence/format.ts";
 
 export interface RecoveryFileAccess {
   read(): Promise<string | null>;

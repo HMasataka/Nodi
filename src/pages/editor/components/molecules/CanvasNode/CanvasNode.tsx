@@ -1,4 +1,5 @@
 import type { PointerEvent } from "react";
+
 import type { DocumentNode } from "@/document/types";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 

@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { toggleSelection } from "../src/pages/editor/selection.ts";
+import { absoluteGeometry, nodesInBounds } from "../src/pages/editor/geometry.ts";
 import { addNode, createDocument, deleteNodes, findNode, moveNodes } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
-import { absoluteGeometry, nodesInBounds } from "../src/pages/editor/geometry.ts";
-import { toggleSelection } from "../src/pages/editor/selection.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
 function success(result) { assert.equal(result.type, "Success"); return result.value; }

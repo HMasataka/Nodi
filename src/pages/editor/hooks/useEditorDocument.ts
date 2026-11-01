@@ -1,15 +1,16 @@
-import { Result } from "@praha/byethrow";
 import { isTauri } from "@tauri-apps/api/core";
+import { Result } from "@praha/byethrow";
 import { useEffect, useRef, useState } from "react";
-import { createAgentApi, type FocusedViewport } from "@/agent/api";
-import { createDocument, findNode } from "@/document/commands/index.ts";
-import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
-import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
+
 import type { Document } from "@/document/types";
 import { documentFiles } from "@/ipc/documentFiles";
 import { recoveryFiles } from "@/ipc/recoveryFiles";
-import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft, type RecoveryDraft } from "@/persistence/recovery";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
+import { clearRecoveryDraft, readRecoveryDraft, type RecoveryDraft, writeRecoveryDraft } from "@/persistence/recovery";
+import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
+import { createAgentApi, type FocusedViewport } from "@/agent/api";
+import { createDocument, findNode } from "@/document/commands/index.ts";
+import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
 
 type RecoveryStatus = { kind: "checking" | "none" } | { kind: "available"; draft: RecoveryDraft } | { kind: "error"; message: string };
 
