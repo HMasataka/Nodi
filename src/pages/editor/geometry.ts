@@ -1,4 +1,5 @@
-import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+import { listLocatedNodes } from "@/document/geometry.ts";
+import type { Document, Geometry } from "@/document/types.ts";
 
 export { absoluteGeometry } from "@/document/geometry.ts";
 
@@ -9,31 +10,20 @@ export function pointOnCanvas(clientX: number, clientY: number, bounds: { left: 
 }
 
 export function frameOrigin(document: Document, id: string): Point | null {
-  function visit(nodes: DocumentNode[], offset: Point): Point | null {
-    for (const node of nodes) {
-      if (node.type !== "frame") continue;
-      const origin = { x: offset.x + node.x, y: offset.y + node.y };
-      if (node.id === id) return origin;
-      const found = visit(node.children, origin);
-      if (found) return found;
-    }
-    return null;
-  }
-  return visit(document.children, { x: 0, y: 0 });
+  const frame = listLocatedNodes(document).find(({ node }) => node.id === id && node.type === "frame");
+  return frame ? { x: frame.absolute.x, y: frame.absolute.y } : null;
+}
+
+function overlaps(first: Geometry, second: Geometry): boolean {
+  const horizontal = first.x < second.x + second.width && second.x < first.x + first.width;
+  const vertical = first.y < second.y + second.height && second.y < first.y + first.height;
+  return horizontal && vertical;
 }
 
 export function nodesInBounds(document: Document, bounds: Geometry): string[] {
-  const ids: string[] = [];
-  function visit(nodes: DocumentNode[], origin: Point) {
-    for (const node of nodes) {
-      const x = origin.x + node.x;
-      const y = origin.y + node.y;
-      if (x < bounds.x + bounds.width && x + node.width > bounds.x && y < bounds.y + bounds.height && y + node.height > bounds.y) ids.push(node.id);
-      if (node.type === "frame") visit(node.children, { x, y });
-    }
-  }
-  visit(document.children, { x: 0, y: 0 });
-  return ids;
+  return listLocatedNodes(document)
+    .filter(({ absolute }) => overlaps(absolute, bounds))
+    .map(({ node }) => node.id);
 }
 
 export function drawingGeometry(start: Point, end: Point, parentOrigin: Point = { x: 0, y: 0 }): Geometry {

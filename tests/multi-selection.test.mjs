@@ -18,6 +18,7 @@ test("Shift 選択と範囲選択は履歴を変えず、別フレームの要�
   assert.deepEqual(toggleSelection(toggleSelection([], first.node.id), second.node.id), [first.node.id, second.node.id]);
   assert.deepEqual(toggleSelection([first.node.id, second.node.id], first.node.id), [second.node.id]);
   assert.deepEqual(nodesInBounds(second.document, { x: 105, y: 65, width: 255, height: 150 }), [firstFrame.node.id, first.node.id, secondFrame.node.id, second.node.id]);
+  assert.deepEqual(nodesInBounds(second.document, { x: 250, y: 60, width: 50, height: 300 }), []);
   assert.equal(isDirty(history), false);
   assert.equal(history.past.length, 0);
 

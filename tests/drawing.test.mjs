@@ -24,5 +24,6 @@ test("入れ子フレーム内の作成は親基準の座標になり、確定�
   assert.equal(history.past.length, 0);
   const drawn = success(addNode(inner.document, { type: "ellipse", parentId: inner.node.id, ...geometry }));
   assert.equal(undo(commit(history, drawn.document)).present, inner.document);
+  assert.equal(frameOrigin(drawn.document, drawn.node.id), null);
   assert.equal(frameOrigin(inner.document, "missing"), null);
 });
