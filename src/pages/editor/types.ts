@@ -1,5 +1,8 @@
 import type { Document } from "@/document/types";
 import type { Point } from "@/pages/editor/geometry";
+import type { RecoveryDraft } from "@/persistence/recovery";
+
+export type RecoveryStatus = { kind: "checking" } | { kind: "none" } | { kind: "available"; draft: RecoveryDraft } | { kind: "error"; message: string };
 
 export interface SingleDragState {
   mode: "move" | "resize";

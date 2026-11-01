@@ -1,13 +1,10 @@
 import type { Alignment, LayerDirection } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
 
-import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
-import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
+import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
-import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
-import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 
 interface InspectorProps {
   selected?: DocumentNode;
@@ -47,29 +44,8 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           <div className="field-label">位置・サイズ</div>
           <GeometryEditor key={`${selected.id}:${selected.x}:${selected.y}:${selected.width}:${selected.height}`}
             node={selected} onChange={onGeometry} />
-          {selected.type === "image" && <p className="property-help">画像データは `.nodi` ファイル内に埋め込まれています。</p>}
-          {selected.type === "text" && (
-            <>
-              <div className="field-label">本文</div>
-              <ContentEditor key={`${selected.id}:${selected.content}`} node={selected} onChange={onTextContent} />
-              <div className="field-label">文字の見た目</div>
-              <TextStyleEditor key={`${selected.id}:${selected.fontSize}:${selected.color}:${selected.textAlign}`}
-                node={selected} onChange={onTextStyle} />
-            </>
-          )}
-          {(selected.type === "rectangle" || selected.type === "ellipse") && (
-            <>
-              <div className="field-label">スタイル</div>
-              <ShapeStyleEditor key={`${selected.id}:${selected.fill}:${selected.stroke}:${selected.strokeWidth}:${selected.type === "rectangle" ? selected.cornerRadius : "ellipse"}`}
-                node={selected} onChange={onShapeStyle} />
-            </>
-          )}
-          {selected.type === "frame" && (
-            <>
-              <div className="field-label">フレームの見た目</div>
-              <FrameStyleEditor key={`${selected.id}:${selected.background}:${selected.clipContent}`} node={selected} onChange={onFrameStyle} />
-            </>
-          )}
+          <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle}
+            onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} />
           <div className="property-divider" />
           <div className="field-label">要素 ID</div>
           <code className="node-id">{selected.id}</code>
