@@ -5,14 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import type { Document } from "@/document/types";
 import { documentFiles } from "@/ipc/documentFiles";
 import { recoveryFiles } from "@/ipc/recoveryFiles";
+import type { RecoveryStatus } from "@/pages/editor/types";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
-import { clearRecoveryDraft, readRecoveryDraft, type RecoveryDraft, writeRecoveryDraft } from "@/persistence/recovery";
+import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft } from "@/persistence/recovery";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
 import { createAgentApi, type FocusedViewport } from "@/agent/api";
 import { createDocument, findNode } from "@/document/commands/index.ts";
 import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
-
-type RecoveryStatus = { kind: "checking" | "none" } | { kind: "available"; draft: RecoveryDraft } | { kind: "error"; message: string };
 
 export function useEditorDocument() {
   const [history, setHistory] = useState(() => createHistory(createDocument(), true));

@@ -13,6 +13,9 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const { Canvas } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/Canvas/Canvas.tsx");
     const { LayersPanel } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/LayersPanel/LayersPanel.tsx");
     const { Inspector } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/Inspector/Inspector.tsx");
+    const { EditorToolbar } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorToolbar/EditorToolbar.tsx");
+    const { EditorStatus } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorStatus/EditorStatus.tsx");
+    const { RecoveryDialog } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/RecoveryDialog/RecoveryDialog.tsx");
     const image = { id: "image-1", name: "風景", type: "image", x: 10, y: 20, width: 100, height: 80, source: "data:image/png;base64,aGVsbG8=" };
     const frame = { id: "frame-1", name: "画面", type: "frame", x: 0, y: 0, width: 300, height: 200, background: "#aabbcc", clipContent: true, children: [image] };
     const noOp = () => {};
@@ -90,6 +93,27 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(frameInspector, /type="color" value="#aabbcc"/);
     assert.match(frameInspector, /はみ出しを表示/);
+
+    const toolbar = renderToStaticMarkup(createElement(EditorToolbar, {
+      fileName: "画面.nodi", filePath: "/tmp/画面.nodi", canUndo: true, canRedo: false, isBusy: false,
+      onUndo: noOp, onRedo: noOp, onOpen: noOp, onSave: noOp, onCreate: noOp, onImportImage: noOp,
+      drawTool: "select", onDrawToolChange: noOp,
+    }));
+    assert.match(toolbar, /title="\/tmp\/画面.nodi"/);
+    assert.match(toolbar, /矩形を追加/);
+    assert.match(toolbar, /楕円を描く/);
+    assert.match(toolbar, /フレームを追加/);
+    assert.match(toolbar, /画像ファイル/);
+    assert.match(toolbar, /disabled=""[^>]*>やり直す/);
+
+    assert.match(renderToStaticMarkup(createElement(EditorStatus, { selected: image, isDirty: true, filePath: null })), /未保存の変更/);
+    const recovery = renderToStaticMarkup(createElement(RecoveryDialog, {
+      status: { kind: "available", draft: { sourcePath: "/tmp/画面.nodi", document: { version: 1, children: [] } } },
+      onRestore: noOp, onDiscard: noOp,
+    }));
+    assert.match(recovery, /元のファイルは上書きされません/);
+    assert.match(recovery, /編集を復元/);
+    assert.match(recovery, /破棄して開始/);
   } finally {
     await vite.close();
   }
