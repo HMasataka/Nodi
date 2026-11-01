@@ -2,6 +2,7 @@ import { Result } from "@praha/byethrow";
 import { useRef, useState } from "react";
 import {
   deleteNode,
+  deleteNodes,
   duplicateNode,
   reorderNode,
   setFrameStyle,
@@ -19,20 +20,21 @@ import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import { toggleSelection } from "@/pages/editor/selection";
 import "@/App.css";
 
 function EditorPage() {
   const session = useEditorDocument();
   const {
-    history, design, designRef, selectedId, setSelectedId, selected,
+    history, design, designRef, selectedId, selectedIds, setSelectedId, setSelectedIds, selected,
     error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery,
     recordDocument, applyDocument, openFile, saveFile,
   } = session;
   const {
-    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing,
+    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
-    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing,
+    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection,
   } = useCanvasInteraction(session);
   const imageInput = useRef<HTMLInputElement>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -108,13 +110,13 @@ function EditorPage() {
 
   function deleteSelected() {
     if (!selectedId) return;
-    const result = deleteNode(designRef.current, selectedId);
+    const result = selectedIds.length > 1 ? deleteNodes(designRef.current, selectedIds) : deleteNode(designRef.current, selectedId);
     if (Result.isFailure(result)) {
       setError(result.error.message);
       return;
     }
     recordDocument(result.value);
-    setSelectedId(null);
+    setSelectedIds([]);
   }
 
   function duplicateSelected() {
@@ -183,23 +185,26 @@ function EditorPage() {
       </header>
 
       <div className="workspace">
-        <LayersPanel nodes={design.children} selectedId={selectedId} onSelect={setSelectedId}
+        <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
+          onSelect={(id, additive) => additive ? setSelectedIds((ids) => toggleSelection(ids, id)) : setSelectedId(id)}
           onReorder={(id, direction) => applyDocument(reorderNode(designRef.current, id, direction))} />
 
         <Canvas
-          design={design} selectedId={selectedId} zoom={zoom} setZoom={setZoom} viewportRef={viewportRef}
-          drawTool={drawTool} drawing={drawing}
+          design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} setZoom={setZoom} viewportRef={viewportRef}
+          drawTool={drawTool} drawing={drawing} selection={selection}
           onNodePointerDown={startDrag} onResizePointerDown={startResize}
           onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
           onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
           onWorldPointerDown={onWorldPointerDown}
-          onWorldPointerMove={updateDrawing} onWorldPointerUp={finishDrawing}
-          onWorldPointerCancel={cancelDrawing}
+          onWorldPointerMove={(event) => { updateDrawing(event); updateSelection(event); }}
+          onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
+          onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
           onImageError={(id) => setError(`画像を表示できません: ${id}`)}
         />
 
         <Inspector
           selected={selected}
+          selectedCount={selectedIds.length}
           onRename={(name) => {
             if (!selected) return;
             const result = agentApi.rename(selected.id, name);

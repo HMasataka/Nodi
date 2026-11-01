@@ -1,7 +1,26 @@
 import { Result } from "@praha/byethrow";
-import { updateNode } from "@/document/commands/tree.ts";
+import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
-import type { Document, Geometry } from "@/document/types.ts";
+import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+
+export function moveNodes(document: Document, ids: string[], dx: number, dy: number): Result.Result<Document, Error> {
+  if (!Number.isFinite(dx) || !Number.isFinite(dy)) return Result.fail(new Error("移動量は有限の数値で指定してください"));
+  const selected = new Set(ids);
+  if (selected.size === 0) return Result.fail(new Error("移動する要素を指定してください"));
+  for (const id of selected) {
+    const node = findNode(document, id);
+    if (!node) return Result.fail(new Error(`要素が見つかりません: ${id}`));
+    if (!Number.isFinite(node.x + dx) || !Number.isFinite(node.y + dy)) return Result.fail(new Error("移動後の座標が不正です"));
+  }
+  if (dx === 0 && dy === 0) return Result.succeed(document);
+  function move(nodes: DocumentNode[]): DocumentNode[] {
+    return nodes.map((node) => {
+      if (selected.has(node.id)) return { ...node, x: node.x + dx, y: node.y + dy };
+      return node.type === "frame" ? { ...node, children: move(node.children) } : node;
+    });
+  }
+  return Result.succeed({ ...document, children: move(document.children) });
+}
 
 export function renameNode(document: Document, id: string, name: string): Result.Result<Document, Error> {
   const validated = validateName(name);

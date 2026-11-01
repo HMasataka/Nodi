@@ -36,6 +36,20 @@ export function absoluteGeometry(document: Document, id: string): Geometry | nul
   return visit(document.children, { x: 0, y: 0 });
 }
 
+export function nodesInBounds(document: Document, bounds: Geometry): string[] {
+  const ids: string[] = [];
+  function visit(nodes: DocumentNode[], origin: Point) {
+    for (const node of nodes) {
+      const x = origin.x + node.x;
+      const y = origin.y + node.y;
+      if (x < bounds.x + bounds.width && x + node.width > bounds.x && y < bounds.y + bounds.height && y + node.height > bounds.y) ids.push(node.id);
+      if (node.type === "frame") visit(node.children, { x, y });
+    }
+  }
+  visit(document.children, { x: 0, y: 0 });
+  return ids;
+}
+
 export function drawingGeometry(start: Point, end: Point, parentOrigin: Point = { x: 0, y: 0 }): Geometry {
   return {
     x: Math.min(start.x, end.x) - parentOrigin.x,

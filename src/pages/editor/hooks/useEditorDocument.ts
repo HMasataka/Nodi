@@ -18,7 +18,9 @@ export function useEditorDocument() {
   const historyRef = useRef(history);
   const [design, setDesign] = useState<Document>(history.present);
   const designRef = useRef(design);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const selectedId = selectedIds[selectedIds.length - 1] ?? null;
+  function setSelectedId(id: string | null) { setSelectedIds(id ? [id] : []); }
   const [error, setError] = useState<string | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -65,7 +67,7 @@ export function useEditorDocument() {
     designRef.current = next.present;
     setDesign(next.present);
     setFilePath(null);
-    setSelectedId(null);
+    setSelectedIds([]);
     revision.current += 1;
     setRecoveryStatus({ kind: "none" });
     setError(null);
@@ -127,7 +129,7 @@ export function useEditorDocument() {
     setHistory(next);
     designRef.current = next.present;
     setDesign(next.present);
-    if (selectedId && !findNode(next.present, selectedId)) setSelectedId(null);
+    setSelectedIds((ids) => ids.filter((id) => !!findNode(next.present, id)));
     revision.current += 1;
     setError(null);
   }
@@ -150,7 +152,7 @@ export function useEditorDocument() {
     designRef.current = result.value.document;
     setDesign(result.value.document);
     setFilePath(result.value.path);
-    setSelectedId(null);
+    setSelectedIds([]);
     revision.current += 1;
     setError(null);
     queueRecovery(() => clearRecoveryDraft(recoveryFiles));
@@ -178,7 +180,7 @@ export function useEditorDocument() {
   }
 
   return {
-    history, design, designRef, selectedId, setSelectedId, selected,
+    history, design, designRef, selectedId, selectedIds, setSelectedId, setSelectedIds, selected,
     error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery, focusElementRef,
     recordDocument, applyDocument, previewDocument, finishPreview, stepHistory, openFile, saveFile,
   };

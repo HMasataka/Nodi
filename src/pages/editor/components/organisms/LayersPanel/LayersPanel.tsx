@@ -5,11 +5,12 @@ import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 interface LayersPanelProps {
   nodes: DocumentNode[];
   selectedId: string | null;
-  onSelect(id: string): void;
+  selectedIds?: string[];
+  onSelect(id: string, additive?: boolean): void;
   onReorder(id: string, direction: LayerDirection): void;
 }
 
-export function LayersPanel({ nodes, selectedId, onSelect, onReorder }: LayersPanelProps) {
+export function LayersPanel({ nodes, selectedId, selectedIds = selectedId ? [selectedId] : [], onSelect, onReorder }: LayersPanelProps) {
   function count(items: DocumentNode[]): number {
     return items.reduce((total, node) => total + 1 + (node.type === "frame" ? count(node.children) : 0), 0);
   }
@@ -19,9 +20,9 @@ export function LayersPanel({ nodes, selectedId, onSelect, onReorder }: LayersPa
     return (
       <div key={node.id}>
         <div className="layer-item">
-          <button type="button" className={`layer-row${selectedId === node.id ? " is-selected" : ""}`}
-            style={{ paddingLeft: 11 + depth * 18 }} aria-pressed={selectedId === node.id}
-            onClick={() => onSelect(node.id)}>
+          <button type="button" className={`layer-row${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+            style={{ paddingLeft: 11 + depth * 18 }} aria-pressed={selectedIds.includes(node.id)}
+            onClick={(event) => onSelect(node.id, event.shiftKey)}>
             <LayerIcon type={node.type} />
             <span className="layer-name">{node.name}</span>
           </button>

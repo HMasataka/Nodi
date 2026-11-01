@@ -1,16 +1,17 @@
 import { Result } from "@praha/byethrow";
 import { flushSync } from "react-dom";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { findNode, setNodeGeometry } from "@/document/commands/index.ts";
-import { absoluteGeometry, drawingGeometry, frameOrigin, pointOnCanvas } from "@/pages/editor/geometry";
+import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
+import { absoluteGeometry, drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
+import { toggleSelection } from "@/pages/editor/selection";
 import type { DocumentNode } from "@/document/types";
 import { canvasExtent, focusViewport, screenDeltaToDocument } from "@/pages/editor/viewport";
-import type { DragState, DrawingState, DrawTool, PanState } from "@/pages/editor/types";
+import type { DragState, DrawingState, DrawTool, PanState, SelectionRegion } from "@/pages/editor/types";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {
-    designRef, setSelectedId, setError, agentApi,
+    designRef, selectedIds, setSelectedId, setSelectedIds, setError, agentApi,
     previewDocument, finishPreview, stepHistory: stepDocumentHistory, focusElementRef,
   } = session;
   const drag = useRef<DragState | null>(null);
@@ -21,6 +22,8 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   const [drawTool, setDrawTool] = useState<DrawTool>("select");
   const [drawing, setDrawing] = useState<DrawingState | null>(null);
   const drawingRef = useRef<DrawingState | null>(null);
+  const [selection, setSelection] = useState<SelectionRegion | null>(null);
+  const selectionRef = useRef<SelectionRegion | null>(null);
 
   useEffect(() => {
     focusElementRef.current = (id) => {
@@ -48,7 +51,16 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   function startDrag(event: PointerEvent<HTMLElement>, node: DocumentNode) {
     if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
     event.stopPropagation();
+    if (event.shiftKey) {
+      setSelectedIds((ids) => toggleSelection(ids, node.id));
+      return;
+    }
     event.currentTarget.setPointerCapture(event.pointerId);
+    if (selectedIds.length > 1 && selectedIds.includes(node.id)) {
+      drag.current = { mode: "group", ids: selectedIds, original: designRef.current, pointerId: event.pointerId,
+        clientX: event.clientX, clientY: event.clientY, zoom };
+      return;
+    }
     drag.current = {
       mode: "move", id: node.id, pointerId: event.pointerId,
       clientX: event.clientX, clientY: event.clientY,
@@ -75,6 +87,12 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     if (!active || active.pointerId !== event.pointerId) return;
     const dx = screenDeltaToDocument(event.clientX - active.clientX, active.zoom);
     const dy = screenDeltaToDocument(event.clientY - active.clientY, active.zoom);
+    if (active.mode === "group") {
+      const moved = moveNodes(active.original, active.ids, dx, dy);
+      if (Result.isFailure(moved)) { setError(moved.error.message); return; }
+      if (moved.value !== designRef.current) previewDocument(moved.value);
+      return;
+    }
     const geometry = active.mode === "resize"
       ? { x: active.x, y: active.y, width: Math.max(1, active.width + dx), height: Math.max(1, active.height + dy) }
       : { x: active.x + dx, y: active.y + dy, width: active.width, height: active.height };
@@ -89,6 +107,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     const active = drag.current;
     if (!active || active.pointerId !== pointerId) return;
     drag.current = null;
+    if (active.mode === "group") { finishPreview(designRef.current !== active.original); return; }
     const final = findNode(designRef.current, active.id);
     finishPreview(!!final && (final.x !== active.x || final.y !== active.y || final.width !== active.width || final.height !== active.height));
   }
@@ -146,6 +165,35 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     setDrawing(null);
   }
 
+  function updateSelection(event: PointerEvent<HTMLDivElement>) {
+    const active = selectionRef.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    const next = { ...active, end: pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom) };
+    selectionRef.current = next;
+    setSelection(next);
+  }
+
+  function finishSelection(event: PointerEvent<HTMLDivElement>) {
+    const active = selectionRef.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    selectionRef.current = null;
+    setSelection(null);
+    const end = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const bounds = drawingGeometry(active.start, end);
+    if (bounds.width < 3 || bounds.height < 3) {
+      if (!active.additive) setSelectedIds([]);
+      return;
+    }
+    const ids = nodesInBounds(designRef.current, bounds);
+    setSelectedIds((current) => active.additive ? [...new Set([...current, ...ids])] : ids);
+  }
+
+  function cancelSelection(pointerId?: number) {
+    if (!selectionRef.current || (pointerId !== undefined && selectionRef.current.pointerId !== pointerId)) return;
+    selectionRef.current = null;
+    setSelection(null);
+  }
+
   function finishDrawing(event: PointerEvent<HTMLDivElement>) {
     const active = drawingRef.current;
     if (!active || active.pointerId !== event.pointerId) return;
@@ -161,7 +209,13 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
 
   function onWorldPointerDown(event: PointerEvent<HTMLDivElement>) {
     if (drawTool !== "select") beginDrawing(event);
-    else if (event.target === event.currentTarget && !spacePressed.current && event.button === 0) setSelectedId(null);
+    else if (event.target === event.currentTarget && !spacePressed.current && event.button === 0) {
+      const start = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+      const next = { pointerId: event.pointerId, start, end: start, additive: event.shiftKey };
+      selectionRef.current = next;
+      setSelection(next);
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
   }
 
   useEffect(() => {
@@ -172,6 +226,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
         event.preventDefault();
         return;
       }
+      if (event.key === "Escape" && selectionRef.current) { cancelSelection(); event.preventDefault(); return; }
       const target = event.target instanceof HTMLElement ? event.target : null;
       const editing = target?.closest("input, textarea, [contenteditable]");
       const toolbarButton = target?.closest("button:not(.canvas-node)");
@@ -197,9 +252,9 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing,
+    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
-    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing,
+    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection,
   };
 }

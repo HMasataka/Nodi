@@ -10,6 +10,7 @@ import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEd
 
 interface InspectorProps {
   selected?: DocumentNode;
+  selectedCount?: number;
   onRename(name: string): void;
   onGeometry(geometry: Geometry): void;
   onTextContent(content: string): void;
@@ -23,7 +24,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -33,6 +34,7 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
             <LayerIcon type={selected.type} />{" "}
             {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : "フレーム"}
           </div>
+          {selectedCount > 1 && <p className="property-help">{selectedCount} 個の要素を選択中。ドラッグで一括移動できます。</p>}
           <label className="field-label" htmlFor="node-name">名前</label>
           <NameEditor key={`${selected.id}:${selected.name}`} node={selected} onRename={onRename} />
           <div className="property-divider" />
@@ -68,7 +70,7 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
           <p className="property-help">名前は変更できます。ID はこの要素を正確に指すために変わりません。</p>
           <div className="node-actions">
             <button type="button" className="file-button" onClick={onDuplicate}>複製</button>
-            <button type="button" className="file-button" onClick={onDelete}>削除</button>
+            <button type="button" className="file-button" onClick={onDelete}>{selectedCount > 1 ? "選択中を削除" : "削除"}</button>
           </div>
           <div className="node-actions layer-depth-actions">
             <button type="button" className="file-button" onClick={() => onReorder("front")}>最前面へ</button>

@@ -27,6 +27,17 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(canvas, /class="frame-contents" style="overflow:hidden"/);
     assert.match(canvas, /aria-label="風景"/);
     assert.match(canvas, /class="resize-handle"/);
+    const multiCanvas = renderToStaticMarkup(createElement(Canvas, {
+      design: { version: 1, children: [frame] }, selectedId: image.id, selectedIds: [frame.id, image.id],
+      zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      selection: { start: { x: 10, y: 20 }, end: { x: 120, y: 90 } },
+      onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
+      onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
+      onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp, onImageError: noOp,
+    }));
+    assert.match(multiCanvas, /class="selection-preview"/);
+    assert.match(multiCanvas, /class="canvas-frame is-selected"/);
+    assert.match(multiCanvas, /class="canvas-image is-selected"/);
     const overflowing = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [{ ...frame, clipContent: false }] }, selectedId: frame.id,
       zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
@@ -52,6 +63,8 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const layered = { version: 1, children: [{ ...frame, children: [back, front] }] };
     const layerMarkup = renderToStaticMarkup(createElement(LayersPanel, { nodes: layered.children, selectedId: null, onSelect: noOp, onReorder: noOp }));
     assert.ok(layerMarkup.indexOf("前面") < layerMarkup.indexOf("背面"));
+    const multiLayers = renderToStaticMarkup(createElement(LayersPanel, { nodes: layered.children, selectedId: front.id, selectedIds: [back.id, front.id], onSelect: noOp, onReorder: noOp }));
+    assert.equal((multiLayers.match(/aria-pressed="true"/g) ?? []).length, 2);
     const reordered = reorderNode(layered, back.id, "front").value;
     const reorderedMarkup = renderToStaticMarkup(createElement(Canvas, {
       design: reordered, selectedId: null, zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,

@@ -13,10 +13,11 @@ export interface NodeInteraction {
 interface CanvasNodeProps {
   node: DocumentNode;
   selectedId: string | null;
+  selectedIds?: string[];
   interaction: NodeInteraction;
 }
 
-export function CanvasNode({ node, selectedId, interaction }: CanvasNodeProps) {
+export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction }: CanvasNodeProps) {
   const {
     onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError,
   } = interaction;
@@ -30,19 +31,19 @@ export function CanvasNode({ node, selectedId, interaction }: CanvasNodeProps) {
   };
 
   if (node.type === "frame") return (
-    <div className={`canvas-frame${selectedId === node.id ? " is-selected" : ""}`}
+    <div className={`canvas-frame${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       data-frame-id={node.id} role="group" aria-label={node.name} style={{ ...style, background: node.background }}
       onPointerDown={(event) => { if (event.target === event.currentTarget) onNodePointerDown(event, node); }}
       {...pointerEvents}>
       <div className="frame-contents" style={{ overflow: node.clipContent ? "hidden" : "visible" }}>
-        {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} interaction={interaction} />)}
+        {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
       </div>
       {handle}
     </div>
   );
   if (node.type === "text") return (
-    <button type="button" className={`canvas-text${selectedId === node.id ? " is-selected" : ""}`}
-      aria-label={node.name} aria-pressed={selectedId === node.id}
+    <button type="button" className={`canvas-text${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
       style={{ ...style, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign }}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {node.content}
@@ -50,8 +51,8 @@ export function CanvasNode({ node, selectedId, interaction }: CanvasNodeProps) {
     </button>
   );
   if (node.type === "image") return (
-    <button type="button" className={`canvas-image${selectedId === node.id ? " is-selected" : ""}`}
-      aria-label={node.name} aria-pressed={selectedId === node.id} style={style}
+    <button type="button" className={`canvas-image${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={style}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       <img src={node.source} alt="" draggable={false} onError={() => onImageError(node.id)} />
       {handle}
@@ -59,8 +60,8 @@ export function CanvasNode({ node, selectedId, interaction }: CanvasNodeProps) {
   );
   return (
     <button type="button"
-      className={`canvas-node${node.type === "ellipse" ? " canvas-ellipse" : ""}${selectedId === node.id ? " is-selected" : ""}`}
-      aria-label={node.name} aria-pressed={selectedId === node.id}
+      className={`canvas-node${node.type === "ellipse" ? " canvas-ellipse" : ""}${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
       style={{ ...style, background: node.fill, borderColor: node.stroke, borderWidth: node.strokeWidth, borderRadius: node.type === "ellipse" ? "50%" : node.cornerRadius }}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {handle}

@@ -8,11 +8,13 @@ import type { DrawingState, DrawTool } from "@/pages/editor/types";
 interface CanvasProps extends NodeInteraction {
   design: Document;
   selectedId: string | null;
+  selectedIds?: string[];
   zoom: number;
   setZoom: Dispatch<SetStateAction<number>>;
   viewportRef?: Ref<HTMLElement>;
   drawTool: DrawTool;
   drawing: DrawingState | null;
+  selection?: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
   onPanPointerDown(event: PointerEvent<HTMLElement>): void;
   onPanPointerMove(event: PointerEvent<HTMLElement>): void;
   onPanPointerUp(pointerId: number): void;
@@ -24,7 +26,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, zoom, setZoom, viewportRef, drawTool, drawing,
+    design, selectedId, selectedIds, zoom, setZoom, viewportRef, drawTool, drawing, selection,
     onPanPointerDown, onPanPointerMove, onPanPointerUp,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -52,7 +54,8 @@ export function Canvas(props: CanvasProps) {
           onPointerCancel={(event) => onWorldPointerCancel(event.pointerId)}
           onLostPointerCapture={(event) => onWorldPointerCancel(event.pointerId)}>
           {design.children.length === 0 && <div className="canvas-hint" aria-hidden="true"><span className="hint-symbol">＋</span><span>ここから、かたちをつくる。</span></div>}
-          {design.children.map((node) => <CanvasNode key={node.id} node={node} selectedId={selectedId} interaction={interaction} />)}
+           {design.children.map((node) => <CanvasNode key={node.id} node={node} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
+           {selection && <div className="selection-preview" style={{ left: Math.min(selection.start.x, selection.end.x), top: Math.min(selection.start.y, selection.end.y), width: Math.abs(selection.end.x - selection.start.x), height: Math.abs(selection.end.y - selection.start.y) }} />}
           {drawing && preview && <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
             style={{ left: preview.x + drawing.parentOrigin.x, top: preview.y + drawing.parentOrigin.y, width: preview.width, height: preview.height }} />}
         </div>
