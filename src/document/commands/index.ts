@@ -1,4 +1,5 @@
 export { addNode, createDocument, type AddNodeInput } from "@/document/commands/create.ts";
+export { alignNodes, type Alignment } from "@/document/commands/align.ts";
 export { deleteNode, deleteNodes, duplicateNode, reorderNode, type LayerDirection } from "@/document/commands/structure.ts";
 export { setFrameStyle, setNodeStyle, setTextContent, setTextStyle } from "@/document/commands/style.ts";
 export { findNode } from "@/document/commands/tree.ts";

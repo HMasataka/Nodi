@@ -4,6 +4,7 @@ import type { Document } from "@/document/types";
 import { canvasExtent, clampZoom } from "@/pages/editor/viewport";
 import { CanvasNode, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
 import type { DrawingState, DrawTool } from "@/pages/editor/types";
+import type { SnapGuide } from "@/pages/editor/snapping";
 
 interface CanvasProps extends NodeInteraction {
   design: Document;
@@ -15,6 +16,7 @@ interface CanvasProps extends NodeInteraction {
   drawTool: DrawTool;
   drawing: DrawingState | null;
   selection?: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
+  guides?: SnapGuide[];
   onPanPointerDown(event: PointerEvent<HTMLElement>): void;
   onPanPointerMove(event: PointerEvent<HTMLElement>): void;
   onPanPointerUp(pointerId: number): void;
@@ -26,7 +28,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, selectedIds, zoom, setZoom, viewportRef, drawTool, drawing, selection,
+    design, selectedId, selectedIds, zoom, setZoom, viewportRef, drawTool, drawing, selection, guides = [],
     onPanPointerDown, onPanPointerMove, onPanPointerUp,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -56,6 +58,8 @@ export function Canvas(props: CanvasProps) {
           {design.children.length === 0 && <div className="canvas-hint" aria-hidden="true"><span className="hint-symbol">＋</span><span>ここから、かたちをつくる。</span></div>}
            {design.children.map((node) => <CanvasNode key={node.id} node={node} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
            {selection && <div className="selection-preview" style={{ left: Math.min(selection.start.x, selection.end.x), top: Math.min(selection.start.y, selection.end.y), width: Math.abs(selection.end.x - selection.start.x), height: Math.abs(selection.end.y - selection.start.y) }} />}
+           {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
+             style={guide.orientation === "vertical" ? { left: guide.position, top: guide.from, height: guide.to - guide.from } : { top: guide.position, left: guide.from, width: guide.to - guide.from }} />)}
           {drawing && preview && <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
             style={{ left: preview.x + drawing.parentOrigin.x, top: preview.y + drawing.parentOrigin.y, width: preview.width, height: preview.height }} />}
         </div>

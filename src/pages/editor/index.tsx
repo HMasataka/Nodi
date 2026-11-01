@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import {
   deleteNode,
   deleteNodes,
+  alignNodes,
   duplicateNode,
   reorderNode,
   setFrameStyle,
@@ -31,7 +32,7 @@ function EditorPage() {
     recordDocument, applyDocument, openFile, saveFile,
   } = session;
   const {
-    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection,
+    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection,
@@ -191,7 +192,7 @@ function EditorPage() {
 
         <Canvas
           design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} setZoom={setZoom} viewportRef={viewportRef}
-          drawTool={drawTool} drawing={drawing} selection={selection}
+          drawTool={drawTool} drawing={drawing} selection={selection} guides={guides}
           onNodePointerDown={startDrag} onResizePointerDown={startResize}
           onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
           onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
@@ -218,6 +219,7 @@ function EditorPage() {
           onDuplicate={duplicateSelected}
           onDelete={deleteSelected}
           onReorder={(direction) => { if (selectedId) applyDocument(reorderNode(designRef.current, selectedId, direction)); }}
+          onAlign={(alignment) => applyDocument(alignNodes(designRef.current, selectedIds, alignment))}
           onExportFrame={() => { void exportSelectedFrame(); }}
           isExporting={isExporting}
         />
