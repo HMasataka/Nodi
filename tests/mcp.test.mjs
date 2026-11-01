@@ -9,7 +9,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { createAgentApi } from "../src/agent/api.ts";
 import { dispatchAgentRequest } from "../src/agent/bridge.ts";
 import { createDocument } from "../src/document/commands/index.ts";
-import { commit, createHistory, isDirty, undo } from "../src/document/history.ts";
+import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
 import { absoluteGeometry } from "../src/pages/editor/geometry.ts";
 import { canvasExtent, focusViewport } from "../src/pages/editor/viewport.ts";
 
@@ -206,6 +206,53 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(missingSelection.isError, true);
     assert.equal(selectedId, siblingId);
     assert.equal(history, beforeSelection);
+
+    for (const name of ["set_element_geometry", "set_shape_style", "set_frame_style", "set_text_style", "delete_element", "duplicate_element"]) {
+      assert.ok(tools.tools.some((tool) => tool.name === name));
+      assert.match(tools.tools.find((tool) => tool.name === name).description, /Before\/After/);
+    }
+    const beforeEditCount = history.past.length;
+    const geometryChanged = await client.callTool({ name: "set_element_geometry", arguments: { id: siblingId, x: 120, y: 110, width: 320, height: 70 } });
+    assert.equal(geometryChanged.isError, false);
+    assert.equal(JSON.parse(geometryChanged.content[0].text).width, 320);
+    assert.equal(history.past.length, beforeEditCount + 1);
+    assert.equal(undo(history).present.children.find((node) => node.id === frameId).children.find((node) => node.id === siblingId).width, 300);
+    const shapeChanged = await client.callTool({ name: "set_shape_style", arguments: { id: element.id, fill: "#123456", cornerRadius: 8 } });
+    assert.equal(JSON.parse(shapeChanged.content[0].text).fill, "#123456");
+    const frameChanged = await client.callTool({ name: "set_frame_style", arguments: { id: frameId, background: "#abcdef", clipContent: false } });
+    assert.equal(JSON.parse(frameChanged.content[0].text).clipContent, false);
+    const textChanged = await client.callTool({ name: "set_text_style", arguments: { id: text.id, fontSize: 24, color: "#654321", textAlign: "center" } });
+    assert.equal(JSON.parse(textChanged.content[0].text).fontSize, 24);
+    const beforeInvalid = history;
+    for (const [name, args] of [
+      ["set_element_geometry", { id: siblingId, x: 0, y: 0, width: -1, height: 20 }],
+      ["set_shape_style", { id: element.id, strokeWidth: -1 }],
+      ["set_shape_style", { id: element.id }],
+      ["set_text_style", { id: frameId, fontSize: 12 }],
+      ["set_frame_style", { id: "missing", clipContent: true }],
+      ["delete_element", { id: "missing" }],
+    ]) {
+      assert.equal((await client.callTool({ name, arguments: args })).isError, true);
+    }
+    assert.equal(history, beforeInvalid);
+
+    const duplicated = await client.callTool({ name: "duplicate_element", arguments: { id: frameId } });
+    assert.equal(duplicated.isError, false);
+    const copyId = JSON.parse(duplicated.content[0].text).id;
+    const frames = history.present.children.filter((node) => node.type === "frame");
+    const originalFrame = frames.find((node) => node.id === frameId);
+    const copiedFrame = frames.find((node) => node.id === copyId);
+    assert.ok(copiedFrame);
+    assert.deepEqual(copiedFrame.children.map((node) => node.name), originalFrame.children.map((node) => node.name));
+    assert.ok(copiedFrame.children.every((node, index) => node.id !== originalFrame.children[index].id));
+    const deleted = await client.callTool({ name: "delete_element", arguments: { id: frameId } });
+    assert.equal(JSON.parse(deleted.content[0].text).deleted, true);
+    assert.ok(!history.present.children.some((node) => node.id === frameId));
+    assert.ok(isDirty(history));
+    history = undo(history);
+    assert.ok(history.present.children.some((node) => node.id === frameId));
+    history = redo(history);
+    assert.ok(!history.present.children.some((node) => node.id === frameId));
   } finally {
     await client.close();
     await new Promise((done) => http.close(done));

@@ -18,6 +18,11 @@ const contentInput = z.strictObject({ id: z.string().min(1), content: z.string()
 const revisionElementInput = z.strictObject({ revisionId: z.string().min(1), elementId: z.string().min(1) });
 const compareInput = z.strictObject({ fromRevisionId: z.string().min(1), toRevisionId: z.string().min(1), elementId: z.string().min(1) });
 const relativeInput = z.strictObject({ revisionId: z.string().min(1), firstId: z.string().min(1), secondId: z.string().min(1) });
+const setGeometryInput = z.strictObject({ id: z.string().min(1), ...geometryInput });
+const hasChange = (value: { id: string }) => Object.keys(value).some((key) => key !== "id");
+const shapeStyleInput = z.strictObject({ id: z.string().min(1), fill: z.string().optional(), stroke: z.string().optional(), strokeWidth: z.number().optional(), cornerRadius: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
+const frameStyleInput = z.strictObject({ id: z.string().min(1), background: z.string().optional(), clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
+const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional() }).refine(hasChange, "変更するスタイルを指定してください");
 
 export function dispatchAgentRequest(api: AgentApi, method: string, args: unknown) {
   const input = (() => {
@@ -62,6 +67,38 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_text_content": {
         const parsed = contentInput.safeParse(args);
         return parsed.success ? Result.succeed(api.setTextContent(parsed.data.id, parsed.data.content)) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
+      case "set_element_geometry": {
+        const parsed = setGeometryInput.safeParse(args);
+        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
+        const { id, ...geometry } = parsed.data;
+        return Result.succeed(api.setGeometry(id, geometry));
+      }
+      case "set_shape_style": {
+        const parsed = shapeStyleInput.safeParse(args);
+        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
+        const { id, ...style } = parsed.data;
+        return Result.succeed(api.setShapeStyle(id, style));
+      }
+      case "set_frame_style": {
+        const parsed = frameStyleInput.safeParse(args);
+        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
+        const { id, ...style } = parsed.data;
+        return Result.succeed(api.setFrameStyle(id, style));
+      }
+      case "set_text_style": {
+        const parsed = textStyleInput.safeParse(args);
+        if (!parsed.success) return Result.fail(new Error(parsed.error.issues[0].message));
+        const { id, ...style } = parsed.data;
+        return Result.succeed(api.setTextStyle(id, style));
+      }
+      case "delete_element": {
+        const parsed = idInput.safeParse(args);
+        return parsed.success ? Result.succeed(api.delete(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
+      case "duplicate_element": {
+        const parsed = idInput.safeParse(args);
+        return parsed.success ? Result.succeed(api.duplicate(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
       }
       default: return Result.fail(new Error(`未知の操作です: ${method}`));
     }

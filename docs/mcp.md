@@ -36,6 +36,11 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 - `rename_element`: ID と新しい名前で改名。
 - `move_element`: ID と親基準の X・Y で移動。
 - `set_text_content`: ID と本文でテキストを変更。
+- `set_element_geometry`: ID と親基準の `x`・`y`・`width`・`height`（px）で位置と寸法を変更。
+- `set_shape_style`: 矩形・楕円の `fill`・`stroke`・`strokeWidth`、矩形の `cornerRadius` を変更。
+- `set_frame_style`: フレームの `background` と `clipContent` を変更。
+- `set_text_style`: テキストの `fontSize`・`color`・`textAlign` を変更。
+- `delete_element` / `duplicate_element`: ID で削除・複製。フレームの子孫も対象に含み、複製した全要素の ID を再生成。
 
 `get_state` を呼び、続けて `add_element` で名前付き矩形を追加する。返された名前と ID を使って `rename_element`・`move_element` を呼ぶと、画面にも変更が反映される。画面の「元に戻す」で操作を戻せることを確認する。存在しない ID を指定した場合はエラーとなり、ドキュメントは変わらない。
 

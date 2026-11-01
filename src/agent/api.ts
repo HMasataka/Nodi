@@ -1,8 +1,8 @@
 import { Result } from "@praha/byethrow";
-import { addNode, moveNode, renameNode, setTextContent, type AddNodeInput } from "@/document/commands/index.ts";
+import { addNode, deleteNode, duplicateNode, moveNode, renameNode, setFrameStyle, setNodeGeometry, setNodeStyle, setTextContent, setTextStyle, type AddNodeInput } from "@/document/commands/index.ts";
 import { listRevisions, type DocumentHistory } from "@/document/history.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
-import type { Document, DocumentNode } from "@/document/types.ts";
+import type { Document, DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types.ts";
 
 export interface ElementReference {
   id: string;
@@ -22,6 +22,8 @@ export interface ElementReference {
   stroke?: string;
   strokeWidth?: number;
   cornerRadius?: number;
+  background?: string;
+  clipContent?: boolean;
   source?: string;
 }
 
@@ -54,6 +56,7 @@ export function listElements(document: Document, includeImageSource = false): El
         ...(node.type === "text" ? { content: node.content, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign } : {}),
         ...(node.type === "rectangle" || node.type === "ellipse" ? { fill: node.fill, stroke: node.stroke, strokeWidth: node.strokeWidth } : {}),
         ...(node.type === "rectangle" ? { cornerRadius: node.cornerRadius } : {}),
+        ...(node.type === "frame" ? { background: node.background, clipContent: node.clipContent } : {}),
         ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
       });
       if (node.type === "frame") visit(node.children, path, node.id);
@@ -67,6 +70,12 @@ export function createAgentApi(port: EditorPort) {
   function getElement(id: string): Result.Result<ElementReference, Error> {
     const element = listElements(port.getDocument(), true).find((item) => item.id === id);
     return element ? Result.succeed(element) : Result.fail(new Error(`要素が見つかりません: ${id}`));
+  }
+
+  function applyToElement(id: string, result: Result.Result<Document, Error>): Result.Result<ElementReference, Error> {
+    if (Result.isFailure(result)) return result;
+    port.apply(result.value);
+    return getElement(id);
   }
 
   return {
@@ -112,10 +121,33 @@ export function createAgentApi(port: EditorPort) {
       return getElement(id);
     },
     move(id: string, x: number, y: number): Result.Result<ElementReference, Error> {
-      const result = moveNode(port.getDocument(), id, x, y);
+      return applyToElement(id, moveNode(port.getDocument(), id, x, y));
+    },
+    setGeometry(id: string, geometry: Geometry) {
+      return applyToElement(id, setNodeGeometry(port.getDocument(), id, geometry));
+    },
+    setShapeStyle(id: string, style: Partial<RectangleStyle>) {
+      return applyToElement(id, setNodeStyle(port.getDocument(), id, style));
+    },
+    setFrameStyle(id: string, style: Partial<FrameStyle>) {
+      return applyToElement(id, setFrameStyle(port.getDocument(), id, style));
+    },
+    setTextStyle(id: string, style: Partial<TextStyle>) {
+      return applyToElement(id, setTextStyle(port.getDocument(), id, style));
+    },
+    delete(id: string) {
+      const element = getElement(id);
+      if (Result.isFailure(element)) return element;
+      const removed = deleteNode(port.getDocument(), id);
+      if (Result.isFailure(removed)) return removed;
+      port.apply(removed.value);
+      return Result.succeed({ ...element.value, deleted: true });
+    },
+    duplicate(id: string) {
+      const result = duplicateNode(port.getDocument(), id);
       if (Result.isFailure(result)) return result;
-      port.apply(result.value);
-      return getElement(id);
+      port.apply(result.value.document);
+      return getElement(result.value.node.id);
     },
     setTextContent(id: string, content: string): Result.Result<ElementReference, Error> {
       const result = setTextContent(port.getDocument(), id, content);
