@@ -1,55 +1,29 @@
-import { flushSync } from "react-dom";
 import { Result } from "@praha/byethrow";
 import { type PointerEvent, useEffect, useRef, useState } from "react";
 
 import type { DocumentNode } from "@/document/types";
+import { screenDeltaToDocument } from "@/pages/editor/viewport";
 import { toggleSelection } from "@/pages/editor/selection";
+import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
-import { absoluteGeometry, drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
-import { canvasExtent, focusViewport, screenDeltaToDocument } from "@/pages/editor/viewport";
-import type { DragState, DrawingState, DrawTool, PanState, SelectionRegion } from "@/pages/editor/types";
+import type { DragState, DrawingState, DrawTool, SelectionRegion } from "@/pages/editor/types";
+import { drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
 import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
 import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {
     designRef, selectedIds, setSelectedId, setSelectedIds, setError, agentApi,
-    previewDocument, finishPreview, stepHistory: stepDocumentHistory, focusElementRef,
+    previewDocument, finishPreview, stepHistory: stepDocumentHistory,
   } = session;
   const drag = useRef<DragState | null>(null);
-  const pan = useRef<PanState | null>(null);
-  const viewportRef = useRef<HTMLElement | null>(null);
-  const spacePressed = useRef(false);
-  const [zoom, setZoom] = useState(1);
+  const { zoom, setZoom, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
   const [drawTool, setDrawTool] = useState<DrawTool>("select");
   const [drawing, setDrawing] = useState<DrawingState | null>(null);
   const drawingRef = useRef<DrawingState | null>(null);
   const [selection, setSelection] = useState<SelectionRegion | null>(null);
   const selectionRef = useRef<SelectionRegion | null>(null);
   const [guides, setGuides] = useState<SnapGuide[]>([]);
-
-  useEffect(() => {
-    focusElementRef.current = (id) => {
-      const viewport = viewportRef.current;
-      const absolute = absoluteGeometry(designRef.current, id);
-      if (!absolute) return Result.fail(new Error(`要素が見つかりません: ${id}`));
-      if (!viewport || viewport.clientWidth === 0 || viewport.clientHeight === 0) return Result.fail(new Error("キャンバスを表示できません"));
-      const extent = canvasExtent(designRef.current);
-      const target = focusViewport(absolute, extent, { width: viewport.clientWidth, height: viewport.clientHeight }, zoom);
-      flushSync(() => { setZoom(target.zoom); setSelectedId(id); });
-      viewport.scrollLeft = target.scrollLeft;
-      viewport.scrollTop = target.scrollTop;
-      return Result.succeed({
-        absolute, zoom: target.zoom, scrollLeft: viewport.scrollLeft, scrollTop: viewport.scrollTop,
-        screen: {
-          x: (extent.originX + absolute.x) * target.zoom - viewport.scrollLeft,
-          y: (extent.originY + absolute.y) * target.zoom - viewport.scrollTop,
-          width: absolute.width * target.zoom, height: absolute.height * target.zoom,
-        },
-      });
-    };
-    return () => { focusElementRef.current = () => Result.fail(new Error("キャンバスを表示できません")); };
-  }, [designRef, focusElementRef, setSelectedId, zoom]);
 
   function startDrag(event: PointerEvent<HTMLElement>, node: DocumentNode) {
     if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
@@ -130,27 +104,6 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
 
   function stepHistory(direction: "undo" | "redo") {
     if (!drag.current) stepDocumentHistory(direction);
-  }
-
-  function startPan(event: PointerEvent<HTMLElement>) {
-    if (drag.current || pan.current || !(event.button === 1 || spacePressed.current)) return;
-    event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    pan.current = {
-      pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY,
-      scrollLeft: event.currentTarget.scrollLeft, scrollTop: event.currentTarget.scrollTop,
-    };
-  }
-
-  function continuePan(event: PointerEvent<HTMLElement>) {
-    const active = pan.current;
-    if (!active || active.pointerId !== event.pointerId) return;
-    event.currentTarget.scrollLeft = active.scrollLeft - (event.clientX - active.clientX);
-    event.currentTarget.scrollTop = active.scrollTop - (event.clientY - active.clientY);
-  }
-
-  function finishPan(pointerId: number) {
-    if (pan.current?.pointerId === pointerId) pan.current = null;
   }
 
   function beginDrawing(event: PointerEvent<HTMLDivElement>) {
@@ -245,25 +198,14 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       if (event.key === "Escape" && selectionRef.current) { cancelSelection(); event.preventDefault(); return; }
       const target = event.target instanceof HTMLElement ? event.target : null;
       const editing = target?.closest("input, textarea, [contenteditable]");
-      const toolbarButton = target?.closest("button:not(.canvas-node)");
-      if (event.code === "Space" && !editing && !toolbarButton) {
-        spacePressed.current = true;
-        event.preventDefault();
-      }
       if (!(event.metaKey || event.ctrlKey) || event.altKey || event.key.toLowerCase() !== "z") return;
       if (editing) return;
       event.preventDefault();
       stepHistory(event.shiftKey ? "redo" : "undo");
     }
-    function onKeyUp(event: KeyboardEvent) { if (event.code === "Space") spacePressed.current = false; }
-    function onBlur() { spacePressed.current = false; }
     window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keyup", onKeyUp);
-    window.addEventListener("blur", onBlur);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("keyup", onKeyUp);
-      window.removeEventListener("blur", onBlur);
     };
   });
 

@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import type { Document, FrameStyle, RectangleStyle, TextStyle } from "@/document/types.ts";
+import { type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 
 export function setNodeStyle(
@@ -13,7 +13,7 @@ export function setNodeStyle(
   if (node.type === "ellipse" && patch.cornerRadius !== undefined) return Result.fail(new Error("楕円に角丸は設定できません"));
   const style = { fill: patch.fill ?? node.fill, stroke: patch.stroke ?? node.stroke,
     strokeWidth: patch.strokeWidth ?? node.strokeWidth };
-  if (!/^#[0-9a-fA-F]{6}$/.test(style.fill) || !/^#[0-9a-fA-F]{6}$/.test(style.stroke)) {
+  if (!HEX_COLOR_PATTERN.test(style.fill) || !HEX_COLOR_PATTERN.test(style.stroke)) {
     return Result.fail(new Error("色は #RRGGBB 形式で指定してください"));
   }
   const cornerRadius = node.type === "rectangle" ? patch.cornerRadius ?? node.cornerRadius : undefined;
@@ -26,7 +26,7 @@ export function setNodeStyle(
 export function setFrameStyle(document: Document, id: string, patch: Partial<FrameStyle>): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "frame") return Result.fail(new Error(`フレームが見つかりません: ${id}`));
-  if (patch.background !== undefined && (typeof patch.background !== "string" || !/^#[0-9a-fA-F]{6}$/.test(patch.background))) {
+  if (patch.background !== undefined && (typeof patch.background !== "string" || !HEX_COLOR_PATTERN.test(patch.background))) {
     return Result.fail(new Error("背景色は #RRGGBB 形式で指定してください"));
   }
   if (patch.clipContent !== undefined && typeof patch.clipContent !== "boolean") return Result.fail(new Error("はみ出し表示の設定が不正です"));
@@ -47,7 +47,7 @@ export function setTextStyle(document: Document, id: string, patch: Partial<Text
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
   const style = { fontSize: patch.fontSize ?? node.fontSize, color: patch.color ?? node.color, textAlign: patch.textAlign ?? node.textAlign };
   if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) return Result.fail(new Error("文字サイズは正の有限値で指定してください"));
-  if (!/^#[0-9a-fA-F]{6}$/.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB 形式で指定してください"));
+  if (!HEX_COLOR_PATTERN.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB 形式で指定してください"));
   if (!["left", "center", "right"].includes(style.textAlign)) return Result.fail(new Error("文字揃えが不正です"));
   return updateNode(document, id, (current) => ({ ...current, ...style }));
 }

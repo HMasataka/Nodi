@@ -2,47 +2,43 @@ import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
 export interface LocatedNode { node: DocumentNode; absolute: Geometry }
 
-export function listLocatedNodes(document: Document): LocatedNode[] {
-  const located: LocatedNode[] = [];
-  function visit(nodes: DocumentNode[], parentX: number, parentY: number) {
+type VisitDecision = "stop" | "skipChildren" | void;
+
+export function walkLocatedNodes(document: Document, visit: (entry: LocatedNode) => VisitDecision): void {
+  function walk(nodes: DocumentNode[], parentX: number, parentY: number): boolean {
     for (const node of nodes) {
       const x = parentX + node.x;
       const y = parentY + node.y;
-      located.push({ node, absolute: { x, y, width: node.width, height: node.height } });
-      if (node.type === "frame") visit(node.children, x, y);
+      const decision = visit({ node, absolute: { x, y, width: node.width, height: node.height } });
+      if (decision === "stop") return true;
+      if (node.type === "frame" && decision !== "skipChildren" && walk(node.children, x, y)) return true;
     }
+    return false;
   }
-  visit(document.children, 0, 0);
+  walk(document.children, 0, 0);
+}
+
+export function listLocatedNodes(document: Document): LocatedNode[] {
+  const located: LocatedNode[] = [];
+  walkLocatedNodes(document, (entry) => { located.push(entry); });
   return located;
 }
 
 export function absoluteGeometry(document: Document, id: string): Geometry | null {
-  function visit(nodes: DocumentNode[], originX: number, originY: number): Geometry | null {
-    for (const node of nodes) {
-      const x = originX + node.x;
-      const y = originY + node.y;
-      if (node.id === id) return { x, y, width: node.width, height: node.height };
-      if (node.type === "frame") {
-        const found = visit(node.children, x, y);
-        if (found) return found;
-      }
-    }
-    return null;
-  }
-  return visit(document.children, 0, 0);
+  let found: Geometry | null = null;
+  walkLocatedNodes(document, ({ node, absolute }) => {
+    if (node.id === id) { found = absolute; return "stop"; }
+  });
+  return found;
 }
 
 export function locateSelection(document: Document, ids: Set<string>): LocatedNode[] {
   const located: LocatedNode[] = [];
-  function visit(nodes: DocumentNode[], originX: number, originY: number) {
-    for (const node of nodes) {
-      const x = originX + node.x;
-      const y = originY + node.y;
-      if (ids.has(node.id)) {
-        located.push({ node, absolute: { x, y, width: node.width, height: node.height } });
-      } else if (node.type === "frame") visit(node.children, x, y);
+  walkLocatedNodes(document, (entry) => {
+    if (ids.has(entry.node.id)) {
+      located.push(entry);
+      return "skipChildren";
     }
-  }
-  visit(document.children, 0, 0);
+  });
   return located;
 }

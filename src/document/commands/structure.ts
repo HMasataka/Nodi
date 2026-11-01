@@ -44,20 +44,7 @@ export function reorderNode(document: Document, id: string, direction: LayerDire
 }
 
 export function deleteNode(document: Document, id: string): Result.Result<Document, Error> {
-  let found = false;
-  function remove(nodes: DocumentNode[]): DocumentNode[] {
-    return nodes.flatMap((node) => {
-      if (node.id === id) {
-        found = true;
-        return [];
-      }
-      return [node.type === "frame" ? { ...node, children: remove(node.children) } : node];
-    });
-  }
-  const children = remove(document.children);
-  return found
-    ? Result.succeed({ ...document, children })
-    : Result.fail(new Error(`要素が見つかりません: ${id}`));
+  return deleteNodes(document, [id]);
 }
 
 export function duplicateNode(

@@ -1,4 +1,5 @@
-import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+import { walkLocatedNodes } from "@/document/geometry.ts";
+import type { Document, Geometry } from "@/document/types.ts";
 
 export interface CanvasExtent {
   originX: number;
@@ -12,18 +13,12 @@ export function canvasExtent(document: Document): CanvasExtent {
   let minY = 0;
   let maxX = 1200;
   let maxY = 900;
-  function visit(nodes: DocumentNode[], originX: number, originY: number) {
-    for (const node of nodes) {
-      const x = originX + node.x;
-      const y = originY + node.y;
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + node.width);
-      maxY = Math.max(maxY, y + node.height);
-      if (node.type === "frame") visit(node.children, x, y);
-    }
-  }
-  visit(document.children, 0, 0);
+  walkLocatedNodes(document, ({ absolute }) => {
+    minX = Math.min(minX, absolute.x);
+    minY = Math.min(minY, absolute.y);
+    maxX = Math.max(maxX, absolute.x + absolute.width);
+    maxY = Math.max(maxY, absolute.y + absolute.height);
+  });
   const originX = minX < 0 ? -minX + 32 : 0;
   const originY = minY < 0 ? -minY + 32 : 0;
   return { originX, originY, width: originX + maxX + 32, height: originY + maxY + 32 };

@@ -15,10 +15,12 @@
 | `src/pages/editor/components/organisms/EditorToolbar/` | 文書操作と作成・描画ツールの組み立て |
 | `src/pages/editor/components/molecules/CreationTools/`・`DocumentControls/`・`DrawingTools/` | ツールバー内の操作群 |
 | `src/pages/editor/components/molecules/ElementAppearance/` | 要素種別ごとの編集欄の切り替え |
-| `src/pages/editor/hooks/useCanvasInteraction.ts` | ポインター操作、パン・ズーム、描画ツールとショートカット |
+| `src/pages/editor/hooks/useCanvasInteraction.ts` | 要素のドラッグ・範囲選択・描画ツールと Undo / Redo |
+| `src/pages/editor/hooks/useCanvasViewport.ts` | パン・ズーム、Space キー操作、MCP からの表示位置調整 |
 | `src/pages/editor/hooks/useMcpBridge.ts` | 実行中のアプリへの MCP 要求を編集 API に渡す |
 | `src/pages/editor/geometry.ts`・`viewport.ts` | 画面座標・ズームからドキュメント座標への変換 |
 | `src/document/types.ts` | ドキュメントの型・既定値 |
+| `src/document/geometry.ts` | 親フレームを加味した要素の絶対座標走査 |
 | `src/document/commands/` | ツリー走査と作成・更新・スタイル・構造変更。`index.ts` が公開操作の入口 |
 | `src/document/history.ts`・`measure.ts` | 編集履歴と履歴時点の数値計測 |
 | `src/persistence/` | 保存形式の検証・JSON 変換、ファイル選択・読み書き、復元データの検証 |

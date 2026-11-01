@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
-import { type Document, type DocumentNode, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
+import { type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");
@@ -8,7 +8,7 @@ const coordinate = z.number().finite();
 const dimension = z.number().finite().positive();
 const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimension };
 
-const color = z.string().regex(/^#[0-9a-fA-F]{6}$/);
+const color = z.string().regex(HEX_COLOR_PATTERN);
 const style = { fill: color, stroke: color, strokeWidth: z.number().finite().nonnegative(), cornerRadius: z.number().finite().nonnegative() };
 const nodeSchema: z.ZodType<DocumentNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
