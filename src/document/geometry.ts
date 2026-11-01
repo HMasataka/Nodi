@@ -2,6 +2,20 @@ import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
 export interface LocatedNode { node: DocumentNode; absolute: Geometry }
 
+export function listLocatedNodes(document: Document): LocatedNode[] {
+  const located: LocatedNode[] = [];
+  function visit(nodes: DocumentNode[], parentX: number, parentY: number) {
+    for (const node of nodes) {
+      const x = parentX + node.x;
+      const y = parentY + node.y;
+      located.push({ node, absolute: { x, y, width: node.width, height: node.height } });
+      if (node.type === "frame") visit(node.children, x, y);
+    }
+  }
+  visit(document.children, 0, 0);
+  return located;
+}
+
 export function absoluteGeometry(document: Document, id: string): Geometry | null {
   function visit(nodes: DocumentNode[], originX: number, originY: number): Geometry | null {
     for (const node of nodes) {
