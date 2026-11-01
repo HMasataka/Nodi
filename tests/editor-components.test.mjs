@@ -38,6 +38,14 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(multiCanvas, /class="selection-preview"/);
     assert.match(multiCanvas, /class="canvas-frame is-selected"/);
     assert.match(multiCanvas, /class="canvas-image is-selected"/);
+    const guidedCanvas = renderToStaticMarkup(createElement(Canvas, {
+      design: { version: 1, children: [frame] }, selectedId: image.id, zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      guides: [{ orientation: "vertical", position: 110, from: 20, to: 150 }],
+      onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
+      onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
+      onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp, onImageError: noOp,
+    }));
+    assert.match(guidedCanvas, /class="alignment-guide vertical" style="left:110px;top:20px;height:130px"/);
     const overflowing = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [{ ...frame, clipContent: false }] }, selectedId: frame.id,
       zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,

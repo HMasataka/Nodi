@@ -1,5 +1,6 @@
 import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
 import type { LayerDirection } from "@/document/commands/index.ts";
+import type { Alignment } from "@/document/commands/index.ts";
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
@@ -20,11 +21,12 @@ interface InspectorProps {
   onDuplicate(): void;
   onDelete(): void;
   onReorder(direction: LayerDirection): void;
+  onAlign?(alignment: Alignment): void;
   onExportFrame(): void;
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -35,6 +37,10 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
             {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : "フレーム"}
           </div>
           {selectedCount > 1 && <p className="property-help">{selectedCount} 個の要素を選択中。ドラッグで一括移動できます。</p>}
+          {selectedCount > 1 && onAlign && <div className="alignment-actions" aria-label="選択要素の整列">
+            {([ ["左", "left"], ["横中央", "centerX"], ["右", "right"], ["上", "top"], ["縦中央", "centerY"], ["下", "bottom"] ] as const).map(([label, alignment]) =>
+              <button key={alignment} type="button" className="file-button" onClick={() => onAlign(alignment)}>{label}</button>)}
+          </div>}
           <label className="field-label" htmlFor="node-name">名前</label>
           <NameEditor key={`${selected.id}:${selected.name}`} node={selected} onRename={onRename} />
           <div className="property-divider" />

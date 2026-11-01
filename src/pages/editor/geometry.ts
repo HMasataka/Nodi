@@ -1,4 +1,5 @@
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+export { absoluteGeometry } from "@/document/geometry.ts";
 
 export interface Point { x: number; y: number }
 
@@ -14,22 +15,6 @@ export function frameOrigin(document: Document, id: string): Point | null {
       if (node.id === id) return origin;
       const found = visit(node.children, origin);
       if (found) return found;
-    }
-    return null;
-  }
-  return visit(document.children, { x: 0, y: 0 });
-}
-
-export function absoluteGeometry(document: Document, id: string): Geometry | null {
-  function visit(nodes: DocumentNode[], origin: Point): Geometry | null {
-    for (const node of nodes) {
-      const x = origin.x + node.x;
-      const y = origin.y + node.y;
-      if (node.id === id) return { x, y, width: node.width, height: node.height };
-      if (node.type === "frame") {
-        const found = visit(node.children, { x, y });
-        if (found) return found;
-      }
     }
     return null;
   }

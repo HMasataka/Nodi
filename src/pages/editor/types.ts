@@ -3,6 +3,7 @@ import type { Point } from "@/pages/editor/geometry";
 
 export interface SingleDragState {
   mode: "move" | "resize";
+  original: Document;
   id: string;
   pointerId: number;
   clientX: number;

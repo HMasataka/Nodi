@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
 import { absoluteGeometry, drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
 import { toggleSelection } from "@/pages/editor/selection";
+import { snapMove, snapResize, type SnapGuide } from "@/pages/editor/snapping";
 import type { DocumentNode } from "@/document/types";
 import { canvasExtent, focusViewport, screenDeltaToDocument } from "@/pages/editor/viewport";
 import type { DragState, DrawingState, DrawTool, PanState, SelectionRegion } from "@/pages/editor/types";
@@ -24,6 +25,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   const drawingRef = useRef<DrawingState | null>(null);
   const [selection, setSelection] = useState<SelectionRegion | null>(null);
   const selectionRef = useRef<SelectionRegion | null>(null);
+  const [guides, setGuides] = useState<SnapGuide[]>([]);
 
   useEffect(() => {
     focusElementRef.current = (id) => {
@@ -63,6 +65,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     }
     drag.current = {
       mode: "move", id: node.id, pointerId: event.pointerId,
+      original: designRef.current,
       clientX: event.clientX, clientY: event.clientY,
       x: node.x, y: node.y, width: node.width, height: node.height, zoom,
     };
@@ -76,6 +79,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     event.currentTarget.parentElement?.setPointerCapture(event.pointerId);
     drag.current = {
       mode: "resize", id: node.id, pointerId: event.pointerId,
+      original: designRef.current,
       clientX: event.clientX, clientY: event.clientY,
       x: node.x, y: node.y, width: node.width, height: node.height, zoom,
     };
@@ -88,17 +92,27 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     const dx = screenDeltaToDocument(event.clientX - active.clientX, active.zoom);
     const dy = screenDeltaToDocument(event.clientY - active.clientY, active.zoom);
     if (active.mode === "group") {
-      const moved = moveNodes(active.original, active.ids, dx, dy);
+      const snapped = snapMove(active.original, active.ids, dx, dy, active.zoom);
+      setGuides(snapped.guides);
+      const moved = moveNodes(active.original, active.ids, snapped.dx, snapped.dy);
       if (Result.isFailure(moved)) { setError(moved.error.message); return; }
       if (moved.value !== designRef.current) previewDocument(moved.value);
       return;
     }
-    const geometry = active.mode === "resize"
+    const proposed = active.mode === "resize"
       ? { x: active.x, y: active.y, width: Math.max(1, active.width + dx), height: Math.max(1, active.height + dy) }
       : { x: active.x + dx, y: active.y + dy, width: active.width, height: active.height };
+    const snapped = active.mode === "resize"
+      ? snapResize(active.original, active.id, proposed, active.zoom)
+      : (() => {
+        const result = snapMove(active.original, [active.id], dx, dy, active.zoom);
+        return { geometry: { ...proposed, x: active.x + result.dx, y: active.y + result.dy }, guides: result.guides };
+      })();
+    setGuides(snapped.guides);
+    const geometry = snapped.geometry;
     const current = findNode(designRef.current, active.id);
     if (current && current.x === geometry.x && current.y === geometry.y && current.width === geometry.width && current.height === geometry.height) return;
-    const moved = setNodeGeometry(designRef.current, active.id, geometry);
+    const moved = setNodeGeometry(active.original, active.id, geometry);
     if (Result.isFailure(moved)) { setError(moved.error.message); return; }
     previewDocument(moved.value);
   }
@@ -107,6 +121,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     const active = drag.current;
     if (!active || active.pointerId !== pointerId) return;
     drag.current = null;
+    setGuides([]);
     if (active.mode === "group") { finishPreview(designRef.current !== active.original); return; }
     const final = findNode(designRef.current, active.id);
     finishPreview(!!final && (final.x !== active.x || final.y !== active.y || final.width !== active.width || final.height !== active.height));
@@ -252,7 +267,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection,
+    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection,
