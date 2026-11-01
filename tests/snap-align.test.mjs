@@ -18,6 +18,10 @@ test("移動・リサイズの辺と中心をズームに応じた閾値でス�
   assert.deepEqual([atOne.dx, atOne.dy], [50, 40]);
   assert.deepEqual([atTwo.dx, atTwo.dy], [50, 40]);
   assert.deepEqual(atOne.guides.map((guide) => [guide.orientation, guide.position]), [["vertical", 150], ["horizontal", 80]]);
+  const nearAtOne = snapMove(b.document, [a.node.id], 44, 35, 1);
+  const nearAtTwo = snapMove(b.document, [a.node.id], 44, 35, 2);
+  assert.deepEqual([nearAtOne.dx, nearAtOne.dy], [50, 40]);
+  assert.deepEqual([nearAtTwo.dx, nearAtTwo.dy], [44, 35]);
   const resized = snapResize(b.document, a.node.id, { x: 0, y: 0, width: 145, height: 75 }, 1);
   assert.deepEqual(resized.geometry, { x: 0, y: 0, width: 150, height: 80 });
   assert.equal(resized.guides.length, 2);
@@ -29,6 +33,18 @@ test("移動・リサイズの辺と中心をズームに応じた閾値でス�
   assert.deepEqual(centerResized.guides.map((guide) => guide.position), [150, 120]);
   assert.equal(history.present, b.document);
   assert.equal(isDirty(history), false);
+});
+
+test("選択フレームの子にはスナップせず、入れ子のリサイズは絶対座標で比較する", () => {
+  const frame = success(addNode(createDocument(), { type: "frame", x: 100, y: 50, width: 400, height: 300 }));
+  const child = success(addNode(frame.document, { type: "rectangle", parentId: frame.node.id, x: 10, y: 20, width: 100, height: 40 }));
+  const onlyFrameAndChild = snapMove(child.document, [frame.node.id], 0, 0, 1);
+  assert.deepEqual(onlyFrameAndChild, { dx: 0, dy: 0, guides: [] });
+
+  const sibling = success(addNode(child.document, { type: "rectangle", parentId: frame.node.id, x: 150, y: 100, width: 80, height: 40 }));
+  const result = snapResize(sibling.document, child.node.id, { x: 10, y: 20, width: 145, height: 40 }, 1);
+  assert.equal(result.geometry.width, 140);
+  assert.equal(result.guides.find((guide) => guide.orientation === "vertical")?.position, 250);
 });
 
 test("別フレームの要素を左右・上下・中心で整列して保存・Undo / Redo できる", () => {

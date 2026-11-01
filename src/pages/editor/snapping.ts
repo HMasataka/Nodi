@@ -1,77 +1,134 @@
-import { absoluteGeometry, locateSelection } from "@/document/geometry.ts";
+import { locateSelection } from "@/document/geometry.ts";
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
 export interface SnapGuide { orientation: "vertical" | "horizontal"; position: number; from: number; to: number }
 
-function candidates(document: Document, selectedIds: string[]): Geometry[] {
-  const excluded = new Set(locateSelection(document, new Set(selectedIds)).map(({ node }) => node.id));
-  const results: Geometry[] = [];
-  function visit(nodes: DocumentNode[], originX: number, originY: number) {
+type Axis = "x" | "y";
+type SnapMode = "move" | "resize";
+
+interface AxisEdges { start: number; center: number; end: number; size: number }
+interface SnapMatch { adjustment: number; distance: number; guide: SnapGuide }
+
+// 判定は画面上で 8px 以内。ズームに応じてドキュメント座標へ換算する。
+const SNAP_DISTANCE_ON_SCREEN = 8;
+
+function otherElementBounds(document: Document, selectedIds: string[]): Geometry[] {
+  const selectedRoots = new Set(locateSelection(document, new Set(selectedIds)).map(({ node }) => node.id));
+  const bounds: Geometry[] = [];
+  function visit(nodes: DocumentNode[], parentX: number, parentY: number) {
     for (const node of nodes) {
-      if (excluded.has(node.id)) continue;
-      const x = originX + node.x;
-      const y = originY + node.y;
-      results.push({ x, y, width: node.width, height: node.height });
+      // 選択フレームの子にも自分自身をスナップさせない。
+      if (selectedRoots.has(node.id)) continue;
+      const x = parentX + node.x;
+      const y = parentY + node.y;
+      bounds.push({ x, y, width: node.width, height: node.height });
       if (node.type === "frame") visit(node.children, x, y);
     }
   }
   visit(document.children, 0, 0);
-  return results;
+  return bounds;
 }
 
-function boundsOf(geometries: Geometry[]): Geometry {
-  const x = Math.min(...geometries.map((item) => item.x));
-  const y = Math.min(...geometries.map((item) => item.y));
-  return { x, y, width: Math.max(...geometries.map((item) => item.x + item.width)) - x,
-    height: Math.max(...geometries.map((item) => item.y + item.height)) - y };
+function enclosingBounds(geometries: Geometry[]): Geometry {
+  let left = Infinity;
+  let top = Infinity;
+  let right = -Infinity;
+  let bottom = -Infinity;
+  for (const geometry of geometries) {
+    left = Math.min(left, geometry.x);
+    top = Math.min(top, geometry.y);
+    right = Math.max(right, geometry.x + geometry.width);
+    bottom = Math.max(bottom, geometry.y + geometry.height);
+  }
+  return { x: left, y: top, width: right - left, height: bottom - top };
 }
 
-function snapAxis(moving: Geometry, others: Geometry[], axis: "x" | "y", threshold: number, resize: boolean) {
-  const start = moving[axis];
-  const size = axis === "x" ? moving.width : moving.height;
-  const cross = axis === "x" ? "y" : "x";
-  const crossSize = axis === "x" ? "height" : "width";
-  const anchors = resize ? [{ value: start + size, factor: 1 }, { value: start + size / 2, factor: 2 }]
-    : [{ value: start, factor: 1 }, { value: start + size / 2, factor: 1 }, { value: start + size, factor: 1 }];
-  let best: { adjustment: number; distance: number; guide: SnapGuide } | null = null;
+function edgesAlong(geometry: Geometry, axis: Axis): AxisEdges {
+  const start = axis === "x" ? geometry.x : geometry.y;
+  const size = axis === "x" ? geometry.width : geometry.height;
+  return { start, center: start + size / 2, end: start + size, size };
+}
+
+function movingAnchors(edges: AxisEdges, mode: SnapMode) {
+  if (mode === "move") return [
+    { position: edges.start, adjustmentFactor: 1 },
+    { position: edges.center, adjustmentFactor: 1 },
+    { position: edges.end, adjustmentFactor: 1 },
+  ];
+  return [
+    { position: edges.end, adjustmentFactor: 1 },
+    // 左上は固定。幅・高さを変えると中心はその半分だけ動く。
+    { position: edges.center, adjustmentFactor: 2 },
+  ];
+}
+
+function guideAcross(moving: Geometry, other: Geometry, axis: Axis, position: number): SnapGuide {
+  if (axis === "x") return {
+    orientation: "vertical", position,
+    from: Math.min(moving.y, other.y), to: Math.max(moving.y + moving.height, other.y + other.height),
+  };
+  return {
+    orientation: "horizontal", position,
+    from: Math.min(moving.x, other.x), to: Math.max(moving.x + moving.width, other.x + other.width),
+  };
+}
+
+function closestSnap(moving: Geometry, others: Geometry[], axis: Axis, mode: SnapMode, zoom: number): SnapMatch | null {
+  const movingEdges = edgesAlong(moving, axis);
+  const anchors = movingAnchors(movingEdges, mode);
+  const threshold = SNAP_DISTANCE_ON_SCREEN / zoom;
+  let closest: SnapMatch | null = null;
+
   for (const other of others) {
-    const otherSize = axis === "x" ? other.width : other.height;
-    for (const target of [other[axis], other[axis] + otherSize / 2, other[axis] + otherSize]) {
+    const targetEdges = edgesAlong(other, axis);
+    for (const target of [targetEdges.start, targetEdges.center, targetEdges.end]) {
       for (const anchor of anchors) {
-        const distance = Math.abs(target - anchor.value);
-        const adjustment = (target - anchor.value) * anchor.factor;
-        if (distance > threshold || (resize && size + adjustment <= 0) || (best && distance >= best.distance)) continue;
-        best = { adjustment, distance, guide: {
-          orientation: axis === "x" ? "vertical" : "horizontal", position: target,
-          from: Math.min(moving[cross], other[cross]),
-          to: Math.max(moving[cross] + moving[crossSize], other[cross] + other[crossSize]),
-        } };
+        const difference = target - anchor.position;
+        const distance = Math.abs(difference);
+        const adjustment = difference * anchor.adjustmentFactor;
+        if (distance > threshold || (mode === "resize" && movingEdges.size + adjustment <= 0)) continue;
+        if (closest && distance >= closest.distance) continue;
+        closest = { adjustment, distance, guide: guideAcross(moving, other, axis, target) };
       }
     }
   }
-  return best;
+  return closest;
+}
+
+function guidesFor(xSnap: SnapMatch | null, ySnap: SnapMatch | null): SnapGuide[] {
+  return [xSnap?.guide, ySnap?.guide].filter((guide): guide is SnapGuide => guide !== undefined);
 }
 
 export function snapMove(document: Document, ids: string[], dx: number, dy: number, zoom: number) {
-  const located = locateSelection(document, new Set(ids));
-  if (located.length === 0) return { dx, dy, guides: [] as SnapGuide[] };
-  const original = boundsOf(located.map(({ absolute }) => absolute));
+  const selected = locateSelection(document, new Set(ids));
+  if (selected.length === 0) return { dx, dy, guides: [] as SnapGuide[] };
+
+  const original = enclosingBounds(selected.map(({ absolute }) => absolute));
   const moving = { ...original, x: original.x + dx, y: original.y + dy };
-  const others = candidates(document, ids);
-  const horizontal = snapAxis(moving, others, "x", 8 / zoom, false);
-  const vertical = snapAxis(moving, others, "y", 8 / zoom, false);
-  return { dx: dx + (horizontal?.adjustment ?? 0), dy: dy + (vertical?.adjustment ?? 0),
-    guides: [horizontal?.guide, vertical?.guide].filter((guide): guide is SnapGuide => !!guide) };
+  const others = otherElementBounds(document, ids);
+  const xSnap = closestSnap(moving, others, "x", "move", zoom);
+  const ySnap = closestSnap(moving, others, "y", "move", zoom);
+  return {
+    dx: dx + (xSnap?.adjustment ?? 0), dy: dy + (ySnap?.adjustment ?? 0),
+    guides: guidesFor(xSnap, ySnap),
+  };
 }
 
 export function snapResize(document: Document, id: string, geometry: Geometry, zoom: number) {
-  const current = absoluteGeometry(document, id);
-  const located = locateSelection(document, new Set([id]))[0];
-  if (!current || !located) return { geometry, guides: [] as SnapGuide[] };
-  const moving = { ...geometry, x: current.x + geometry.x - located.node.x, y: current.y + geometry.y - located.node.y };
-  const others = candidates(document, [id]);
-  const horizontal = snapAxis(moving, others, "x", 8 / zoom, true);
-  const vertical = snapAxis(moving, others, "y", 8 / zoom, true);
-  return { geometry: { ...geometry, width: geometry.width + (horizontal?.adjustment ?? 0), height: geometry.height + (vertical?.adjustment ?? 0) },
-    guides: [horizontal?.guide, vertical?.guide].filter((guide): guide is SnapGuide => !!guide) };
+  const selected = locateSelection(document, new Set([id]))[0];
+  if (!selected) return { geometry, guides: [] as SnapGuide[] };
+
+  // 提案された x/y は親基準なので、元の絶対位置との差分を足して比較する。
+  const moving = {
+    ...geometry,
+    x: selected.absolute.x + geometry.x - selected.node.x,
+    y: selected.absolute.y + geometry.y - selected.node.y,
+  };
+  const others = otherElementBounds(document, [id]);
+  const xSnap = closestSnap(moving, others, "x", "resize", zoom);
+  const ySnap = closestSnap(moving, others, "y", "resize", zoom);
+  return {
+    geometry: { ...geometry, width: geometry.width + (xSnap?.adjustment ?? 0), height: geometry.height + (ySnap?.adjustment ?? 0) },
+    guides: guidesFor(xSnap, ySnap),
+  };
 }
