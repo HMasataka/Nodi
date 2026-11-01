@@ -17,7 +17,7 @@ function fakeCanvas() {
     clip: () => calls.push(["clip"]),
     roundRect: (...args) => calls.push(["roundRect", ...args]),
     ellipse: (...args) => calls.push(["ellipse", ...args]),
-    fill: () => calls.push(["fill"]), stroke: () => calls.push(["stroke"]),
+    fill: () => calls.push(["fill", ctx.fillStyle]), stroke: () => calls.push(["stroke"]),
     fillRect: (...args) => calls.push(["fillRect", ...args, ctx.fillStyle]),
     measureText: (text) => ({ width: [...text].length * 8 }),
     fillText: (...args) => calls.push(["fillText", ...args]),
@@ -51,6 +51,14 @@ test("サンプルのフレームを寸法どおりに描き、編集 UI を含�
   assert.ok(visibleText.includes("ATLAS STUDIO"));
   assert.ok(!visibleText.includes("ナビゲーション"));
   assert.equal(calls.filter(([method]) => method === "save").length, calls.filter(([method]) => method === "restore").length);
+});
+
+test("重なった兄弟要素はレイヤー順に PNG へ描画する", async () => {
+  const rectangle = (id, fill) => ({ id, name: id, type: "rectangle", x: 0, y: 0, width: 80, height: 80, fill, stroke: "#000000", strokeWidth: 0, cornerRadius: 0 });
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 100, background: "#ffffff", clipContent: true, children: [rectangle("back", "#123456"), rectangle("front", "#abcdef")] };
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.filter(([method]) => method === "fill").map(([, color]) => color), ["#123456", "#abcdef"]);
 });
 
 test("入れ子フレームの背景を先に描き、クリップ設定ごとに子要素を切り替える", async () => {

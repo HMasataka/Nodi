@@ -2,6 +2,34 @@ import { Result } from "@praha/byethrow";
 import { collectNodes, findNode } from "@/document/commands/tree.ts";
 import type { Document, DocumentNode } from "@/document/types.ts";
 
+export type LayerDirection = "front" | "back" | "forward" | "backward";
+
+export function reorderNode(document: Document, id: string, direction: LayerDirection): Result.Result<Document, Error> {
+  if (!["front", "back", "forward", "backward"].includes(direction)) return Result.fail(new Error("重なり順の指定が不正です"));
+  let found = false;
+  function reorder(nodes: DocumentNode[]): DocumentNode[] {
+    const index = nodes.findIndex((node) => node.id === id);
+    if (index >= 0) {
+      found = true;
+      const nextIndex = direction === "front" ? nodes.length - 1 : direction === "back" ? 0
+        : direction === "forward" ? Math.min(nodes.length - 1, index + 1) : Math.max(0, index - 1);
+      if (index === nextIndex) return nodes;
+      const result = [...nodes];
+      result.splice(nextIndex, 0, result.splice(index, 1)[0]);
+      return result;
+    }
+    const updated = nodes.map((node) => {
+      if (node.type !== "frame") return node;
+      const children = reorder(node.children);
+      return children === node.children ? node : { ...node, children };
+    });
+    return updated.every((node, position) => node === nodes[position]) ? nodes : updated;
+  }
+  const children = reorder(document.children);
+  if (!found) return Result.fail(new Error(`要素が見つかりません: ${id}`));
+  return Result.succeed(children === document.children ? document : { ...document, children });
+}
+
 export function deleteNode(document: Document, id: string): Result.Result<Document, Error> {
   let found = false;
   function remove(nodes: DocumentNode[]): DocumentNode[] {
