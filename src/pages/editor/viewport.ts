@@ -1,3 +1,4 @@
+import type { PanState } from "@/pages/editor/types";
 import { walkLocatedNodes } from "@/document/geometry.ts";
 import type { Document, Geometry } from "@/document/types.ts";
 
@@ -7,6 +8,8 @@ export interface CanvasExtent {
   width: number;
   height: number;
 }
+
+export interface ScrollPosition { scrollLeft: number; scrollTop: number }
 
 export function canvasExtent(document: Document): CanvasExtent {
   let minX = 0;
@@ -31,6 +34,22 @@ export function focusViewport(bounds: Geometry, extent: CanvasExtent, viewport: 
   const scrollLeft = Math.max(0, (extent.originX + bounds.x + bounds.width / 2) * zoom - viewport.width / 2);
   const scrollTop = Math.max(0, (extent.originY + bounds.y + bounds.height / 2) * zoom - viewport.height / 2);
   return { zoom, scrollLeft, scrollTop };
+}
+
+export function screenGeometry(bounds: Geometry, extent: CanvasExtent, zoom: number, scroll: ScrollPosition): Geometry {
+  return {
+    x: (extent.originX + bounds.x) * zoom - scroll.scrollLeft,
+    y: (extent.originY + bounds.y) * zoom - scroll.scrollTop,
+    width: bounds.width * zoom,
+    height: bounds.height * zoom,
+  };
+}
+
+export function panScroll(start: PanState, pointer: { clientX: number; clientY: number }): ScrollPosition {
+  return {
+    scrollLeft: start.scrollLeft - (pointer.clientX - start.clientX),
+    scrollTop: start.scrollTop - (pointer.clientY - start.clientY),
+  };
 }
 
 export function clampZoom(value: number): number {
