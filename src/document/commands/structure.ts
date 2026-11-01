@@ -4,6 +4,19 @@ import type { Document, DocumentNode } from "@/document/types.ts";
 
 export type LayerDirection = "front" | "back" | "forward" | "backward";
 
+export function deleteNodes(document: Document, ids: string[]): Result.Result<Document, Error> {
+  const selected = new Set(ids);
+  if (selected.size === 0) return Result.fail(new Error("削除する要素を指定してください"));
+  for (const id of selected) if (!findNode(document, id)) return Result.fail(new Error(`要素が見つかりません: ${id}`));
+  function remove(nodes: DocumentNode[]): DocumentNode[] {
+    return nodes.flatMap((node) => {
+      if (selected.has(node.id)) return [];
+      return [node.type === "frame" ? { ...node, children: remove(node.children) } : node];
+    });
+  }
+  return Result.succeed({ ...document, children: remove(document.children) });
+}
+
 export function reorderNode(document: Document, id: string, direction: LayerDirection): Result.Result<Document, Error> {
   if (!["front", "back", "forward", "backward"].includes(direction)) return Result.fail(new Error("重なり順の指定が不正です"));
   let found = false;
