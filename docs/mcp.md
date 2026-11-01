@@ -27,6 +27,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 
 - `get_state`: 開いているドキュメント・選択要素・要素一覧。
 - `get_element`: ID で要素を参照。
+- `select_element`: `id` で要素を選択し、全体が見えるように画面をパン・ズーム。名前・親階層、ドキュメント絶対位置、表示後の画面座標と倍率を返す。選択と表示だけなので未保存状態や履歴は変わらない。
 - `list_revisions`: 作成順のリビジョン ID・親 ID・現在/保存済み状態。Undo 後に分岐した旧時点も含む。
 - `get_revision_element`: `revisionId` と `elementId` で、指定時点の要素の親基準座標とドキュメント基準の四辺・中心を取得。
 - `compare_revisions`: `fromRevisionId`、`toRevisionId`、`elementId` で、同じ要素の2時点の座標・寸法差分を取得。

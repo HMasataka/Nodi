@@ -28,7 +28,7 @@ function EditorPage() {
     recordDocument, applyDocument, openFile, saveFile,
   } = session;
   const {
-    drag, zoom, setZoom, drawTool, setDrawTool, drawing,
+    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing,
@@ -185,7 +185,7 @@ function EditorPage() {
         <LayersPanel nodes={design.children} selectedId={selectedId} onSelect={setSelectedId} />
 
         <Canvas
-          design={design} selectedId={selectedId} zoom={zoom} setZoom={setZoom}
+          design={design} selectedId={selectedId} zoom={zoom} setZoom={setZoom} viewportRef={viewportRef}
           drawTool={drawTool} drawing={drawing}
           onNodePointerDown={startDrag} onResizePointerDown={startResize}
           onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}

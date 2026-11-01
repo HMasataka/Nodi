@@ -1,24 +1,49 @@
 import { Result } from "@praha/byethrow";
+import { flushSync } from "react-dom";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { findNode, setNodeGeometry } from "@/document/commands/index.ts";
-import { drawingGeometry, frameOrigin, pointOnCanvas } from "@/pages/editor/geometry";
+import { absoluteGeometry, drawingGeometry, frameOrigin, pointOnCanvas } from "@/pages/editor/geometry";
 import type { DocumentNode } from "@/document/types";
-import { screenDeltaToDocument } from "@/pages/editor/viewport";
+import { canvasExtent, focusViewport, screenDeltaToDocument } from "@/pages/editor/viewport";
 import type { DragState, DrawingState, DrawTool, PanState } from "@/pages/editor/types";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {
     designRef, setSelectedId, setError, agentApi,
-    previewDocument, finishPreview, stepHistory: stepDocumentHistory,
+    previewDocument, finishPreview, stepHistory: stepDocumentHistory, focusElementRef,
   } = session;
   const drag = useRef<DragState | null>(null);
   const pan = useRef<PanState | null>(null);
+  const viewportRef = useRef<HTMLElement | null>(null);
   const spacePressed = useRef(false);
   const [zoom, setZoom] = useState(1);
   const [drawTool, setDrawTool] = useState<DrawTool>("select");
   const [drawing, setDrawing] = useState<DrawingState | null>(null);
   const drawingRef = useRef<DrawingState | null>(null);
+
+  useEffect(() => {
+    focusElementRef.current = (id) => {
+      const viewport = viewportRef.current;
+      const absolute = absoluteGeometry(designRef.current, id);
+      if (!absolute) return Result.fail(new Error(`要素が見つかりません: ${id}`));
+      if (!viewport || viewport.clientWidth === 0 || viewport.clientHeight === 0) return Result.fail(new Error("キャンバスを表示できません"));
+      const extent = canvasExtent(designRef.current);
+      const target = focusViewport(absolute, extent, { width: viewport.clientWidth, height: viewport.clientHeight }, zoom);
+      flushSync(() => { setZoom(target.zoom); setSelectedId(id); });
+      viewport.scrollLeft = target.scrollLeft;
+      viewport.scrollTop = target.scrollTop;
+      return Result.succeed({
+        absolute, zoom: target.zoom, scrollLeft: viewport.scrollLeft, scrollTop: viewport.scrollTop,
+        screen: {
+          x: (extent.originX + absolute.x) * target.zoom - viewport.scrollLeft,
+          y: (extent.originY + absolute.y) * target.zoom - viewport.scrollTop,
+          width: absolute.width * target.zoom, height: absolute.height * target.zoom,
+        },
+      });
+    };
+    return () => { focusElementRef.current = () => Result.fail(new Error("キャンバスを表示できません")); };
+  }, [designRef, focusElementRef, setSelectedId, zoom]);
 
   function startDrag(event: PointerEvent<HTMLElement>, node: DocumentNode) {
     if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
@@ -172,7 +197,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, zoom, setZoom, drawTool, setDrawTool, drawing,
+    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing,

@@ -1,7 +1,7 @@
 import { Result } from "@praha/byethrow";
 import { isTauri } from "@tauri-apps/api/core";
 import { useEffect, useRef, useState } from "react";
-import { createAgentApi } from "@/agent/api";
+import { createAgentApi, type FocusedViewport } from "@/agent/api";
 import { createDocument, findNode } from "@/document/commands/index.ts";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
 import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
@@ -26,6 +26,7 @@ export function useEditorDocument() {
   const fileOperation = useRef(false);
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus>(() => isTauri() ? { kind: "checking" } : { kind: "none" });
   const recoveryQueue = useRef(Promise.resolve());
+  const focusElementRef = useRef<(id: string) => Result.Result<FocusedViewport, Error>>(() => Result.fail(new Error("キャンバスを表示できません")));
   const selected = selectedId ? findNode(design, selectedId) : undefined;
   const isDirty = isDocumentDirty(history, design);
 
@@ -92,6 +93,7 @@ export function useEditorDocument() {
     getHistory: () => historyRef.current,
     getSelectedId: () => selectedId,
     apply: recordDocument,
+    focus: (id) => focusElementRef.current(id),
   });
   useMcpBridge(agentApi, setError, recoveryStatus.kind === "none");
 
@@ -177,7 +179,7 @@ export function useEditorDocument() {
 
   return {
     history, design, designRef, selectedId, setSelectedId, selected,
-    error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery,
+    error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery, focusElementRef,
     recordDocument, applyDocument, previewDocument, finishPreview, stepHistory, openFile, saveFile,
   };
 }

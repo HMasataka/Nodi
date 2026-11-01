@@ -10,14 +10,27 @@ import { createAgentApi } from "../src/agent/api.ts";
 import { dispatchAgentRequest } from "../src/agent/bridge.ts";
 import { createDocument } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, undo } from "../src/document/history.ts";
+import { absoluteGeometry } from "../src/pages/editor/geometry.ts";
+import { canvasExtent, focusViewport } from "../src/pages/editor/viewport.ts";
 
 test("MCP クライアントから編集と履歴の数値照会ができ、照会は履歴を変えない", { timeout: 20000 }, async () => {
   let history = createHistory(createDocument(), true);
+  let selectedId = null;
   const api = createAgentApi({
     getDocument: () => history.present,
     getHistory: () => history,
-    getSelectedId: () => null,
+    getSelectedId: () => selectedId,
     apply: (document) => { history = commit(history, document); },
+    focus: (id) => {
+      const absolute = absoluteGeometry(history.present, id);
+      const extent = canvasExtent(history.present);
+      const view = focusViewport(absolute, extent, { width: 240, height: 160 }, 1);
+      selectedId = id;
+      return { type: "Success", value: {
+        absolute, ...view,
+        screen: { x: (extent.originX + absolute.x) * view.zoom - view.scrollLeft, y: (extent.originY + absolute.y) * view.zoom - view.scrollTop, width: absolute.width * view.zoom, height: absolute.height * view.zoom },
+      } };
+    },
   });
   const http = createServer(async (request, response) => {
     assert.equal(request.headers["x-nodi-token"], "test-secret");
@@ -167,6 +180,32 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(branchRevisions.find((item) => item.id === afterId).isCurrent, false);
     const oldBranch = await client.callTool({ name: "get_revision_element", arguments: { revisionId: afterId, elementId: text.id } });
     assert.equal(JSON.parse(oldBranch.content[0].text).absolute.x, 40);
+
+    assert.ok(tools.tools.some((tool) => tool.name === "select_element"));
+    const sibling = await client.callTool({ name: "add_element", arguments: { type: "text", parentId: frameId, name: "見出し", content: "同名", x: 100, y: 90, width: 300, height: 50 } });
+    const siblingId = JSON.parse(sibling.content[0].text).id;
+    const beforeSelection = history;
+    const dirtyBeforeSelection = isDirty(history);
+    const focused = await client.callTool({ name: "select_element", arguments: { id: siblingId } });
+    assert.equal(focused.isError, false);
+    const selected = JSON.parse(focused.content[0].text);
+    assert.equal(selected.id, siblingId);
+    assert.equal(selected.name, "見出し");
+    assert.equal(selected.path, "画面 › 見出し");
+    assert.equal(selected.parentId, frameId);
+    assert.equal(selected.unit, "px");
+    assert.equal(selected.absoluteOrigin, "document");
+    assert.deepEqual(selected.absolute, { x: 80, y: 90, width: 300, height: 50 });
+    assert.ok(selected.zoom < 1);
+    assert.ok(selected.screen.x >= 0 && selected.screen.x + selected.screen.width <= 240);
+    assert.ok(selected.screen.y >= 0 && selected.screen.y + selected.screen.height <= 160);
+    assert.equal(JSON.parse((await client.callTool({ name: "get_state", arguments: {} })).content[0].text).selected.id, siblingId);
+    assert.equal(history, beforeSelection);
+    assert.equal(isDirty(history), dirtyBeforeSelection);
+    const missingSelection = await client.callTool({ name: "select_element", arguments: { id: "missing" } });
+    assert.equal(missingSelection.isError, true);
+    assert.equal(selectedId, siblingId);
+    assert.equal(history, beforeSelection);
   } finally {
     await client.close();
     await new Promise((done) => http.close(done));

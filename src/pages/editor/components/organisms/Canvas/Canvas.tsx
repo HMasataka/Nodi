@@ -1,7 +1,7 @@
-import type { Dispatch, PointerEvent, SetStateAction } from "react";
+import type { Dispatch, PointerEvent, Ref, SetStateAction } from "react";
 import { drawingGeometry } from "@/pages/editor/geometry";
 import type { Document } from "@/document/types";
-import { clampZoom } from "@/pages/editor/viewport";
+import { canvasExtent, clampZoom } from "@/pages/editor/viewport";
 import { CanvasNode, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
 import type { DrawingState, DrawTool } from "@/pages/editor/types";
 
@@ -10,6 +10,7 @@ interface CanvasProps extends NodeInteraction {
   selectedId: string | null;
   zoom: number;
   setZoom: Dispatch<SetStateAction<number>>;
+  viewportRef?: Ref<HTMLElement>;
   drawTool: DrawTool;
   drawing: DrawingState | null;
   onPanPointerDown(event: PointerEvent<HTMLElement>): void;
@@ -23,7 +24,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, zoom, setZoom, drawTool, drawing,
+    design, selectedId, zoom, setZoom, viewportRef, drawTool, drawing,
     onPanPointerDown, onPanPointerMove, onPanPointerUp,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -35,17 +36,18 @@ export function Canvas(props: CanvasProps) {
     onImageError: props.onImageError,
   };
   const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentOrigin) : null;
+  const extent = canvasExtent(design);
 
   return (
-    <section className="canvas-viewport" aria-label="キャンバス"
+    <section ref={viewportRef} className="canvas-viewport" aria-label="キャンバス"
       onPointerDown={onPanPointerDown} onPointerMove={onPanPointerMove}
       onPointerUp={(event) => onPanPointerUp(event.pointerId)}
       onPointerCancel={(event) => onPanPointerUp(event.pointerId)}
       onLostPointerCapture={(event) => onPanPointerUp(event.pointerId)}>
       <div className="canvas-surface"
-        style={{ width: `max(100%, ${1200 * zoom}px)`, height: `max(100%, ${900 * zoom}px)`, backgroundSize: `${24 * zoom}px ${24 * zoom}px` }}>
+        style={{ width: `max(100%, ${extent.width * zoom}px)`, height: `max(100%, ${extent.height * zoom}px)`, backgroundSize: `${24 * zoom}px ${24 * zoom}px` }}>
         <div className={`canvas-world${drawTool !== "select" ? " is-drawing" : ""}`}
-          style={{ transform: `scale(${zoom})` }} onPointerDown={onWorldPointerDown}
+          style={{ transform: `translate(${extent.originX * zoom}px, ${extent.originY * zoom}px) scale(${zoom})` }} onPointerDown={onWorldPointerDown}
           onPointerMove={onWorldPointerMove} onPointerUp={onWorldPointerUp}
           onPointerCancel={(event) => onWorldPointerCancel(event.pointerId)}
           onLostPointerCapture={(event) => onWorldPointerCancel(event.pointerId)}>
