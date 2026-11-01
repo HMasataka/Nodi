@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import {
   deleteNode,
   duplicateNode,
+  reorderNode,
   setFrameStyle,
   setNodeGeometry,
   setNodeStyle,
@@ -182,7 +183,8 @@ function EditorPage() {
       </header>
 
       <div className="workspace">
-        <LayersPanel nodes={design.children} selectedId={selectedId} onSelect={setSelectedId} />
+        <LayersPanel nodes={design.children} selectedId={selectedId} onSelect={setSelectedId}
+          onReorder={(id, direction) => applyDocument(reorderNode(designRef.current, id, direction))} />
 
         <Canvas
           design={design} selectedId={selectedId} zoom={zoom} setZoom={setZoom} viewportRef={viewportRef}
@@ -210,6 +212,7 @@ function EditorPage() {
           onFrameStyle={(style) => { if (selected) applyDocument(setFrameStyle(designRef.current, selected.id, style)); }}
           onDuplicate={duplicateSelected}
           onDelete={deleteSelected}
+          onReorder={(direction) => { if (selectedId) applyDocument(reorderNode(designRef.current, selectedId, direction)); }}
           onExportFrame={() => { void exportSelectedFrame(); }}
           isExporting={isExporting}
         />

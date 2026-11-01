@@ -1,4 +1,5 @@
 import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
+import type { LayerDirection } from "@/document/commands/index.ts";
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
@@ -17,11 +18,12 @@ interface InspectorProps {
   onFrameStyle(style: Partial<FrameStyle>): void;
   onDuplicate(): void;
   onDelete(): void;
+  onReorder(direction: LayerDirection): void;
   onExportFrame(): void;
   isExporting: boolean;
 }
 
-export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -67,6 +69,10 @@ export function Inspector({ selected, onRename, onGeometry, onTextContent, onTex
           <div className="node-actions">
             <button type="button" className="file-button" onClick={onDuplicate}>複製</button>
             <button type="button" className="file-button" onClick={onDelete}>削除</button>
+          </div>
+          <div className="node-actions layer-depth-actions">
+            <button type="button" className="file-button" onClick={() => onReorder("front")}>最前面へ</button>
+            <button type="button" className="file-button" onClick={() => onReorder("back")}>最背面へ</button>
           </div>
           {selected.type === "frame" && <button type="button" className="file-button export-button" onClick={onExportFrame} disabled={isExporting}>
             {isExporting ? "PNG を生成中…" : "PNG に書き出す"}

@@ -3,6 +3,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import test from "node:test";
 import { createServer } from "vite";
+import { reorderNode } from "../src/document/commands/index.ts";
 
 test("分割後のキャンバス・レイヤー・プロパティが同じ要素を表示する", async () => {
   const vite = await createServer({ server: { middlewareMode: true } });
@@ -46,6 +47,19 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(inspector, /image-1/);
     assert.match(inspector, /埋め込まれています/);
+    const back = { id: "back", name: "背面", type: "rectangle", x: 10, y: 10, width: 80, height: 80, fill: "#123456", stroke: "#000000", strokeWidth: 0, cornerRadius: 0 };
+    const front = { ...back, id: "front", name: "前面", x: 20, y: 20 };
+    const layered = { version: 1, children: [{ ...frame, children: [back, front] }] };
+    const layerMarkup = renderToStaticMarkup(createElement(LayersPanel, { nodes: layered.children, selectedId: null, onSelect: noOp, onReorder: noOp }));
+    assert.ok(layerMarkup.indexOf("前面") < layerMarkup.indexOf("背面"));
+    const reordered = reorderNode(layered, back.id, "front").value;
+    const reorderedMarkup = renderToStaticMarkup(createElement(Canvas, {
+      design: reordered, selectedId: null, zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
+      onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
+      onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp, onImageError: noOp,
+    }));
+    assert.ok(reorderedMarkup.indexOf('aria-label="前面"') < reorderedMarkup.indexOf('aria-label="背面"'));
     const frameInspector = renderToStaticMarkup(createElement(Inspector, {
       selected: frame, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
       onShapeStyle: noOp, onFrameStyle: noOp, onDuplicate: noOp, onDelete: noOp,
