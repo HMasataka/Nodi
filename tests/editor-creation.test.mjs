@@ -22,3 +22,22 @@ test("作成の初期位置・寸法は種類と選択フレームで決まり�
   });
   assert.equal(document.children.length, 0);
 });
+
+test("トップレベルのずらし幅は共通で、フレームだけ早く起点へ戻る", () => {
+  let document = createDocument();
+  for (let index = 0; index < 6; index++) {
+    const added = addNode(document, creationInput("rectangle", document));
+    assert.equal(added.type, "Success");
+    document = added.value.document;
+  }
+  assert.deepEqual([creationInput("rectangle", document).x, creationInput("text", document).y,
+    imageCreationInput(document, undefined, "photo.png", "data:image/png;base64,aGVsbG8=").x], [248, 248, 248]);
+  assert.deepEqual([creationInput("frame", document).x, creationInput("frame", document).y], [80, 80]);
+
+  for (let index = 0; index < 2; index++) {
+    const added = addNode(document, creationInput("ellipse", document));
+    assert.equal(added.type, "Success");
+    document = added.value.document;
+  }
+  assert.equal(creationInput("rectangle", document).x, 80);
+});
