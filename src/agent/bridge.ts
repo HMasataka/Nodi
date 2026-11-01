@@ -27,6 +27,10 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
         const parsed = idInput.safeParse(args);
         return parsed.success ? Result.succeed(api.getElement(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
       }
+      case "select_element": {
+        const parsed = idInput.safeParse(args);
+        return parsed.success ? Result.succeed(api.select(parsed.data.id)) : Result.fail(new Error(parsed.error.issues[0].message));
+      }
       case "list_revisions": {
         const parsed = z.strictObject({}).safeParse(args);
         return parsed.success ? Result.succeed(api.listRevisions()) : Result.fail(new Error(parsed.error.issues[0].message));

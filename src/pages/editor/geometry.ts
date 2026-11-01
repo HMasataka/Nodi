@@ -20,6 +20,22 @@ export function frameOrigin(document: Document, id: string): Point | null {
   return visit(document.children, { x: 0, y: 0 });
 }
 
+export function absoluteGeometry(document: Document, id: string): Geometry | null {
+  function visit(nodes: DocumentNode[], origin: Point): Geometry | null {
+    for (const node of nodes) {
+      const x = origin.x + node.x;
+      const y = origin.y + node.y;
+      if (node.id === id) return { x, y, width: node.width, height: node.height };
+      if (node.type === "frame") {
+        const found = visit(node.children, { x, y });
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+  return visit(document.children, { x: 0, y: 0 });
+}
+
 export function drawingGeometry(start: Point, end: Point, parentOrigin: Point = { x: 0, y: 0 }): Geometry {
   return {
     x: Math.min(start.x, end.x) - parentOrigin.x,

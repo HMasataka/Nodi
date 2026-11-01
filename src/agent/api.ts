@@ -30,6 +30,15 @@ export interface EditorPort {
   getHistory(): DocumentHistory;
   getSelectedId(): string | null;
   apply(document: Document): void;
+  focus?(id: string): Result.Result<FocusedViewport, Error>;
+}
+
+export interface FocusedViewport {
+  absolute: { x: number; y: number; width: number; height: number };
+  zoom: number;
+  scrollLeft: number;
+  scrollTop: number;
+  screen: { x: number; y: number; width: number; height: number };
 }
 
 const coordinates = { unit: "px", localOrigin: "parent", absoluteOrigin: "document" } as const;
@@ -68,6 +77,13 @@ export function createAgentApi(port: EditorPort) {
       return Result.succeed({ document: structuredClone(document), selected, elements });
     },
     getElement,
+    select(id: string) {
+      const element = getElement(id);
+      if (Result.isFailure(element)) return element;
+      if (!port.focus) return Result.fail(new Error("キャンバスを表示できません"));
+      const focused = port.focus(id);
+      return Result.isFailure(focused) ? focused : Result.succeed({ ...element.value, ...focused.value, unit: "px", absoluteOrigin: "document" as const });
+    },
     listRevisions() {
       return Result.succeed({ revisions: listRevisions(port.getHistory()) });
     },

@@ -43,6 +43,7 @@ export function createNodiMcpServer(request = callNodi) {
   }
   tool("get_state", "開いている Nodi ドキュメントと選択要素、名前と ID の一覧を取得", z.object({}));
   tool("get_element", "ID で要素を取得", z.object({ id: z.string() }));
+  tool("select_element", "ID で要素を画面上で選択し、境界が見えるようにパン・ズーム。名前・親階層・表示後の座標を返す（ドキュメントは変更しない）", z.strictObject({ id: z.string().min(1) }));
   tool("list_revisions", "現在のドキュメントのリビジョン ID・親 ID・現在/保存済み状態を作成順に取得", z.strictObject({}));
   tool("get_revision_element", "指定時点の要素 ID・名前・親階層と親基準/ドキュメント基準の座標・境界を px で取得", z.strictObject({ revisionId: z.string().min(1), elementId: z.string().min(1) }));
   tool("compare_revisions", "同じ要素の2時点の座標・寸法の符号付き差分を px で取得", z.strictObject({ fromRevisionId: z.string().min(1), toRevisionId: z.string().min(1), elementId: z.string().min(1) }));
