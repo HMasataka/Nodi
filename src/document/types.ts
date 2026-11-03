@@ -95,6 +95,20 @@ export interface TextMark {
   code?: true;
 }
 
+export interface TextMarkPatch {
+  color?: string | null;
+  fontWeight?: number | null;
+  underline?: boolean;
+  code?: boolean;
+}
+
+export interface TextMarkRangeEdit {
+  content: string;
+  start: number;
+  end: number;
+  patch: TextMarkPatch;
+}
+
 export interface TextNode extends Geometry, TextStyle {
   id: string;
   name: string;

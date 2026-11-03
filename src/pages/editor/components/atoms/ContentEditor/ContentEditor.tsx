@@ -1,11 +1,14 @@
-import { useState } from "react";
+interface ContentEditorProps {
+  value: string;
+  onChange(value: string, start: number, end: number): void;
+  onSelect(start: number, end: number): void;
+  onBlur(): void;
+}
 
-import type { TextNode } from "@/document/types";
-
-export function ContentEditor({ node, onChange }: { node: TextNode; onChange(content: string): void }) {
-  const [draft, setDraft] = useState(node.content);
-  return <textarea className="content-editor" value={draft}
-    onChange={(event) => setDraft(event.currentTarget.value)}
-    onBlur={() => { if (draft !== node.content) onChange(draft); }}
+export function ContentEditor({ value, onChange, onSelect, onBlur }: ContentEditorProps) {
+  return <textarea className="content-editor" value={value}
+    onChange={(event) => onChange(event.currentTarget.value, event.currentTarget.selectionStart, event.currentTarget.selectionEnd)}
+    onSelect={(event) => onSelect(event.currentTarget.selectionStart, event.currentTarget.selectionEnd)}
+    onBlur={onBlur}
     aria-label="テキスト本文" />;
 }
