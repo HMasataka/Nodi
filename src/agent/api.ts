@@ -2,7 +2,7 @@ import { Result } from "@praha/byethrow";
 
 import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setFrameStyle, setNodeGeometry, setNodeStyle, setTextContent, setTextStyle } from "@/document/commands/index.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
-import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, type Document, type DocumentNode, type FrameStyle, type Geometry, type RectangleStyle, type TextFontFamily, type TextStyle } from "@/document/types.ts";
+import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type Document, type DocumentNode, type FrameStyle, type Geometry, type RectangleStyle, type TextFontFamily, type TextStyle } from "@/document/types.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
 
 export interface ElementReference {
@@ -21,6 +21,8 @@ export interface ElementReference {
   textAlign?: "left" | "center" | "right";
   fontFamily?: TextFontFamily;
   fontWeight?: number;
+  lineHeight?: number;
+  letterSpacing?: number;
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
@@ -57,7 +59,8 @@ export function listElements(document: Document, includeImageSource = false): El
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
         x: node.x, y: node.y, width: node.width, height: node.height,
         ...(node.type === "text" ? { content: node.content, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign,
-          fontFamily: node.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY, fontWeight: node.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT } : {}),
+          fontFamily: node.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY, fontWeight: node.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT,
+          lineHeight: node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT, letterSpacing: node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING } : {}),
         ...(node.type === "rectangle" || node.type === "ellipse" ? { fill: node.fill, stroke: node.stroke, strokeWidth: node.strokeWidth } : {}),
         ...(node.type === "rectangle" ? { cornerRadius: node.cornerRadius } : {}),
         ...(node.type === "frame" ? { background: node.background, clipContent: node.clipContent } : {}),

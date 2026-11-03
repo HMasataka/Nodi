@@ -22,15 +22,20 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const frame = { id: "frame-1", name: "画面", type: "frame", x: 0, y: 0, width: 300, height: 200, background: "#aabbcc", clipContent: true, children: [image] };
     const noOp = () => {};
     const text = { id: "heading", name: "見出し", type: "text", x: 0, y: 0, width: 200, height: 48,
-      content: "Hello", fontSize: 24, color: "#1f2328", textAlign: "left", fontFamily: "system", fontWeight: 700 };
+      content: "Hello", fontSize: 24, color: "#1f2328", textAlign: "left", fontFamily: "system", fontWeight: 700,
+      lineHeight: 1.75, letterSpacing: -0.5 };
     const textMarkup = renderToStaticMarkup(createElement(CanvasNode, { node: text, selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp } }));
     assert.match(textMarkup, /font-family:system-ui/);
     assert.match(textMarkup, /font-weight:700/);
+    assert.match(textMarkup, /line-height:1.75/);
+    assert.match(textMarkup, /letter-spacing:-0.5px/);
     const textStyleMarkup = renderToStaticMarkup(createElement(TextStyleEditor, { node: text, onChange: noOp }));
     assert.match(textStyleMarkup, /フォント/);
     assert.match(textStyleMarkup, /value="system" selected=""/);
     assert.match(textStyleMarkup, /value="700" selected=""/);
+    assert.match(textStyleMarkup, /value="1.75"/);
+    assert.match(textStyleMarkup, /value="-0.5"/);
     const canvas = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [frame] }, selectedId: image.id,
       zoom: 1.2345, onZoom: noOp, drawTool: "select", drawing: null,

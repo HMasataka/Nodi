@@ -20,7 +20,8 @@ function fakeCanvas() {
     ellipse: (...args) => calls.push(["ellipse", ...args]),
     fill: () => calls.push(["fill", ctx.fillStyle]), stroke: () => calls.push(["stroke"]),
     fillRect: (...args) => calls.push(["fillRect", ...args, ctx.fillStyle]),
-    measureText: (text) => ({ width: [...text].length * 8 }),
+    letterSpacing: "0px",
+    measureText: (text) => ({ width: [...text].length * (8 + Number.parseFloat(ctx.letterSpacing ?? "0px")) }),
     fillText: (...args) => calls.push(["fillText", ...args]),
     drawImage: (...args) => calls.push(["drawImage", ...args]),
   };
@@ -95,6 +96,47 @@ test("PNG のテキストは選択したフォントと太さを使い、旧形�
   success(await renderFramePng({ ...frame, children: [{ ...frame.children[0], fontFamily: undefined, fontWeight: undefined }] },
     { createCanvas: () => legacy.canvas, loadImage: async () => {} }));
   assert.match(legacy.canvas.getContext("2d").font, /^400 24px "Avenir Next",/);
+});
+
+test("PNG は行高と対応ブラウザの字間を複数行に反映する", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 200, height: 100,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 180, height: 80,
+        content: "AB\nCD", fontSize: 20, color: "#000000", textAlign: "left", lineHeight: 1.8, letterSpacing: 2 },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  const ctx = canvas.getContext("2d");
+  ctx.letterSpacing = "0px";
+  ctx.measureText = (text) => ({ width: text.length * (8 + Number.parseFloat(ctx.letterSpacing)), fontBoundingBoxAscent: 20, fontBoundingBoxDescent: 7 });
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.equal(ctx.letterSpacing, "2px");
+  assert.deepEqual(calls.filter(([method]) => method === "fillText"), [
+    ["fillText", "AB", 2, 26.5], ["fillText", "CD", 2, 62.5],
+  ]);
+});
+
+test("字間が増えると PNG の折り返し幅にも反映される", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 80,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 20, height: 60,
+        content: "AB", fontSize: 16, color: "#000000", textAlign: "left", letterSpacing: 2 },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, line]) => line), ["A", "B"]);
+  assert.ok(calls.some(([method, , , width, height]) => method === "rect" && width === 20 && height === 60));
+});
+
+test("字間に未対応の Canvas でも負の字間と中央揃えを描画する", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 50,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "見出し", type: "text", x: 0, y: 0, width: 100, height: 30,
+        content: "AB", fontSize: 16, color: "#000000", textAlign: "center", letterSpacing: -1 },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  delete canvas.getContext("2d").letterSpacing;
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, character, x]) => [character, x]), [["A", 43], ["B", 50]]);
 });
 
 test("入れ子フレームの背景を先に描き、クリップ設定ごとに子要素を切り替える", async () => {

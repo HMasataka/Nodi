@@ -1,8 +1,8 @@
 import type { PointerEvent } from "react";
 
-import type { DocumentNode } from "@/document/types";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import { resolvedTextFont } from "@/document/textFonts";
+import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode } from "@/document/types";
 
 export interface NodeInteraction {
   onNodePointerDown(event: PointerEvent<HTMLElement>, node: DocumentNode): void;
@@ -46,7 +46,8 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
   if (node.type === "text") return (
     <button type="button" className={`canvas-text${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
-      style={{ ...style, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign, ...resolvedTextFont(node) }}
+      style={{ ...style, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign,
+        lineHeight: node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT, letterSpacing: `${node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING}px`, ...resolvedTextFont(node) }}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {node.content}
       {handle}

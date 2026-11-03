@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, TEXT_FONT_FAMILIES, type TextStyle } from "@/document/types.ts";
+import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, TEXT_FONT_FAMILIES, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 
 export function setNodeStyle(
@@ -49,6 +49,8 @@ export function setTextStyle(document: Document, id: string, patch: Partial<Text
     fontSize: patch.fontSize ?? node.fontSize, color: patch.color ?? node.color, textAlign: patch.textAlign ?? node.textAlign,
     fontFamily: patch.fontFamily ?? node.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY,
     fontWeight: patch.fontWeight ?? node.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT,
+    lineHeight: patch.lineHeight ?? node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT,
+    letterSpacing: patch.letterSpacing ?? node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING,
   };
   if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) return Result.fail(new Error("文字サイズは正の有限値で指定してください"));
   if (!HEX_COLOR_PATTERN.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB 形式で指定してください"));
@@ -57,5 +59,7 @@ export function setTextStyle(document: Document, id: string, patch: Partial<Text
   if (!Number.isInteger(style.fontWeight) || style.fontWeight < 100 || style.fontWeight > 900 || style.fontWeight % 100 !== 0) {
     return Result.fail(new Error("文字の太さは 100 から 900 までの 100 刻みで指定してください"));
   }
+  if (!Number.isFinite(style.lineHeight) || style.lineHeight <= 0) return Result.fail(new Error("行高は正の有限値で指定してください"));
+  if (!Number.isFinite(style.letterSpacing)) return Result.fail(new Error("字間は有限値で指定してください"));
   return updateNode(document, id, (current) => ({ ...current, ...style }));
 }

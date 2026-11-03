@@ -1,6 +1,6 @@
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import { Result } from "@praha/byethrow";
-import type { DocumentNode, FrameNode } from "@/document/types.ts";
+import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type FrameNode } from "@/document/types.ts";
 
 export interface PngRenderEnvironment {
   createCanvas(): HTMLCanvasElement;
@@ -32,6 +32,18 @@ export function wrapText(content: string, width: number, measure: (text: string)
     lines.push(line);
   }
   return lines;
+}
+
+function drawSpacedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, spacing: number, align: CanvasTextAlign) {
+  const characters = [...text];
+  const width = ctx.measureText(text).width + characters.length * spacing;
+  const left = align === "center" ? x - width / 2 : align === "right" ? x - width : x;
+  ctx.textAlign = "left";
+  let prefix = "";
+  characters.forEach((character, index) => {
+    ctx.fillText(character, left + ctx.measureText(prefix).width + index * spacing, y);
+    prefix += character;
+  });
 }
 
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
@@ -84,14 +96,22 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = node.color;
       const x = node.textAlign === "center" ? node.width / 2 : node.textAlign === "right" ? node.width - 2 : 2;
-      const lineHeight = node.fontSize * 1.4;
+      const lineHeight = node.fontSize * (node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT);
+      const letterSpacing = node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING;
+      const nativeSpacing = "letterSpacing" in ctx;
+      if (nativeSpacing) ctx.letterSpacing = `${letterSpacing}px`;
       const metrics = ctx.measureText("Mg");
       const ascent = metrics.fontBoundingBoxAscent ?? node.fontSize;
       const descent = metrics.fontBoundingBoxDescent ?? node.fontSize * 0.35;
-      // CSS の 2px padding と 1.4 の行高に合わせて行ボックス内に文字を置く。
+      // CSS の 2px padding と設定された行高に合わせて行ボックス内に文字を置く。
       const baseline = 2 + (lineHeight - ascent - descent) / 2 + ascent;
-      const lines = wrapText(node.content, node.width - 4, (text) => ctx.measureText(text).width);
-      lines.forEach((line, index) => ctx.fillText(line, x, baseline + index * lineHeight));
+      const measure = (text: string) => ctx.measureText(text).width + (nativeSpacing ? 0 : [...text].length * letterSpacing);
+      const lines = wrapText(node.content, node.width - 4, measure);
+      lines.forEach((line, index) => {
+        const y = baseline + index * lineHeight;
+        if (nativeSpacing || letterSpacing === 0) ctx.fillText(line, x, y);
+        else drawSpacedText(ctx, line, x, y, letterSpacing, node.textAlign);
+      });
     } else {
       const image = await loadImage(node.source);
       const width = image.naturalWidth;
