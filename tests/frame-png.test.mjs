@@ -3,8 +3,9 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { parseDocument } from "../src/persistence/format.ts";
+import { renderFramePng } from "../src/export/framePng.ts";
 import { savePng } from "../src/export/savePng.ts";
-import { renderFramePng, wrapText } from "../src/export/framePng.ts";
+import { wrapText } from "../src/document/textLayout.ts";
 
 function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
@@ -127,6 +128,17 @@ test("字間が増えると PNG の折り返し幅にも反映される", async 
   assert.ok(calls.some(([method, , , width, height]) => method === "rect" && width === 20 && height === 60));
 });
 
+test("PNG の本文も単語境界と空行を同じ行構成で描く", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 120,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 52, height: 100,
+        content: "Hello world\n\nABCDEF", fontSize: 16, color: "#000000", textAlign: "left", lineHeight: 1.5 },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, line]) => line), ["Hello", "world", "", "ABCDEF"]);
+});
+
 test("字間に未対応の Canvas でも負の字間と中央揃えを描画する", async () => {
   const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 50,
     background: "#ffffff", clipContent: true, children: [
@@ -137,6 +149,18 @@ test("字間に未対応の Canvas でも負の字間と中央揃えを描画す
   delete canvas.getContext("2d").letterSpacing;
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
   assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, character, x]) => [character, x]), [["A", 43], ["B", 50]]);
+});
+
+test("字間の代替描画でも結合した絵文字を一文字として扱う", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 50,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "絵文字", type: "text", x: 0, y: 0, width: 100, height: 30,
+        content: "👩‍💻A", fontSize: 16, color: "#000000", textAlign: "center", letterSpacing: 1 },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  delete canvas.getContext("2d").letterSpacing;
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, character]) => character), ["👩‍💻", "A"]);
 });
 
 test("入れ子フレームの背景を先に描き、クリップ設定ごとに子要素を切り替える", async () => {

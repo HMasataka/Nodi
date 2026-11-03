@@ -51,6 +51,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - v1 の `type` は `frame`、`rectangle`、`ellipse`、`text`、`image`。`frame` は `children` 配列を持ち、それ以外は子を持たない。
 - `children` の順番は背面から前面への描画順。同じ親の子要素だけを並べ替え、ID・親基準の座標は変わらない。レイヤー一覧は前面の要素を上に表示する。
 - `text` も子を持たず、要素名 `name` とは別の文字列 `content`、正の有限値 `fontSize`、`#RRGGBB` 形式の `color`、`left`・`center`・`right` の `textAlign` を必ず持つ。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
+- 折り返しは単語境界を優先し、枠に入らない長い単語は文字単位で分ける。明示改行と空行は維持し、編集画面と PNG は同じ行構成を使う。
 - `text` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。いずれも省略可能で、省略時は従来どおり `default`・400 として表示する。編集画面と PNG は同じフォントの代替順を使う。
 - `text` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。どちらも省略可能で、省略時は従来どおり行高 1.4 倍・字間 0px を使う。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
