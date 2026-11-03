@@ -1,8 +1,18 @@
-import type { PointerEvent } from "react";
+import { type PointerEvent, useMemo } from "react";
 
+import { layoutTextLines } from "@/rendering/textLayout";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import { resolvedTextFont } from "@/document/textFonts";
-import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode } from "@/document/types";
+import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type TextNode } from "@/document/types";
+
+let measurementContext: CanvasRenderingContext2D | null = null;
+
+function visibleTextLines(node: TextNode): string[] {
+  const content = node.content.replace(/\r\n?/g, "\n");
+  if (typeof document === "undefined") return content.split("\n");
+  measurementContext ??= document.createElement("canvas").getContext("2d");
+  return measurementContext ? layoutTextLines(measurementContext, node).lines : content.split("\n");
+}
 
 export interface NodeInteraction {
   onNodePointerDown(event: PointerEvent<HTMLElement>, node: DocumentNode): void;
@@ -24,6 +34,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
     onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError,
   } = interaction;
   const style = { left: node.x, top: node.y, width: node.width, height: node.height };
+  const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
   const handle = selectedId === node.id && <ResizeHandle onPointerDown={(event) => onResizePointerDown(event, node)} />;
   const pointerEvents = {
     onPointerMove: onNodePointerMove,
@@ -49,7 +60,8 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       style={{ ...style, fontSize: node.fontSize, color: node.color, textAlign: node.textAlign,
         lineHeight: node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT, letterSpacing: `${node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING}px`, ...resolvedTextFont(node) }}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
-      {node.content}
+      {lines?.map((line, index) => <span key={index} className="canvas-text-line"
+        style={{ height: node.fontSize * (node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT) }}>{line}</span>)}
       {handle}
     </button>
   );
