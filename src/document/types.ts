@@ -52,6 +52,11 @@ export interface FrameStyle {
 
 export const DEFAULT_FRAME_STYLE: FrameStyle = { background: "#ffffff", clipContent: true };
 
+export const TEXT_FONT_FAMILIES = ["default", "system", "serif", "monospace"] as const;
+export type TextFontFamily = (typeof TEXT_FONT_FAMILIES)[number];
+export const DEFAULT_TEXT_FONT_FAMILY: TextFontFamily = "default";
+export const DEFAULT_TEXT_FONT_WEIGHT = 400;
+
 export interface FrameNode extends Geometry, FrameStyle {
   id: string;
   name: string;
@@ -63,12 +68,16 @@ export interface TextStyle {
   fontSize: number;
   color: string;
   textAlign: "left" | "center" | "right";
+  fontFamily?: TextFontFamily;
+  fontWeight?: number;
 }
 
 export const DEFAULT_TEXT_STYLE: TextStyle = {
   fontSize: 16,
   color: "#272b29",
   textAlign: "left",
+  fontFamily: DEFAULT_TEXT_FONT_FAMILY,
+  fontWeight: DEFAULT_TEXT_FONT_WEIGHT,
 };
 
 export interface TextNode extends Geometry, TextStyle {

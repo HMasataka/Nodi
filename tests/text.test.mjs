@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { resolvedTextFont } from "../src/document/textFonts.ts";
 import { addNode, createDocument, findNode, moveNode, setTextContent, setTextStyle } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
@@ -40,4 +42,36 @@ test("文字のサイズ・色・揃えは保存・Undo / Redo で維持され�
   for (const patch of [{ fontSize: 0 }, { color: "red" }, { textAlign: "justify" }]) {
     assert.equal(setTextStyle(created.document, created.node.id, patch).type, "Failure");
   }
+});
+
+test("旧形式の文字は従来のフォントで読み込み、フォントと太さの変更は保存・Undoできる", () => {
+  const created = success(addNode(createDocument(), { type: "text", content: "Hello", x: 0, y: 0, width: 200, height: 48 }));
+  const legacyNode = { ...created.node };
+  delete legacyNode.fontFamily;
+  delete legacyNode.fontWeight;
+  const legacy = { version: 1, children: [legacyNode] };
+  const loaded = success(parseDocument(JSON.stringify(legacy)));
+  assert.deepEqual(success(parseDocument(success(serializeDocument(loaded)))), loaded);
+  assert.deepEqual(resolvedTextFont(legacyNode), resolvedTextFont(created.node));
+
+  const styled = success(setTextStyle(loaded, legacyNode.id, { fontFamily: "system", fontWeight: 700 }));
+  assert.equal(findNode(styled, legacyNode.id).fontFamily, "system");
+  assert.equal(findNode(styled, legacyNode.id).fontWeight, 700);
+  assert.deepEqual(success(parseDocument(success(serializeDocument(styled)))), styled);
+  const history = commit(createHistory(loaded), styled);
+  assert.equal(findNode(undo(history).present, legacyNode.id).fontFamily, undefined);
+  assert.equal(findNode(redo(undo(history)).present, legacyNode.id).fontWeight, 700);
+});
+
+test("対応しないフォントや不正な太さは文書を変更せず拒否する", () => {
+  const created = success(addNode(createDocument(), { type: "text", x: 0, y: 0, width: 100, height: 40 }));
+  assert.equal(created.node.fontFamily, "default");
+  assert.equal(created.node.fontWeight, 400);
+  for (const patch of [{ fontFamily: "unknown" }, { fontWeight: 0 }, { fontWeight: 350 }, { fontWeight: 1000 }, { fontWeight: NaN }, { fontWeight: "700" }]) {
+    assert.equal(setTextStyle(created.document, created.node.id, patch).type, "Failure");
+  }
+  for (const patch of [{ fontFamily: "unknown" }, { fontWeight: 350 }, { fontWeight: "700" }]) {
+    assert.equal(parseDocument(JSON.stringify({ ...created.document, children: [{ ...created.node, ...patch }] })).type, "Failure");
+  }
+  assert.equal(findNode(created.document, created.node.id).fontWeight, 400);
 });

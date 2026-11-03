@@ -223,14 +223,18 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(JSON.parse(shapeChanged.content[0].text).fill, "#123456");
     const frameChanged = await client.callTool({ name: "set_frame_style", arguments: { id: frameId, background: "#abcdef", clipContent: false } });
     assert.equal(JSON.parse(frameChanged.content[0].text).clipContent, false);
-    const textChanged = await client.callTool({ name: "set_text_style", arguments: { id: text.id, fontSize: 24, color: "#654321", textAlign: "center" } });
+    const textChanged = await client.callTool({ name: "set_text_style", arguments: { id: text.id, fontSize: 24, color: "#654321", textAlign: "center", fontFamily: "system", fontWeight: 700 } });
     assert.equal(JSON.parse(textChanged.content[0].text).fontSize, 24);
+    assert.equal(JSON.parse(textChanged.content[0].text).fontFamily, "system");
+    assert.equal(JSON.parse(textChanged.content[0].text).fontWeight, 700);
     const beforeInvalid = history;
     for (const [name, args] of [
       ["set_element_geometry", { id: siblingId, x: 0, y: 0, width: -1, height: 20 }],
       ["set_shape_style", { id: element.id, strokeWidth: -1 }],
       ["set_shape_style", { id: element.id }],
       ["set_text_style", { id: frameId, fontSize: 12 }],
+      ["set_text_style", { id: text.id, fontFamily: "missing" }],
+      ["set_text_style", { id: text.id, fontWeight: 350 }],
       ["set_frame_style", { id: "missing", clipContent: true }],
       ["delete_element", { id: "missing" }],
     ]) {

@@ -2,6 +2,7 @@ import { Result } from "@praha/byethrow";
 import { z } from "zod";
 
 import type { AgentApi } from "@/agent/api.ts";
+import { TEXT_FONT_FAMILIES } from "@/document/types.ts";
 
 const idInput = z.strictObject({ id: z.string().min(1) });
 const geometryInput = {
@@ -23,7 +24,7 @@ const setGeometryInput = z.strictObject({ id: z.string().min(1), ...geometryInpu
 const hasChange = (value: { id: string }) => Object.keys(value).some((key) => key !== "id");
 const shapeStyleInput = z.strictObject({ id: z.string().min(1), fill: z.string().optional(), stroke: z.string().optional(), strokeWidth: z.number().optional(), cornerRadius: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const frameStyleInput = z.strictObject({ id: z.string().min(1), background: z.string().optional(), clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
-const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional() }).refine(hasChange, "変更するスタイルを指定してください");
+const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const emptyInput = z.strictObject({});
 
 function withInput<Input, Output>(

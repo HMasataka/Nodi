@@ -82,6 +82,21 @@ test("図形の線を領域内へ収め、テキストを編集画面の行ボ�
   assert.deepEqual(calls.find(([method]) => method === "fillText"), ["fillText", "1", 10, 18.2]);
 });
 
+test("PNG のテキストは選択したフォントと太さを使い、旧形式は標準フォントへ戻す", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 200, height: 100,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "見出し", type: "text", x: 0, y: 0, width: 180, height: 40,
+        content: "Hello", fontSize: 24, color: "#000000", textAlign: "left", fontFamily: "system", fontWeight: 700 },
+    ] };
+  const selected = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => selected.canvas, loadImage: async () => {} }));
+  assert.match(selected.canvas.getContext("2d").font, /^700 24px system-ui,/);
+  const legacy = fakeCanvas();
+  success(await renderFramePng({ ...frame, children: [{ ...frame.children[0], fontFamily: undefined, fontWeight: undefined }] },
+    { createCanvas: () => legacy.canvas, loadImage: async () => {} }));
+  assert.match(legacy.canvas.getContext("2d").font, /^400 24px "Avenir Next",/);
+});
+
 test("入れ子フレームの背景を先に描き、クリップ設定ごとに子要素を切り替える", async () => {
   const child = { id: "child", name: "はみ出す矩形", type: "rectangle", x: 90, y: 80, width: 40, height: 40,
     fill: "#112233", stroke: "#445566", strokeWidth: 0, cornerRadius: 0 };

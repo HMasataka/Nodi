@@ -36,7 +36,9 @@
           "content": "ATLAS STUDIO",
           "fontSize": 22,
           "color": "#24383a",
-          "textAlign": "left"
+          "textAlign": "left",
+          "fontFamily": "system",
+          "fontWeight": 700
         },
         {
           "id": "nd_sample_sidebar",
@@ -96,7 +98,9 @@
               "content": "Overview",
               "fontSize": 20,
               "color": "#44352c",
-              "textAlign": "left"
+              "textAlign": "left",
+              "fontFamily": "system",
+              "fontWeight": 600
             },
             {
               "id": "nd_sample_overview_subtitle",

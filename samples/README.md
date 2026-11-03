@@ -1,8 +1,8 @@
 # Nodi サンプル
 
-`studio.nodi` はフレーム・矩形・楕円・テキスト・埋め込み画像を使った、ダッシュボード風の編集用サンプル。`ATLAS STUDIO` と `Overview`、説明文は文字サイズ・色を設定したテキスト要素です。要素名はキャンバス上に描かず、レイヤー一覧とプロパティで確認できます。
+`studio.nodi` はフレーム・矩形・楕円・テキスト・埋め込み画像を使った、ダッシュボード風の編集用サンプル。`ATLAS STUDIO` と `Overview` はシステムフォントと太さを指定し、説明文は従来の標準フォントで表示します。要素名はキャンバス上に描かず、レイヤー一覧とプロパティで確認できます。
 
-`github-docs-hello-world.nodi` は [GitHub Docs の Hello World ページ](https://docs.github.com/en/get-started/start-your-journey/hello-world) の冒頭から「Step 1: Create a repository」までを、幅1440pxのデスクトップ表示でトレースしたサンプル。2026年11月時点の表示を参考に、案内帯、ヘッダー、パンくず、左右のナビゲーション、記事本文と手順の図を再現しています。GitHub マークのみ埋め込み SVG 画像で、文字や罫線、ボタン、選択状態、手順の図は編集可能な Nodi の要素です。太字・下線・専用アイコンなど、現在の文書形式にない表現は近似しています。
+`github-docs-hello-world.nodi` は [GitHub Docs の Hello World ページ](https://docs.github.com/en/get-started/start-your-journey/hello-world) の冒頭から「Step 1: Create a repository」までを、幅1440pxのデスクトップ表示でトレースしたサンプル。2026年11月時点の表示を参考に、案内帯、ヘッダー、パンくず、左右のナビゲーション、記事本文と手順の図を再現しています。GitHub マークのみ埋め込み SVG 画像で、文字や罫線、ボタン、選択状態、手順の図は編集可能な Nodi の要素です。見出しはシステムフォントと太さを指定しています。下線・専用アイコンなど、現在の文書形式にない表現は近似しています。
 
 ## 試し方
 

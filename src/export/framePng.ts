@@ -1,3 +1,4 @@
+import { resolvedTextFont } from "@/document/textFonts.ts";
 import { Result } from "@praha/byethrow";
 import type { DocumentNode, FrameNode } from "@/document/types.ts";
 
@@ -77,7 +78,8 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
       ctx.beginPath();
       ctx.rect(0, 0, node.width, node.height);
       ctx.clip();
-      ctx.font = `${node.fontSize}px "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif`;
+      const font = resolvedTextFont(node);
+      ctx.font = `${font.fontWeight} ${node.fontSize}px ${font.fontFamily}`;
       ctx.textAlign = node.textAlign;
       ctx.textBaseline = "alphabetic";
       ctx.fillStyle = node.color;

@@ -52,8 +52,11 @@ test("テキストの本文と表示属性を階層付きで参照・編集で�
   assert.equal(text.content, "Hello");
   assert.equal(text.fontSize, 16);
   assert.equal(text.textAlign, "left");
+  assert.equal(text.fontFamily, "default");
+  assert.equal(text.fontWeight, 400);
+  assert.equal(success(api.setTextStyle(text.id, { fontFamily: "system", fontWeight: 700 })).fontWeight, 700);
   assert.equal(success(api.setTextContent(text.id, "Nodi")).content, "Nodi");
   assert.equal(api.setTextContent(frame.id, "invalid").type, "Failure");
-  assert.equal(history.past.length, 3);
+  assert.equal(history.past.length, 4);
   assert.ok(isDirty(history));
 });
