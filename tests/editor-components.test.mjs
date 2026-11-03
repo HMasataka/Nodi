@@ -21,7 +21,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const noOp = () => {};
     const canvas = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [frame] }, selectedId: image.id,
-      zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      zoom: 1.2345, onZoom: noOp, drawTool: "select", drawing: null,
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
       onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp,
@@ -32,9 +32,11 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(canvas, /class="frame-contents" style="overflow:hidden"/);
     assert.match(canvas, /aria-label="風景"/);
     assert.match(canvas, /class="resize-handle"/);
+    assert.match(canvas, /123%/);
+    assert.ok(canvas.indexOf('class="canvas-scale"') > canvas.indexOf("</section>"));
     const multiCanvas = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [frame] }, selectedId: image.id, selectedIds: [frame.id, image.id],
-      zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       selection: { start: { x: 10, y: 20 }, end: { x: 120, y: 90 } },
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
@@ -44,7 +46,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(multiCanvas, /class="canvas-frame is-selected"/);
     assert.match(multiCanvas, /class="canvas-image is-selected"/);
     const guidedCanvas = renderToStaticMarkup(createElement(Canvas, {
-      design: { version: 1, children: [frame] }, selectedId: image.id, zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      design: { version: 1, children: [frame] }, selectedId: image.id, zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       guides: [{ orientation: "vertical", position: 110, from: 20, to: 150 }],
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
@@ -53,7 +55,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(guidedCanvas, /class="alignment-guide vertical" style="left:110px;top:20px;height:130px"/);
     const overflowing = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [{ ...frame, clipContent: false }] }, selectedId: frame.id,
-      zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
       onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp,
@@ -80,7 +82,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.equal((multiLayers.match(/aria-pressed="true"/g) ?? []).length, 2);
     const reordered = reorderNode(layered, back.id, "front").value;
     const reorderedMarkup = renderToStaticMarkup(createElement(Canvas, {
-      design: reordered, selectedId: null, zoom: 1, setZoom: noOp, drawTool: "select", drawing: null,
+      design: reordered, selectedId: null, zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
       onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp, onImageError: noOp,

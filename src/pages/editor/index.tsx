@@ -16,7 +16,7 @@ function EditorPage() {
   const actions = useEditorActions(session);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
-  const { drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
+  const { drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection } = interaction;
 
@@ -30,7 +30,7 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} setZoom={setZoom} viewportRef={viewportRef}
+      <Canvas design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}

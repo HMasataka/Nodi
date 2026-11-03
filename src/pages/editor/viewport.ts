@@ -11,6 +11,9 @@ export interface CanvasExtent {
 
 export interface ScrollPosition { scrollLeft: number; scrollTop: number }
 
+const WHEEL_LINE_PIXELS = 16;
+const WHEEL_ZOOM_SENSITIVITY = 0.0015;
+
 export function canvasExtent(document: Document): CanvasExtent {
   let minX = 0;
   let minY = 0;
@@ -49,6 +52,21 @@ export function panScroll(start: PanState, pointer: { clientX: number; clientY: 
   return {
     scrollLeft: start.scrollLeft - (pointer.clientX - start.clientX),
     scrollTop: start.scrollTop - (pointer.clientY - start.clientY),
+  };
+}
+
+export function zoomFromWheel(currentZoom: number, deltaY: number, deltaMode: number, viewportHeight: number): number {
+  const pixelsPerUnit = deltaMode === 1 ? WHEEL_LINE_PIXELS : deltaMode === 2 ? viewportHeight : 1;
+  return clampZoom(currentZoom * Math.exp(-deltaY * pixelsPerUnit * WHEEL_ZOOM_SENSITIVITY));
+}
+
+export function zoomAroundPoint(currentZoom: number, requestedZoom: number, scroll: ScrollPosition, point: { x: number; y: number }) {
+  const zoom = clampZoom(requestedZoom);
+  const ratio = zoom / currentZoom;
+  return {
+    zoom,
+    scrollLeft: Math.max(0, (scroll.scrollLeft + point.x) * ratio - point.x),
+    scrollTop: Math.max(0, (scroll.scrollTop + point.y) * ratio - point.y),
   };
 }
 
