@@ -50,23 +50,27 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         if (Result.isFailure(painted)) return painted;
       }
     } else if (node.type === "rectangle") {
+      const strokeWidth = Math.min(node.strokeWidth, node.width, node.height);
+      const inset = strokeWidth / 2;
       ctx.beginPath();
-      ctx.roundRect(0, 0, node.width, node.height, node.cornerRadius);
+      ctx.roundRect(inset, inset, node.width - strokeWidth, node.height - strokeWidth, Math.max(0, node.cornerRadius - inset));
       ctx.fillStyle = node.fill;
       ctx.fill();
-      if (node.strokeWidth > 0) {
+      if (strokeWidth > 0) {
         ctx.strokeStyle = node.stroke;
-        ctx.lineWidth = node.strokeWidth;
+        ctx.lineWidth = strokeWidth;
         ctx.stroke();
       }
     } else if (node.type === "ellipse") {
+      const strokeWidth = Math.min(node.strokeWidth, node.width, node.height);
+      const inset = strokeWidth / 2;
       ctx.beginPath();
-      ctx.ellipse(node.width / 2, node.height / 2, node.width / 2, node.height / 2, 0, 0, Math.PI * 2);
+      ctx.ellipse(node.width / 2, node.height / 2, Math.max(0, node.width / 2 - inset), Math.max(0, node.height / 2 - inset), 0, 0, Math.PI * 2);
       ctx.fillStyle = node.fill;
       ctx.fill();
-      if (node.strokeWidth > 0) {
+      if (strokeWidth > 0) {
         ctx.strokeStyle = node.stroke;
-        ctx.lineWidth = node.strokeWidth;
+        ctx.lineWidth = strokeWidth;
         ctx.stroke();
       }
     } else if (node.type === "text") {
@@ -75,11 +79,17 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
       ctx.clip();
       ctx.font = `${node.fontSize}px "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif`;
       ctx.textAlign = node.textAlign;
-      ctx.textBaseline = "top";
+      ctx.textBaseline = "alphabetic";
       ctx.fillStyle = node.color;
       const x = node.textAlign === "center" ? node.width / 2 : node.textAlign === "right" ? node.width - 2 : 2;
+      const lineHeight = node.fontSize * 1.4;
+      const metrics = ctx.measureText("Mg");
+      const ascent = metrics.fontBoundingBoxAscent ?? node.fontSize;
+      const descent = metrics.fontBoundingBoxDescent ?? node.fontSize * 0.35;
+      // CSS の 2px padding と 1.4 の行高に合わせて行ボックス内に文字を置く。
+      const baseline = 2 + (lineHeight - ascent - descent) / 2 + ascent;
       const lines = wrapText(node.content, node.width - 4, (text) => ctx.measureText(text).width);
-      lines.forEach((line, index) => ctx.fillText(line, x, 2 + index * node.fontSize * 1.4));
+      lines.forEach((line, index) => ctx.fillText(line, x, baseline + index * lineHeight));
     } else {
       const image = await loadImage(node.source);
       const width = image.naturalWidth;

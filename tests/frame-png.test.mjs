@@ -62,6 +62,26 @@ test("重なった兄弟要素はレイヤー順に PNG へ描画する", async 
   assert.deepEqual(calls.filter(([method]) => method === "fill").map(([, color]) => color), ["#123456", "#abcdef"]);
 });
 
+test("図形の線を領域内へ収め、テキストを編集画面の行ボックスに揃える", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 100,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "rectangle", name: "枠", type: "rectangle", x: 0, y: 0, width: 20, height: 10,
+        fill: "#ffffff", stroke: "#000000", strokeWidth: 2, cornerRadius: 4 },
+      { id: "ellipse", name: "丸", type: "ellipse", x: 0, y: 0, width: 20, height: 10,
+        fill: "#ffffff", stroke: "#000000", strokeWidth: 2 },
+      { id: "text", name: "番号", type: "text", x: 0, y: 0, width: 20, height: 26,
+        content: "1", fontSize: 16, color: "#000000", textAlign: "center" },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  const ctx = canvas.getContext("2d");
+  ctx.measureText = (text) => ({ width: text.length * 8, fontBoundingBoxAscent: 16, fontBoundingBoxDescent: 6 });
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.find(([method]) => method === "roundRect"), ["roundRect", 1, 1, 18, 8, 3]);
+  assert.deepEqual(calls.find(([method]) => method === "ellipse"), ["ellipse", 10, 5, 9, 4, 0, 0, Math.PI * 2]);
+  assert.equal(ctx.textBaseline, "alphabetic");
+  assert.deepEqual(calls.find(([method]) => method === "fillText"), ["fillText", "1", 10, 18.2]);
+});
+
 test("入れ子フレームの背景を先に描き、クリップ設定ごとに子要素を切り替える", async () => {
   const child = { id: "child", name: "はみ出す矩形", type: "rectangle", x: 90, y: 80, width: 40, height: 40,
     fill: "#112233", stroke: "#445566", strokeWidth: 0, cornerRadius: 0 };
