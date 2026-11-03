@@ -18,6 +18,8 @@ function fakeCanvas() {
     rect: (...args) => calls.push(["rect", ...args]),
     clip: () => calls.push(["clip"]),
     roundRect: (...args) => calls.push(["roundRect", ...args]),
+    moveTo: (...args) => calls.push(["moveTo", ...args]),
+    lineTo: (...args) => calls.push(["lineTo", ...args]),
     ellipse: (...args) => calls.push(["ellipse", ...args]),
     fill: () => calls.push(["fill", ctx.fillStyle]), stroke: () => calls.push(["stroke"]),
     fillRect: (...args) => calls.push(["fillRect", ...args, ctx.fillStyle]),
@@ -137,6 +139,26 @@ test("PNG の本文も単語境界と空行を同じ行構成で描く", async (
   const { canvas, calls } = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
   assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, line]) => line), ["Hello", "world", "", "ABCDEF"]);
+});
+
+test("部分装飾の文字色・太さ・下線・コード背景を PNG に描く", async () => {
+  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 200, height: 80,
+    background: "#ffffff", clipContent: true, children: [
+      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 180, height: 45,
+        content: "Hello world code", fontSize: 16, color: "#1f2328", textAlign: "left",
+        marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] },
+    ] };
+  const { canvas, calls } = fakeCanvas();
+  const ctx = canvas.getContext("2d");
+  ctx.fillText = (text, x, y) => calls.push(["fillText", text, x, y, ctx.font, ctx.fillStyle]);
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  const textCalls = calls.filter(([method]) => method === "fillText");
+  assert.deepEqual(textCalls.map(([, text]) => text), ["Hello ", "world", " ", "code"]);
+  assert.match(textCalls[1][4], /^700 16px/);
+  assert.equal(textCalls[1][5], "#0969da");
+  assert.match(textCalls[3][4], /monospace$/);
+  assert.ok(calls.some(([method, color]) => method === "fill" && color === "#f6f8fa"));
+  assert.ok(calls.some(([method]) => method === "lineTo"));
 });
 
 test("字間に未対応の Canvas でも負の字間と中央揃えを描画する", async () => {

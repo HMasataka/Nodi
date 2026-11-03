@@ -1,7 +1,8 @@
 import { Result } from "@praha/byethrow";
 
-import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, TEXT_FONT_FAMILIES, type TextStyle } from "@/document/types.ts";
+import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
+import { remapTextMarks, textMarkIssue } from "@/document/textMarks.ts";
 
 export function setNodeStyle(
   document: Document,
@@ -39,7 +40,17 @@ export function setTextContent(document: Document, id: string, content: string):
   const node = findNode(document, id);
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
   if (typeof content !== "string") return Result.fail(new Error("本文は文字列で指定してください"));
-  return updateNode(document, id, (current) => ({ ...current, content }));
+  return updateNode(document, id, (current) => current.type === "text"
+    ? { ...current, content, ...(current.marks ? { marks: remapTextMarks(current.content, content, current.marks) } : {}) }
+    : current);
+}
+
+export function setTextMarks(document: Document, id: string, marks: TextMark[]): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
+  const issue = textMarkIssue(node.content, marks);
+  if (issue) return Result.fail(new Error(issue));
+  return updateNode(document, id, (current) => ({ ...current, marks: marks.map((mark) => ({ ...mark })) }));
 }
 
 export function setTextStyle(document: Document, id: string, patch: Partial<TextStyle>): Result.Result<Document, Error> {

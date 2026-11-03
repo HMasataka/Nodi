@@ -58,8 +58,12 @@ test("テキストの本文と表示属性を階層付きで参照・編集で�
   assert.equal(text.letterSpacing, 0);
   assert.equal(success(api.setTextStyle(text.id, { fontFamily: "system", fontWeight: 700 })).fontWeight, 700);
   assert.equal(success(api.setTextStyle(text.id, { lineHeight: 1.6, letterSpacing: -0.5 })).letterSpacing, -0.5);
+  assert.deepEqual(success(api.setTextMarks(text.id, [{ start: 0, end: 5, fontWeight: 700 }])).marks, [{ start: 0, end: 5, fontWeight: 700 }]);
+  success(api.getElement(text.id)).marks[0].start = 2;
+  assert.equal(success(api.getElement(text.id)).marks[0].start, 0);
   assert.equal(success(api.setTextContent(text.id, "Nodi")).content, "Nodi");
+  assert.deepEqual(success(api.getElement(text.id)).marks, [{ start: 0, end: 4, fontWeight: 700 }]);
   assert.equal(api.setTextContent(frame.id, "invalid").type, "Failure");
-  assert.equal(history.past.length, 5);
+  assert.equal(history.past.length, 6);
   assert.ok(isDirty(history));
 });

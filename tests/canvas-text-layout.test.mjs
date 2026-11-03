@@ -23,6 +23,19 @@ test("キャンバスのテキストは共通の計測結果を行として描�
     assert.match(markup, />Hello<\/span><span class="canvas-text-line"[^>]*>world<\/span>/);
     assert.match(markup, />world<\/span><span class="canvas-text-line" style="height:24px"><\/span>/);
     assert.match(markup, />ABCDEF<\/span>/);
+    const marked = renderToStaticMarkup(createElement(CanvasNode, {
+      node: { id: "marked", name: "部分装飾", type: "text", x: 0, y: 0, width: 180, height: 45,
+        content: "Hello world code", fontSize: 16, color: "#1f2328", textAlign: "left",
+        marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] },
+      selectedId: null,
+      interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp },
+    }));
+    assert.equal((marked.match(/class="canvas-text-line"/g) ?? []).length, 1);
+    assert.match(marked, /color:#0969da/);
+    assert.match(marked, /font-weight:700/);
+    assert.match(marked, /text-decoration-line:underline/);
+    assert.match(marked, /background-color:#f6f8fa/);
+    assert.match(marked, /font-family:ui-monospace/);
   } finally {
     globalThis.document = previousDocument;
     await vite.close();

@@ -1,17 +1,18 @@
 import { type PointerEvent, useMemo } from "react";
 
-import { layoutTextLines } from "@/rendering/textLayout";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import { resolvedTextFont } from "@/document/textFonts";
 import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type TextNode } from "@/document/types";
+import { layoutTextLines, textFragmentStyle, type TextLine } from "@/rendering/textLayout";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
 
-function visibleTextLines(node: TextNode): string[] {
+function visibleTextLines(node: TextNode): TextLine[] {
   const content = node.content.replace(/\r\n?/g, "\n");
-  if (typeof document === "undefined") return content.split("\n");
+  const fallback = () => content.split("\n").map((text) => ({ fragments: text ? [{ text, mark: null, width: 0 }] : [], width: 0 }));
+  if (typeof document === "undefined") return fallback();
   measurementContext ??= document.createElement("canvas").getContext("2d");
-  return measurementContext ? layoutTextLines(measurementContext, node).lines : content.split("\n");
+  return measurementContext ? layoutTextLines(measurementContext, node).lines : fallback();
 }
 
 export interface NodeInteraction {
@@ -61,7 +62,15 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
         lineHeight: node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT, letterSpacing: `${node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING}px`, ...resolvedTextFont(node) }}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {lines?.map((line, index) => <span key={index} className="canvas-text-line"
-        style={{ height: node.fontSize * (node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT) }}>{line}</span>)}
+        style={{ height: node.fontSize * (node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT) }}>
+        {line.fragments.map((fragment, part) => {
+          if (!fragment.mark) return fragment.text;
+          const appearance = textFragmentStyle(node, fragment.mark);
+          return <span key={part} style={{ fontFamily: appearance.fontFamily, fontWeight: appearance.fontWeight,
+            color: appearance.color, textDecorationLine: appearance.underline ? "underline" : undefined,
+            backgroundColor: appearance.code ? "#f6f8fa" : undefined, borderRadius: appearance.code ? 3 : undefined }}>{fragment.text}</span>;
+        })}
+      </span>)}
       {handle}
     </button>
   );
