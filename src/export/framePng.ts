@@ -1,7 +1,7 @@
 import { graphemeSegments } from "@/document/textLayout.ts";
-import { layoutTextLines } from "@/rendering/textLayout.ts";
 import { Result } from "@praha/byethrow";
 import { DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type FrameNode } from "@/document/types.ts";
+import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 
 export interface PngRenderEnvironment {
   createCanvas(): HTMLCanvasElement;
@@ -87,8 +87,42 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
       const baseline = 2 + (lineHeight - ascent - descent) / 2 + ascent;
       lines.forEach((line, index) => {
         const y = baseline + index * lineHeight;
-        if (nativeSpacing || letterSpacing === 0) ctx.fillText(line, x, y);
-        else drawSpacedText(ctx, line, x, y, letterSpacing, node.textAlign);
+        ctx.textAlign = node.textAlign;
+        if (line.fragments.length === 0) { ctx.fillText("", x, y); return; }
+        if (line.fragments.length === 1 && !line.fragments[0].mark) {
+          const text = line.fragments[0].text;
+          if (nativeSpacing || letterSpacing === 0) ctx.fillText(text, x, y);
+          else drawSpacedText(ctx, text, x, y, letterSpacing, node.textAlign);
+          return;
+        }
+        let left = node.textAlign === "center" ? (node.width - line.width) / 2
+          : node.textAlign === "right" ? node.width - 2 - line.width : 2;
+        for (const fragment of line.fragments) {
+          const appearance = textFragmentStyle(node, fragment.mark);
+          ctx.font = `${appearance.fontWeight} ${node.fontSize}px ${appearance.fontFamily}`;
+          ctx.textAlign = "left";
+          if (appearance.code) {
+            const bounds = ctx.measureText("Mg");
+            const ascent = bounds.fontBoundingBoxAscent ?? node.fontSize;
+            const descent = bounds.fontBoundingBoxDescent ?? node.fontSize * 0.35;
+            ctx.beginPath();
+            ctx.roundRect(left, y - ascent, fragment.width, ascent + descent, 3);
+            ctx.fillStyle = "#f6f8fa";
+            ctx.fill();
+          }
+          ctx.fillStyle = appearance.color;
+          if (nativeSpacing || letterSpacing === 0) ctx.fillText(fragment.text, left, y);
+          else drawSpacedText(ctx, fragment.text, left, y, letterSpacing, "left");
+          if (appearance.underline) {
+            ctx.beginPath();
+            ctx.moveTo(left, y + 2);
+            ctx.lineTo(left + fragment.width, y + 2);
+            ctx.strokeStyle = appearance.color;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+          left += fragment.width;
+        }
       });
     } else {
       const image = await loadImage(node.source);

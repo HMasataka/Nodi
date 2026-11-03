@@ -86,11 +86,21 @@ export const DEFAULT_TEXT_STYLE: TextStyle = {
   letterSpacing: DEFAULT_TEXT_LETTER_SPACING,
 };
 
+export interface TextMark {
+  start: number;
+  end: number;
+  color?: string;
+  fontWeight?: number;
+  underline?: true;
+  code?: true;
+}
+
 export interface TextNode extends Geometry, TextStyle {
   id: string;
   name: string;
   type: "text";
   content: string;
+  marks?: TextMark[];
 }
 
 export type DocumentNode = FrameNode | RectangleNode | EllipseNode | TextNode | ImageNode;

@@ -209,7 +209,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(selectedId, siblingId);
     assert.equal(history, beforeSelection);
 
-    for (const name of ["set_element_geometry", "set_shape_style", "set_frame_style", "set_text_style", "delete_element", "duplicate_element"]) {
+    for (const name of ["set_element_geometry", "set_shape_style", "set_frame_style", "set_text_style", "set_text_marks", "delete_element", "duplicate_element"]) {
       assert.ok(tools.tools.some((tool) => tool.name === name));
       assert.match(tools.tools.find((tool) => tool.name === name).description, /Before\/After/);
     }
@@ -229,6 +229,8 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(JSON.parse(textChanged.content[0].text).fontWeight, 700);
     assert.equal(JSON.parse(textChanged.content[0].text).lineHeight, 1.6);
     assert.equal(JSON.parse(textChanged.content[0].text).letterSpacing, -0.5);
+    const marksChanged = await client.callTool({ name: "set_text_marks", arguments: { id: text.id, marks: [{ start: 0, end: 4, color: "#0969da", underline: true }] } });
+    assert.deepEqual(JSON.parse(marksChanged.content[0].text).marks, [{ start: 0, end: 4, color: "#0969da", underline: true }]);
     const beforeInvalid = history;
     for (const [name, args] of [
       ["set_element_geometry", { id: siblingId, x: 0, y: 0, width: -1, height: 20 }],
@@ -239,6 +241,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
       ["set_text_style", { id: text.id, fontWeight: 350 }],
       ["set_text_style", { id: text.id, lineHeight: 0 }],
       ["set_text_style", { id: text.id, letterSpacing: "wide" }],
+      ["set_text_marks", { id: text.id, marks: [{ start: 0, end: 5, code: true }] }],
       ["set_frame_style", { id: "missing", clipContent: true }],
       ["delete_element", { id: "missing" }],
     ]) {
