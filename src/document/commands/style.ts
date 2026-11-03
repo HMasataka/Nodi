@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, type TextStyle } from "@/document/types.ts";
+import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, TEXT_FONT_FAMILIES, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 
 export function setNodeStyle(
@@ -45,9 +45,17 @@ export function setTextContent(document: Document, id: string, content: string):
 export function setTextStyle(document: Document, id: string, patch: Partial<TextStyle>): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
-  const style = { fontSize: patch.fontSize ?? node.fontSize, color: patch.color ?? node.color, textAlign: patch.textAlign ?? node.textAlign };
+  const style = {
+    fontSize: patch.fontSize ?? node.fontSize, color: patch.color ?? node.color, textAlign: patch.textAlign ?? node.textAlign,
+    fontFamily: patch.fontFamily ?? node.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY,
+    fontWeight: patch.fontWeight ?? node.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT,
+  };
   if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) return Result.fail(new Error("文字サイズは正の有限値で指定してください"));
   if (!HEX_COLOR_PATTERN.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB 形式で指定してください"));
   if (!["left", "center", "right"].includes(style.textAlign)) return Result.fail(new Error("文字揃えが不正です"));
+  if (!TEXT_FONT_FAMILIES.includes(style.fontFamily)) return Result.fail(new Error("フォントが不正です"));
+  if (!Number.isInteger(style.fontWeight) || style.fontWeight < 100 || style.fontWeight > 900 || style.fontWeight % 100 !== 0) {
+    return Result.fail(new Error("文字の太さは 100 から 900 までの 100 刻みで指定してください"));
+  }
   return updateNode(document, id, (current) => ({ ...current, ...style }));
 }

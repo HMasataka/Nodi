@@ -11,14 +11,26 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
   const vite = await createServer({ server: { middlewareMode: true } });
   try {
     const { Canvas } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/Canvas/Canvas.tsx");
+    const { CanvasNode } = await vite.ssrLoadModule("/src/pages/editor/components/molecules/CanvasNode/CanvasNode.tsx");
     const { LayersPanel } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/LayersPanel/LayersPanel.tsx");
     const { Inspector } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/Inspector/Inspector.tsx");
     const { EditorToolbar } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorToolbar/EditorToolbar.tsx");
     const { EditorStatus } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorStatus/EditorStatus.tsx");
     const { RecoveryDialog } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/RecoveryDialog/RecoveryDialog.tsx");
+    const { TextStyleEditor } = await vite.ssrLoadModule("/src/pages/editor/components/molecules/TextStyleEditor/TextStyleEditor.tsx");
     const image = { id: "image-1", name: "風景", type: "image", x: 10, y: 20, width: 100, height: 80, source: "data:image/png;base64,aGVsbG8=" };
     const frame = { id: "frame-1", name: "画面", type: "frame", x: 0, y: 0, width: 300, height: 200, background: "#aabbcc", clipContent: true, children: [image] };
     const noOp = () => {};
+    const text = { id: "heading", name: "見出し", type: "text", x: 0, y: 0, width: 200, height: 48,
+      content: "Hello", fontSize: 24, color: "#1f2328", textAlign: "left", fontFamily: "system", fontWeight: 700 };
+    const textMarkup = renderToStaticMarkup(createElement(CanvasNode, { node: text, selectedId: null,
+      interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp } }));
+    assert.match(textMarkup, /font-family:system-ui/);
+    assert.match(textMarkup, /font-weight:700/);
+    const textStyleMarkup = renderToStaticMarkup(createElement(TextStyleEditor, { node: text, onChange: noOp }));
+    assert.match(textStyleMarkup, /フォント/);
+    assert.match(textStyleMarkup, /value="system" selected=""/);
+    assert.match(textStyleMarkup, /value="700" selected=""/);
     const canvas = renderToStaticMarkup(createElement(Canvas, {
       design: { version: 1, children: [frame] }, selectedId: image.id,
       zoom: 1.2345, onZoom: noOp, drawTool: "select", drawing: null,

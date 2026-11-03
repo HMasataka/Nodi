@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
-import { type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
+import { type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, TEXT_FONT_FAMILIES } from "@/document/types.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");
@@ -16,7 +16,7 @@ const nodeSchema: z.ZodType<DocumentNode> = z.lazy(() =>
     z.strictObject({ id, name, type: z.literal("ellipse"), ...geometry, fill: color, stroke: color, strokeWidth: style.strokeWidth }),
     z.strictObject({ id, name, type: z.literal("image"), ...geometry, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
     z.strictObject({ id, name, type: z.literal("frame"), ...geometry, background: color, clipContent: z.boolean(), children: z.array(nodeSchema) }),
-    z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string(), fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]) }),
+    z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string(), fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional() }),
   ]),
 );
 

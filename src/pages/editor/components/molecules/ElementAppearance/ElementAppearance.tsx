@@ -19,7 +19,7 @@ export function ElementAppearance({ node, onTextContent, onTextStyle, onShapeSty
     <div className="field-label">本文</div>
     <ContentEditor key={`${node.id}:${node.content}`} node={node} onChange={onTextContent} />
     <div className="field-label">文字の見た目</div>
-    <TextStyleEditor key={`${node.id}:${node.fontSize}:${node.color}:${node.textAlign}`} node={node} onChange={onTextStyle} />
+    <TextStyleEditor key={`${node.id}:${node.fontSize}:${node.color}:${node.textAlign}:${node.fontFamily}:${node.fontWeight}`} node={node} onChange={onTextStyle} />
   </>;
   if (node.type === "frame") return <>
     <div className="field-label">フレームの見た目</div>

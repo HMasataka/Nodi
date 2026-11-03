@@ -51,6 +51,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - v1 の `type` は `frame`、`rectangle`、`ellipse`、`text`、`image`。`frame` は `children` 配列を持ち、それ以外は子を持たない。
 - `children` の順番は背面から前面への描画順。同じ親の子要素だけを並べ替え、ID・親基準の座標は変わらない。レイヤー一覧は前面の要素を上に表示する。
 - `text` も子を持たず、要素名 `name` とは別の文字列 `content`、正の有限値 `fontSize`、`#RRGGBB` 形式の `color`、`left`・`center`・`right` の `textAlign` を必ず持つ。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
+- `text` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。いずれも省略可能で、省略時は従来どおり `default`・400 として表示する。編集画面と PNG は同じフォントの代替順を使う。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
 - フレームは `background`（`#RRGGBB` 形式）と `clipContent`（真偽値）を必ず持つ。既定値は白背景と `true`。`true` なら子要素をフレームの寸法で切り取り、`false` ならはみ出しを表示する（書き出し対象フレーム自体の外は PNG に含まれない）。
 - 矩形は `fill` と `stroke`（`#RRGGBB` 形式）、`strokeWidth` と `cornerRadius`（0 以上の有限値）を必ず持つ。フレームはこれらの項目を持たない。
