@@ -217,8 +217,15 @@ button {
   white-space: nowrap;
 }
 
-.canvas-viewport {
+.canvas-container {
   position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.canvas-viewport {
+  position: absolute;
+  inset: 0;
   overflow: auto;
   background: #eae9e3;
 }
@@ -306,11 +313,13 @@ button {
 .text-style-fields p { margin: 0; color: #9a9c96; font-size: 11px; line-height: 1.5; }
 .resize-handle { position: absolute; right: -7px; bottom: -7px; width: 12px; height: 12px; border: 2px solid white; border-radius: 2px; background: var(--accent); cursor: nwse-resize; touch-action: none; }
 .canvas-scale {
-  position: sticky;
+  position: absolute;
   bottom: 14px;
   left: 14px;
-  display: inline-block;
-  margin: 0 0 14px 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: 1px solid #deddd5;
   border-radius: 5px;
   padding: 7px 10px;
@@ -321,7 +330,6 @@ button {
     monospace;
   box-shadow: 0 2px 8px #3c3c3512;
 }
-.canvas-scale { display: inline-flex; align-items: center; gap: 8px; }
 .canvas-scale button { border: 0; background: transparent; color: var(--ink); font: 16px ui-monospace, monospace; }
 .canvas-scale span { min-width: 40px; text-align: center; }
 

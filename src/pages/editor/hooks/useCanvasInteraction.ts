@@ -17,7 +17,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     previewDocument, finishPreview, stepHistory: stepDocumentHistory,
   } = session;
   const drag = useRef<DragState | null>(null);
-  const { zoom, setZoom, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
+  const { zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
   const [drawTool, setDrawTool] = useState<DrawTool>("select");
   const [drawing, setDrawing] = useState<DrawingState | null>(null);
   const drawingRef = useRef<DrawingState | null>(null);
@@ -210,7 +210,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, zoom, setZoom, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
+    drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection,
