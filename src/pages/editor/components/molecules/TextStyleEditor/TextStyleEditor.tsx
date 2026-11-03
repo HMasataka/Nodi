@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, type TextNode, type TextStyle } from "@/document/types";
+import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type TextNode, type TextStyle } from "@/document/types";
 
 export function TextStyleEditor({ node, onChange }: { node: TextNode; onChange(style: Partial<TextStyle>): void }) {
   const [fontSize, setFontSize] = useState(String(node.fontSize));
+  const [lineHeight, setLineHeight] = useState(String(node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT));
+  const [letterSpacing, setLetterSpacing] = useState(String(node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING));
   const [color, setColor] = useState(node.color);
   return <div className="text-style-fields">
     <label>フォント
@@ -23,6 +25,16 @@ export function TextStyleEditor({ node, onChange }: { node: TextNode; onChange(s
         onChange={(event) => setFontSize(event.currentTarget.value)}
         onBlur={() => { if (fontSize !== String(node.fontSize)) onChange({ fontSize: fontSize.trim() === "" ? NaN : Number(fontSize) }); }} />
     </label>
+    <label>行高（倍）
+      <input type="number" min="0.1" step="any" value={lineHeight}
+        onChange={(event) => setLineHeight(event.currentTarget.value)}
+        onBlur={() => { if (lineHeight !== String(node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT)) onChange({ lineHeight: lineHeight.trim() === "" ? NaN : Number(lineHeight) }); }} />
+    </label>
+    <label>字間（px）
+      <input type="number" step="any" value={letterSpacing}
+        onChange={(event) => setLetterSpacing(event.currentTarget.value)}
+        onBlur={() => { if (letterSpacing !== String(node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING)) onChange({ letterSpacing: letterSpacing.trim() === "" ? NaN : Number(letterSpacing) }); }} />
+    </label>
     <label>文字色
       <input type="color" value={color} onChange={(event) => setColor(event.currentTarget.value)}
         onBlur={() => { if (color !== node.color) onChange({ color }); }} />
@@ -32,6 +44,6 @@ export function TextStyleEditor({ node, onChange }: { node: TextNode; onChange(s
         <option value="left">左</option><option value="center">中央</option><option value="right">右</option>
       </select>
     </label>
-    <p>標準は Avenir Next を優先し、利用できないフォントは代替フォントで表示します。枠の幅で折り返し、高さを超えた本文は隠れます。枠の高さは「位置・サイズ」で変更できます。</p>
+    <p>標準は Avenir Next を優先し、利用できないフォントは代替フォントで表示します。字間は負値でも指定できます。枠の幅で折り返し、高さを超えた本文は隠れます。枠の高さは「位置・サイズ」で変更できます。</p>
   </div>;
 }

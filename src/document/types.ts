@@ -56,6 +56,8 @@ export const TEXT_FONT_FAMILIES = ["default", "system", "serif", "monospace"] as
 export type TextFontFamily = (typeof TEXT_FONT_FAMILIES)[number];
 export const DEFAULT_TEXT_FONT_FAMILY: TextFontFamily = "default";
 export const DEFAULT_TEXT_FONT_WEIGHT = 400;
+export const DEFAULT_TEXT_LINE_HEIGHT = 1.4;
+export const DEFAULT_TEXT_LETTER_SPACING = 0;
 
 export interface FrameNode extends Geometry, FrameStyle {
   id: string;
@@ -70,6 +72,8 @@ export interface TextStyle {
   textAlign: "left" | "center" | "right";
   fontFamily?: TextFontFamily;
   fontWeight?: number;
+  lineHeight?: number;
+  letterSpacing?: number;
 }
 
 export const DEFAULT_TEXT_STYLE: TextStyle = {
@@ -78,6 +82,8 @@ export const DEFAULT_TEXT_STYLE: TextStyle = {
   textAlign: "left",
   fontFamily: DEFAULT_TEXT_FONT_FAMILY,
   fontWeight: DEFAULT_TEXT_FONT_WEIGHT,
+  lineHeight: DEFAULT_TEXT_LINE_HEIGHT,
+  letterSpacing: DEFAULT_TEXT_LETTER_SPACING,
 };
 
 export interface TextNode extends Geometry, TextStyle {

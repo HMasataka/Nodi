@@ -62,7 +62,7 @@ export function createNodiMcpServer(request = callNodi) {
   tool("set_element_geometry", "ID で要素の親基準 x・y・width・height を変更（px）", z.strictObject({ id: z.string().min(1), ...geometry }), true);
   tool("set_shape_style", "矩形・楕円の塗り・線色・線幅、矩形の角丸を変更", z.strictObject({ id: z.string().min(1), fill: z.string().optional(), stroke: z.string().optional(), strokeWidth: z.number().optional(), cornerRadius: z.number().optional() }), true);
   tool("set_frame_style", "フレームの背景色と子要素のクリップを変更", z.strictObject({ id: z.string().min(1), background: z.string().optional(), clipContent: z.boolean().optional() }), true);
-  tool("set_text_style", "テキストの文字サイズ・色・揃え・フォント・太さを変更", z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(["default", "system", "serif", "monospace"]).optional(), fontWeight: z.number().optional() }), true);
+  tool("set_text_style", "テキストの文字サイズ・色・揃え・フォント・太さ・行高・字間を変更", z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(["default", "system", "serif", "monospace"]).optional(), fontWeight: z.number().optional(), lineHeight: z.number().optional(), letterSpacing: z.number().optional() }), true);
   tool("delete_element", "ID で要素とその子孫を削除", z.strictObject({ id: z.string().min(1) }), true);
   tool("duplicate_element", "ID で要素と子孫を複製し、すべてに新しい ID を付ける", z.strictObject({ id: z.string().min(1) }), true);
   return server;
