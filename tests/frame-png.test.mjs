@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { parseDocument } from "../src/persistence/format.ts";
+import { RENDER_COLORS } from "../src/rendering/colors.ts";
 import { renderFramePng } from "../src/export/framePng.ts";
 import { savePng } from "../src/export/savePng.ts";
 import { wrapText } from "../src/document/textLayout.ts";
@@ -157,7 +158,7 @@ test("部分装飾の文字色・太さ・下線・コード背景を PNG に描
   assert.match(textCalls[1][4], /^700 16px/);
   assert.equal(textCalls[1][5], "#0969da");
   assert.match(textCalls[3][4], /monospace$/);
-  assert.ok(calls.some(([method, color]) => method === "fill" && color === "#f6f8fa"));
+  assert.ok(calls.some(([method, color]) => method === "fill" && color === RENDER_COLORS.codeBackground));
   assert.ok(calls.some(([method]) => method === "lineTo"));
 });
 
