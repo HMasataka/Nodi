@@ -2,12 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { absoluteGeometry } from "../src/document/geometry.ts";
+import { success } from "./support/factories.mjs";
 import { addNode, alignNodes, createDocument, findNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { snapMove, snapResize } from "../src/pages/editor/snapping.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("移動・リサイズの辺と中心をズームに応じた閾値でスナップし、ガイドだけでは履歴を変えない", () => {
   const a = success(addNode(createDocument(), { type: "rectangle", x: 0, y: 0, width: 100, height: 40 }));

@@ -6,6 +6,7 @@ import { createServer } from "vite";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { reorderNode } from "../src/document/commands/index.ts";
+import { document, frame as makeFrame, image as makeImage, rectangle as makeRectangle, text as makeText } from "./support/factories.mjs";
 
 test("分割後のキャンバス・レイヤー・プロパティが同じ要素を表示する", async () => {
   const vite = await createServer({ server: { middlewareMode: true } });
@@ -18,12 +19,11 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const { EditorStatus } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorStatus/EditorStatus.tsx");
     const { RecoveryDialog } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/RecoveryDialog/RecoveryDialog.tsx");
     const { TextStyleEditor } = await vite.ssrLoadModule("/src/pages/editor/components/molecules/TextStyleEditor/TextStyleEditor.tsx");
-    const image = { id: "image-1", name: "風景", type: "image", x: 10, y: 20, width: 100, height: 80, source: "data:image/png;base64,aGVsbG8=" };
-    const frame = { id: "frame-1", name: "画面", type: "frame", x: 0, y: 0, width: 300, height: 200, background: "#aabbcc", clipContent: true, children: [image] };
+    const image = makeImage({ id: "image-1", name: "風景", x: 10, y: 20, width: 100, height: 80 });
+    const frame = makeFrame({ id: "frame-1", background: "#aabbcc", children: [image] });
     const noOp = () => {};
-    const text = { id: "heading", name: "見出し", type: "text", x: 0, y: 0, width: 200, height: 48,
-      content: "Hello", fontSize: 24, color: "#1f2328", textAlign: "left", fontFamily: "system", fontWeight: 700,
-      lineHeight: 1.75, letterSpacing: -0.5 };
+    const text = makeText({ id: "heading", name: "見出し", width: 200, height: 48, content: "Hello",
+      fontSize: 24, color: "#1f2328", fontFamily: "system", fontWeight: 700, lineHeight: 1.75, letterSpacing: -0.5 });
     const textMarkup = renderToStaticMarkup(createElement(CanvasNode, { node: text, selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp } }));
     assert.match(textMarkup, /font-family:system-ui/);
@@ -37,7 +37,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(textStyleMarkup, /value="1.75"/);
     assert.match(textStyleMarkup, /value="-0.5"/);
     const canvas = renderToStaticMarkup(createElement(Canvas, {
-      design: { version: 1, children: [frame] }, selectedId: image.id,
+      design: document(frame), selectedId: image.id,
       zoom: 1.2345, onZoom: noOp, drawTool: "select", drawing: null,
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
@@ -52,7 +52,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(canvas, /123%/);
     assert.ok(canvas.indexOf('class="canvas-scale"') > canvas.indexOf("</section>"));
     const multiCanvas = renderToStaticMarkup(createElement(Canvas, {
-      design: { version: 1, children: [frame] }, selectedId: image.id, selectedIds: [frame.id, image.id],
+      design: document(frame), selectedId: image.id, selectedIds: [frame.id, image.id],
       zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       selection: { start: { x: 10, y: 20 }, end: { x: 120, y: 90 } },
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
@@ -63,7 +63,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(multiCanvas, /class="canvas-frame is-selected"/);
     assert.match(multiCanvas, /class="canvas-image is-selected"/);
     const guidedCanvas = renderToStaticMarkup(createElement(Canvas, {
-      design: { version: 1, children: [frame] }, selectedId: image.id, zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
+      design: document(frame), selectedId: image.id, zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       guides: [{ orientation: "vertical", position: 110, from: 20, to: 150 }],
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
@@ -71,7 +71,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(guidedCanvas, /class="alignment-guide vertical" style="left:110px;top:20px;height:130px"/);
     const overflowing = renderToStaticMarkup(createElement(Canvas, {
-      design: { version: 1, children: [{ ...frame, clipContent: false }] }, selectedId: frame.id,
+      design: document({ ...frame, clipContent: false }), selectedId: frame.id,
       zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
       onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp,
       onPanPointerDown: noOp, onPanPointerMove: noOp, onPanPointerUp: noOp,
@@ -97,9 +97,10 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(textInspector, /選択範囲の装飾/);
     assert.match(textInspector, /本文から文字を選択してください/);
     assert.match(textInspector, /aria-pressed="false" disabled=""[^>]*>太字/);
-    const back = { id: "back", name: "背面", type: "rectangle", x: 10, y: 10, width: 80, height: 80, fill: "#123456", stroke: "#000000", strokeWidth: 0, cornerRadius: 0 };
+    const back = makeRectangle({ id: "back", name: "背面", x: 10, y: 10, width: 80, height: 80,
+      fill: "#123456", stroke: "#000000", strokeWidth: 0, cornerRadius: 0 });
     const front = { ...back, id: "front", name: "前面", x: 20, y: 20 };
-    const layered = { version: 1, children: [{ ...frame, children: [back, front] }] };
+    const layered = document({ ...frame, children: [back, front] });
     const layerMarkup = renderToStaticMarkup(createElement(LayersPanel, { nodes: layered.children, selectedId: null, onSelect: noOp, onReorder: noOp }));
     assert.ok(layerMarkup.indexOf("前面") < layerMarkup.indexOf("背面"));
     const multiLayers = renderToStaticMarkup(createElement(LayersPanel, { nodes: layered.children, selectedId: front.id, selectedIds: [back.id, front.id], onSelect: noOp, onReorder: noOp }));
@@ -134,7 +135,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
 
     assert.match(renderToStaticMarkup(createElement(EditorStatus, { selected: image, isDirty: true, filePath: null })), /未保存の変更/);
     const recovery = renderToStaticMarkup(createElement(RecoveryDialog, {
-      status: { kind: "available", draft: { sourcePath: "/tmp/画面.nodi", document: { version: 1, children: [] } } },
+      status: { kind: "available", draft: { sourcePath: "/tmp/画面.nodi", document: document() } },
       onRestore: noOp, onDiscard: noOp,
     }));
     assert.match(recovery, /元のファイルは上書きされません/);

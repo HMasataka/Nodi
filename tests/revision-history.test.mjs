@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
+import { success } from "./support/factories.mjs";
 import test from "node:test";
 import { addNode, createDocument, moveNode, renameNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, getRevision, isDirty, listRevisions, markSaved, redo, undo } from "../src/document/history.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("編集時点は不変の ID と親 ID を持ち、Undo / Redo でも変わらない", () => {
   const initial = createDocument();

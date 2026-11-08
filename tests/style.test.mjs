@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, findNode, setFrameStyle, setNodeStyle } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("矩形の塗り・線・角丸を編集して保存し、Undo / Redo できる", () => {
   const { document, node } = success(addNode(createDocument(), { type: "rectangle", x: 0, y: 0, width: 100, height: 50 }));

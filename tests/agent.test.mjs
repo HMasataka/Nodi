@@ -3,9 +3,8 @@ import test from "node:test";
 
 import { createAgentApi } from "../src/agent/api.ts";
 import { createDocument } from "../src/document/commands/index.ts";
+import { success } from "./support/factories.mjs";
 import { commit, createHistory, isDirty, undo } from "../src/document/history.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("AI API の変更は同じ履歴に入り、名前と ID を階層付きで返す", () => {
   let history = createHistory(createDocument(), true);

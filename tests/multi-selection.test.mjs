@@ -1,13 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { success } from "./support/factories.mjs";
 import { toggleSelection } from "../src/pages/editor/selection.ts";
 import { absoluteGeometry, nodesInBounds } from "../src/pages/editor/geometry.ts";
 import { addNode, createDocument, deleteNodes, findNode, moveNodes } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("Shift 選択と範囲選択は履歴を変えず、別フレームの要素を見つける", () => {
   const firstFrame = success(addNode(createDocument(), { type: "frame", x: 100, y: 50, width: 150, height: 130 }));

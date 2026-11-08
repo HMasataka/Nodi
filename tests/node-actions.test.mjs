@@ -1,13 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, deleteNode, duplicateNode, findNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) {
-  assert.equal(result.type, "Success");
-  return result.value;
-}
 
 test("階層ごと複製してすべての ID を再生成し、名前・配置を区別する", () => {
   const frame = success(addNode(createDocument(), { type: "frame", name: "画面", x: 0, y: 0, width: 400, height: 300 }));

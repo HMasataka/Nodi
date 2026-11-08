@@ -6,6 +6,7 @@ import { createServer } from "vite";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { RENDER_COLORS } from "../src/rendering/colors.ts";
+import { text } from "./support/factories.mjs";
 
 test("キャンバスのテキストは共通の計測結果を行として描き、空行も高さを保つ", async () => {
   const vite = await createServer({ server: { middlewareMode: true, hmr: false } });
@@ -16,8 +17,8 @@ test("キャンバスのテキストは共通の計測結果を行として描�
     globalThis.document = { createElement: () => ({ getContext: () => ctx }) };
     const noOp = () => {};
     const markup = renderToStaticMarkup(createElement(CanvasNode, {
-      node: { id: "text", name: "説明", type: "text", x: 0, y: 0, width: 52, height: 100,
-        content: "Hello world\n\nABCDEF", fontSize: 16, color: "#000000", textAlign: "left", lineHeight: 1.5, letterSpacing: 0 },
+      node: text({ id: "text", name: "説明", width: 52, height: 100,
+        content: "Hello world\n\nABCDEF", color: "#000000", lineHeight: 1.5, letterSpacing: 0 }),
       selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp },
     }));
@@ -26,9 +27,9 @@ test("キャンバスのテキストは共通の計測結果を行として描�
     assert.match(markup, />world<\/span><span class="canvas-text-line" style="height:24px"><\/span>/);
     assert.match(markup, />ABCDEF<\/span>/);
     const marked = renderToStaticMarkup(createElement(CanvasNode, {
-      node: { id: "marked", name: "部分装飾", type: "text", x: 0, y: 0, width: 180, height: 45,
-        content: "Hello world code", fontSize: 16, color: "#1f2328", textAlign: "left",
-        marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] },
+      node: text({ id: "marked", name: "部分装飾", width: 180, height: 45,
+        content: "Hello world code", color: "#1f2328",
+        marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] }),
       selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp },
     }));

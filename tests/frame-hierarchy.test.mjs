@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, findNode, moveNode } from "../src/document/commands/index.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("フレーム内の子は親基準の座標と ID を保って保存・再読込できる", () => {
   const parent = success(addNode(createDocument(), { type: "frame", name: "画面", x: 100, y: 200, width: 400, height: 300 }));

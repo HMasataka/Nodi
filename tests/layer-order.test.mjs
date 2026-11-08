@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, reorderNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("同じ親の子だけを並べ替え、位置と ID を維持して保存・Undo / Redo する", () => {
   const frame = success(addNode(createDocument(), { type: "frame", x: 30, y: 40, width: 200, height: 150 }));
