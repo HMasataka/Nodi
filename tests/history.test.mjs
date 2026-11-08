@@ -1,12 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, moveNode, renameNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty, markSaved, redo, undo } from "../src/document/history.ts";
-
-function success(result) {
-  assert.equal(result.type, "Success");
-  return result.value;
-}
 
 test("追加・改名・移動を順に戻してやり直せる", () => {
   const initial = createDocument();

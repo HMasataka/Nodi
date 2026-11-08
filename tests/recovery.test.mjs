@@ -2,11 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { saveDocumentFile } from "../src/persistence/documentFile.ts";
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, moveNode } from "../src/document/commands/index.ts";
 import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft } from "../src/persistence/recovery.ts";
 import { commit, createHistory, isDirty, markSaved, undo } from "../src/document/history.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 function memoryRecovery() {
   let contents = null;

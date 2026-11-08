@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, setNodeGeometry } from "../src/document/commands/index.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("位置・サイズの編集は保存でき、1操作で戻せる", () => {
   const { document, node } = success(addNode(createDocument(), { type: "rectangle", x: 0, y: 0, width: 20, height: 30 }));

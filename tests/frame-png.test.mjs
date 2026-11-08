@@ -7,8 +7,7 @@ import { RENDER_COLORS } from "../src/rendering/colors.ts";
 import { renderFramePng } from "../src/export/framePng.ts";
 import { savePng } from "../src/export/savePng.ts";
 import { wrapText } from "../src/document/textLayout.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
+import { ellipse as makeEllipse, frame as makeFrame, rectangle as makeRectangle, text as makeText, success } from "./support/factories.mjs";
 
 function fakeCanvas() {
   const calls = [];
@@ -60,23 +59,19 @@ test("サンプルのフレームを寸法どおりに描き、編集 UI を含�
 });
 
 test("重なった兄弟要素はレイヤー順に PNG へ描画する", async () => {
-  const rectangle = (id, fill) => ({ id, name: id, type: "rectangle", x: 0, y: 0, width: 80, height: 80, fill, stroke: "#000000", strokeWidth: 0, cornerRadius: 0 });
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 100, background: "#ffffff", clipContent: true, children: [rectangle("back", "#123456"), rectangle("front", "#abcdef")] };
+  const box = (id, fill) => makeRectangle({ id, name: id, width: 80, height: 80, fill, stroke: "#000000", strokeWidth: 0, cornerRadius: 0 });
+  const frame = makeFrame({ width: 100, height: 100, children: [box("back", "#123456"), box("front", "#abcdef")] });
   const { canvas, calls } = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
   assert.deepEqual(calls.filter(([method]) => method === "fill").map(([, color]) => color), ["#123456", "#abcdef"]);
 });
 
 test("図形の線を領域内へ収め、テキストを編集画面の行ボックスに揃える", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 100,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "rectangle", name: "枠", type: "rectangle", x: 0, y: 0, width: 20, height: 10,
-        fill: "#ffffff", stroke: "#000000", strokeWidth: 2, cornerRadius: 4 },
-      { id: "ellipse", name: "丸", type: "ellipse", x: 0, y: 0, width: 20, height: 10,
-        fill: "#ffffff", stroke: "#000000", strokeWidth: 2 },
-      { id: "text", name: "番号", type: "text", x: 0, y: 0, width: 20, height: 26,
-        content: "1", fontSize: 16, color: "#000000", textAlign: "center" },
-    ] };
+  const frame = makeFrame({ width: 100, height: 100, children: [
+    makeRectangle({ id: "rectangle", name: "枠", width: 20, height: 10, fill: "#ffffff", stroke: "#000000", strokeWidth: 2, cornerRadius: 4 }),
+    makeEllipse({ id: "ellipse", name: "丸", width: 20, height: 10, fill: "#ffffff", stroke: "#000000", strokeWidth: 2 }),
+    makeText({ id: "text", name: "番号", width: 20, height: 26, content: "1", color: "#000000", textAlign: "center" }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   const ctx = canvas.getContext("2d");
   ctx.measureText = (text) => ({ width: text.length * 8, fontBoundingBoxAscent: 16, fontBoundingBoxDescent: 6 });
@@ -88,11 +83,10 @@ test("図形の線を領域内へ収め、テキストを編集画面の行ボ�
 });
 
 test("PNG のテキストは選択したフォントと太さを使い、旧形式は標準フォントへ戻す", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 200, height: 100,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "見出し", type: "text", x: 0, y: 0, width: 180, height: 40,
-        content: "Hello", fontSize: 24, color: "#000000", textAlign: "left", fontFamily: "system", fontWeight: 700 },
-    ] };
+  const frame = makeFrame({ width: 200, height: 100, children: [
+    makeText({ id: "text", name: "見出し", width: 180, height: 40, content: "Hello", fontSize: 24,
+      color: "#000000", fontFamily: "system", fontWeight: 700 }),
+  ] });
   const selected = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => selected.canvas, loadImage: async () => {} }));
   assert.match(selected.canvas.getContext("2d").font, /^700 24px system-ui,/);
@@ -103,11 +97,10 @@ test("PNG のテキストは選択したフォントと太さを使い、旧形�
 });
 
 test("PNG は行高と対応ブラウザの字間を複数行に反映する", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 200, height: 100,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 180, height: 80,
-        content: "AB\nCD", fontSize: 20, color: "#000000", textAlign: "left", lineHeight: 1.8, letterSpacing: 2 },
-    ] };
+  const frame = makeFrame({ width: 200, height: 100, children: [
+    makeText({ id: "text", name: "本文", width: 180, height: 80, content: "AB\nCD", fontSize: 20,
+      color: "#000000", lineHeight: 1.8, letterSpacing: 2 }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   const ctx = canvas.getContext("2d");
   ctx.letterSpacing = "0px";
@@ -120,11 +113,9 @@ test("PNG は行高と対応ブラウザの字間を複数行に反映する", a
 });
 
 test("字間が増えると PNG の折り返し幅にも反映される", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 80,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 20, height: 60,
-        content: "AB", fontSize: 16, color: "#000000", textAlign: "left", letterSpacing: 2 },
-    ] };
+  const frame = makeFrame({ width: 100, height: 80, children: [
+    makeText({ id: "text", name: "本文", width: 20, height: 60, content: "AB", color: "#000000", letterSpacing: 2 }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
   assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, line]) => line), ["A", "B"]);
@@ -132,23 +123,19 @@ test("字間が増えると PNG の折り返し幅にも反映される", async 
 });
 
 test("PNG の本文も単語境界と空行を同じ行構成で描く", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 120,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 52, height: 100,
-        content: "Hello world\n\nABCDEF", fontSize: 16, color: "#000000", textAlign: "left", lineHeight: 1.5 },
-    ] };
+  const frame = makeFrame({ width: 100, height: 120, children: [
+    makeText({ id: "text", name: "本文", width: 52, height: 100, content: "Hello world\n\nABCDEF", lineHeight: 1.5 }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
   assert.deepEqual(calls.filter(([method]) => method === "fillText").map(([, line]) => line), ["Hello", "world", "", "ABCDEF"]);
 });
 
 test("部分装飾の文字色・太さ・下線・コード背景を PNG に描く", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 200, height: 80,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 180, height: 45,
-        content: "Hello world code", fontSize: 16, color: "#1f2328", textAlign: "left",
-        marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] },
-    ] };
+  const frame = makeFrame({ width: 200, height: 80, children: [
+    makeText({ id: "text", name: "本文", width: 180, height: 45, content: "Hello world code", color: "#1f2328",
+      marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   const ctx = canvas.getContext("2d");
   ctx.fillText = (text, x, y) => calls.push(["fillText", text, x, y, ctx.font, ctx.fillStyle]);
@@ -163,11 +150,10 @@ test("部分装飾の文字色・太さ・下線・コード背景を PNG に描
 });
 
 test("字間に未対応の Canvas でも負の字間と中央揃えを描画する", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 50,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "見出し", type: "text", x: 0, y: 0, width: 100, height: 30,
-        content: "AB", fontSize: 16, color: "#000000", textAlign: "center", letterSpacing: -1 },
-    ] };
+  const frame = makeFrame({ width: 100, height: 50, children: [
+    makeText({ id: "text", name: "見出し", width: 100, height: 30, content: "AB", color: "#000000",
+      textAlign: "center", letterSpacing: -1 }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   delete canvas.getContext("2d").letterSpacing;
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
@@ -175,11 +161,10 @@ test("字間に未対応の Canvas でも負の字間と中央揃えを描画す
 });
 
 test("字間の代替描画でも結合した絵文字を一文字として扱う", async () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 100, height: 50,
-    background: "#ffffff", clipContent: true, children: [
-      { id: "text", name: "絵文字", type: "text", x: 0, y: 0, width: 100, height: 30,
-        content: "👩‍💻A", fontSize: 16, color: "#000000", textAlign: "center", letterSpacing: 1 },
-    ] };
+  const frame = makeFrame({ width: 100, height: 50, children: [
+    makeText({ id: "text", name: "絵文字", width: 100, height: 30, content: "👩‍💻A", color: "#000000",
+      textAlign: "center", letterSpacing: 1 }),
+  ] });
   const { canvas, calls } = fakeCanvas();
   delete canvas.getContext("2d").letterSpacing;
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
@@ -187,12 +172,12 @@ test("字間の代替描画でも結合した絵文字を一文字として扱�
 });
 
 test("入れ子フレームの背景を先に描き、クリップ設定ごとに子要素を切り替える", async () => {
-  const child = { id: "child", name: "はみ出す矩形", type: "rectangle", x: 90, y: 80, width: 40, height: 40,
-    fill: "#112233", stroke: "#445566", strokeWidth: 0, cornerRadius: 0 };
-  const nested = { id: "nested", name: "内側", type: "frame", x: 10, y: 20, width: 100, height: 100,
-    background: "#aabbcc", clipContent: true, children: [child] };
-  const frame = { id: "root", name: "外側", type: "frame", x: 0, y: 0, width: 200, height: 200,
-    background: "#123456", clipContent: true, children: [nested] };
+  const child = makeRectangle({ id: "child", name: "はみ出す矩形", x: 90, y: 80, width: 40, height: 40,
+    fill: "#112233", stroke: "#445566", strokeWidth: 0, cornerRadius: 0 });
+  const nested = makeFrame({ id: "nested", name: "内側", x: 10, y: 20, width: 100, height: 100,
+    background: "#aabbcc", children: [child] });
+  const frame = makeFrame({ id: "root", name: "外側", width: 200, height: 200,
+    background: "#123456", children: [nested] });
   const clipped = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => clipped.canvas, loadImage: async () => {} }));
   assert.deepEqual(clipped.calls.filter(([method]) => method === "fillRect"), [

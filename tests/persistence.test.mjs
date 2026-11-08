@@ -2,17 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { addNode, createDocument, moveNode, renameNode } from "../src/document/commands/index.ts";
 import { commit, createHistory, isDirty } from "../src/document/history.ts";
+import { failure, success } from "./support/factories.mjs";
 import { openDocumentFile, saveDocumentFile } from "../src/persistence/documentFile.ts";
-
-function success(result) {
-  assert.equal(result.type, "Success");
-  return result.value;
-}
-
-function failure(result) {
-  assert.equal(result.type, "Failure");
-  return result.error;
-}
 
 function memoryFiles() {
   const files = new Map();

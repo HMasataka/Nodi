@@ -3,9 +3,7 @@ import test from "node:test";
 import { addNode, createDocument, deleteNode, moveNode, renameNode, setNodeGeometry } from "../src/document/commands/index.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "../src/document/measure.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
-function failure(result) { assert.equal(result.type, "Failure"); return result.error; }
+import { failure, success } from "./support/factories.mjs";
 
 test("入れ子フレームのローカル座標と絶対境界を取得する", () => {
   const outer = success(addNode(createDocument(), { type: "frame", name: "画面", x: 100, y: 50, width: 400, height: 300 }));

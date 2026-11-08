@@ -1,30 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { addNode, createDocument, findNode, moveNode, renameNode } from "../src/document/commands/index.ts";
+import { document, failure, frame, rectangle, success } from "./support/factories.mjs";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-function success(result) {
-  assert.equal(result.type, "Success");
-  return result.value;
-}
-
-function failure(result) {
-  assert.equal(result.type, "Failure");
-  return result.error;
-}
-
-const rectangle = {
-  id: "nd_button", name: "ログインボタン", type: "rectangle",
-  x: 24, y: 680, width: 342, height: 48,
-  fill: "#f3d9c8", stroke: "#d9bbaa", strokeWidth: 1, cornerRadius: 2,
-};
-const valid = {
-  version: 1,
-  children: [{
-    id: "nd_screen", name: "ログイン画面", type: "frame",
-    x: 0, y: 0, width: 390, height: 844, background: "#ffffff", clipContent: true, children: [rectangle],
-  }],
-};
+const button = rectangle({ id: "nd_button", name: "ログインボタン", x: 24, y: 680, width: 342, height: 48 });
+const valid = document(frame({ id: "nd_screen", name: "ログイン画面", width: 390, height: 844, children: [button] }));
 
 test("v1 の JSON を読み書きすると ID、名前、階層、スタイルが保たれる", () => {
   assert.deepEqual(success(parseDocument(success(serializeDocument(valid)))), valid);
@@ -34,17 +15,17 @@ test("未知の項目、型の変換、不正な数値と無名の要素を拒�
   for (const invalid of [
     { ...valid, version: 2 },
     { ...valid, extra: true },
-    { ...valid, children: [{ ...rectangle, children: [] }] },
-    { ...valid, children: [{ ...rectangle, width: "342" }] },
-    { ...valid, children: [{ ...rectangle, name: " \t " }] },
-    { ...valid, children: [{ ...rectangle, width: 0 }] },
-    { ...valid, children: [{ ...rectangle, height: Infinity }] },
-    { ...valid, children: [{ ...rectangle, x: NaN }] },
-    { ...valid, children: [{ ...rectangle, type: "circle" }] },
-    { ...valid, children: [{ ...rectangle, id: "" }] },
-    { ...valid, children: [{ ...rectangle, name: undefined }] },
-    { ...valid, children: [{ ...rectangle, fill: "red" }] },
-    { ...valid, children: [{ ...rectangle, strokeWidth: -1 }] },
+    { ...valid, children: [{ ...button, children: [] }] },
+    { ...valid, children: [{ ...button, width: "342" }] },
+    { ...valid, children: [{ ...button, name: " \t " }] },
+    { ...valid, children: [{ ...button, width: 0 }] },
+    { ...valid, children: [{ ...button, height: Infinity }] },
+    { ...valid, children: [{ ...button, x: NaN }] },
+    { ...valid, children: [{ ...button, type: "circle" }] },
+    { ...valid, children: [{ ...button, id: "" }] },
+    { ...valid, children: [{ ...button, name: undefined }] },
+    { ...valid, children: [{ ...button, fill: "red" }] },
+    { ...valid, children: [{ ...button, strokeWidth: -1 }] },
     { ...valid, children: [{ ...valid.children[0], children: undefined }] },
   ]) {
     assert.ok(Array.isArray(failure(serializeDocument(invalid))));
@@ -62,7 +43,7 @@ test("スタイル項目の欠けた古い形のデータは移行せず拒否�
 test("子孫を含む ID 重複は問題のパスとともに報告する", () => {
   const duplicate = {
     ...valid,
-    children: [{ ...valid.children[0], children: [{ ...rectangle, id: "nd_screen" }] }],
+    children: [{ ...valid.children[0], children: [{ ...button, id: "nd_screen" }] }],
   };
   const issues = failure(parseDocument(JSON.stringify(duplicate)));
   assert.deepEqual(issues[0].path, ["children", 0, "children", 0, "id"]);
@@ -85,17 +66,17 @@ test("名前付き作成・移動・改名を保存し直しても ID が変わ�
 });
 
 test("名前省略時は初期名を付け、不正な編集操作を拒否する", () => {
-  const { document, node } = success(addNode(createDocument(), {
+  const { document: withRectangle, node } = success(addNode(createDocument(), {
     type: "rectangle", x: 0, y: 0, width: 10, height: 10,
   }));
   assert.equal(node.name, "矩形 1");
-  assert.equal(success(addNode(document, { type: "rectangle", x: 0, y: 0, width: 10, height: 10 })).node.name, "矩形 2");
-  assert.match(failure(addNode(document, {
+  assert.equal(success(addNode(withRectangle, { type: "rectangle", x: 0, y: 0, width: 10, height: 10 })).node.name, "矩形 2");
+  assert.match(failure(addNode(withRectangle, {
     type: "rectangle", parentId: node.id, x: 0, y: 0, width: 10, height: 10,
   })).message, /親フレーム/);
-  assert.match(failure(addNode(document, {
+  assert.match(failure(addNode(withRectangle, {
     type: "rectangle", name: "  ", x: 0, y: 0, width: 10, height: 10,
   })).message, /名前/);
-  assert.match(failure(moveNode(document, node.id, Infinity, 0)).message, /座標/);
-  assert.match(failure(renameNode(document, "missing", "名前")).message, /見つかりません/);
+  assert.match(failure(moveNode(withRectangle, node.id, Infinity, 0)).message, /座標/);
+  assert.match(failure(renameNode(withRectangle, "missing", "名前")).message, /見つかりません/);
 });

@@ -5,14 +5,13 @@ import { tmpdir } from "node:os";
 import { copyFile, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 
 import { createAgentApi } from "../src/agent/api.ts";
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, deleteNode, duplicateNode, findNode, setNodeGeometry } from "../src/document/commands/index.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { readImageFile, validateImageFile } from "../src/ipc/imageFiles.ts";
 
 const source = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO7+R7sAAAAASUVORK5CYII=";
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
-
 test("フレーム内の画像は移動・サイズ変更・複製・削除・Undo ができる", () => {
   const frame = success(addNode(createDocument(), { type: "frame", x: 0, y: 0, width: 300, height: 200 }));
   const added = success(addNode(frame.document, { type: "image", source, parentId: frame.node.id, x: 10, y: 20, width: 100, height: 80 }));

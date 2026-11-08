@@ -3,11 +3,10 @@ import test from "node:test";
 
 import { layoutTextLines } from "../src/rendering/textLayout.ts";
 import { rangeHasMark } from "../src/document/textMarks.ts";
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument, findNode, setTextContent, setTextMarkRange, setTextMarks } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("装飾範囲は一つの本文内に保存され、Undo / Redo と旧文書を維持する", () => {
   const created = success(addNode(createDocument(), { type: "text", content: "Hello 👩‍💻 world\nNext", x: 0, y: 0, width: 240, height: 80 }));

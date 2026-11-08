@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
+import { success } from "./support/factories.mjs";
 import { addNode, createDocument } from "../src/document/commands/index.ts";
 import { commit, createHistory, undo } from "../src/document/history.ts";
 import { drawingGeometry, frameOrigin, pointOnCanvas } from "../src/pages/editor/geometry.ts";
-
-function success(result) { assert.equal(result.type, "Success"); return result.value; }
 
 test("ズーム・スクロールされた画面座標からドラッグの位置と寸法を得る", () => {
   const bounds = { left: -100, top: 20 };

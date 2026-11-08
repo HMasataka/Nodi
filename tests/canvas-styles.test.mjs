@@ -2,10 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { RENDER_COLORS } from "../src/rendering/colors.ts";
-import {
-  canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, frameContentsStyle, frameNodeStyle,
-  guideStyle, imageNodeStyle, selectionPreviewStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle,
-} from "../src/pages/editor/canvasStyles.ts";
+import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, frameContentsStyle, frameNodeStyle,
+  guideStyle, imageNodeStyle, selectionPreviewStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "../src/pages/editor/canvasStyles.ts";
+import { ellipse, frame, image, rectangle, text } from "./support/factories.mjs";
 
 const extent = { originX: 112, originY: 0, width: 1232, height: 932 };
 
@@ -33,36 +32,34 @@ test("ガイドは向きに応じて位置と長さを入れ替える", () => {
 });
 
 test("フレームとテキストは既定値とクリップ設定を反映する", () => {
-  const frame = { id: "frame", name: "画面", type: "frame", x: 10, y: 20, width: 300, height: 200,
-    background: "#aabbcc", clipContent: true, children: [] };
-  assert.deepEqual(frameNodeStyle(frame), { left: 10, top: 20, width: 300, height: 200, background: "#aabbcc" });
-  assert.deepEqual(frameContentsStyle(frame), { overflow: "hidden" });
-  assert.deepEqual(frameContentsStyle({ ...frame, clipContent: false }), { overflow: "visible" });
+  const frameNode = frame({ id: "frame", name: "画面", x: 10, y: 20, width: 300, height: 200, background: "#aabbcc" });
+  assert.deepEqual(frameNodeStyle(frameNode), { left: 10, top: 20, width: 300, height: 200, background: "#aabbcc" });
+  assert.deepEqual(frameContentsStyle(frameNode), { overflow: "hidden" });
+  assert.deepEqual(frameContentsStyle({ ...frameNode, clipContent: false }), { overflow: "visible" });
 
-  const text = { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 180, height: 60,
-    content: "Hello", fontSize: 20, color: "#1f2328", textAlign: "center" };
-  assert.deepEqual(textNodeStyle(text), {
+  const textNode = text({ id: "text", name: "本文", width: 180, height: 60, content: "Hello", fontSize: 20,
+    color: "#1f2328", textAlign: "center" });
+  assert.deepEqual(textNodeStyle(textNode), {
     left: 0, top: 0, width: 180, height: 60, fontSize: 20, color: "#1f2328", textAlign: "center",
     lineHeight: 1.4, letterSpacing: "0px",
     fontFamily: '"Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif', fontWeight: 400,
   });
-  assert.deepEqual(textNodeStyle({ ...text, lineHeight: 1.8, letterSpacing: -0.5, fontFamily: "system", fontWeight: 700 }), {
+  assert.deepEqual(textNodeStyle({ ...textNode, lineHeight: 1.8, letterSpacing: -0.5, fontFamily: "system", fontWeight: 700 }), {
     left: 0, top: 0, width: 180, height: 60, fontSize: 20, color: "#1f2328", textAlign: "center",
     lineHeight: 1.8, letterSpacing: "-0.5px",
     fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontWeight: 700,
   });
-  assert.deepEqual(textLineStyle(text), { height: 28 });
+  assert.deepEqual(textLineStyle(textNode), { height: 28 });
 });
 
 test("部分装飾は色・太さ・下線・コード背景をスタイルへ変換する", () => {
-  const text = { id: "text", name: "本文", type: "text", x: 0, y: 0, width: 180, height: 60,
-    content: "Hello world", fontSize: 16, color: "#1f2328", textAlign: "left" };
-  assert.deepEqual(textMarkStyle(text, { start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }), {
+  const textNode = text({ width: 180, height: 60, content: "Hello world", color: "#1f2328" });
+  assert.deepEqual(textMarkStyle(textNode, { start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }), {
     fontFamily: '"Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif',
     fontWeight: 700, color: "#0969da", textDecorationLine: "underline",
     backgroundColor: undefined, borderRadius: undefined,
   });
-  assert.deepEqual(textMarkStyle(text, { start: 0, end: 5, code: true }), {
+  assert.deepEqual(textMarkStyle(textNode, { start: 0, end: 5, code: true }), {
     fontFamily: 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace',
     fontWeight: 400, color: "#1f2328", textDecorationLine: undefined,
     backgroundColor: RENDER_COLORS.codeBackground, borderRadius: 3,
@@ -70,14 +67,15 @@ test("部分装飾は色・太さ・下線・コード背景をスタイルへ�
 });
 
 test("矩形と楕円は同じ位置に異なる角丸を適用し、画像は位置だけを持つ", () => {
-  const rectangle = { id: "rect", name: "矩形", type: "rectangle", x: 1, y: 2, width: 30, height: 40,
-    fill: "#ffffff", stroke: "#000000", strokeWidth: 2, cornerRadius: 6 };
-  const ellipse = { ...rectangle, id: "ellipse", type: "ellipse" };
-  assert.deepEqual(shapeNodeStyle(rectangle), {
+  const rectangleNode = rectangle({ id: "rect", name: "矩形", x: 1, y: 2, width: 30, height: 40,
+    fill: "#ffffff", stroke: "#000000", strokeWidth: 2, cornerRadius: 6 });
+  const ellipseNode = ellipse({ id: "ellipse", name: "楕円", x: 1, y: 2, width: 30, height: 40,
+    fill: "#ffffff", stroke: "#000000", strokeWidth: 2 });
+  assert.deepEqual(shapeNodeStyle(rectangleNode), {
     left: 1, top: 2, width: 30, height: 40, background: "#ffffff", borderColor: "#000000", borderWidth: 2, borderRadius: 6,
   });
-  assert.deepEqual(shapeNodeStyle(ellipse), {
+  assert.deepEqual(shapeNodeStyle(ellipseNode), {
     left: 1, top: 2, width: 30, height: 40, background: "#ffffff", borderColor: "#000000", borderWidth: 2, borderRadius: "50%",
   });
-  assert.deepEqual(imageNodeStyle({ x: 5, y: 6, width: 70, height: 80 }), { left: 5, top: 6, width: 70, height: 80 });
+  assert.deepEqual(imageNodeStyle(image({ x: 5, y: 6, width: 70, height: 80 })), { left: 5, top: 6, width: 70, height: 80 });
 });
