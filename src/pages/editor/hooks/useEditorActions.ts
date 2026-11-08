@@ -9,9 +9,9 @@ import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
   type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type LayerDirection,
-  reorderNode, setFrameStyle, setNodeGeometry, setNodeStyle, setTextContent, setTextStyle,
+  reorderNode, setFrameStyle, setNodeGeometry, setNodeStyle, setTextContent, setTextMarkRange, setTextStyle,
 } from "@/document/commands/index.ts";
-import type { FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
+import type { FrameStyle, Geometry, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
 
 export function useEditorActions(session: ReturnType<typeof useEditorDocument>) {
   const { designRef, selected, selectedId, selectedIds, setSelectedId, setSelectedIds, setError, applyDocument, recordDocument, agentApi } = session;
@@ -80,6 +80,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
       onGeometry: (value: Geometry) => changeSelected(value, setNodeGeometry),
       onTextContent: (value: string) => changeSelected(value, setTextContent),
       onTextStyle: (value: Partial<TextStyle>) => changeSelected(value, setTextStyle),
+      onTextMarkRange: (value: TextMarkRangeEdit) => changeSelected(value, setTextMarkRange),
       onShapeStyle: (value: Partial<RectangleStyle>) => changeSelected(value, setNodeStyle),
       onFrameStyle: (value: Partial<FrameStyle>) => changeSelected(value, setFrameStyle),
       onDuplicate: duplicateSelected,

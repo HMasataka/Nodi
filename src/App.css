@@ -123,6 +123,7 @@ button {
 .file-button:focus-visible,
 .layer-row:focus-visible,
 .canvas-node:focus-visible,
+.text-mark-actions button:focus-visible,
 .properties input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -306,6 +307,14 @@ button {
 .canvas-image img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
 .image-file-input { display: none; }
 .content-editor { width: 100%; min-height: 100px; margin-bottom: 18px; border: 1px solid #e4e3dc; border-radius: 4px; padding: 8px; resize: vertical; font: 12px/1.5 "Avenir Next", sans-serif; }
+.text-mark-controls { display: grid; gap: 8px; margin-bottom: 18px; padding: 10px; border: 1px solid #e4e3dc; border-radius: 5px; background: #f9f8f3; }
+.text-mark-controls p { margin: 0; color: #858981; font-size: 11px; }
+.text-mark-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.text-mark-actions button { border: 1px solid #d7d7d0; border-radius: 4px; padding: 6px 8px; background: #fff; color: var(--ink); font-size: 11px; }
+.text-mark-actions button[aria-pressed="true"] { border-color: var(--accent); background: #f7e9e2; color: #a84728; }
+.text-mark-actions button:disabled { opacity: .45; cursor: default; }
+.text-mark-actions label { display: flex; align-items: center; gap: 6px; color: #858981; font-size: 11px; }
+.text-mark-actions input[type="color"] { width: 32px; height: 26px; padding: 2px; }
 .text-style-fields { display: grid; gap: 10px; margin-bottom: 18px; }
 .text-style-fields label { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #858981; font-size: 11px; }
 .text-style-fields input[type="number"], .text-style-fields select { width: 80px; border: 1px solid #e4e3dc; border-radius: 4px; padding: 6px; background: white; }

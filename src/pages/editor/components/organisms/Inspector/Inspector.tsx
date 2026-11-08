@@ -1,5 +1,5 @@
 import type { Alignment, LayerDirection } from "@/document/commands/index.ts";
-import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextStyle } from "@/document/types";
+import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
@@ -13,6 +13,7 @@ interface InspectorProps {
   onGeometry(geometry: Geometry): void;
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
+  onTextMarkRange(edit: TextMarkRangeEdit): void;
   onShapeStyle(style: Partial<RectangleStyle>): void;
   onFrameStyle(style: Partial<FrameStyle>): void;
   onDuplicate(): void;
@@ -23,7 +24,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onTextContent, onTextStyle, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -44,7 +45,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           <div className="field-label">位置・サイズ</div>
           <GeometryEditor key={`${selected.id}:${selected.x}:${selected.y}:${selected.width}:${selected.height}`}
             node={selected} onChange={onGeometry} />
-          <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle}
+          <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} />
           <div className="property-divider" />
           <div className="field-label">要素 ID</div>

@@ -90,6 +90,13 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(inspector, /image-1/);
     assert.match(inspector, /埋め込まれています/);
+    const textInspector = renderToStaticMarkup(createElement(Inspector, {
+      selected: text, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
+      onTextMarkRange: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp,
+    }));
+    assert.match(textInspector, /選択範囲の装飾/);
+    assert.match(textInspector, /本文から文字を選択してください/);
+    assert.match(textInspector, /aria-pressed="false" disabled=""[^>]*>太字/);
     const back = { id: "back", name: "背面", type: "rectangle", x: 10, y: 10, width: 80, height: 80, fill: "#123456", stroke: "#000000", strokeWidth: 0, cornerRadius: 0 };
     const front = { ...back, id: "front", name: "前面", x: 20, y: 20 };
     const layered = { version: 1, children: [{ ...frame, children: [back, front] }] };

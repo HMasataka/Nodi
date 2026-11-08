@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { layoutTextLines } from "../src/rendering/textLayout.ts";
-import { addNode, createDocument, findNode, setTextContent, setTextMarks } from "../src/document/commands/index.ts";
+import { rangeHasMark } from "../src/document/textMarks.ts";
+import { addNode, createDocument, findNode, setTextContent, setTextMarkRange, setTextMarks } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
@@ -78,4 +79,45 @@ test("装飾中への挿入はスタイルを継ぎ、太さの違いで行の�
   const middle = success(setTextMarks(created.document, created.node.id, [{ start: 1, end: 4, color: "#0969da" }]));
   const inserted = success(setTextContent(middle, created.node.id, "HelXlo world"));
   assert.deepEqual(inserted.children[0].marks, [{ start: 1, end: 5, color: "#0969da" }]);
+});
+
+test("選択範囲への装飾は既存の色や下線を残して分割し、解除後は隣接範囲を結合する", () => {
+  const created = success(addNode(createDocument(), { type: "text", content: "Hello world", x: 0, y: 0, width: 180, height: 40 }));
+  const linked = success(setTextMarks(created.document, created.node.id, [{ start: 6, end: 11, color: "#0969da", underline: true }]));
+  const bold = success(setTextMarkRange(linked, created.node.id, { content: "Hello world", start: 0, end: 5, patch: { fontWeight: 700 } }));
+  const code = success(setTextMarkRange(bold, created.node.id, { content: "Hello world", start: 3, end: 8, patch: { code: true } }));
+  assert.deepEqual(findNode(code, created.node.id).marks, [
+    { start: 0, end: 3, fontWeight: 700 },
+    { start: 3, end: 5, fontWeight: 700, code: true },
+    { start: 5, end: 6, code: true },
+    { start: 6, end: 8, color: "#0969da", underline: true, code: true },
+    { start: 8, end: 11, color: "#0969da", underline: true },
+  ]);
+  const marks = findNode(code, created.node.id).marks;
+  assert.equal(rangeHasMark(marks, 3, 8, (mark) => mark?.code === true), true);
+  assert.equal(rangeHasMark(marks, 2, 8, (mark) => mark?.code === true), false);
+  const cleared = success(setTextMarkRange(code, created.node.id, { content: "Hello world", start: 3, end: 8, patch: { code: false } }));
+  assert.deepEqual(findNode(cleared, created.node.id).marks, [
+    { start: 0, end: 5, fontWeight: 700 }, { start: 6, end: 11, color: "#0969da", underline: true },
+  ]);
+  const noColor = success(setTextMarkRange(cleared, created.node.id, { content: "Hello world", start: 6, end: 11, patch: { color: null } }));
+  assert.deepEqual(findNode(noColor, created.node.id).marks[1], { start: 6, end: 11, underline: true });
+  const noUnderline = success(setTextMarkRange(noColor, created.node.id, { content: "Hello world", start: 6, end: 11, patch: { underline: false } }));
+  assert.deepEqual(findNode(noUnderline, created.node.id).marks, [{ start: 0, end: 5, fontWeight: 700 }]);
+  assert.equal(success(parseDocument(success(serializeDocument(noUnderline)))).children[0].marks.length, 1);
+});
+
+test("未確定の本文と装飾を一操作で確定し、範囲の不正入力では履歴を変えない", () => {
+  const created = success(addNode(createDocument(), { type: "text", content: "A👩‍💻B", x: 0, y: 0, width: 180, height: 40 }));
+  const invalid = setTextMarkRange(created.document, created.node.id,
+    { content: "Hi A👩‍💻B", start: 5, end: 9, patch: { underline: true } });
+  assert.equal(invalid.type, "Failure");
+  assert.equal(created.document.children[0].content, "A👩‍💻B");
+  const changed = success(setTextMarkRange(created.document, created.node.id,
+    { content: "Hi A👩‍💻B", start: 4, end: 9, patch: { color: "#0969da" } }));
+  assert.deepEqual(changed.children[0].marks, [{ start: 4, end: 9, color: "#0969da" }]);
+  const history = commit(createHistory(created.document), changed);
+  assert.equal(history.past.length, 1);
+  assert.equal(findNode(undo(history).present, created.node.id).content, "A👩‍💻B");
+  assert.deepEqual(findNode(redo(undo(history)).present, created.node.id).marks, changed.children[0].marks);
 });
