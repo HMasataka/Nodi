@@ -1,4 +1,5 @@
 import { graphemeSegments } from "@/document/textLayout.ts";
+import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
 import { DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type FrameNode } from "@/document/types.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
@@ -107,7 +108,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
             const descent = bounds.fontBoundingBoxDescent ?? node.fontSize * 0.35;
             ctx.beginPath();
             ctx.roundRect(left, y - ascent, fragment.width, ascent + descent, 3);
-            ctx.fillStyle = "#f6f8fa";
+            ctx.fillStyle = RENDER_COLORS.codeBackground;
             ctx.fill();
           }
           ctx.fillStyle = appearance.color;

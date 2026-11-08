@@ -33,3 +33,9 @@
 画面からドキュメントを変更するときは `src/document/` の操作結果を `useEditorDocument` に渡す。MCP からの変更も同じ履歴を通る。描画要素が増えたときは `CanvasNode`、レイヤーの表示が増えたときは `LayersPanel`、編集項目が増えたときは対応する編集欄と `Inspector` を更新する。`Canvas` は表示、`useCanvasInteraction` はその操作を担当する。
 
 依存方向はドキュメントの型・編集操作・履歴 → ファイル/MCP/画面側のアダプター。`src/document/` から React、Tauri、ファイル選択や MCP の都合を参照しない。編集コマンド内では `tree.ts` と `validation.ts` を共有し、各操作は他の操作ファイルを経由しない。
+
+## 色
+
+- 編集画面の UI 色は `src/App.css` の `:root` に定義した CSS カスタムプロパティを使う。ルール内に色のリテラルを書かない。
+- キャンバスと PNG の両方で使う描画色は `src/rendering/colors.ts` に置く。テキストのインラインコード背景など、2つの描画経路で一致させる必要がある色が対象。
+- 文書の既定色（`src/document/types.ts` の `DEFAULT_RECTANGLE_STYLE` など）は保存データの意味を持つため、UI トークンとは分けて扱う。

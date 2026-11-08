@@ -5,6 +5,8 @@ import { createElement } from "react";
 import { createServer } from "vite";
 import { renderToStaticMarkup } from "react-dom/server";
 
+import { RENDER_COLORS } from "../src/rendering/colors.ts";
+
 test("キャンバスのテキストは共通の計測結果を行として描き、空行も高さを保つ", async () => {
   const vite = await createServer({ server: { middlewareMode: true, hmr: false } });
   const previousDocument = globalThis.document;
@@ -34,7 +36,7 @@ test("キャンバスのテキストは共通の計測結果を行として描�
     assert.match(marked, /color:#0969da/);
     assert.match(marked, /font-weight:700/);
     assert.match(marked, /text-decoration-line:underline/);
-    assert.match(marked, /background-color:#f6f8fa/);
+    assert.match(marked, new RegExp(`background-color:${RENDER_COLORS.codeBackground}`));
     assert.match(marked, /font-family:ui-monospace/);
   } finally {
     globalThis.document = previousDocument;

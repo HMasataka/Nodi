@@ -1,5 +1,6 @@
 import { type PointerEvent, useMemo } from "react";
 
+import { RENDER_COLORS } from "@/rendering/colors";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import { resolvedTextFont } from "@/document/textFonts";
 import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type TextNode } from "@/document/types";
@@ -68,7 +69,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
           const appearance = textFragmentStyle(node, fragment.mark);
           return <span key={part} style={{ fontFamily: appearance.fontFamily, fontWeight: appearance.fontWeight,
             color: appearance.color, textDecorationLine: appearance.underline ? "underline" : undefined,
-            backgroundColor: appearance.code ? "#f6f8fa" : undefined, borderRadius: appearance.code ? 3 : undefined }}>{fragment.text}</span>;
+            backgroundColor: appearance.code ? RENDER_COLORS.codeBackground : undefined, borderRadius: appearance.code ? 3 : undefined }}>{fragment.text}</span>;
         })}
       </span>)}
       {handle}
