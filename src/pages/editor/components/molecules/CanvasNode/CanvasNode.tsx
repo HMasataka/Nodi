@@ -3,7 +3,7 @@ import { type PointerEvent, useMemo } from "react";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import { boxShape, ellipseShape, pathToString, type ShapePaths } from "@/document/shapePath.ts";
 import type { DocumentNode, TextNode } from "@/document/types";
-import { frameContentsStyle, frameNodeStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
+import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
@@ -82,7 +82,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
     <button type="button" className={`canvas-image${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={imageNodeStyle(node)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
-      <img src={node.source} alt="" draggable={false} onError={() => onImageError(node.id)} />
+      <img src={node.source} alt="" draggable={false} style={imageContentStyle(node)} onError={() => onImageError(node.id)} />
       {handle}
     </button>
   );

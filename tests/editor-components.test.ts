@@ -87,9 +87,12 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(layers, /風景/);
     const inspector = renderToStaticMarkup(createElement(Inspector, {
       selected: image, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
-      onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp,
+      onShapeStyle: noOp, onImageStyle: noOp, onDuplicate: noOp, onDelete: noOp,
     }));
     assert.match(inspector, /image-1/);
+    assert.match(inspector, /フィット/);
+    assert.match(inspector, /焦点 X/);
+    assert.match(inspector, /焦点 Y/);
     assert.match(inspector, /埋め込まれています/);
     const textInspector = renderToStaticMarkup(createElement(Inspector, {
       selected: text, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
