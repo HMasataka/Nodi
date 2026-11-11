@@ -1,3 +1,4 @@
+import { BorderEditor } from "@/pages/editor/components/molecules/BorderEditor/BorderEditor.tsx";
 import { useState } from "react";
 import type { FrameNode, FrameStyle } from "@/document/types";
 
@@ -8,5 +9,6 @@ export function FrameStyleEditor({ node, onChange }: { node: FrameNode; onChange
     <label className="frame-overflow-label">はみ出しを表示
       <input type="checkbox" checked={!node.clipContent} onChange={(event) => onChange({ clipContent: !event.currentTarget.checked })} />
     </label>
+    <BorderEditor style={node.style} onChange={(border) => onChange({ border })} />
   </div>;
 }

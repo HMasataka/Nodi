@@ -1,8 +1,8 @@
 import { type PointerEvent, useMemo } from "react";
 
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
-import { boxShape, ellipseShape, pathToString, type ShapePaths } from "@/document/shapePath.ts";
-import type { DocumentNode, TextNode } from "@/document/types";
+import type { Border, DocumentNode, TextNode } from "@/document/types";
+import { borderPaths, boxShape, ellipseShape, pathToString, type ShapePaths } from "@/document/shapePath.ts";
 import { frameContentsStyle, frameNodeStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 
@@ -15,6 +15,13 @@ function shapeSvg(shape: ShapePaths) {
       {shape.stroke && <path d={pathToString(shape.stroke)} fill="none" stroke={shape.strokeColor} strokeWidth={shape.strokeWidth} />}
     </svg>
   );
+}
+
+function borderSvg(width: number, height: number, border: Border) {
+  const paths = borderPaths(width, height, border);
+  return paths.length > 0 && <svg className="canvas-shape canvas-border" aria-hidden="true">
+    {paths.map((edge) => <path key={edge.side} d={pathToString(edge.commands)} fill={edge.color} />)}
+  </svg>;
 }
 
 function visibleTextLines(node: TextNode): TextLine[] {
@@ -60,6 +67,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       <div className="frame-contents" style={frameContentsStyle(node)}>
         {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
       </div>
+      {borderSvg(node.width, node.height, node.style.border)}
       {handle}
     </div>
   );
@@ -93,6 +101,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       style={shapeNodeStyle(node)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style))}
+      {node.type === "rectangle" && borderSvg(node.width, node.height, node.style.border)}
       {handle}
     </button>
   );
