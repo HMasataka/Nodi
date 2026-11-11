@@ -57,12 +57,14 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - `text.style` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。Wire 形式では省略可能で、省略時は `default`・400 に補完する。編集画面と PNG は同じフォントの代替順を使う。
 - `text.style` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。Wire 形式では省略可能で、省略時は行高 1.4 倍・字間 0px に補完する。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
-- 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`）。`fill` は必須の `#RRGGBB` または `null`（塗りなし）。フレームの `background` は廃止した。
-- `stroke` は `{ "color": "#RRGGBB", "width": 1 }` または `null`（線なし）。幅は 0 以上の有限値で、均一な内側線として描画する。省略時は `null`。幅 0 の線は明示した色とともに保持し、`null` に置き換えない。辺ごとの線は将来の `border` として別途扱う。
+- 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`・`border`）。`fill` は必須の `#RRGGBB` または `null`（塗りなし）。フレームの `background` は廃止した。
+- `stroke` は `{ "color": "#RRGGBB", "width": 1 }` または `null`（線なし）。幅は 0 以上の有限値で、均一な内側線として描画する。省略時は `null`。幅 0 の線は明示した色とともに保持し、`null` に置き換えない。
+- `border` は矩形・フレームだけが持つ、`top`・`right`・`bottom`・`left` ごとの `{ color, width }`。省略した辺は線なし。既定の空オブジェクトは保存しない。初版では角丸（4隅のいずれかが非0）との併用を拒否する。
 - `cornerRadii` は `topLeft`・`topRight`・`bottomRight`・`bottomLeft` の4隅のオブジェクト。各値は 0 以上の有限値。オブジェクト全体の省略時は全隅 0 に補完する。指定する場合は4隅とも必須。単一値の `cornerRadius` は廃止し、同梱サンプルの旧角丸は全隅同値で再生成した。
 - フレームの `clipContent` はノード直下の真偽値。省略時は `true` に補完する。`true` なら子要素をフレームの輪郭で切り取り、`false` ならはみ出しを表示する（書き出し対象フレーム自体の外は PNG に含まれない）。
 - 楕円の `style` は `fill`・`stroke` のみで、`cornerRadii` は持たない。
 - 矩形・楕円は `isMask: true` を指定すると、同じ親でその直後から次のマスクまでの兄弟要素を形状でクリップする。マスク自身は描画せず、塗りと線の色は使わない。未指定は `false` に補完し、保存時は省略する。`isMask: false` を Wire に明示した場合は拒否する。マスクの削除・並べ替えで対象の兄弟が変わり、複製ではマスク設定も引き継がれる。
+- 編集画面の範囲選択・スナップは回転後の要素AABBを使う。マスク自身と完全に隠れた兄弟は対象外とし、一部見える兄弟はマスクや親フレームのAABBで切り取った範囲を使う。楕円・角丸の輪郭そのものではなくAABB近似で判定する。
 - 画像は `source` に PNG・JPEG・WEBP・SVG の data URI と `style` を持つ。画像は `.nodi` 内に埋め込むため、ファイルを単体で移動しても参照が切れない。画像データは 8,000,000 文字以下。
 - `image.style.filters` は `brightness`・`contrast`・`saturate`（0 以上の有限値、既定 1）、`grayscale`・`sepia`（0〜1、既定 0）、`hueRotate`（有限の度数、既定 0）を指定できる。適用順はこの記載順。Wire 形式では全項目省略可能で、保存時は既定値の項目だけを除去する。画像の `fit`・`focalPoint`・`cornerRadii` と組み合わせられる。
 

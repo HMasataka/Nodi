@@ -1,6 +1,6 @@
-import { listLocatedNodes } from "@/document/geometry.ts";
 import { composeTransform, IDENTITY_TRANSFORM, invertTransform, nodeTransform, rotatePoint, type Transform, transformPoint, transformVector } from "@/document/transform.ts";
 import type { Document, Geometry, RotatedGeometry } from "@/document/types.ts";
+import { listLocatedNodes, walkVisibleNodes } from "@/document/geometry.ts";
 
 export { absoluteGeometry } from "@/document/geometry.ts";
 
@@ -26,9 +26,9 @@ function overlaps(first: Geometry, second: Geometry): boolean {
 }
 
 export function nodesInBounds(document: Document, bounds: Geometry): string[] {
-  return listLocatedNodes(document)
-    .filter(({ absolute }) => overlaps(absolute, bounds))
-    .map(({ node }) => node.id);
+  const ids: string[] = [];
+  walkVisibleNodes(document, ({ node, visible }) => { if (overlaps(visible, bounds)) ids.push(node.id); });
+  return ids;
 }
 
 export function drawingGeometry(start: Point, end: Point, parent: Point | Transform = IDENTITY_TRANSFORM): Geometry {

@@ -20,7 +20,7 @@
 | `src/pages/editor/hooks/useMcpBridge.ts` | 実行中のアプリへの MCP 要求を編集 API に渡す |
 | `src/pages/editor/geometry.ts`・`viewport.ts` | 画面座標・ズームからドキュメント座標への変換 |
 | `src/document/types.ts` | ドキュメントの型・既定値 |
-| `src/document/geometry.ts` | 親フレームを加味した要素の絶対座標走査 |
+| `src/document/geometry.ts` | 親フレームのアフィン変換を含む絶対座標・AABB走査と、マスク／クリップを加味した表示領域AABBの問い合わせ |
 | `src/document/commands/` | ツリー走査と作成・更新・スタイル・構造変更。`index.ts` が公開操作の入口 |
 | `src/document/history.ts`・`measure.ts` | 編集履歴と履歴時点の数値計測 |
 | `src/persistence/` | 保存形式の検証・JSON 変換、ファイル選択・読み書き、復元データの検証 |

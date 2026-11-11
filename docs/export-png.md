@@ -14,4 +14,4 @@
 
 グリッド、選択枠、リサイズハンドル、要素名などの編集 UI は書き出さない。保存をキャンセルした場合や描画・書き込みに失敗した場合も、`.nodi` の編集内容は変わらない。
 
-実装はブラウザの [Canvas 2D API の `roundRect()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/roundRect)・[`drawImage()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage) で描き、[`toBlob()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) で PNG にする。`toBlob()` は生成できない場合に `null` を返すため失敗として扱う。保存先は [Tauri Dialog](https://v2.tauri.app/plugin/dialog/) で選ぶ。
+図形とマスクのパスは `src/document/shapePath.ts` で生成し、編集画面のSVGとPNGのCanvas 2Dで共有する。画像はCanvasの[`drawImage()`](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage)で描き、[`toBlob()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob)でPNGにする。`toBlob()`が生成できない場合は失敗として扱う。保存先は[Tauri Dialog](https://v2.tauri.app/plugin/dialog/)で選ぶ。
