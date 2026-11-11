@@ -1,5 +1,5 @@
 {
-  "jsPlugins": ["./scripts/no-throw.js"],
+  "jsPlugins": ["./scripts/no-throw.ts"],
   "rules": {
     "nodi/no-throw": "error",
     "sort-imports": ["error", {

@@ -4,7 +4,7 @@ Tauri v2 と React / TypeScript (Vite) のデスクトップアプリです。
 
 ## 開発
 
-Node.js、pnpm、Rust、macOS では Xcode Command Line Tools が必要です。
+Node.js 22.18 以上、pnpm、Rust、macOS では Xcode Command Line Tools が必要です。
 
 ```sh
 pnpm install
@@ -23,7 +23,7 @@ pnpm tauri dev
 
 起動中の履歴には [安定したリビジョン ID](docs/revision-history.md) が付きます。
 
-`pnpm test` でドキュメントモデルのテストを実行します。`pnpm lint` は TypeScript/JavaScript の `throw` 文を禁止し、`pnpm build` でも lint を実行します。失敗する操作は `@praha/byethrow` の `Result` で返します。
+`pnpm test` で Vitest により TypeScript のテストを実行します。`pnpm lint` は TypeScript/JavaScript の `throw` 文を禁止し、`pnpm build` でも lint を実行します。失敗する操作は `@praha/byethrow` の `Result` で返します。
 
 外部 AI クライアントとの接続は [MCP の手順](docs/mcp.md) を参照してください。
 

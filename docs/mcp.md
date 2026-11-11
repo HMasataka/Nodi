@@ -5,7 +5,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 ## 接続
 
 1. `pnpm tauri dev` で Nodi を起動する。
-2. MCP クライアントのサーバー設定で、`node` と Nodi リポジトリ内の `scripts/mcp-server.mjs` の絶対パスを指定する。
+2. MCP クライアントのサーバー設定で、`node` と Nodi リポジトリ内の `scripts/mcp-server.ts` の絶対パスを指定する。
 3. クライアントを再起動し、`nodi` サーバーのツールが表示されることを確認する。
 
 設定例（`/path/to/Nodi` を実際のパスに置き換える）:
@@ -15,7 +15,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
   "mcpServers": {
     "nodi": {
       "command": "node",
-      "args": ["/path/to/Nodi/scripts/mcp-server.mjs"]
+      "args": ["/path/to/Nodi/scripts/mcp-server.ts"]
     }
   }
 }
