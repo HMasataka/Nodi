@@ -466,6 +466,8 @@ button {
 .color-field { display: grid; grid-column: 1 / -1; gap: 5px; min-width: 0; }
 .color-field label { display: flex; align-items: center; justify-content: space-between; gap: 6px; color: var(--text-tertiary); font-size: 11px; }
 .color-field input[type="number"] { width: 72px; min-width: 0; }
+.shadow-editor { display: grid; gap: 7px; padding: 10px 0; border-top: 1px solid var(--field-border); }
+.shadow-editor .mask-control { margin: 0; }
 .fill-editor { display: grid; grid-column: 1 / -1; gap: 6px; min-width: 0; padding-bottom: 6px; }
 .fill-editor > label, .gradient-point, .gradient-stop { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .fill-editor select { width: 98px; min-width: 0; padding: 3px; border: 1px solid var(--field-border); border-radius: 4px; background: var(--surface); }

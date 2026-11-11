@@ -40,6 +40,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 - `set_shape_style`: 矩形・楕円の `fill`（`#RRGGBB` または `null`）・`stroke`（`{ color, width }` または `null`）、矩形の `cornerRadii`（`topLeft`・`topRight`・`bottomRight`・`bottomLeft`）を変更。線は均一な内側線。
 - `set_mask`: 矩形・楕円の `isMask` を真偽値で切り替える。マスクは後続の同じ親の兄弟を、次のマスクまでクリップする。未選択時のマスクはレイヤー一覧から選択する。
 - `set_opacity`: 要素全体の不透明度 `opacity` を0〜1で設定する。フレームは子を含むグループに適用する。
+- `set_shadow`: 要素全体の外側影を `{ color, offsetX, offsetY, blur }` で設定する。`null` で解除する。色は6桁／8桁HEX、ぼかしは0以上。
 - `set_shape_style`・`set_frame_style` の `fill` は単色や `null` のほか、`type: "linear"`、正規化した `start`・`end`、2個以上の `{ position, color }` の `stops` を持つ線形グラデーションを指定できる。
 - `fill` に `type: "radial"`、正規化した `center`、短辺に対する0より大きく1以下の `radius`、線形と同じ `stops` を持つ放射状グラデーションも指定できる。
 - `set_frame_style`: フレームの `fill`・`stroke`・`cornerRadii` と `clipContent` を変更。スタイルの形式は矩形と共通。

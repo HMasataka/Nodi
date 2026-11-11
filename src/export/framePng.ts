@@ -87,22 +87,32 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
 
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
   if (node.opacity === 0) return Result.succeed();
-  if (node.opacity < 1) {
-    // 塗りと線・フレームの子を先に一枚へ描画し、グループ全体へ透明度を一度だけ掛ける。
-    // 書き出しキャンバス全体を使うことで、回転後やクリップしないフレームの子も切らない。
+  if (node.opacity < 1 || node.shadow) {
+    // 描画済みのシルエットに影を付けた後、グループ全体の透明度を一度だけ掛ける。
+    // 影の投影元が書き出し範囲の外にあっても描けるよう余白を設ける。
+    const padding = node.shadow ? Math.ceil(Math.abs(node.shadow.offsetX) + Math.abs(node.shadow.offsetY) + node.shadow.blur * 3 + 2) : 0;
     const layer = environment.createCanvas();
-    layer.width = ctx.canvas.width;
-    layer.height = ctx.canvas.height;
+    layer.width = ctx.canvas.width + padding * 2;
+    layer.height = ctx.canvas.height + padding * 2;
     const layerContext = layer.getContext("2d");
     if (!layerContext) return Result.fail(new Error("不透明度の描画領域を作成できません"));
-    layerContext.setTransform(ctx.getTransform());
-    const painted = await paintNode(layerContext, { ...node, opacity: 1 }, environment);
+    const transform = ctx.getTransform();
+    layerContext.setTransform(transform.a, transform.b, transform.c, transform.d, transform.e + padding, transform.f + padding);
+    const painted = await paintNode(layerContext, { ...node, opacity: 1, shadow: null }, environment);
     if (Result.isFailure(painted)) return painted;
     ctx.save();
     try {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
+      if (node.shadow) {
+        const angle = node.rotation * Math.PI / 180;
+        const x = node.shadow.offsetX * Math.cos(angle) - node.shadow.offsetY * Math.sin(angle);
+        const y = node.shadow.offsetX * Math.sin(angle) + node.shadow.offsetY * Math.cos(angle);
+        const offsetX = Number((x * transform.a + y * transform.c).toFixed(6));
+        const offsetY = Number((x * transform.b + y * transform.d).toFixed(6));
+        ctx.filter = `drop-shadow(${offsetX}px ${offsetY}px ${node.shadow.blur}px ${node.shadow.color})`;
+      }
       ctx.globalAlpha *= node.opacity;
-      ctx.drawImage(layer, 0, 0);
+      ctx.drawImage(layer, -padding, -padding);
     } finally {
       ctx.restore();
     }
