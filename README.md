@@ -16,6 +16,10 @@ pnpm tauri dev
 
 フロントエンドのみの確認は `pnpm dev`、配布用アプリの生成は `pnpm tauri build` で行います。
 
+`nix develop`（または direnv）の環境では Kache が Rust コンパイラのラッパーとして有効になり、`pnpm tauri dev` にも引き継がれます。Kache のローカルストアはユーザー単位で共有されるため、worktree ごとの `src-tauri/target/` は分離したまま、同じツールチェーン・ビルド条件の成果物を再利用できます。`kache init` は不要です。
+
+初回ビルドの後、別の worktree でビルドし、`kache stats --last-build` で再利用状況を確認できます。新しい worktree の依存関係を `target/` に先に複製する機能も使う場合は、`kache daemon start` を実行してください。
+
 エディタの「保存」「開く」は Tauri のデスクトップアプリで使用します。`.nodi` ファイルの中身は JSON（[v1 形式](docs/document-format.md)）です。読み込みに失敗した場合は編集中のドキュメントを維持します。
 
 フレームを選択すると [PNG 書き出し](docs/export-png.md) で画面を共有できます。
