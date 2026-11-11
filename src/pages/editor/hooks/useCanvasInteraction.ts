@@ -2,13 +2,15 @@ import { Result } from "@praha/byethrow";
 import { type PointerEvent, useEffect, useRef, useState } from "react";
 
 import type { DocumentNode } from "@/document/types";
+import { listLocatedNodes } from "@/document/geometry.ts";
 import { screenDeltaToDocument } from "@/pages/editor/viewport";
 import { toggleSelection } from "@/pages/editor/selection";
 import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import type { DragState, DrawingState, DrawTool, SelectionRegion } from "@/pages/editor/types";
-import { drawingGeometry, frameOrigin, nodesInBounds, pointOnCanvas } from "@/pages/editor/geometry";
+import { drawingGeometry, frameTransform, nodesInBounds, pointOnCanvas, resizeFromWorldDelta } from "@/pages/editor/geometry";
 import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
+import { IDENTITY_TRANSFORM, invertTransform, transformVector } from "@/document/transform.ts";
 import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
@@ -42,7 +44,8 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       mode: "move", id: node.id, pointerId: event.pointerId,
       original: designRef.current,
       clientX: event.clientX, clientY: event.clientY,
-      x: node.x, y: node.y, width: node.width, height: node.height, zoom,
+      x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation,
+      parentTransform: listLocatedNodes(designRef.current).find(({ node: item }) => item.id === node.id)?.parent ?? IDENTITY_TRANSFORM, zoom,
     };
     setSelectedId(node.id);
   }
@@ -56,7 +59,8 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       mode: "resize", id: node.id, pointerId: event.pointerId,
       original: designRef.current,
       clientX: event.clientX, clientY: event.clientY,
-      x: node.x, y: node.y, width: node.width, height: node.height, zoom,
+      x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation,
+      parentTransform: listLocatedNodes(designRef.current).find(({ node: item }) => item.id === node.id)?.parent ?? IDENTITY_TRANSFORM, zoom,
     };
     setSelectedId(node.id);
   }
@@ -75,13 +79,14 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       return;
     }
     const proposed = active.mode === "resize"
-      ? { x: active.x, y: active.y, width: Math.max(1, active.width + dx), height: Math.max(1, active.height + dy) }
-      : { x: active.x + dx, y: active.y + dy, width: active.width, height: active.height };
+      ? resizeFromWorldDelta(active, active.parentTransform, { x: dx, y: dy })
+      : { x: active.x, y: active.y, width: active.width, height: active.height };
     const snapped = active.mode === "resize"
       ? snapResize(active.original, active.id, proposed, active.zoom)
       : (() => {
         const result = snapMove(active.original, [active.id], dx, dy, active.zoom);
-        return { geometry: { ...proposed, x: active.x + result.dx, y: active.y + result.dy }, guides: result.guides };
+        const local = transformVector(invertTransform(active.parentTransform), { x: result.dx, y: result.dy });
+        return { geometry: { x: active.x + local.x, y: active.y + local.y, width: active.width, height: active.height }, guides: result.guides };
       })();
     setGuides(snapped.guides);
     const geometry = snapped.geometry;
@@ -111,10 +116,10 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     event.preventDefault();
     event.stopPropagation();
     const frameId = event.target instanceof Element ? event.target.closest("[data-frame-id]")?.getAttribute("data-frame-id") ?? null : null;
-    const origin = frameId ? frameOrigin(designRef.current, frameId) : { x: 0, y: 0 };
-    if (!origin) return;
+    const parentTransform = frameId ? frameTransform(designRef.current, frameId) : IDENTITY_TRANSFORM;
+    if (!parentTransform) return;
     const start = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
-    const next = { pointerId: event.pointerId, tool: drawTool, start, end: start, parentId: frameId, parentOrigin: origin };
+    const next = { pointerId: event.pointerId, tool: drawTool, start, end: start, parentId: frameId, parentTransform };
     drawingRef.current = next;
     setDrawing(next);
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -167,7 +172,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     const active = drawingRef.current;
     if (!active || active.pointerId !== event.pointerId) return;
     const end = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
-    const geometry = drawingGeometry(active.start, end, active.parentOrigin);
+    const geometry = drawingGeometry(active.start, end, active.parentTransform);
     cancelDrawing(event.pointerId);
     if (geometry.width < 4 || geometry.height < 4) return;
     const result = agentApi.add({ type: active.tool, parentId: active.parentId ?? undefined, ...geometry });

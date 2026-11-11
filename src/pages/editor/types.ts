@@ -1,6 +1,7 @@
 import type { Document } from "@/document/types";
 import type { Point } from "@/pages/editor/geometry";
 import type { RecoveryDraft } from "@/persistence/recovery";
+import type { Transform } from "@/document/transform.ts";
 
 export type RecoveryStatus = { kind: "checking" } | { kind: "none" } | { kind: "available"; draft: RecoveryDraft } | { kind: "error"; message: string };
 
@@ -15,6 +16,8 @@ export interface SingleDragState {
   y: number;
   width: number;
   height: number;
+  rotation: number;
+  parentTransform: Transform;
   zoom: number;
 }
 
@@ -33,4 +36,4 @@ export type DragState = SingleDragState | GroupDragState;
 export interface PanState { pointerId: number; clientX: number; clientY: number; scrollLeft: number; scrollTop: number }
 export interface SelectionRegion { pointerId: number; start: Point; end: Point; additive: boolean }
 export type DrawTool = "select" | "rectangle" | "ellipse";
-export interface DrawingState { pointerId: number; tool: Exclude<DrawTool, "select">; start: Point; end: Point; parentId: string | null; parentOrigin: Point }
+export interface DrawingState { pointerId: number; tool: Exclude<DrawTool, "select">; start: Point; end: Point; parentId: string | null; parentTransform: Transform }
