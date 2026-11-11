@@ -30,6 +30,8 @@ const setBorderInput = z.strictObject({ id: z.string().min(1), border: borderInp
 const shapeStyleInput = z.strictObject({ id: z.string().min(1), ...boxStyleInput }).refine(hasChange, "変更するスタイルを指定してください");
 const frameStyleInput = z.strictObject({ id: z.string().min(1), ...boxStyleInput, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const imageStyleInput = z.strictObject({ id: z.string().min(1), fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) }).optional(), cornerRadii: boxStyleInput.cornerRadii }).refine(hasChange, "変更するスタイルを指定してください");
+const imageFilters = z.strictObject({ brightness: z.number().finite().nonnegative().optional(), contrast: z.number().finite().nonnegative().optional(), saturate: z.number().finite().nonnegative().optional(), grayscale: z.number().finite().min(0).max(1).optional(), sepia: z.number().finite().min(0).max(1).optional(), hueRotate: z.number().finite().optional() });
+const imageFiltersInput = z.strictObject({ id: z.string().min(1), filters: imageFilters.refine((value) => Object.keys(value).length > 0, "変更するフィルターを指定してください") });
 const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().optional(), lineHeight: z.number().optional(), letterSpacing: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const textMarksInput = z.strictObject({ id: z.string().min(1), marks: z.array(z.strictObject({ start: z.number(), end: z.number(), color: z.string().optional(), fontWeight: z.number().optional(), underline: z.literal(true).optional(), code: z.literal(true).optional() })) });
 const emptyInput = z.strictObject({});
@@ -63,6 +65,7 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_frame_style": return withInput(frameStyleInput, args, ({ id, ...style }) => api.setFrameStyle(id, style));
       case "set_border": return withInput(setBorderInput, args, ({ id, border }) => api.setBorder(id, border));
       case "set_image_style": return withInput(imageStyleInput, args, ({ id, ...style }) => api.setImageStyle(id, style));
+      case "set_image_filters": return withInput(imageFiltersInput, args, ({ id, filters }) => api.setImageFilters(id, filters));
       case "set_text_style": return withInput(textStyleInput, args, ({ id, ...style }) => api.setTextStyle(id, style));
       case "set_text_marks": return withInput(textMarksInput, args, ({ id, marks }) => api.setTextMarks(id, marks));
       case "delete_element": return withInput(idInput, args, ({ id }) => api.delete(id));

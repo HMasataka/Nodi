@@ -9,6 +9,7 @@ import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
 import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, RectangleNode, RotatedGeometry, TextMark, TextNode } from "@/document/types.ts";
+import { cssImageFilter, hasImageFilters } from "@/document/imageFilters.ts";
 
 const CANVAS_GRID_SIZE = 24;
 
@@ -102,5 +103,6 @@ export function imageNodeStyle(node: ImageNode): CSSProperties {
 }
 
 export function imageContentStyle(node: ImageNode): CSSProperties {
-  return { objectFit: node.style.fit, objectPosition: imageObjectPosition(node.style) };
+  return { objectFit: node.style.fit, objectPosition: imageObjectPosition(node.style),
+    ...(hasImageFilters(node.style.filters) ? { filter: cssImageFilter(node.style.filters) } : {}) };
 }

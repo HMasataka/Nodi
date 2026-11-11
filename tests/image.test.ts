@@ -119,7 +119,7 @@ test("PNG は DOM と同じ焦点配置を用い、contain の余白を背景色
 test("旧画像は cover・中央で正規化し、既定値は保存せず再読込できる", () => {
   const legacy = { version: 1, children: [{ ...image(), style: {} }] };
   const loaded = success(parseDocument(JSON.stringify(legacy)));
-  assert.deepEqual(loaded.children[0].style, { fit: "cover", focalPoint: { x: 0.5, y: 0.5 }, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 } });
+  assert.deepEqual(loaded.children[0].style, image().style);
   const compact = JSON.parse(success(serializeDocument(loaded)));
   assert.deepEqual(compact.children[0].style, {});
   assert.deepEqual(success(parseDocument(JSON.stringify(compact))), loaded);
@@ -139,7 +139,7 @@ test("画像スタイルは不正値と画像以外への編集を拒否し、MC
   const api = createAgentApi({ getDocument: () => current, getHistory: () => createHistory(current), getSelectedId: () => null,
     apply: (document) => { current = document; } });
   assert.equal(dispatchAgentRequest(api, "set_image_style", { id: "image", fit: "contain", focalPoint: { x: 0, y: 1 } }).ok, true);
-  assert.deepEqual(success(api.getElement("image")).style, { fit: "contain", focalPoint: { x: 0, y: 1 }, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 } });
+  assert.deepEqual(success(api.getElement("image")).style, { ...image().style, fit: "contain", focalPoint: { x: 0, y: 1 } });
   assert.equal(dispatchAgentRequest(api, "set_image_style", { id: "image", focalPoint: { x: 2, y: 0 } }).ok, false);
   assert.equal(dispatchAgentRequest(api, "set_image_style", { id: "image", bogus: true }).ok, false);
 });
