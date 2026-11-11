@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
 import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
-import { DEFAULT_TEXT_FONT_WEIGHT, type TextMarkPatch, type TextMarkRangeEdit, type TextNode, type TextStyle } from "@/document/types";
 import { graphemeBoundaries, graphemeSegments } from "@/document/textLayout";
 import { rangeHasMark, remapTextMarks } from "@/document/textMarks";
+import type { TextMarkPatch, TextMarkRangeEdit, TextNode, TextStyle } from "@/document/types";
 
 interface TextAppearanceProps {
   node: TextNode;
@@ -24,14 +24,14 @@ export function TextAppearance({ node, onTextContent, onTextStyle, onTextMarkRan
   const marks = useMemo(() => remapTextMarks(node.content, draft, node.marks ?? []), [node.content, node.marks, draft]);
   const boundaries = useMemo(() => graphemeBoundaries(draft), [draft]);
   const canStyle = selection.start < selection.end && selection.end <= draft.length && boundaries.has(selection.start) && boundaries.has(selection.end);
-  const baseWeight = node.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT;
+  const baseWeight = node.style.fontWeight;
   const bold = canStyle && rangeHasMark(marks, selection.start, selection.end, (mark) => (mark?.fontWeight ?? baseWeight) >= 600);
   const underline = canStyle && rangeHasMark(marks, selection.start, selection.end, (mark) => mark?.underline === true);
   const code = canStyle && rangeHasMark(marks, selection.start, selection.end, (mark) => mark?.code === true);
   const first = marks.find((mark) => mark.start <= selection.start && mark.end > selection.start);
-  const firstColor = first?.color ?? node.color;
-  const color = canStyle && rangeHasMark(marks, selection.start, selection.end, (mark) => (mark?.color ?? node.color) === firstColor)
-    ? firstColor : node.color;
+  const firstColor = first?.color ?? node.style.color;
+  const color = canStyle && rangeHasMark(marks, selection.start, selection.end, (mark) => (mark?.color ?? node.style.color) === firstColor)
+    ? firstColor : node.style.color;
 
   function apply(patch: TextMarkPatch) {
     if (!canStyle) return;
@@ -66,7 +66,7 @@ export function TextAppearance({ node, onTextContent, onTextStyle, onTextMarkRan
       </div>
     </div>
     <div className="field-label">文字の見た目</div>
-    <TextStyleEditor key={`${node.id}:${node.fontSize}:${node.color}:${node.textAlign}:${node.fontFamily}:${node.fontWeight}:${node.lineHeight}:${node.letterSpacing}`}
+    <TextStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`}
       node={node} onChange={onTextStyle} />
   </>;
 }

@@ -18,7 +18,7 @@ test("キャンバスのテキストは共通の計測結果を行として描�
     const noOp = () => {};
     const markup = renderToStaticMarkup(createElement(CanvasNode, {
       node: text({ id: "text", name: "説明", width: 52, height: 100,
-        content: "Hello world\n\nABCDEF", color: "#000000", lineHeight: 1.5, letterSpacing: 0 }),
+        content: "Hello world\n\nABCDEF", style: { color: "#000000", lineHeight: 1.5, letterSpacing: 0 } }),
       selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp },
     }));
@@ -28,7 +28,7 @@ test("キャンバスのテキストは共通の計測結果を行として描�
     assert.match(markup, />ABCDEF<\/span>/);
     const marked = renderToStaticMarkup(createElement(CanvasNode, {
       node: text({ id: "marked", name: "部分装飾", width: 180, height: 45,
-        content: "Hello world code", color: "#1f2328",
+        content: "Hello world code", style: { color: "#1f2328" },
         marks: [{ start: 6, end: 11, color: "#0969da", fontWeight: 700, underline: true }, { start: 12, end: 16, code: true }] }),
       selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp },

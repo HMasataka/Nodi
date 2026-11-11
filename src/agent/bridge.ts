@@ -22,8 +22,9 @@ const compareInput = z.strictObject({ fromRevisionId: z.string().min(1), toRevis
 const relativeInput = z.strictObject({ revisionId: z.string().min(1), firstId: z.string().min(1), secondId: z.string().min(1) });
 const setGeometryInput = z.strictObject({ id: z.string().min(1), ...geometryInput });
 const hasChange = (value: { id: string }) => Object.keys(value).some((key) => key !== "id");
-const shapeStyleInput = z.strictObject({ id: z.string().min(1), fill: z.string().optional(), stroke: z.string().optional(), strokeWidth: z.number().optional(), cornerRadius: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
-const frameStyleInput = z.strictObject({ id: z.string().min(1), background: z.string().optional(), clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
+const boxStyleInput = { fill: z.string().nullable().optional(), stroke: z.strictObject({ color: z.string(), width: z.number() }).nullable().optional(), cornerRadii: z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() }).optional() };
+const shapeStyleInput = z.strictObject({ id: z.string().min(1), ...boxStyleInput }).refine(hasChange, "変更するスタイルを指定してください");
+const frameStyleInput = z.strictObject({ id: z.string().min(1), ...boxStyleInput, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().optional(), lineHeight: z.number().optional(), letterSpacing: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const textMarksInput = z.strictObject({ id: z.string().min(1), marks: z.array(z.strictObject({ start: z.number(), end: z.number(), color: z.string().optional(), fontWeight: z.number().optional(), underline: z.literal(true).optional(), code: z.literal(true).optional() })) });
 const emptyInput = z.strictObject({});

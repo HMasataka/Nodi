@@ -48,14 +48,14 @@ export function addNode(
 
   const geometry = { x: input.x, y: input.y, width: input.width, height: input.height };
   const node: DocumentNode = input.type === "frame"
-    ? { id, name, type: "frame", ...geometry, ...DEFAULT_FRAME_STYLE, children: [] }
+    ? { id, name, type: "frame", ...geometry, style: structuredClone(DEFAULT_FRAME_STYLE), clipContent: true, children: [] }
     : input.type === "text"
-      ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", ...DEFAULT_TEXT_STYLE }
+      ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", style: { ...DEFAULT_TEXT_STYLE } }
       : input.type === "image"
-        ? { id, name, type: "image", ...geometry, source: input.source }
+        ? { id, name, type: "image", ...geometry, source: input.source, style: {} }
       : input.type === "ellipse"
-        ? { id, name, type: "ellipse", ...geometry, fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: DEFAULT_RECTANGLE_STYLE.stroke, strokeWidth: DEFAULT_RECTANGLE_STYLE.strokeWidth }
-        : { id, name, type: "rectangle", ...geometry, ...DEFAULT_RECTANGLE_STYLE };
+        ? { id, name, type: "ellipse", ...geometry, style: { fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: structuredClone(DEFAULT_RECTANGLE_STYLE.stroke) } }
+        : { id, name, type: "rectangle", ...geometry, style: structuredClone(DEFAULT_RECTANGLE_STYLE) };
 
   if (parent === undefined) {
     return Result.succeed({ document: { ...document, children: [...document.children, node] }, node });

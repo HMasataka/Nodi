@@ -1,7 +1,7 @@
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
-import { DEFAULT_TEXT_LINE_HEIGHT, type DocumentNode, type FrameNode } from "@/document/types.ts";
+import type { CornerRadii, DocumentNode, FrameNode, RectangleNode } from "@/document/types.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 
 export interface PngRenderEnvironment {
@@ -31,16 +31,35 @@ function drawSpacedText(ctx: CanvasRenderingContext2D, text: string, x: number, 
   });
 }
 
+function radii(value: CornerRadii): number[] {
+  return [value.topLeft, value.topRight, value.bottomRight, value.bottomLeft];
+}
+
+function paintBox(ctx: CanvasRenderingContext2D, node: FrameNode | RectangleNode) {
+  const { fill, stroke, cornerRadii } = node.style;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, node.width, node.height, radii(cornerRadii));
+  if (fill !== null) { ctx.fillStyle = fill; ctx.fill(); }
+  const width = Math.min(stroke?.width ?? 0, node.width, node.height);
+  if (stroke && width > 0) {
+    const inset = width / 2;
+    ctx.beginPath();
+    ctx.roundRect(inset, inset, node.width - width, node.height - width, radii(cornerRadii).map((radius) => Math.max(0, radius - inset)));
+    ctx.strokeStyle = stroke.color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  }
+}
+
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
   ctx.save();
   ctx.translate(node.x, node.y);
   try {
     if (node.type === "frame") {
-      ctx.fillStyle = node.background;
-      ctx.fillRect(0, 0, node.width, node.height);
+      paintBox(ctx, node);
       if (node.clipContent) {
         ctx.beginPath();
-        ctx.rect(0, 0, node.width, node.height);
+        ctx.roundRect(0, 0, node.width, node.height, radii(node.style.cornerRadii));
         ctx.clip();
       }
       for (const child of node.children) {
@@ -48,26 +67,15 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         if (Result.isFailure(painted)) return painted;
       }
     } else if (node.type === "rectangle") {
-      const strokeWidth = Math.min(node.strokeWidth, node.width, node.height);
-      const inset = strokeWidth / 2;
-      ctx.beginPath();
-      ctx.roundRect(inset, inset, node.width - strokeWidth, node.height - strokeWidth, Math.max(0, node.cornerRadius - inset));
-      ctx.fillStyle = node.fill;
-      ctx.fill();
-      if (strokeWidth > 0) {
-        ctx.strokeStyle = node.stroke;
-        ctx.lineWidth = strokeWidth;
-        ctx.stroke();
-      }
+      paintBox(ctx, node);
     } else if (node.type === "ellipse") {
-      const strokeWidth = Math.min(node.strokeWidth, node.width, node.height);
+      const strokeWidth = Math.min(node.style.stroke?.width ?? 0, node.width, node.height);
       const inset = strokeWidth / 2;
       ctx.beginPath();
       ctx.ellipse(node.width / 2, node.height / 2, Math.max(0, node.width / 2 - inset), Math.max(0, node.height / 2 - inset), 0, 0, Math.PI * 2);
-      ctx.fillStyle = node.fill;
-      ctx.fill();
-      if (strokeWidth > 0) {
-        ctx.strokeStyle = node.stroke;
+      if (node.style.fill !== null) { ctx.fillStyle = node.style.fill; ctx.fill(); }
+      if (node.style.stroke && strokeWidth > 0) {
+        ctx.strokeStyle = node.style.stroke.color;
         ctx.lineWidth = strokeWidth;
         ctx.stroke();
       }
@@ -76,36 +84,36 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
       ctx.rect(0, 0, node.width, node.height);
       ctx.clip();
       const { lines, nativeSpacing, letterSpacing } = layoutTextLines(ctx, node);
-      ctx.textAlign = node.textAlign;
+      ctx.textAlign = node.style.textAlign;
       ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = node.color;
-      const x = node.textAlign === "center" ? node.width / 2 : node.textAlign === "right" ? node.width - 2 : 2;
-      const lineHeight = node.fontSize * (node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT);
+      ctx.fillStyle = node.style.color;
+      const x = node.style.textAlign === "center" ? node.width / 2 : node.style.textAlign === "right" ? node.width - 2 : 2;
+      const lineHeight = node.style.fontSize * node.style.lineHeight;
       const metrics = ctx.measureText("Mg");
-      const ascent = metrics.fontBoundingBoxAscent ?? node.fontSize;
-      const descent = metrics.fontBoundingBoxDescent ?? node.fontSize * 0.35;
+      const ascent = metrics.fontBoundingBoxAscent ?? node.style.fontSize;
+      const descent = metrics.fontBoundingBoxDescent ?? node.style.fontSize * 0.35;
       // CSS の 2px padding と設定された行高に合わせて行ボックス内に文字を置く。
       const baseline = 2 + (lineHeight - ascent - descent) / 2 + ascent;
       lines.forEach((line, index) => {
         const y = baseline + index * lineHeight;
-        ctx.textAlign = node.textAlign;
+        ctx.textAlign = node.style.textAlign;
         if (line.fragments.length === 0) { ctx.fillText("", x, y); return; }
         if (line.fragments.length === 1 && !line.fragments[0].mark) {
           const text = line.fragments[0].text;
           if (nativeSpacing || letterSpacing === 0) ctx.fillText(text, x, y);
-          else drawSpacedText(ctx, text, x, y, letterSpacing, node.textAlign);
+          else drawSpacedText(ctx, text, x, y, letterSpacing, node.style.textAlign);
           return;
         }
-        let left = node.textAlign === "center" ? (node.width - line.width) / 2
-          : node.textAlign === "right" ? node.width - 2 - line.width : 2;
+        let left = node.style.textAlign === "center" ? (node.width - line.width) / 2
+          : node.style.textAlign === "right" ? node.width - 2 - line.width : 2;
         for (const fragment of line.fragments) {
           const appearance = textFragmentStyle(node, fragment.mark);
-          ctx.font = `${appearance.fontWeight} ${node.fontSize}px ${appearance.fontFamily}`;
+          ctx.font = `${appearance.fontWeight} ${node.style.fontSize}px ${appearance.fontFamily}`;
           ctx.textAlign = "left";
           if (appearance.code) {
             const bounds = ctx.measureText("Mg");
-            const ascent = bounds.fontBoundingBoxAscent ?? node.fontSize;
-            const descent = bounds.fontBoundingBoxDescent ?? node.fontSize * 0.35;
+            const ascent = bounds.fontBoundingBoxAscent ?? node.style.fontSize;
+            const descent = bounds.fontBoundingBoxDescent ?? node.style.fontSize * 0.35;
             ctx.beginPath();
             ctx.roundRect(left, y - ascent, fragment.width, ascent + descent, 3);
             ctx.fillStyle = RENDER_COLORS.codeBackground;
@@ -148,15 +156,11 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     canvas.height = Math.round(frame.height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
-    ctx.fillStyle = frame.background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();
-    for (const child of frame.children) {
-      const painted = await paintNode(ctx, child, environment.loadImage);
-      if (Result.isFailure(painted)) return painted;
-    }
+    const painted = await paintNode(ctx, { ...frame, x: 0, y: 0 }, environment.loadImage);
+    if (Result.isFailure(painted)) return painted;
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     return blob ? Result.succeed(blob) : Result.fail(new Error("PNG を生成できません"));
   } catch (error) {

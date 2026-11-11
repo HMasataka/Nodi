@@ -36,48 +36,48 @@ test("文字のサイズ・色・揃えは保存・Undo / Redo で維持され�
   const styled = success(setTextStyle(created.document, created.node.id, { fontSize: 24, color: "#aabbcc", textAlign: "center" }));
   assert.deepEqual(success(parseDocument(success(serializeDocument(styled)))), styled);
   const history = commit(createHistory(created.document), styled);
-  assert.equal(findNode(undo(history).present, created.node.id).fontSize, 16);
-  assert.equal(findNode(redo(undo(history)).present, created.node.id).textAlign, "center");
+  assert.equal(findNode(undo(history).present, created.node.id).style.fontSize, 16);
+  assert.equal(findNode(redo(undo(history)).present, created.node.id).style.textAlign, "center");
   for (const patch of [{ fontSize: 0 }, { color: "red" }, { textAlign: "justify" }]) {
     assert.equal(setTextStyle(created.document, created.node.id, patch).type, "Failure");
   }
 });
 
-test("旧形式の文字は従来のフォントで読み込み、フォントと太さの変更は保存・Undoできる", () => {
+test("省略した文字スタイルを補完し、フォントと太さの変更は保存・Undoできる", () => {
   const created = success(addNode(createDocument(), { type: "text", content: "Hello", x: 0, y: 0, width: 200, height: 48 }));
-  const legacyNode = { ...created.node };
-  delete legacyNode.fontFamily;
-  delete legacyNode.fontWeight;
-  delete legacyNode.lineHeight;
-  delete legacyNode.letterSpacing;
+  const legacyNode = structuredClone(created.node);
+  delete legacyNode.style.fontFamily;
+  delete legacyNode.style.fontWeight;
+  delete legacyNode.style.lineHeight;
+  delete legacyNode.style.letterSpacing;
   const legacy = { version: 1, children: [legacyNode] };
   const loaded = success(parseDocument(JSON.stringify(legacy)));
   assert.deepEqual(success(parseDocument(success(serializeDocument(loaded)))), loaded);
-  assert.deepEqual(resolvedTextFont(legacyNode), resolvedTextFont(created.node));
+  assert.deepEqual(resolvedTextFont(loaded.children[0].style), resolvedTextFont(created.node.style));
 
   const styled = success(setTextStyle(loaded, legacyNode.id, { fontFamily: "system", fontWeight: 700 }));
-  assert.equal(findNode(styled, legacyNode.id).fontFamily, "system");
-  assert.equal(findNode(styled, legacyNode.id).fontWeight, 700);
+  assert.equal(findNode(styled, legacyNode.id).style.fontFamily, "system");
+  assert.equal(findNode(styled, legacyNode.id).style.fontWeight, 700);
   assert.deepEqual(success(parseDocument(success(serializeDocument(styled)))), styled);
   const history = commit(createHistory(loaded), styled);
-  assert.equal(findNode(undo(history).present, legacyNode.id).fontFamily, undefined);
-  assert.equal(findNode(redo(undo(history)).present, legacyNode.id).fontWeight, 700);
+  assert.equal(findNode(undo(history).present, legacyNode.id).style.fontFamily, "default");
+  assert.equal(findNode(redo(undo(history)).present, legacyNode.id).style.fontWeight, 700);
 });
 
-test("行高と負の字間は保存・Undo / Redo で維持し、旧文書の省略値も読める", () => {
+test("行高と負の字間は保存・Undo / Redo で維持し、省略値を補完する", () => {
   const created = success(addNode(createDocument(), { type: "text", content: "First\nSecond", x: 0, y: 0, width: 200, height: 70 }));
-  assert.equal(created.node.lineHeight, 1.4);
-  assert.equal(created.node.letterSpacing, 0);
-  const legacy = { ...created.document, children: [{ ...created.node, lineHeight: undefined, letterSpacing: undefined }] };
+  assert.equal(created.node.style.lineHeight, 1.4);
+  assert.equal(created.node.style.letterSpacing, 0);
+  const legacy = { ...created.document, children: [{ ...created.node, style: { ...created.node.style, lineHeight: undefined, letterSpacing: undefined } }] };
   const parsed = success(parseDocument(JSON.stringify(legacy)));
-  assert.equal(parsed.children[0].lineHeight, undefined);
+  assert.equal(parsed.children[0].style.lineHeight, 1.4);
   const styled = success(setTextStyle(parsed, created.node.id, { lineHeight: 1.75, letterSpacing: -0.5 }));
-  assert.equal(styled.children[0].lineHeight, 1.75);
-  assert.equal(styled.children[0].letterSpacing, -0.5);
+  assert.equal(styled.children[0].style.lineHeight, 1.75);
+  assert.equal(styled.children[0].style.letterSpacing, -0.5);
   assert.deepEqual(success(parseDocument(success(serializeDocument(styled)))), styled);
   const history = commit(createHistory(parsed), styled);
-  assert.equal(findNode(undo(history).present, created.node.id).lineHeight, undefined);
-  assert.equal(findNode(redo(undo(history)).present, created.node.id).letterSpacing, -0.5);
+  assert.equal(findNode(undo(history).present, created.node.id).style.lineHeight, 1.4);
+  assert.equal(findNode(redo(undo(history)).present, created.node.id).style.letterSpacing, -0.5);
 });
 
 test("行高のゼロ・負値と字間の非有限値を拒否し、元の文書を変更しない", () => {
@@ -87,20 +87,20 @@ test("行高のゼロ・負値と字間の非有限値を拒否し、元の文�
     assert.equal(setTextStyle(created.document, created.node.id, patch).type, "Failure");
   }
   for (const patch of [{ lineHeight: 0 }, { lineHeight: -1 }, { letterSpacing: "wide" }]) {
-    assert.equal(parseDocument(JSON.stringify({ ...created.document, children: [{ ...created.node, ...patch }] })).type, "Failure");
+    assert.equal(parseDocument(JSON.stringify({ ...created.document, children: [{ ...created.node, style: { ...created.node.style, ...patch } }] })).type, "Failure");
   }
-  assert.equal(created.document.children[0].lineHeight, 1.4);
+  assert.equal(created.document.children[0].style.lineHeight, 1.4);
 });
 
 test("対応しないフォントや不正な太さは文書を変更せず拒否する", () => {
   const created = success(addNode(createDocument(), { type: "text", x: 0, y: 0, width: 100, height: 40 }));
-  assert.equal(created.node.fontFamily, "default");
-  assert.equal(created.node.fontWeight, 400);
+  assert.equal(created.node.style.fontFamily, "default");
+  assert.equal(created.node.style.fontWeight, 400);
   for (const patch of [{ fontFamily: "unknown" }, { fontWeight: 0 }, { fontWeight: 350 }, { fontWeight: 1000 }, { fontWeight: NaN }, { fontWeight: "700" }]) {
     assert.equal(setTextStyle(created.document, created.node.id, patch).type, "Failure");
   }
   for (const patch of [{ fontFamily: "unknown" }, { fontWeight: 350 }, { fontWeight: "700" }]) {
-    assert.equal(parseDocument(JSON.stringify({ ...created.document, children: [{ ...created.node, ...patch }] })).type, "Failure");
+    assert.equal(parseDocument(JSON.stringify({ ...created.document, children: [{ ...created.node, style: { ...created.node.style, ...patch } }] })).type, "Failure");
   }
-  assert.equal(findNode(created.document, created.node.id).fontWeight, 400);
+  assert.equal(findNode(created.document, created.node.id).style.fontWeight, 400);
 });

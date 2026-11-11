@@ -19,10 +19,10 @@ export function ElementAppearance({ node, onTextContent, onTextStyle, onTextMark
     onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange} />;
   if (node.type === "frame") return <>
     <div className="field-label">フレームの見た目</div>
-    <FrameStyleEditor key={`${node.id}:${node.background}:${node.clipContent}`} node={node} onChange={onFrameStyle} />
+    <FrameStyleEditor key={`${node.id}:${JSON.stringify(node.style)}:${node.clipContent}`} node={node} onChange={onFrameStyle} />
   </>;
   return <>
     <div className="field-label">スタイル</div>
-    <ShapeStyleEditor key={`${node.id}:${node.fill}:${node.stroke}:${node.strokeWidth}:${node.type === "rectangle" ? node.cornerRadius : "ellipse"}`} node={node} onChange={onShapeStyle} />
+    <ShapeStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onShapeStyle} />
   </>;
 }

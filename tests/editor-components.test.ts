@@ -20,10 +20,10 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const { RecoveryDialog } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/RecoveryDialog/RecoveryDialog.tsx");
     const { TextStyleEditor } = await vite.ssrLoadModule("/src/pages/editor/components/molecules/TextStyleEditor/TextStyleEditor.tsx");
     const image = makeImage({ id: "image-1", name: "風景", x: 10, y: 20, width: 100, height: 80 });
-    const frame = makeFrame({ id: "frame-1", background: "#aabbcc", children: [image] });
+    const frame = makeFrame({ id: "frame-1", style: { fill: "#aabbcc" }, children: [image] });
     const noOp = () => {};
     const text = makeText({ id: "heading", name: "見出し", width: 200, height: 48, content: "Hello",
-      fontSize: 24, color: "#1f2328", fontFamily: "system", fontWeight: 700, lineHeight: 1.75, letterSpacing: -0.5 });
+      style: { fontSize: 24, color: "#1f2328", fontFamily: "system", fontWeight: 700, lineHeight: 1.75, letterSpacing: -0.5 } });
     const textMarkup = renderToStaticMarkup(createElement(CanvasNode, { node: text, selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp } }));
     assert.match(textMarkup, /font-family:system-ui/);
@@ -46,7 +46,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(canvas, /data-frame-id="frame-1"/);
     assert.match(canvas, /background:#aabbcc/);
-    assert.match(canvas, /class="frame-contents" style="overflow:hidden"/);
+    assert.match(canvas, /class="frame-contents" style="overflow:hidden;border-radius:inherit"/);
     assert.match(canvas, /aria-label="風景"/);
     assert.match(canvas, /class="resize-handle"/);
     assert.match(canvas, /123%/);
@@ -78,7 +78,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       onWorldPointerDown: noOp, onWorldPointerMove: noOp, onWorldPointerUp: noOp, onWorldPointerCancel: noOp,
       onImageError: noOp,
     }));
-    assert.match(overflowing, /class="frame-contents" style="overflow:visible"/);
+    assert.match(overflowing, /class="frame-contents" style="overflow:visible;border-radius:inherit"/);
     assert.match(overflowing, /class="frame-contents"[^]*<span class="resize-handle"/);
 
     const layers = renderToStaticMarkup(createElement(LayersPanel, { nodes: [frame], selectedId: image.id, onSelect: noOp }));
@@ -98,7 +98,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(textInspector, /本文から文字を選択してください/);
     assert.match(textInspector, /aria-pressed="false" disabled=""[^>]*>太字/);
     const back = makeRectangle({ id: "back", name: "背面", x: 10, y: 10, width: 80, height: 80,
-      fill: "#123456", stroke: "#000000", strokeWidth: 0, cornerRadius: 0 });
+      style: { fill: "#123456", stroke: null, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 } } });
     const front = { ...back, id: "front", name: "前面", x: 20, y: 20 };
     const layered = document({ ...frame, children: [back, front] });
     const layerMarkup = renderToStaticMarkup(createElement(LayersPanel, { nodes: layered.children, selectedId: null, onSelect: noOp, onReorder: noOp }));

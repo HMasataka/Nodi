@@ -6,7 +6,6 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import { DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT } from "@/document/types.ts";
 import type { EllipseNode, FrameNode, Geometry, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
 
 const CANVAS_GRID_SIZE = 24;
@@ -52,27 +51,28 @@ function nodeBoxStyle(node: Geometry): CSSProperties {
 }
 
 export function frameNodeStyle(node: FrameNode): CSSProperties {
-  return { ...nodeBoxStyle(node), background: node.background };
+  const { borderColor, borderWidth, borderStyle: _borderStyle, ...appearance } = boxAppearance(node.style);
+  return { ...nodeBoxStyle(node), ...appearance, boxShadow: `inset 0 0 0 ${borderWidth}px ${borderColor}` };
 }
 
 export function frameContentsStyle(node: FrameNode): CSSProperties {
-  return { overflow: node.clipContent ? "hidden" : "visible" };
+  return { overflow: node.clipContent ? "hidden" : "visible", borderRadius: "inherit" };
 }
 
 export function textNodeStyle(node: TextNode): CSSProperties {
   return {
     ...nodeBoxStyle(node),
-    fontSize: node.fontSize,
-    color: node.color,
-    textAlign: node.textAlign,
-    lineHeight: node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT,
-    letterSpacing: `${node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING}px`,
-    ...resolvedTextFont(node),
+    fontSize: node.style.fontSize,
+    color: node.style.color,
+    textAlign: node.style.textAlign,
+    lineHeight: node.style.lineHeight,
+    letterSpacing: `${node.style.letterSpacing}px`,
+    ...resolvedTextFont(node.style),
   };
 }
 
 export function textLineStyle(node: TextNode): CSSProperties {
-  return { height: node.fontSize * (node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT) };
+  return { height: node.style.fontSize * node.style.lineHeight };
 }
 
 export function textMarkStyle(node: TextNode, mark: TextMark): CSSProperties {
@@ -90,11 +90,14 @@ export function textMarkStyle(node: TextNode, mark: TextMark): CSSProperties {
 export function shapeNodeStyle(node: RectangleNode | EllipseNode): CSSProperties {
   return {
     ...nodeBoxStyle(node),
-    background: node.fill,
-    borderColor: node.stroke,
-    borderWidth: node.strokeWidth,
-    borderRadius: node.type === "ellipse" ? "50%" : node.cornerRadius,
+    ...boxAppearance(node.style),
+    ...(node.type === "ellipse" ? { borderRadius: "50%" } : {}),
   };
+}
+
+function boxAppearance(style: RectangleNode["style"] | EllipseNode["style"]): CSSProperties {
+  return { background: style.fill ?? "transparent", borderColor: style.stroke?.color ?? "transparent", borderWidth: style.stroke?.width ?? 0, borderStyle: "solid",
+    ...("cornerRadii" in style ? { borderRadius: `${style.cornerRadii.topLeft}px ${style.cornerRadii.topRight}px ${style.cornerRadii.bottomRight}px ${style.cornerRadii.bottomLeft}px` } : {}) };
 }
 
 export function imageNodeStyle(node: Geometry): CSSProperties {
