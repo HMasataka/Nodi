@@ -9,7 +9,7 @@ import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
   type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type LayerDirection,
-  reorderNode, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarkRange, setTextStyle,
+  reorderNode, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setRotation, setTextContent, setTextMarkRange, setTextStyle,
 } from "@/document/commands/index.ts";
 import type { FrameStyle, Geometry, ImageStyle, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
 
@@ -79,6 +79,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
       onRename: renameSelected,
       onGeometry: (value: Geometry) => changeSelected(value, setNodeGeometry),
       onRotation: (value: number) => changeSelected(value, setRotation),
+      onOpacity: (value: number) => changeSelected(value, setOpacity),
       onMask: (value: boolean) => changeSelected(value, setMask),
       onTextContent: (value: string) => changeSelected(value, setTextContent),
       onTextStyle: (value: Partial<TextStyle>) => changeSelected(value, setTextStyle),

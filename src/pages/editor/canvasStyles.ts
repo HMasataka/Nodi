@@ -8,7 +8,7 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, RectangleNode, RotatedGeometry, TextMark, TextNode } from "@/document/types.ts";
+import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, NodeGeometry, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
 import { cssImageFilter, hasImageFilters } from "@/document/imageFilters.ts";
 import { type Transform, transformPoint } from "@/document/transform.ts";
 
@@ -55,8 +55,9 @@ export function guideStyle(guide: SnapGuide): CSSProperties {
     : { top: guide.position, left: guide.from, width: guide.to - guide.from };
 }
 
-function nodeBoxStyle(node: RotatedGeometry): CSSProperties {
+function nodeBoxStyle(node: NodeGeometry): CSSProperties {
   return { left: node.x, top: node.y, width: node.width, height: node.height,
+    ...(node.opacity === 1 ? {} : { opacity: node.opacity }),
     ...(node.rotation === 0 ? {} : { transform: `rotate(${node.rotation}deg)`, transformOrigin: "center center" }) };
 }
 

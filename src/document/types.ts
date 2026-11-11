@@ -6,6 +6,7 @@ export interface Geometry {
 }
 
 export interface RotatedGeometry extends Geometry { rotation: number }
+export interface NodeGeometry extends RotatedGeometry { opacity: number }
 
 export interface CornerRadii {
   topLeft: number;
@@ -36,7 +37,7 @@ export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   border: {},
 };
 
-export interface RectangleNode extends RotatedGeometry {
+export interface RectangleNode extends NodeGeometry {
   id: string;
   name: string;
   type: "rectangle";
@@ -44,7 +45,7 @@ export interface RectangleNode extends RotatedGeometry {
   style: BoxStyle;
 }
 
-export interface EllipseNode extends RotatedGeometry {
+export interface EllipseNode extends NodeGeometry {
   id: string;
   name: string;
   type: "ellipse";
@@ -52,7 +53,7 @@ export interface EllipseNode extends RotatedGeometry {
   style: ShapeStyle;
 }
 
-export interface ImageNode extends RotatedGeometry {
+export interface ImageNode extends NodeGeometry {
   id: string;
   name: string;
   type: "image";
@@ -76,7 +77,7 @@ export const DEFAULT_TEXT_FONT_WEIGHT = 400;
 export const DEFAULT_TEXT_LINE_HEIGHT = 1.4;
 export const DEFAULT_TEXT_LETTER_SPACING = 0;
 
-export interface FrameNode extends RotatedGeometry {
+export interface FrameNode extends NodeGeometry {
   id: string;
   name: string;
   type: "frame";
@@ -128,7 +129,7 @@ export interface TextMarkRangeEdit {
   patch: TextMarkPatch;
 }
 
-export interface TextNode extends RotatedGeometry {
+export interface TextNode extends NodeGeometry {
   id: string;
   name: string;
   type: "text";
