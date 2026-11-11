@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { validFill } from "@/document/fill.ts";
 import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageFilters, type ImageStylePatch, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
@@ -43,7 +44,7 @@ export function setNodeStyle(
 
 function boxStyleIssue(patch: Partial<RectangleStyle>): string | undefined {
   if (Object.keys(patch).some((key) => !["fill", "stroke", "cornerRadii", "border"].includes(key))) return "未知のスタイル項目です";
-  if (patch.fill !== undefined && patch.fill !== null && (typeof patch.fill !== "string" || !HEX_COLOR_PATTERN.test(patch.fill))) return "色は #RRGGBB または #RRGGBBAA 形式で指定してください";
+  if (patch.fill !== undefined && !validFill(patch.fill)) return "塗りの色またはグラデーションが不正です";
   if (patch.stroke !== undefined && patch.stroke !== null &&
     (typeof patch.stroke !== "object" || Object.keys(patch.stroke).some((key) => !["color", "width"].includes(key)) || !HEX_COLOR_PATTERN.test(patch.stroke.color) || !Number.isFinite(patch.stroke.width) || patch.stroke.width < 0)) return "線の色と幅が不正です";
   if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return "角丸は 0 以上の有限の数値で指定してください";

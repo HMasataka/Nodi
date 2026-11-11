@@ -5,12 +5,15 @@ const idInput = z.strictObject({ id });
 const geometry = { x: z.number(), y: z.number(), width: z.number(), height: z.number() };
 const cornerRadii = z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() });
 const stroke = z.strictObject({ color: z.string(), width: z.number() });
+const unit = z.number().finite().min(0).max(1);
+const gradient = z.strictObject({ type: z.literal("linear"), start: z.strictObject({ x: unit, y: unit }), end: z.strictObject({ x: unit, y: unit }),
+  stops: z.array(z.strictObject({ position: unit, color: z.string() })).min(2) });
 const border = z.strictObject({ top: stroke.optional(), right: stroke.optional(), bottom: stroke.optional(), left: stroke.optional() });
 const focalPoint = z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) });
 const filters = z.strictObject({ brightness: z.number().finite().nonnegative().optional(), contrast: z.number().finite().nonnegative().optional(),
   saturate: z.number().finite().nonnegative().optional(), grayscale: z.number().finite().min(0).max(1).optional(),
   sepia: z.number().finite().min(0).max(1).optional(), hueRotate: z.number().finite().optional() });
-const boxStyle = { fill: z.string().nullable().optional(), stroke: stroke.nullable().optional(), cornerRadii: cornerRadii.optional() };
+const boxStyle = { fill: z.union([z.string(), gradient]).nullable().optional(), stroke: stroke.nullable().optional(), cornerRadii: cornerRadii.optional() };
 const hasChange = (value: { id: string }) => Object.keys(value).some((key) => key !== "id");
 
 export const agentInputs = {

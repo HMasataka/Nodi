@@ -1,4 +1,4 @@
-import type { Border, BoxStyle, CornerRadii, ShapeStyle } from "@/document/types.ts";
+import type { Border, BoxStyle, CornerRadii, Fill, ShapeStyle } from "@/document/types.ts";
 import { type Transform, transformPoint } from "@/document/transform.ts";
 
 export type PathCommand =
@@ -70,7 +70,7 @@ function insetRadii(radii: CornerRadii, inset: number): CornerRadii {
 
 export interface ShapePaths {
   fill: PathCommand[];
-  fillColor: string | null;
+  fillColor: Fill;
   stroke: PathCommand[] | null;
   strokeColor: string;
   strokeWidth: number;

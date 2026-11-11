@@ -13,14 +13,21 @@ const opacity = z.number().finite().min(0).max(1);
 const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate.optional(), opacity: opacity.optional() };
 
 const color = z.string().regex(HEX_COLOR_PATTERN);
+const unit = z.number().finite().min(0).max(1);
+const point = z.strictObject({ x: unit, y: unit });
+const stop = z.strictObject({ position: unit, color });
+const linearFill = z.strictObject({ type: z.literal("linear"), start: point, end: point, stops: z.array(stop).min(2) })
+  .refine((value) => value.start.x !== value.end.x || value.start.y !== value.end.y, "方向の始点と終点は異なる位置にしてください")
+  .refine((value) => value.stops.every((item, index) => index === 0 || value.stops[index - 1].position <= item.position), "色ストップを位置順に指定してください");
+const fill = z.union([color, linearFill]).nullable();
 const textMark = z.strictObject({ start: z.number().int().nonnegative(), end: z.number().int().positive(), color: color.optional(),
   fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(),
   underline: z.literal(true).optional(), code: z.literal(true).optional() });
 const radius = z.number().finite().nonnegative();
 const cornerRadii = z.strictObject({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
 const stroke = z.strictObject({ color, width: radius }).nullable();
-const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: stroke.optional() });
-const normalizedShapeStyle = z.strictObject({ fill: color.nullable(), stroke });
+const shapeStyle = z.strictObject({ fill, stroke: stroke.optional() });
+const normalizedShapeStyle = z.strictObject({ fill, stroke });
 const borderEdge = z.strictObject({ color, width: radius });
 const border = z.strictObject({ top: borderEdge.optional(), right: borderEdge.optional(), bottom: borderEdge.optional(), left: borderEdge.optional() });
 const compatibleBorder = (style: { border?: z.infer<typeof border>; cornerRadii?: z.infer<typeof cornerRadii> }) =>

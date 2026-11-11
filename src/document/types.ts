@@ -17,7 +17,10 @@ export interface CornerRadii {
 
 export interface Stroke { color: string; width: number }
 export type Border = Partial<Record<"top" | "right" | "bottom" | "left", Stroke>>;
-export interface ShapeStyle { fill: string | null; stroke: Stroke | null }
+export interface FillStop { position: number; color: string }
+export interface LinearFill { type: "linear"; start: { x: number; y: number }; end: { x: number; y: number }; stops: FillStop[] }
+export type Fill = string | LinearFill | null;
+export interface ShapeStyle { fill: Fill; stroke: Stroke | null }
 export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii; border: Border }
 export type RectangleStyle = BoxStyle;
 export type ImageFit = "cover" | "contain" | "fill";
