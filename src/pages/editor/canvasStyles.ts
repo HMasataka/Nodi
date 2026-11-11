@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 
 import type { CanvasExtent } from "@/pages/editor/viewport.ts";
 import { imageObjectPosition } from "@/document/imagePlacement.ts";
+import { normalizeRadii } from "@/document/shapePath.ts";
 import type { Point } from "@/pages/editor/geometry.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
@@ -52,7 +53,7 @@ function nodeBoxStyle(node: Geometry): CSSProperties {
 }
 
 export function frameNodeStyle(node: FrameNode): CSSProperties {
-  return { ...nodeBoxStyle(node), borderRadius: cornerRadiiCss(node.style.cornerRadii) };
+  return { ...nodeBoxStyle(node), borderRadius: cornerRadiiCss(normalizeRadii(node.style.cornerRadii, node.width, node.height)) };
 }
 
 export function frameContentsStyle(node: FrameNode): CSSProperties {
@@ -96,7 +97,7 @@ function cornerRadiiCss(radii: CornerRadii): string {
 }
 
 export function imageNodeStyle(node: ImageNode): CSSProperties {
-  return nodeBoxStyle(node);
+  return { ...nodeBoxStyle(node), borderRadius: cornerRadiiCss(normalizeRadii(node.style.cornerRadii, node.width, node.height)) };
 }
 
 export function imageContentStyle(node: ImageNode): CSSProperties {

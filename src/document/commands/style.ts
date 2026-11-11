@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageStyle, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
+import { type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageStyle, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
@@ -27,8 +27,13 @@ function boxStyleIssue(patch: Partial<RectangleStyle>): string | undefined {
   if (patch.fill !== undefined && patch.fill !== null && (typeof patch.fill !== "string" || !HEX_COLOR_PATTERN.test(patch.fill))) return "色は #RRGGBB 形式で指定してください";
   if (patch.stroke !== undefined && patch.stroke !== null &&
     (typeof patch.stroke !== "object" || Object.keys(patch.stroke).some((key) => !["color", "width"].includes(key)) || !HEX_COLOR_PATTERN.test(patch.stroke.color) || !Number.isFinite(patch.stroke.width) || patch.stroke.width < 0)) return "線の色と幅が不正です";
-  if (patch.cornerRadii !== undefined && (!patch.cornerRadii || Object.keys(patch.cornerRadii).some((key) => !["topLeft", "topRight", "bottomRight", "bottomLeft"].includes(key)) ||
-    ![patch.cornerRadii.topLeft, patch.cornerRadii.topRight, patch.cornerRadii.bottomRight, patch.cornerRadii.bottomLeft].every((value) => Number.isFinite(value) && value >= 0))) return "角丸は 0 以上の有限の数値で指定してください";
+  if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return "角丸は 0 以上の有限の数値で指定してください";
+}
+
+function cornerRadiiIssue(radii: CornerRadii): boolean {
+  return !radii || typeof radii !== "object" || Array.isArray(radii) ||
+    Object.keys(radii).some((key) => !["topLeft", "topRight", "bottomRight", "bottomLeft"].includes(key)) ||
+    ![radii.topLeft, radii.topRight, radii.bottomRight, radii.bottomLeft].every((value) => Number.isFinite(value) && value >= 0);
 }
 
 function boxStylePatch(patch: Partial<RectangleStyle>): Partial<RectangleStyle> {
@@ -53,8 +58,9 @@ export function setFrameStyle(document: Document, id: string, patch: Partial<Fra
 export function setImageStyle(document: Document, id: string, patch: Partial<ImageStyle>): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "image") return Result.fail(new Error(`画像が見つかりません: ${id}`));
-  if (Object.keys(patch).some((key) => !["fit", "focalPoint"].includes(key))) return Result.fail(new Error("未知の画像スタイル項目です"));
+  if (Object.keys(patch).some((key) => !["fit", "focalPoint", "cornerRadii"].includes(key))) return Result.fail(new Error("未知の画像スタイル項目です"));
   if (patch.fit !== undefined && !["cover", "contain", "fill"].includes(patch.fit)) return Result.fail(new Error("画像のフィットが不正です"));
+  if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return Result.fail(new Error("角丸は 0 以上の有限の数値で指定してください"));
   const point = patch.focalPoint;
   if (point !== undefined && (!point || typeof point !== "object" || Object.keys(point).some((key) => !["x", "y"].includes(key)) ||
     ![point.x, point.y].every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1))) {
@@ -63,9 +69,9 @@ export function setImageStyle(document: Document, id: string, patch: Partial<Ima
   return updateNode(document, id, (current) => current.type === "image" ? { ...current, style: {
     ...current.style, ...(patch.fit === undefined ? {} : { fit: patch.fit }),
     ...(point === undefined ? {} : { focalPoint: { x: point.x, y: point.y } }),
+    ...(patch.cornerRadii === undefined ? {} : { cornerRadii: structuredClone(patch.cornerRadii) }),
   } } : current);
 }
-
 export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));

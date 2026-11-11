@@ -1,5 +1,6 @@
 import type { DocumentNode, FrameStyle, ImageStyle, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
 
+import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
 import { ImageStyleEditor } from "@/pages/editor/components/molecules/ImageStyleEditor";
 import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
@@ -18,7 +19,8 @@ interface ElementAppearanceProps {
 export function ElementAppearance({ node, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle }: ElementAppearanceProps) {
   if (node.type === "image") return <>
     <div className="field-label">画像の表示</div>
-    <ImageStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onImageStyle} />
+    <ImageStyleEditor key={`${node.id}:${node.style.fit}:${JSON.stringify(node.style.focalPoint)}`} node={node} onChange={onImageStyle} />
+    <CornerRadiiEditor key={`${node.id}:${JSON.stringify(node.style.cornerRadii)}`} radii={node.style.cornerRadii} onChange={(cornerRadii) => onImageStyle({ cornerRadii })} />
     <p className="property-help">画像データは `.nodi` ファイル内に埋め込まれています。</p>
   </>;
   if (node.type === "text") return <TextAppearance key={node.id} node={node} onTextContent={onTextContent}

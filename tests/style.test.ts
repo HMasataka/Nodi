@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-import { addNode, createDocument, findNode, setFrameStyle, setNodeStyle } from "../src/document/commands/index.ts";
+import { addNode, createDocument, findNode, setFrameStyle, setImageStyle, setNodeStyle } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
-import { corners, success } from "./support/factories.ts";
+import { corners, document, image, success } from "./support/factories.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
 test("矩形の塗り・線・角丸を編集して保存し、Undo / Redo できる", () => {
@@ -13,6 +13,24 @@ test("矩形の塗り・線・角丸を編集して保存し、Undo / Redo で�
   const history = commit(createHistory(document), edited);
   assert.equal(undo(history).present.children[0].style.fill, "#f3d9c8");
   assert.deepEqual(redo(undo(history)).present.children[0].style.cornerRadii, corners(12));
+});
+
+test("画像の角丸パッチは独立に保持し、不正な角・対象を拒否する", () => {
+  const original = document(image());
+  const radii = { topLeft: 1, topRight: 2, bottomRight: 3, bottomLeft: 4 };
+  const edited = success(setImageStyle(original, "image", { cornerRadii: radii }));
+  const frame = success(addNode(createDocument(), { type: "frame", x: 0, y: 0, width: 10, height: 10 }));
+  const rectangle = success(addNode(createDocument(), { type: "rectangle", x: 0, y: 0, width: 10, height: 10 }));
+  radii.topLeft = 99;
+  assert.equal(edited.children[0].style.cornerRadii.topLeft, 1);
+  assert.deepEqual(original.children[0].style.cornerRadii, corners(0));
+  assert.deepEqual(success(parseDocument(success(serializeDocument(edited)))), edited);
+  assert.equal(setImageStyle(original, "missing", { cornerRadii: corners(2) }).type, "Failure");
+  for (const bad of [corners(-1), corners(Infinity), { ...corners(0), bottomRight: NaN }, { topLeft: 1 }]) {
+    assert.equal(setImageStyle(original, "image", { cornerRadii: bad }).type, "Failure");
+    assert.equal(setFrameStyle(frame.document, frame.node.id, { cornerRadii: bad }).type, "Failure");
+    assert.equal(setNodeStyle(rectangle.document, rectangle.node.id, { cornerRadii: bad }).type, "Failure");
+  }
 });
 
 test("不正なスタイルを拒否し、図形用コマンドはフレームを変更しない", () => {

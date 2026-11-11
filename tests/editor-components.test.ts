@@ -7,6 +7,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { reorderNode } from "../src/document/commands/index.ts";
 import { document, frame as makeFrame, image as makeImage, rectangle as makeRectangle, text as makeText } from "./support/factories.ts";
+import { pathToString, roundedRectPath } from "../src/document/shapePath.ts";
 
 test("分割後のキャンバス・レイヤー・プロパティが同じ要素を表示する", async () => {
   const vite = await createServer({ server: { middlewareMode: true } });
@@ -124,6 +125,21 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(frameInspector, /type="color" value="#aabbcc"/);
     assert.match(frameInspector, /はみ出しを表示/);
+
+    const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
+    const clippedImage = makeImage({ width: 15, height: 10, style: { cornerRadii: radii, fit: "contain", focalPoint: { x: 0.2, y: 0.8 } } });
+    const clippedFrame = makeFrame({ width: 15, height: 10, style: { cornerRadii: radii }, children: [clippedImage] });
+    const clipped = renderToStaticMarkup(createElement(CanvasNode, { node: clippedFrame, selectedId: null,
+      interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp } }));
+    const path = pathToString(roundedRectPath(0, 0, 15, 10, radii));
+    assert.equal(clipped.split(`d="${path}"`).length - 1, 2);
+    assert.match(clipped, /border-radius:10px 5px 2.5px 0px/);
+    assert.match(clipped, /<clipPath id="[^"]+"><path d="/);
+    assert.match(clipped, /<foreignObject[^>]+clip-path="url\(#[^)]+\)"/);
+    assert.match(clipped, /<img[^>]+style="object-fit:contain;object-position:20% 80%"/);
+    assert.match(renderToStaticMarkup(createElement(Inspector, { selected: clippedImage, onImageStyle: noOp,
+      onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp })), /左上[^]*右上[^]*右下[^]*左下/);
+    assert.match(frameInspector, /左上[^]*右上[^]*右下[^]*左下/);
 
     const toolbar = renderToStaticMarkup(createElement(EditorToolbar, {
       fileName: "画面.nodi", filePath: "/tmp/画面.nodi", canUndo: true, canRedo: false, isBusy: false,
