@@ -39,6 +39,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 - `set_element_geometry`: ID と親基準の `x`・`y`・`width`・`height`（px）で位置と寸法を変更。
 - `set_shape_style`: 矩形・楕円の `fill`（`#RRGGBB` または `null`）・`stroke`（`{ color, width }` または `null`）、矩形の `cornerRadii`（`topLeft`・`topRight`・`bottomRight`・`bottomLeft`）を変更。線は均一な内側線。
 - `set_mask`: 矩形・楕円の `isMask` を真偽値で切り替える。マスクは後続の同じ親の兄弟を、次のマスクまでクリップする。未選択時のマスクはレイヤー一覧から選択する。
+- `set_opacity`: 要素全体の不透明度 `opacity` を0〜1で設定する。フレームは子を含むグループに適用する。
 - `set_frame_style`: フレームの `fill`・`stroke`・`cornerRadii` と `clipContent` を変更。スタイルの形式は矩形と共通。
 - `set_image_filters`: 画像の `filters` に明るさ・コントラスト・彩度・グレースケール・セピア・色相の変更項目を指定。未指定の項目は維持される。
 - `set_text_style`: テキストの `fontSize`・`color`・`textAlign`・`fontFamily`（`default`・`system`・`serif`・`monospace`）・`fontWeight`（100〜900 の 100 刻み）・`lineHeight`（倍率）・`letterSpacing`（px、負値も可）を変更。

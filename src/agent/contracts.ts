@@ -32,6 +32,7 @@ export const agentInputs = {
   set_text_content: z.strictObject({ id, content: z.string() }),
   set_element_geometry: z.strictObject({ id, ...geometry }),
   set_rotation: z.strictObject({ id, rotation: z.number().finite() }),
+  set_opacity: z.strictObject({ id, opacity: z.number().finite().min(0).max(1) }),
   set_mask: z.strictObject({ id, isMask: z.boolean() }),
   set_shape_style: z.strictObject({ id, ...boxStyle }).refine(hasChange, "変更するスタイルを指定してください"),
   set_frame_style: z.strictObject({ id, ...boxStyle, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください"),

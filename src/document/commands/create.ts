@@ -46,7 +46,7 @@ export function addNode(
     id = `nd_${crypto.randomUUID()}`;
   } while (ids.has(id));
 
-  const geometry = { x: input.x, y: input.y, width: input.width, height: input.height, rotation: 0 };
+  const geometry = { x: input.x, y: input.y, width: input.width, height: input.height, rotation: 0, opacity: 1 };
   const node: DocumentNode = input.type === "frame"
     ? { id, name, type: "frame", ...geometry, style: structuredClone(DEFAULT_FRAME_STYLE), clipContent: true, children: [] }
     : input.type === "text"

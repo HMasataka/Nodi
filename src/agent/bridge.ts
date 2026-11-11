@@ -29,6 +29,7 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_text_content": return withInput(agentInputs.set_text_content, args, ({ id, content }) => api.setTextContent(id, content));
       case "set_element_geometry": return withInput(agentInputs.set_element_geometry, args, ({ id, ...geometry }) => api.setGeometry(id, geometry));
       case "set_rotation": return withInput(agentInputs.set_rotation, args, ({ id, rotation }) => api.setRotation(id, rotation));
+      case "set_opacity": return withInput(agentInputs.set_opacity, args, ({ id, opacity }) => api.setOpacity(id, opacity));
       case "set_mask": return withInput(agentInputs.set_mask, args, ({ id, isMask }) => api.setMask(id, isMask));
       case "set_shape_style": return withInput(agentInputs.set_shape_style, args, ({ id, ...style }) => api.setShapeStyle(id, style));
       case "set_frame_style": return withInput(agentInputs.set_frame_style, args, ({ id, ...style }) => api.setFrameStyle(id, style));

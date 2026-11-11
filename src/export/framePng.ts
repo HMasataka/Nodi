@@ -77,6 +77,28 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
 }
 
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
+  if (node.opacity === 0) return Result.succeed();
+  if (node.opacity < 1) {
+    // 塗りと線・フレームの子を先に一枚へ描画し、グループ全体へ透明度を一度だけ掛ける。
+    // 書き出しキャンバス全体を使うことで、回転後やクリップしないフレームの子も切らない。
+    const layer = environment.createCanvas();
+    layer.width = ctx.canvas.width;
+    layer.height = ctx.canvas.height;
+    const layerContext = layer.getContext("2d");
+    if (!layerContext) return Result.fail(new Error("不透明度の描画領域を作成できません"));
+    layerContext.setTransform(ctx.getTransform());
+    const painted = await paintNode(layerContext, { ...node, opacity: 1 }, environment);
+    if (Result.isFailure(painted)) return painted;
+    ctx.save();
+    try {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalAlpha *= node.opacity;
+      ctx.drawImage(layer, 0, 0);
+    } finally {
+      ctx.restore();
+    }
+    return Result.succeed();
+  }
   ctx.save();
   ctx.translate(node.x, node.y);
   if (node.rotation !== 0) {

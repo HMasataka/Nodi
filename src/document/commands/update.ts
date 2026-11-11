@@ -60,6 +60,13 @@ export function setRotation(document: Document, id: string, rotation: number): R
   return updateNode(document, id, (node) => node.rotation === normalized ? node : { ...node, rotation: normalized });
 }
 
+export function setOpacity(document: Document, id: string, opacity: number): Result.Result<Document, Error> {
+  if (typeof opacity !== "number" || !Number.isFinite(opacity) || opacity < 0 || opacity > 1) {
+    return Result.fail(new Error("不透明度は 0 から 1 の有限値で指定してください"));
+  }
+  return updateNode(document, id, (node) => node.opacity === opacity ? node : { ...node, opacity });
+}
+
 export function setMask(document: Document, id: string, isMask: boolean): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`マスクにできる図形が見つかりません: ${id}`));

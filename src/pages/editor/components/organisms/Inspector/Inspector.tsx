@@ -12,6 +12,7 @@ interface InspectorProps {
   onRename(name: string): void;
   onGeometry(geometry: Geometry): void;
   onRotation(rotation: number): void;
+  onOpacity(opacity: number): void;
   onMask(isMask: boolean): void;
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
@@ -27,7 +28,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -55,6 +56,17 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
                 const value = event.currentTarget.value.trim();
                 if (value !== "" && Number(value) !== selected.rotation) onRotation(Number(value));
                 else event.currentTarget.value = String(selected.rotation);
+              }}
+              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+          </label>
+          <label className="geometry-field">
+            <span>不透明度 %</span>
+            <input key={`${selected.id}:${selected.opacity}`} type="number" min="0" max="100" step="any" defaultValue={selected.opacity * 100}
+              onBlur={(event) => {
+                const value = event.currentTarget.value.trim();
+                const percentage = Number(value);
+                if (value !== "" && Number.isFinite(percentage) && percentage >= 0 && percentage <= 100 && percentage / 100 !== selected.opacity) onOpacity(percentage / 100);
+                else event.currentTarget.value = String(selected.opacity * 100);
               }}
               onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
           </label>
