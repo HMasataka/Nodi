@@ -30,10 +30,13 @@
               pnpm
               cargo
               clippy
+              kache
               rustc
               rustfmt
               pkg-config
             ];
+
+            RUSTC_WRAPPER = "${pkgs.kache}/bin/kache";
 
             shellHook = ''
               echo "Nodi dev shell — node $(node --version), pnpm $(pnpm --version), rustc $(rustc --version)"
