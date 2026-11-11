@@ -35,10 +35,16 @@ function drawSpacedText(ctx: CanvasRenderingContext2D, text: string, x: number, 
   });
 }
 
-function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths) {
+function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths, width: number, height: number) {
   if (shape.fillColor !== null) {
     tracePath(ctx, shape.fill);
-    ctx.fillStyle = shape.fillColor;
+    if (typeof shape.fillColor === "string") ctx.fillStyle = shape.fillColor;
+    else {
+      const fill = shape.fillColor;
+      const gradient = ctx.createLinearGradient(fill.start.x * width, fill.start.y * height, fill.end.x * width, fill.end.y * height);
+      fill.stops.forEach((stop) => gradient.addColorStop(stop.position, stop.color));
+      ctx.fillStyle = gradient;
+    }
     ctx.fill();
   }
   if (shape.stroke) {
@@ -109,7 +115,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
   try {
     if (node.type === "frame") {
       const shape = boxShape(node.width, node.height, node.style);
-      paintShape(ctx, shape);
+      paintShape(ctx, shape, node.width, node.height);
       if (node.clipContent) {
         tracePath(ctx, shape.fill);
         ctx.clip();
@@ -118,10 +124,10 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
       if (Result.isFailure(painted)) return painted;
       paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "rectangle") {
-      paintShape(ctx, boxShape(node.width, node.height, node.style));
+      paintShape(ctx, boxShape(node.width, node.height, node.style), node.width, node.height);
       paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "ellipse") {
-      paintShape(ctx, ellipseShape(node.width, node.height, node.style));
+      paintShape(ctx, ellipseShape(node.width, node.height, node.style), node.width, node.height);
     } else if (node.type === "text") {
       ctx.beginPath();
       ctx.rect(0, 0, node.width, node.height);
