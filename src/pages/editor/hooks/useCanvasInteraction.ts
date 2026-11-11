@@ -16,7 +16,7 @@ import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {
     designRef, selectedIds, setSelectedId, setSelectedIds, setError, agentApi,
-    previewDocument, finishPreview, stepHistory: stepDocumentHistory,
+    beginPreview, previewDocument, finishPreview, stepHistory: stepDocumentHistory,
   } = session;
   const drag = useRef<DragState | null>(null);
   const { zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
@@ -35,6 +35,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       return;
     }
     event.currentTarget.setPointerCapture(event.pointerId);
+    beginPreview();
     if (selectedIds.length > 1 && selectedIds.includes(node.id)) {
       drag.current = { mode: "group", ids: selectedIds, original: designRef.current, pointerId: event.pointerId,
         clientX: event.clientX, clientY: event.clientY, zoom };
@@ -55,6 +56,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     event.stopPropagation();
     event.preventDefault();
     event.currentTarget.parentElement?.setPointerCapture(event.pointerId);
+    beginPreview();
     drag.current = {
       mode: "resize", id: node.id, pointerId: event.pointerId,
       original: designRef.current,
