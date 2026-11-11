@@ -1,7 +1,7 @@
 import { Result } from "@praha/byethrow";
 
 import { collectNodes, findNode, updateNode } from "@/document/commands/tree.ts";
-import { DEFAULT_FRAME_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type Geometry, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
+import { DEFAULT_FRAME_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type Geometry, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, ZERO_CORNER_RADII } from "@/document/types.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
 
 export type AddNodeInput = Geometry & { parentId?: string; name?: string } & (
@@ -52,7 +52,7 @@ export function addNode(
     : input.type === "text"
       ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", style: { ...DEFAULT_TEXT_STYLE } }
       : input.type === "image"
-        ? { id, name, type: "image", ...geometry, source: input.source, style: {} }
+        ? { id, name, type: "image", ...geometry, source: input.source, style: { cornerRadii: { ...ZERO_CORNER_RADII } } }
       : input.type === "ellipse"
         ? { id, name, type: "ellipse", ...geometry, style: { fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: structuredClone(DEFAULT_RECTANGLE_STYLE.stroke) } }
         : { id, name, type: "rectangle", ...geometry, style: structuredClone(DEFAULT_RECTANGLE_STYLE) };

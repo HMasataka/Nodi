@@ -10,8 +10,16 @@ const HALF_TURN = Math.PI;
 const QUARTER_TURN = Math.PI / 2;
 const FULL_TURN = Math.PI * 2;
 
-export function roundedRectPath(x: number, y: number, width: number, height: number, radii: CornerRadii): PathCommand[] {
+export function normalizeRadii(radii: CornerRadii, width: number, height: number): CornerRadii {
   const { topLeft, topRight, bottomRight, bottomLeft } = radii;
+  const ratio = (size: number, sum: number) => sum > 0 ? size / sum : 1;
+  const factor = Math.min(1, ratio(width, topLeft + topRight), ratio(width, bottomLeft + bottomRight),
+    ratio(height, topLeft + bottomLeft), ratio(height, topRight + bottomRight));
+  return { topLeft: topLeft * factor, topRight: topRight * factor, bottomRight: bottomRight * factor, bottomLeft: bottomLeft * factor };
+}
+
+export function roundedRectPath(x: number, y: number, width: number, height: number, radii: CornerRadii): PathCommand[] {
+  const { topLeft, topRight, bottomRight, bottomLeft } = normalizeRadii(radii, width, height);
   const right = x + width;
   const bottom = y + height;
   const commands: PathCommand[] = [

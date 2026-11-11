@@ -16,7 +16,7 @@ export interface Stroke { color: string; width: number }
 export interface ShapeStyle { fill: string | null; stroke: Stroke | null }
 export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii }
 export type RectangleStyle = BoxStyle;
-export type ImageStyle = Record<string, never>;
+export interface ImageStyle { cornerRadii: CornerRadii }
 export const ZERO_CORNER_RADII: CornerRadii = { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 };
 
 export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;

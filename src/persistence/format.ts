@@ -18,12 +18,13 @@ const radius = z.number().finite().nonnegative();
 const cornerRadii = z.strictObject({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
 const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: z.strictObject({ color, width: radius }).nullable().optional() });
 const boxStyle = z.strictObject({ ...shapeStyle.shape, cornerRadii: cornerRadii.optional() });
+const imageStyle = z.strictObject({ cornerRadii: cornerRadii.optional() });
 const textStyle = z.strictObject({ fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(), lineHeight: z.number().finite().positive().optional(), letterSpacing: z.number().finite().optional() });
 
 export type WireNode =
   | (Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> })
   | (Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> })
-  | Extract<DocumentNode, { type: "image" }>
+  | (Omit<Extract<DocumentNode, { type: "image" }>, "style"> & { style: z.infer<typeof imageStyle> })
   | (Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> })
   | (Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] });
 export interface WireDocument { version: 1; children: WireNode[] }
@@ -32,7 +33,7 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
     z.strictObject({ id, name, type: z.literal("rectangle"), ...geometry, style: boxStyle }),
     z.strictObject({ id, name, type: z.literal("ellipse"), ...geometry, style: shapeStyle }),
-    z.strictObject({ id, name, type: z.literal("image"), ...geometry, style: z.strictObject({}), source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
+    z.strictObject({ id, name, type: z.literal("image"), ...geometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
     z.strictObject({ id, name, type: z.literal("frame"), ...geometry, style: boxStyle, clipContent: z.boolean().optional(), children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
   ]),
@@ -62,7 +63,7 @@ export const documentSchema = z.strictObject({ version: z.literal(1), children: 
 
 function normalizeNode(node: WireNode): DocumentNode {
   switch (node.type) {
-    case "image": return node;
+    case "image": return { ...node, style: { cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } } };
     case "text": return { ...node, style: { ...node.style,
       fontFamily: node.style.fontFamily ?? DEFAULT_TEXT_STYLE.fontFamily,
       fontWeight: node.style.fontWeight ?? DEFAULT_TEXT_STYLE.fontWeight,
@@ -76,7 +77,8 @@ function normalizeNode(node: WireNode): DocumentNode {
 }
 
 function compactNode(node: DocumentNode): WireNode {
-  if (node.type === "image") return node;
+  if (node.type === "image") return { ...node, style: Object.values(node.style.cornerRadii).some((value) => value !== 0)
+    ? { cornerRadii: node.style.cornerRadii } : {} };
   if (node.type === "text") {
     const { fontFamily, fontWeight, lineHeight, letterSpacing, ...required } = node.style;
     return { ...node, style: { ...required,

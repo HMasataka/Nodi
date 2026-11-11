@@ -25,6 +25,7 @@ const hasChange = (value: { id: string }) => Object.keys(value).some((key) => ke
 const boxStyleInput = { fill: z.string().nullable().optional(), stroke: z.strictObject({ color: z.string(), width: z.number() }).nullable().optional(), cornerRadii: z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() }).optional() };
 const shapeStyleInput = z.strictObject({ id: z.string().min(1), ...boxStyleInput }).refine(hasChange, "変更するスタイルを指定してください");
 const frameStyleInput = z.strictObject({ id: z.string().min(1), ...boxStyleInput, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください");
+const imageStyleInput = z.strictObject({ id: z.string().min(1), cornerRadii: boxStyleInput.cornerRadii }).refine(hasChange, "変更するスタイルを指定してください");
 const textStyleInput = z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().optional(), lineHeight: z.number().optional(), letterSpacing: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください");
 const textMarksInput = z.strictObject({ id: z.string().min(1), marks: z.array(z.strictObject({ start: z.number(), end: z.number(), color: z.string().optional(), fontWeight: z.number().optional(), underline: z.literal(true).optional(), code: z.literal(true).optional() })) });
 const emptyInput = z.strictObject({});
@@ -55,6 +56,7 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_element_geometry": return withInput(setGeometryInput, args, ({ id, ...geometry }) => api.setGeometry(id, geometry));
       case "set_shape_style": return withInput(shapeStyleInput, args, ({ id, ...style }) => api.setShapeStyle(id, style));
       case "set_frame_style": return withInput(frameStyleInput, args, ({ id, ...style }) => api.setFrameStyle(id, style));
+      case "set_image_style": return withInput(imageStyleInput, args, ({ id, ...style }) => api.setImageStyle(id, style));
       case "set_text_style": return withInput(textStyleInput, args, ({ id, ...style }) => api.setTextStyle(id, style));
       case "set_text_marks": return withInput(textMarksInput, args, ({ id, marks }) => api.setTextMarks(id, marks));
       case "delete_element": return withInput(idInput, args, ({ id }) => api.delete(id));

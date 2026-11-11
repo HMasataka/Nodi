@@ -55,6 +55,6 @@ export function text({ style, ...overrides }: NodeOverrides<TextNode> = {}): Tex
 export function image(overrides: Partial<ImageNode> = {}): ImageNode {
   return {
     id: "image", name: "画像", type: "image", x: 0, y: 0, width: 100, height: 100,
-    source: "data:image/png;base64,aGVsbG8=", style: {}, ...overrides,
+    source: "data:image/png;base64,aGVsbG8=", style: { cornerRadii: corners(0) }, ...overrides,
   };
 }

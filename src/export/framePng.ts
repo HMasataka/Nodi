@@ -1,7 +1,7 @@
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
-import { boxShape, ellipseShape, type ShapePaths, tracePath } from "@/document/shapePath.ts";
+import { boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
 import type { DocumentNode, FrameNode } from "@/document/types.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 
@@ -120,6 +120,8 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         }
       });
     } else {
+      tracePath(ctx, roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii));
+      ctx.clip();
       const image = await loadImage(node.source);
       const width = image.naturalWidth;
       const height = image.naturalHeight;
