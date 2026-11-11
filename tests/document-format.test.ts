@@ -51,7 +51,8 @@ test("非既定値と明示的な null を保持し、ゼロ幅の線を null �
     text({ style: { fontFamily: "monospace", fontWeight: 700, lineHeight: 2, letterSpacing: -1 } }),
   ] }));
   const json = success(serializeDocument(original));
-  assert.deepEqual(JSON.parse(json).children[0].style, original.children[0].style);
+  const { border: _border, ...wireStyle } = original.children[0].style;
+  assert.deepEqual(JSON.parse(json).children[0].style, wireStyle);
   assert.deepEqual(success(parseDocument(json)), original);
   const explicit = document(rectangle({ style: { stroke: null, cornerRadii: corners(0) } }));
   assert.deepEqual(success(parseDocument(JSON.stringify(explicit))), explicit);

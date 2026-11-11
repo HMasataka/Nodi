@@ -17,7 +17,12 @@ const textMark = z.strictObject({ start: z.number().int().nonnegative(), end: z.
 const radius = z.number().finite().nonnegative();
 const cornerRadii = z.strictObject({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
 const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: z.strictObject({ color, width: radius }).nullable().optional() });
-const boxStyle = z.strictObject({ ...shapeStyle.shape, cornerRadii: cornerRadii.optional() });
+const borderEdge = z.strictObject({ color, width: radius });
+const border = z.strictObject({ top: borderEdge.optional(), right: borderEdge.optional(), bottom: borderEdge.optional(), left: borderEdge.optional() });
+const boxStyle = z.strictObject({ ...shapeStyle.shape, cornerRadii: cornerRadii.optional(), border: border.optional() }).refine(
+  (style) => !style.border || Object.keys(style.border).length === 0 || !style.cornerRadii || Object.values(style.cornerRadii).every((value) => value === 0),
+  { message: "辺線と角丸は併用できません", path: ["border"] },
+);
 const textStyle = z.strictObject({ fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(), lineHeight: z.number().finite().positive().optional(), letterSpacing: z.number().finite().optional() });
 const imageStyle = z.strictObject({ fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) }).optional(), cornerRadii: cornerRadii.optional() });
 
@@ -71,8 +76,8 @@ function normalizeNode(node: WireNode): DocumentNode {
       letterSpacing: node.style.letterSpacing ?? DEFAULT_TEXT_STYLE.letterSpacing,
     } };
     case "ellipse": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null } };
-    case "rectangle": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } } };
-    case "frame": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
+    case "rectangle": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} } };
+    case "frame": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
   }
 }
 
@@ -92,7 +97,8 @@ function compactNode(node: DocumentNode): WireNode {
     } };
   }
   const style = { fill: node.style.fill, ...(node.style.stroke === null ? {} : { stroke: node.style.stroke }),
-    ...(node.type !== "ellipse" && Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}) };
+    ...(node.type !== "ellipse" && Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}),
+    ...(node.type !== "ellipse" && Object.keys(node.style.border).length ? { border: node.style.border } : {}) };
   if (node.type === "frame") {
     const { clipContent, ...rest } = node;
     return { ...rest, style, ...(clipContent ? {} : { clipContent }), children: node.children.map(compactNode) };

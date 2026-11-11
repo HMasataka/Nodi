@@ -2,8 +2,8 @@ import { graphemeSegments } from "@/document/textLayout.ts";
 import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
-import { boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
-import type { DocumentNode, FrameNode } from "@/document/types.ts";
+import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
+import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 
 export interface PngRenderEnvironment {
@@ -47,6 +47,14 @@ function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths) {
   }
 }
 
+function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: number, border: Border) {
+  for (const edge of borderPaths(width, height, border)) {
+    tracePath(ctx, edge.commands);
+    ctx.fillStyle = edge.color;
+    ctx.fill();
+  }
+}
+
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
   ctx.save();
   ctx.translate(node.x, node.y);
@@ -62,8 +70,10 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         const painted = await paintNode(ctx, child, loadImage);
         if (Result.isFailure(painted)) return painted;
       }
+      paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "rectangle") {
       paintShape(ctx, boxShape(node.width, node.height, node.style));
+      paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "ellipse") {
       paintShape(ctx, ellipseShape(node.width, node.height, node.style));
     } else if (node.type === "text") {

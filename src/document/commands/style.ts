@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageStyle, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
+import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageStyle, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
@@ -11,9 +11,10 @@ export function setNodeStyle(
 ): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`図形が見つかりません: ${id}`));
-  if (node.type === "ellipse" && patch.cornerRadii !== undefined) return Result.fail(new Error("楕円に角丸は設定できません"));
+  if (node.type === "ellipse" && (patch.cornerRadii !== undefined || patch.border !== undefined)) return Result.fail(new Error("楕円に角丸や辺線は設定できません"));
   const issue = boxStyleIssue(patch);
   if (issue) return Result.fail(new Error(issue));
+  if (node.type === "rectangle" && borderCornerIssue({ ...node.style, ...patch })) return Result.fail(new Error("辺線と角丸は併用できません"));
   const style = boxStylePatch(patch);
   return updateNode(document, id, (current) => {
     if (current.type === "rectangle") return { ...current, style: { ...current.style, ...style } };
@@ -23,11 +24,14 @@ export function setNodeStyle(
 }
 
 function boxStyleIssue(patch: Partial<RectangleStyle>): string | undefined {
-  if (Object.keys(patch).some((key) => !["fill", "stroke", "cornerRadii"].includes(key))) return "未知のスタイル項目です";
+  if (Object.keys(patch).some((key) => !["fill", "stroke", "cornerRadii", "border"].includes(key))) return "未知のスタイル項目です";
   if (patch.fill !== undefined && patch.fill !== null && (typeof patch.fill !== "string" || !HEX_COLOR_PATTERN.test(patch.fill))) return "色は #RRGGBB 形式で指定してください";
   if (patch.stroke !== undefined && patch.stroke !== null &&
     (typeof patch.stroke !== "object" || Object.keys(patch.stroke).some((key) => !["color", "width"].includes(key)) || !HEX_COLOR_PATTERN.test(patch.stroke.color) || !Number.isFinite(patch.stroke.width) || patch.stroke.width < 0)) return "線の色と幅が不正です";
   if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return "角丸は 0 以上の有限の数値で指定してください";
+  if (patch.border !== undefined && (patch.border === null || typeof patch.border !== "object" || Array.isArray(patch.border) ||
+    Object.entries(patch.border).some(([side, edge]) => !["top", "right", "bottom", "left"].includes(side) || !edge || typeof edge !== "object" ||
+      Object.keys(edge).some((key) => !["color", "width"].includes(key)) || typeof edge.color !== "string" || !HEX_COLOR_PATTERN.test(edge.color) || !Number.isFinite(edge.width) || edge.width < 0))) return "辺線の色と幅が不正です";
 }
 
 function cornerRadiiIssue(radii: CornerRadii): boolean {
@@ -36,11 +40,16 @@ function cornerRadiiIssue(radii: CornerRadii): boolean {
     ![radii.topLeft, radii.topRight, radii.bottomRight, radii.bottomLeft].every((value) => Number.isFinite(value) && value >= 0);
 }
 
+function borderCornerIssue(style: RectangleStyle): boolean {
+  return Object.keys(style.border).length > 0 && Object.values(style.cornerRadii).some((value) => value !== 0);
+}
+
 function boxStylePatch(patch: Partial<RectangleStyle>): Partial<RectangleStyle> {
   return structuredClone({
     ...(patch.fill === undefined ? {} : { fill: patch.fill }),
     ...(patch.stroke === undefined ? {} : { stroke: patch.stroke }),
     ...(patch.cornerRadii === undefined ? {} : { cornerRadii: patch.cornerRadii }),
+    ...(patch.border === undefined ? {} : { border: patch.border }),
   });
 }
 
@@ -50,9 +59,16 @@ export function setFrameStyle(document: Document, id: string, patch: Partial<Fra
   const { clipContent: clipping, ...style } = patch;
   const issue = boxStyleIssue(style);
   if (issue) return Result.fail(new Error(issue));
+  if (borderCornerIssue({ ...node.style, ...style })) return Result.fail(new Error("辺線と角丸は併用できません"));
   if (patch.clipContent !== undefined && typeof patch.clipContent !== "boolean") return Result.fail(new Error("はみ出し表示の設定が不正です"));
   const clipContent = clipping ?? node.clipContent;
   return updateNode(document, id, (current) => current.type === "frame" ? { ...current, style: { ...current.style, ...boxStylePatch(style) }, clipContent } : current);
+}
+
+export function setBorder(document: Document, id: string, border: Border): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || (node.type !== "rectangle" && node.type !== "frame")) return Result.fail(new Error(`矩形またはフレームが見つかりません: ${id}`));
+  return node.type === "frame" ? setFrameStyle(document, id, { border }) : setNodeStyle(document, id, { border });
 }
 
 export function setImageStyle(document: Document, id: string, patch: Partial<ImageStyle>): Result.Result<Document, Error> {
