@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageStyle, setNodeGeometry, setNodeStyle, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageStyle, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageStyle, type RectangleStyle, type TextMark, type TextStyle } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -15,6 +15,7 @@ export interface ElementReference {
   y: number;
   width: number;
   height: number;
+  rotation: number;
   content?: string;
   style: DocumentNode["style"];
   border?: Border;
@@ -48,7 +49,7 @@ export function listElements(document: Document, includeImageSource = false): El
       const path = [...names, node.name];
       elements.push({
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
-        x: node.x, y: node.y, width: node.width, height: node.height,
+        x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation,
         style: structuredClone(node.style),
         ...(node.type === "rectangle" || node.type === "frame" ? { border: structuredClone(node.style.border) } : {}),
         ...(node.type === "text" ? { content: node.content,
@@ -122,6 +123,9 @@ export function createAgentApi(port: EditorPort) {
     },
     setGeometry(id: string, geometry: Geometry) {
       return applyToElement(id, setNodeGeometry(port.getDocument(), id, geometry));
+    },
+    setRotation(id: string, rotation: number) {
+      return applyToElement(id, setRotation(port.getDocument(), id, rotation));
     },
     setShapeStyle(id: string, style: Partial<RectangleStyle>) {
       return applyToElement(id, setNodeStyle(port.getDocument(), id, style));

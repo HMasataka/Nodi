@@ -60,8 +60,8 @@ export function createNodiMcpServer(request: NodiRequest = callNodi) {
   tool("get_element", "ID で要素を取得", z.object({ id: z.string() }));
   tool("select_element", "ID で要素を画面上で選択し、境界が見えるようにパン・ズーム。名前・親階層・表示後の座標を返す（ドキュメントは変更しない）", z.strictObject({ id: z.string().min(1) }));
   tool("list_revisions", "現在のドキュメントのリビジョン ID・親 ID・現在/保存済み状態を作成順に取得", z.strictObject({}));
-  tool("get_revision_element", "指定時点の要素 ID・名前・親階層と親基準/ドキュメント基準の座標・境界を px で取得", z.strictObject({ revisionId: z.string().min(1), elementId: z.string().min(1) }));
-  tool("compare_revisions", "同じ要素の2時点の座標・寸法の符号付き差分を px で取得", z.strictObject({ fromRevisionId: z.string().min(1), toRevisionId: z.string().min(1), elementId: z.string().min(1) }));
+  tool("get_revision_element", "指定時点の要素の親基準座標・回転角・ドキュメント基準の四隅と境界を取得", z.strictObject({ revisionId: z.string().min(1), elementId: z.string().min(1) }));
+  tool("compare_revisions", "同じ要素の2時点の座標・寸法・回転角の符号付き差分を取得", z.strictObject({ fromRevisionId: z.string().min(1), toRevisionId: z.string().min(1), elementId: z.string().min(1) }));
   tool("measure_elements", "指定時点の2要素間のドキュメント基準の距離・方向・重なりを px で取得", z.strictObject({ revisionId: z.string().min(1), firstId: z.string().min(1), secondId: z.string().min(1) }));
   const geometry = { x: z.number(), y: z.number(), width: z.number(), height: z.number() };
   tool("add_element", "名前付き要素を追加", z.discriminatedUnion("type", [
@@ -74,6 +74,7 @@ export function createNodiMcpServer(request: NodiRequest = callNodi) {
   tool("move_element", "ID で要素を移動", z.object({ id: z.string(), x: z.number(), y: z.number() }), true);
   tool("set_text_content", "ID でテキスト本文を変更", z.object({ id: z.string(), content: z.string() }), true);
   tool("set_element_geometry", "ID で要素の親基準 x・y・width・height を変更（px）", z.strictObject({ id: z.string().min(1), ...geometry }), true);
+  tool("set_rotation", "ID で要素を中心基準で時計回りに回転（度）", z.strictObject({ id: z.string().min(1), rotation: z.number().finite() }), true);
   const boxStyle = { fill: z.string().nullable().optional(), stroke: z.strictObject({ color: z.string(), width: z.number() }).nullable().optional(), cornerRadii: z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() }).optional() };
   tool("set_shape_style", "矩形・楕円の塗り・内側線、矩形の角丸を変更", z.strictObject({ id: z.string().min(1), ...boxStyle }), true);
   tool("set_frame_style", "フレームの塗り・内側線・角丸と子要素のクリップを変更", z.strictObject({ id: z.string().min(1), ...boxStyle, clipContent: z.boolean().optional() }), true);

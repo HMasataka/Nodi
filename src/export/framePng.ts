@@ -58,6 +58,11 @@ function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: numbe
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
   ctx.save();
   ctx.translate(node.x, node.y);
+  if (node.rotation !== 0) {
+    ctx.translate(node.width / 2, node.height / 2);
+    ctx.rotate(node.rotation * Math.PI / 180);
+    ctx.translate(-node.width / 2, -node.height / 2);
+  }
   try {
     if (node.type === "frame") {
       const shape = boxShape(node.width, node.height, node.style);

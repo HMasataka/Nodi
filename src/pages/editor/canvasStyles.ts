@@ -8,7 +8,7 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
+import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, RectangleNode, RotatedGeometry, TextMark, TextNode } from "@/document/types.ts";
 
 const CANVAS_GRID_SIZE = 24;
 
@@ -48,8 +48,9 @@ export function guideStyle(guide: SnapGuide): CSSProperties {
     : { top: guide.position, left: guide.from, width: guide.to - guide.from };
 }
 
-function nodeBoxStyle(node: Geometry): CSSProperties {
-  return { left: node.x, top: node.y, width: node.width, height: node.height };
+function nodeBoxStyle(node: RotatedGeometry): CSSProperties {
+  return { left: node.x, top: node.y, width: node.width, height: node.height,
+    ...(node.rotation === 0 ? {} : { transform: `rotate(${node.rotation}deg)`, transformOrigin: "center center" }) };
 }
 
 export function frameNodeStyle(node: FrameNode): CSSProperties {

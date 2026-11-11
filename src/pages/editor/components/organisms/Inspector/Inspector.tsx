@@ -11,6 +11,7 @@ interface InspectorProps {
   selectedCount?: number;
   onRename(name: string): void;
   onGeometry(geometry: Geometry): void;
+  onRotation(rotation: number): void;
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
   onTextMarkRange(edit: TextMarkRangeEdit): void;
@@ -25,7 +26,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -46,6 +47,16 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           <div className="field-label">位置・サイズ</div>
           <GeometryEditor key={`${selected.id}:${selected.x}:${selected.y}:${selected.width}:${selected.height}`}
             node={selected} onChange={onGeometry} />
+          <label className="geometry-field">
+            <span>回転 °</span>
+            <input key={`${selected.id}:${selected.rotation}`} type="number" step="any" defaultValue={selected.rotation}
+              onBlur={(event) => {
+                const value = event.currentTarget.value.trim();
+                if (value !== "" && Number(value) !== selected.rotation) onRotation(Number(value));
+                else event.currentTarget.value = String(selected.rotation);
+              }}
+              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+          </label>
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onImageStyle={onImageStyle} />
           <div className="property-divider" />

@@ -267,6 +267,14 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.ok(history.present.children.some((node) => node.id === frameId));
     history = redo(history);
     assert.ok(!history.present.children.some((node) => node.id === frameId));
+    assert.ok(tools.tools.some((tool) => tool.name === "set_rotation"));
+    const rotated = await client.callTool({ name: "set_rotation", arguments: { id: element.id, rotation: -90 } });
+    assert.equal(rotated.isError, false);
+    assert.equal(JSON.parse(rotated.content[0].text).rotation, 270);
+    const measuredRotation = await client.callTool({ name: "get_revision_element", arguments: { revisionId: history.presentRevisionId, elementId: element.id } });
+    assert.equal(JSON.parse(measuredRotation.content[0].text).rotation, 270);
+    const invalidRotation = await client.callTool({ name: "set_rotation", arguments: { id: element.id, rotation: "invalid" } });
+    assert.equal(invalidRotation.isError, true);
   } finally {
     await client.close();
     await new Promise((done) => http.close(done));

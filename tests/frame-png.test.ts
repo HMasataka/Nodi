@@ -14,6 +14,7 @@ function fakeCanvas() {
   const ctx = {
     save: () => calls.push(["save"]), restore: () => calls.push(["restore"]),
     translate: (...args) => calls.push(["translate", ...args]),
+    rotate: (...args) => calls.push(["rotate", ...args]),
     beginPath: () => calls.push(["beginPath"]),
     rect: (...args) => calls.push(["rect", ...args]),
     clip: () => calls.push(["clip"]),
@@ -36,6 +37,35 @@ function fakeCanvas() {
   };
   return { canvas, calls };
 }
+
+test("PNG は入れ子フレームと子の中心回転を save/restore 内で合成する", async () => {
+  const child = makeRectangle({ x: 10, y: 20, width: 40, height: 20, rotation: 45 });
+  const nested = makeFrame({ id: "nested", x: 30, y: 40, width: 100, height: 80, rotation: 90, children: [child] });
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(makeFrame({ children: [nested] }), { createCanvas: () => canvas, loadImage: async () => {} }));
+  const transforms = calls.filter(([method]) => ["save", "restore", "translate", "rotate"].includes(method));
+  assert.deepEqual(transforms, [
+    ["save"], ["translate", 0, 0],
+    ["save"], ["translate", 30, 40], ["translate", 50, 40], ["rotate", Math.PI / 2], ["translate", -50, -40],
+    ["save"], ["translate", 10, 20], ["translate", 20, 10], ["rotate", Math.PI / 4], ["translate", -20, -10],
+    ["restore"], ["restore"], ["restore"],
+  ]);
+});
+
+test("回転したフレームは画像の角丸とフィットを保ち、辺線を子の後に描く", async () => {
+  const picture = { naturalWidth: 30, naturalHeight: 10 };
+  const child = makeImage({ width: 15, height: 10, rotation: 45,
+    style: { cornerRadii: corners(2), fit: "contain", focalPoint: { x: 0.25, y: 0.75 } } });
+  const frame = makeFrame({ width: 15, height: 10, rotation: 90,
+    style: { cornerRadii: corners(0), border: { top: { color: "#112233", width: 2 } } }, children: [child] });
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => picture }));
+  assert.deepEqual(calls.filter(([method]) => method === "rotate"), [["rotate", Math.PI / 2], ["rotate", Math.PI / 4]]);
+  const imageIndex = calls.findIndex(([method]) => method === "drawImage");
+  assert.deepEqual(calls[imageIndex], ["drawImage", picture, 0, 0, 30, 10, 0, 3.75, 15, 5]);
+  assert.equal(calls.slice(0, imageIndex).filter(([method]) => method === "clip").length, 3);
+  assert.ok(calls.findIndex(([method, color], index) => index > imageIndex && method === "fill" && color === "#112233") > imageIndex);
+});
 
 test("サンプルのフレームを寸法どおりに描き、編集 UI を含めない", async () => {
   const text = await readFile(new URL("../samples/studio.nodi", import.meta.url), "utf8");
