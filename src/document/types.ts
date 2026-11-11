@@ -20,8 +20,11 @@ export interface ShapeStyle { fill: string | null; stroke: Stroke | null }
 export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii; border: Border }
 export type RectangleStyle = BoxStyle;
 export type ImageFit = "cover" | "contain" | "fill";
-export interface ImageStyle { fit: ImageFit; focalPoint: { x: number; y: number }; cornerRadii: CornerRadii }
-export const DEFAULT_IMAGE_STYLE: ImageStyle = { fit: "cover", focalPoint: { x: 0.5, y: 0.5 }, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 } };
+export interface ImageFilters { brightness: number; contrast: number; saturate: number; grayscale: number; sepia: number; hueRotate: number }
+export const DEFAULT_IMAGE_FILTERS: ImageFilters = { brightness: 1, contrast: 1, saturate: 1, grayscale: 0, sepia: 0, hueRotate: 0 };
+export interface ImageStyle { fit: ImageFit; focalPoint: { x: number; y: number }; cornerRadii: CornerRadii; filters: ImageFilters }
+export type ImageStylePatch = Omit<Partial<ImageStyle>, "filters"> & { filters?: Partial<ImageFilters> };
+export const DEFAULT_IMAGE_STYLE: ImageStyle = { fit: "cover", focalPoint: { x: 0.5, y: 0.5 }, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 }, filters: DEFAULT_IMAGE_FILTERS };
 export const ZERO_CORNER_RADII: CornerRadii = { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 };
 
 export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;

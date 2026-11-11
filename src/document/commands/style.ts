@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageStyle, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
+import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageFilters, type ImageStylePatch, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
@@ -71,10 +71,10 @@ export function setBorder(document: Document, id: string, border: Border): Resul
   return node.type === "frame" ? setFrameStyle(document, id, { border }) : setNodeStyle(document, id, { border });
 }
 
-export function setImageStyle(document: Document, id: string, patch: Partial<ImageStyle>): Result.Result<Document, Error> {
+export function setImageStyle(document: Document, id: string, patch: ImageStylePatch): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "image") return Result.fail(new Error(`画像が見つかりません: ${id}`));
-  if (Object.keys(patch).some((key) => !["fit", "focalPoint", "cornerRadii"].includes(key))) return Result.fail(new Error("未知の画像スタイル項目です"));
+  if (Object.keys(patch).some((key) => !["fit", "focalPoint", "cornerRadii", "filters"].includes(key))) return Result.fail(new Error("未知の画像スタイル項目です"));
   if (patch.fit !== undefined && !["cover", "contain", "fill"].includes(patch.fit)) return Result.fail(new Error("画像のフィットが不正です"));
   if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return Result.fail(new Error("角丸は 0 以上の有限の数値で指定してください"));
   const point = patch.focalPoint;
@@ -82,11 +82,21 @@ export function setImageStyle(document: Document, id: string, patch: Partial<Ima
     ![point.x, point.y].every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1))) {
     return Result.fail(new Error("焦点位置は 0 から 1 の有限値で指定してください"));
   }
+  if (patch.filters !== undefined && (!patch.filters || typeof patch.filters !== "object" || Array.isArray(patch.filters) ||
+    Object.entries(patch.filters).some(([key, value]) => !["brightness", "contrast", "saturate", "grayscale", "sepia", "hueRotate"].includes(key) ||
+      typeof value !== "number" || !Number.isFinite(value) || (key !== "hueRotate" && value < 0) || (["grayscale", "sepia"].includes(key) && value > 1)))) {
+    return Result.fail(new Error("画像フィルターの値が不正です"));
+  }
   return updateNode(document, id, (current) => current.type === "image" ? { ...current, style: {
     ...current.style, ...(patch.fit === undefined ? {} : { fit: patch.fit }),
     ...(point === undefined ? {} : { focalPoint: { x: point.x, y: point.y } }),
     ...(patch.cornerRadii === undefined ? {} : { cornerRadii: structuredClone(patch.cornerRadii) }),
+    ...(patch.filters === undefined ? {} : { filters: { ...current.style.filters, ...patch.filters } }),
   } } : current);
+}
+
+export function setImageFilters(document: Document, id: string, filters: Partial<ImageFilters>): Result.Result<Document, Error> {
+  return setImageStyle(document, id, { filters });
 }
 export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {
   const node = findNode(document, id);
