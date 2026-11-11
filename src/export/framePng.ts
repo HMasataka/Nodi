@@ -1,8 +1,9 @@
 import { graphemeSegments } from "@/document/textLayout.ts";
+import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
 import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
-import { borderPaths, boxShape, ellipseShape, type ShapePaths, tracePath } from "@/document/shapePath.ts";
+import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 
 export interface PngRenderEnvironment {
@@ -130,14 +131,18 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         }
       });
     } else {
+      tracePath(ctx, roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii));
+      ctx.clip();
       const image = await loadImage(node.source);
       const width = image.naturalWidth;
       const height = image.naturalHeight;
       if (width === 0 || height === 0) return Result.fail(new Error(`画像を描画できません: ${node.name}`));
-      const scale = Math.max(node.width / width, node.height / height);
-      const cropWidth = node.width / scale;
-      const cropHeight = node.height / scale;
-      ctx.drawImage(image, (width - cropWidth) / 2, (height - cropHeight) / 2, cropWidth, cropHeight, 0, 0, node.width, node.height);
+      const { sx, sy, sw, sh, dx, dy, dw, dh } = imagePlacement(width, height, node.width, node.height, node.style);
+      if (node.style.fit === "contain") {
+        ctx.fillStyle = "#eeeeee";
+        ctx.fillRect(0, 0, node.width, node.height);
+      }
+      ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
     }
     return Result.succeed();
   } finally {

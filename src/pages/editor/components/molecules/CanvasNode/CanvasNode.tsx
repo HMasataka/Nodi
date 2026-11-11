@@ -1,9 +1,9 @@
-import { type PointerEvent, useMemo } from "react";
+import { type PointerEvent, useId, useMemo } from "react";
 
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import type { Border, DocumentNode, TextNode } from "@/document/types";
-import { borderPaths, boxShape, ellipseShape, pathToString, type ShapePaths } from "@/document/shapePath.ts";
-import { frameContentsStyle, frameNodeStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
+import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths } from "@/document/shapePath.ts";
+import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
@@ -50,6 +50,7 @@ interface CanvasNodeProps {
 export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction }: CanvasNodeProps) {
   const { onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError } = interaction;
   const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
+  const clipId = useId();
   const handle = selectedId === node.id && <ResizeHandle onPointerDown={(event) => onResizePointerDown(event, node)} />;
   const pointerEvents = {
     onPointerMove: onNodePointerMove,
@@ -90,7 +91,12 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
     <button type="button" className={`canvas-image${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={imageNodeStyle(node)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
-      <img src={node.source} alt="" draggable={false} onError={() => onImageError(node.id)} />
+      <svg viewBox={`0 0 ${node.width} ${node.height}`} aria-hidden="true">
+        <defs><clipPath id={clipId}><path d={pathToString(roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii))} /></clipPath></defs>
+        <foreignObject width={node.width} height={node.height} clipPath={`url(#${clipId})`}>
+          <img src={node.source} alt="" draggable={false} style={imageContentStyle(node)} onError={() => onImageError(node.id)} />
+        </foreignObject>
+      </svg>
       {handle}
     </button>
   );

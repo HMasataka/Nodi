@@ -59,6 +59,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.match(client.getInstructions(), /数値とテスト/);
     const tools = await client.listTools();
     assert.ok(tools.tools.some((tool) => tool.name === "add_element"));
+    assert.ok(tools.tools.some((tool) => tool.name === "set_image_style"));
     assert.match(tools.tools.find((tool) => tool.name === "add_element").description, /Before\/After/);
     for (const name of ["list_revisions", "get_revision_element", "compare_revisions", "measure_elements"]) {
       assert.ok(tools.tools.some((tool) => tool.name === name));

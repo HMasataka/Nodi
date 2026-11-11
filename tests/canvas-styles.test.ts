@@ -73,5 +73,5 @@ test("矩形と楕円は位置のみを持ち、見た目は共通パスへ委�
     style: { fill: "#ffffff", stroke: { color: "#000000", width: 2 } } });
   assert.deepEqual(shapeNodeStyle(rectangleNode), { left: 1, top: 2, width: 30, height: 40 });
   assert.deepEqual(shapeNodeStyle(ellipseNode), { left: 1, top: 2, width: 30, height: 40 });
-  assert.deepEqual(imageNodeStyle(image({ x: 5, y: 6, width: 70, height: 80 })), { left: 5, top: 6, width: 70, height: 80 });
+  assert.deepEqual(imageNodeStyle(image({ x: 5, y: 6, width: 70, height: 80 })), { left: 5, top: 6, width: 70, height: 80, borderRadius: "0px 0px 0px 0px" });
 });

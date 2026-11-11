@@ -3,6 +3,7 @@ import { test } from "vitest";
 
 import { createAgentApi } from "../src/agent/api.ts";
 import { createDocument } from "../src/document/commands/index.ts";
+import { dispatchAgentRequest } from "../src/agent/bridge.ts";
 import { success } from "./support/factories.ts";
 import { commit, createHistory, isDirty, undo } from "../src/document/history.ts";
 
@@ -65,4 +66,22 @@ test("テキストの本文と表示属性を階層付きで参照・編集で�
   assert.equal(api.setTextContent(frame.id, "invalid").type, "Failure");
   assert.equal(history.past.length, 6);
   assert.ok(isDirty(history));
+});
+
+test("画像の4隅を MCP 経由で変更し、不正入力は履歴に残さない", () => {
+  let history = createHistory(createDocument(), true);
+  const api = createAgentApi({ getDocument: () => history.present, getHistory: () => history,
+    getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
+  const image = success(api.add({ type: "image", source: "data:image/png;base64,aGVsbG8=", x: 0, y: 0, width: 20, height: 20 }));
+  const radii = { topLeft: 1, topRight: 2, bottomRight: 3, bottomLeft: 4 };
+  assert.deepEqual(dispatchAgentRequest(api, "set_image_style", { id: image.id, cornerRadii: radii }), {
+    ok: true, data: { ...image, style: { ...image.style, cornerRadii: radii } },
+  });
+  assert.equal(history.past.length, 2);
+  for (const cornerRadii of [{ ...radii, bottomLeft: -1 }, { topLeft: 2 }, { ...radii, extra: 2 }]) {
+    assert.equal(dispatchAgentRequest(api, "set_image_style", { id: image.id, cornerRadii }).ok, false);
+  }
+  assert.equal(dispatchAgentRequest(api, "set_image_style", { id: image.id, fill: "#ffffff" }).ok, false);
+  assert.equal(history.past.length, 2);
+  assert.deepEqual(success(api.getElement(image.id)).style.cornerRadii, radii);
 });
