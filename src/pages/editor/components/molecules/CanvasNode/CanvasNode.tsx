@@ -1,10 +1,11 @@
-import { type PointerEvent, useId, useMemo } from "react";
+import { Fragment, type PointerEvent, useId, useMemo } from "react";
 
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import type { Border, DocumentNode, TextNode } from "@/document/types";
 import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths } from "@/document/shapePath.ts";
 import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
+import { maskGroups, maskPath } from "@/document/masks.ts";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
 
@@ -47,6 +48,15 @@ interface CanvasNodeProps {
   interaction: NodeInteraction;
 }
 
+export function CanvasNodes({ nodes, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction }: { nodes: DocumentNode[] } & Omit<CanvasNodeProps, "node">) {
+  return <>{maskGroups(nodes).map((group, index) => <Fragment key={group.mask?.id ?? `unmasked-${index}`}>
+    {group.mask && <CanvasNode node={group.mask} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />}
+    {group.mask ? <div className="canvas-mask-group" style={{ clipPath: `path("${pathToString(maskPath(group.mask))}")` }}>
+      {group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
+    </div> : group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
+  </Fragment>)}</>;
+}
+
 export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction }: CanvasNodeProps) {
   const { onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError } = interaction;
   const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
@@ -66,7 +76,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       {...pointerEvents}>
       {shapeSvg(boxShape(node.width, node.height, node.style))}
       <div className="frame-contents" style={frameContentsStyle(node)}>
-        {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
+        <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />
       </div>
       {borderSvg(node.width, node.height, node.style.border)}
       {handle}
@@ -100,14 +110,19 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       {handle}
     </button>
   );
+  if (node.isMask && !selectedIds.includes(node.id)) return null;
   return (
     <button type="button"
-      className={`canvas-node${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+      className={`canvas-node${node.isMask ? " canvas-mask is-selected" : selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
       style={shapeNodeStyle(node)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
-      {shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style))}
-      {node.type === "rectangle" && borderSvg(node.width, node.height, node.style.border)}
+      {node.isMask
+        ? <svg className="canvas-shape" aria-hidden="true"><path d={pathToString(node.type === "rectangle"
+          ? boxShape(node.width, node.height, node.style).fill : ellipseShape(node.width, node.height, node.style).fill)}
+          fill="none" stroke="currentColor" strokeDasharray="4 3" /></svg>
+        : shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style))}
+      {node.type === "rectangle" && !node.isMask && borderSvg(node.width, node.height, node.style.border)}
       {handle}
     </button>
   );

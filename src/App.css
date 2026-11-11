@@ -342,6 +342,11 @@ button {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+.canvas-mask { background: transparent; color: var(--accent); outline-style: dashed; }
+.canvas-mask-group { position: absolute; inset: 0; pointer-events: none; }
+.canvas-mask-group > * { pointer-events: auto; }
+.layer-mask-label { margin-left: 5px; color: var(--text-tertiary); font-size: 10px; }
+.mask-control { display: flex; align-items: center; gap: 8px; margin: 12px 0; color: var(--text-tertiary); font-size: 11px; }
 .canvas-node:active {
   cursor: grabbing;
 }

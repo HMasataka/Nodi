@@ -5,6 +5,7 @@ import { Result } from "@praha/byethrow";
 import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
+import { maskGroups, maskPath } from "@/document/masks.ts";
 
 export interface PngRenderEnvironment {
   createCanvas(): HTMLCanvasElement;
@@ -55,6 +56,25 @@ function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: numbe
   }
 }
 
+async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
+  for (const group of maskGroups(nodes)) {
+    if (group.mask) {
+      ctx.save();
+      tracePath(ctx, maskPath(group.mask));
+      ctx.clip();
+    }
+    try {
+      for (const child of group.children) {
+        const painted = await paintNode(ctx, child, loadImage);
+        if (Result.isFailure(painted)) return painted;
+      }
+    } finally {
+      if (group.mask) ctx.restore();
+    }
+  }
+  return Result.succeed();
+}
+
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
   ctx.save();
   ctx.translate(node.x, node.y);
@@ -71,10 +91,8 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         tracePath(ctx, shape.fill);
         ctx.clip();
       }
-      for (const child of node.children) {
-        const painted = await paintNode(ctx, child, loadImage);
-        if (Result.isFailure(painted)) return painted;
-      }
+      const painted = await paintChildren(ctx, node.children, loadImage);
+      if (Result.isFailure(painted)) return painted;
       paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "rectangle") {
       paintShape(ctx, boxShape(node.width, node.height, node.style));

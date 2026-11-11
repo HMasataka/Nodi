@@ -51,3 +51,10 @@ export function setRotation(document: Document, id: string, rotation: number): R
   if (!Number.isFinite(rotation)) return Result.fail(new Error("回転角は有限の数値で指定してください"));
   return updateNode(document, id, (node) => ({ ...node, rotation: normalizeRotation(rotation) }));
 }
+
+export function setMask(document: Document, id: string, isMask: boolean): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`マスクにできる図形が見つかりません: ${id}`));
+  if (typeof isMask !== "boolean") return Result.fail(new Error("マスクの指定が不正です"));
+  return updateNode(document, id, (current) => current.type === "rectangle" || current.type === "ellipse" ? { ...current, isMask } : current);
+}

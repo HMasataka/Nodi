@@ -25,6 +25,7 @@ export function LayersPanel({ nodes, selectedId, selectedIds = selectedId ? [sel
             onClick={(event) => onSelect(node.id, event.shiftKey)}>
             <LayerIcon type={node.type} />
             <span className="layer-name">{node.name}</span>
+            {("isMask" in node && node.isMask) && <span className="layer-mask-label">マスク</span>}
           </button>
           <button type="button" className="layer-order" aria-label={`${node.name}を前へ`} title="前へ" disabled={index === siblings.length - 1} onClick={() => onReorder(node.id, "forward")}>↑</button>
           <button type="button" className="layer-order" aria-label={`${node.name}を後ろへ`} title="後ろへ" disabled={index === 0} onClick={() => onReorder(node.id, "backward")}>↓</button>

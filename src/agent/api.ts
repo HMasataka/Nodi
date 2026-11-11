@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageStyle, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageStyle, type RectangleStyle, type TextMark, type TextStyle } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -16,6 +16,7 @@ export interface ElementReference {
   width: number;
   height: number;
   rotation: number;
+  isMask?: boolean;
   content?: string;
   style: DocumentNode["style"];
   border?: Border;
@@ -50,6 +51,7 @@ export function listElements(document: Document, includeImageSource = false): El
       elements.push({
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
         x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation,
+        ...(node.type === "rectangle" || node.type === "ellipse" ? { isMask: node.isMask } : {}),
         style: structuredClone(node.style),
         ...(node.type === "rectangle" || node.type === "frame" ? { border: structuredClone(node.style.border) } : {}),
         ...(node.type === "text" ? { content: node.content,
@@ -126,6 +128,9 @@ export function createAgentApi(port: EditorPort) {
     },
     setRotation(id: string, rotation: number) {
       return applyToElement(id, setRotation(port.getDocument(), id, rotation));
+    },
+    setMask(id: string, isMask: boolean) {
+      return applyToElement(id, setMask(port.getDocument(), id, isMask));
     },
     setShapeStyle(id: string, style: Partial<RectangleStyle>) {
       return applyToElement(id, setNodeStyle(port.getDocument(), id, style));

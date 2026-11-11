@@ -33,14 +33,14 @@ export function frame({ style, ...overrides }: NodeOverrides<FrameNode> = {}): F
 
 export function rectangle({ style, ...overrides }: NodeOverrides<RectangleNode> = {}): RectangleNode {
   return {
-    id: "rectangle", name: "矩形", type: "rectangle", x: 0, y: 0, width: 100, height: 50, rotation: 0,
+    id: "rectangle", name: "矩形", type: "rectangle", x: 0, y: 0, width: 100, height: 50, rotation: 0, isMask: false,
     style: { ...structuredClone(DEFAULT_RECTANGLE_STYLE), ...style }, ...overrides,
   };
 }
 
 export function ellipse({ style, ...overrides }: NodeOverrides<EllipseNode> = {}): EllipseNode {
   return {
-    id: "ellipse", name: "楕円", type: "ellipse", x: 0, y: 0, width: 100, height: 100, rotation: 0,
+    id: "ellipse", name: "楕円", type: "ellipse", x: 0, y: 0, width: 100, height: 100, rotation: 0, isMask: false,
     style: { fill: "#f3d9c8", stroke: { color: "#d9bbaa", width: 1 }, ...style }, ...overrides,
   };
 }

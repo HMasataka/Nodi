@@ -1,9 +1,10 @@
 import type { Border, BoxStyle, CornerRadii, ShapeStyle } from "@/document/types.ts";
+import { type Transform, transformPoint } from "@/document/transform.ts";
 
 export type PathCommand =
   | { kind: "move"; x: number; y: number }
   | { kind: "line"; x: number; y: number }
-  | { kind: "arc"; cx: number; cy: number; rx: number; ry: number; startAngle: number; endAngle: number; counterclockwise: boolean }
+  | { kind: "arc"; cx: number; cy: number; rx: number; ry: number; startAngle: number; endAngle: number; counterclockwise: boolean; rotation?: number }
   | { kind: "close" };
 
 const HALF_TURN = Math.PI;
@@ -44,6 +45,18 @@ export function ellipsePath(cx: number, cy: number, rx: number, ry: number): Pat
     { kind: "arc", cx, cy, rx, ry, startAngle: HALF_TURN, endAngle: FULL_TURN, counterclockwise: false },
     { kind: "close" },
   ];
+}
+
+export function transformPath(commands: PathCommand[], transform: Transform): PathCommand[] {
+  const angle = Math.atan2(transform.b, transform.a);
+  return commands.map((command) => {
+    if (command.kind === "close") return command;
+    if (command.kind === "arc") {
+      const center = transformPoint(transform, { x: command.cx, y: command.cy });
+      return { ...command, cx: center.x, cy: center.y, rotation: (command.rotation ?? 0) + angle };
+    }
+    return { ...command, ...transformPoint(transform, command) };
+  });
 }
 
 function insetRadii(radii: CornerRadii, inset: number): CornerRadii {
@@ -133,11 +146,14 @@ export function pathToString(commands: PathCommand[]): string {
       case "move": return `M ${format(command.x)} ${format(command.y)}`;
       case "line": return `L ${format(command.x)} ${format(command.y)}`;
       case "arc": {
-        const endX = command.cx + command.rx * Math.cos(command.endAngle);
-        const endY = command.cy + command.ry * Math.sin(command.endAngle);
+        const rotation = command.rotation ?? 0;
+        const x = command.rx * Math.cos(command.endAngle);
+        const y = command.ry * Math.sin(command.endAngle);
+        const endX = command.cx + x * Math.cos(rotation) - y * Math.sin(rotation);
+        const endY = command.cy + x * Math.sin(rotation) + y * Math.cos(rotation);
         const largeArc = Math.abs(command.endAngle - command.startAngle) > HALF_TURN ? 1 : 0;
         const sweep = command.counterclockwise ? 0 : 1;
-        return `A ${format(command.rx)} ${format(command.ry)} 0 ${largeArc} ${sweep} ${format(endX)} ${format(endY)}`;
+        return `A ${format(command.rx)} ${format(command.ry)} ${format(rotation * 180 / Math.PI)} ${largeArc} ${sweep} ${format(endX)} ${format(endY)}`;
       }
       case "close": return "Z";
     }
@@ -150,7 +166,7 @@ export function tracePath(ctx: CanvasRenderingContext2D, commands: PathCommand[]
     switch (command.kind) {
       case "move": ctx.moveTo(command.x, command.y); break;
       case "line": ctx.lineTo(command.x, command.y); break;
-      case "arc": ctx.ellipse(command.cx, command.cy, command.rx, command.ry, 0, command.startAngle, command.endAngle, command.counterclockwise); break;
+      case "arc": ctx.ellipse(command.cx, command.cy, command.rx, command.ry, command.rotation ?? 0, command.startAngle, command.endAngle, command.counterclockwise); break;
       case "close": ctx.closePath(); break;
     }
   }

@@ -38,6 +38,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 - `set_text_content`: ID と本文でテキストを変更。
 - `set_element_geometry`: ID と親基準の `x`・`y`・`width`・`height`（px）で位置と寸法を変更。
 - `set_shape_style`: 矩形・楕円の `fill`（`#RRGGBB` または `null`）・`stroke`（`{ color, width }` または `null`）、矩形の `cornerRadii`（`topLeft`・`topRight`・`bottomRight`・`bottomLeft`）を変更。線は均一な内側線。
+- `set_mask`: 矩形・楕円の `isMask` を真偽値で切り替える。マスクは後続の同じ親の兄弟を、次のマスクまでクリップする。未選択時のマスクはレイヤー一覧から選択する。
 - `set_frame_style`: フレームの `fill`・`stroke`・`cornerRadii` と `clipContent` を変更。スタイルの形式は矩形と共通。
 - `set_text_style`: テキストの `fontSize`・`color`・`textAlign`・`fontFamily`（`default`・`system`・`serif`・`monospace`）・`fontWeight`（100〜900 の 100 刻み）・`lineHeight`（倍率）・`letterSpacing`（px、負値も可）を変更。
 - `set_text_marks`: テキスト本文の UTF-16 範囲 `start`・`end` と、その範囲の `color`・`fontWeight`・`underline: true`・`code: true` を配列で指定して置換。範囲は昇順・非重複で文字境界に揃える。
@@ -55,6 +56,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 
 ```text
 set_shape_style {"id":"nd_...","fill":null,"stroke":{"color":"#123456","width":2}}
+set_mask {"id":"nd_...","isMask":true}
 set_frame_style {"id":"nd_...","fill":"#ffffff","stroke":null,"clipContent":false}
 ```
 

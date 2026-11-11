@@ -75,6 +75,7 @@ export function createNodiMcpServer(request: NodiRequest = callNodi) {
   tool("set_text_content", "ID でテキスト本文を変更", z.object({ id: z.string(), content: z.string() }), true);
   tool("set_element_geometry", "ID で要素の親基準 x・y・width・height を変更（px）", z.strictObject({ id: z.string().min(1), ...geometry }), true);
   tool("set_rotation", "ID で要素を中心基準で時計回りに回転（度）", z.strictObject({ id: z.string().min(1), rotation: z.number().finite() }), true);
+  tool("set_mask", "矩形・楕円をマスクに設定または解除", z.strictObject({ id: z.string().min(1), isMask: z.boolean() }), true);
   const boxStyle = { fill: z.string().nullable().optional(), stroke: z.strictObject({ color: z.string(), width: z.number() }).nullable().optional(), cornerRadii: z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() }).optional() };
   tool("set_shape_style", "矩形・楕円の塗り・内側線、矩形の角丸を変更", z.strictObject({ id: z.string().min(1), ...boxStyle }), true);
   tool("set_frame_style", "フレームの塗り・内側線・角丸と子要素のクリップを変更", z.strictObject({ id: z.string().min(1), ...boxStyle, clipContent: z.boolean().optional() }), true);

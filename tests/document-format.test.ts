@@ -55,7 +55,7 @@ test("非既定値と明示的な null を保持し、ゼロ幅の線を null �
   assert.deepEqual(JSON.parse(json).children[0].style, wireStyle);
   assert.deepEqual(success(parseDocument(json)), original);
   const explicit = document(rectangle({ style: { stroke: null, cornerRadii: corners(0) } }));
-  assert.deepEqual(success(parseDocument(JSON.stringify(explicit))), explicit);
+  assert.deepEqual(success(parseDocument(success(serializeDocument(explicit)))), explicit);
 });
 
 test("旧開発版の平坦な v1 と version 2 を拒否する", () => {
