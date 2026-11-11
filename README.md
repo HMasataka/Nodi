@@ -4,12 +4,15 @@ Tauri v2 と React / TypeScript (Vite) のデスクトップアプリです。
 
 ## 開発
 
-Node.js 22.18 以上、pnpm、Rust、macOS では Xcode Command Line Tools が必要です。
+開発環境は [Nix](https://nixos.org/) の flake で管理しています。Node.js・pnpm・Rust（cargo / rustfmt / clippy）が `nix develop` で揃います。
 
 ```sh
+nix develop          # direnv を使う場合は代わりに direnv allow
 pnpm install
 pnpm tauri dev
 ```
+
+[direnv](https://direnv.net/) と [nix-direnv](https://github.com/nix-community/nix-direnv) を導入済みなら、リポジトリで `direnv allow` するだけで同じ環境に自動で入ります（`.envrc`）。macOS では Xcode Command Line Tools が別途必要です。
 
 フロントエンドのみの確認は `pnpm dev`、配布用アプリの生成は `pnpm tauri build` で行います。
 
