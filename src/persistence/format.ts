@@ -1,6 +1,7 @@
 import { Result } from "@praha/byethrow";
 import { z } from "zod";
 
+import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
 import { DEFAULT_TEXT_STYLE, type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 
@@ -8,7 +9,7 @@ const id = z.string().refine((value) => value.trim().length > 0, "ID は空に�
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");
 const coordinate = z.number().finite();
 const dimension = z.number().finite().positive();
-const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimension };
+const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate.optional() };
 
 const color = z.string().regex(HEX_COLOR_PATTERN);
 const textMark = z.strictObject({ start: z.number().int().nonnegative(), end: z.number().int().positive(), color: color.optional(),
@@ -20,12 +21,13 @@ const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: z.strictObje
 const boxStyle = z.strictObject({ ...shapeStyle.shape, cornerRadii: cornerRadii.optional() });
 const textStyle = z.strictObject({ fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(), lineHeight: z.number().finite().positive().optional(), letterSpacing: z.number().finite().optional() });
 
+type OptionalRotation<T> = Omit<T, "rotation"> & { rotation?: number };
 export type WireNode =
-  | (Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> })
-  | (Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> })
-  | Extract<DocumentNode, { type: "image" }>
-  | (Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> })
-  | (Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] });
+  | OptionalRotation<Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> }>
+  | OptionalRotation<Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> }>
+  | OptionalRotation<Extract<DocumentNode, { type: "image" }>>
+  | OptionalRotation<Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> }>
+  | OptionalRotation<Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] }>;
 export interface WireDocument { version: 1; children: WireNode[] }
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
@@ -61,25 +63,31 @@ function checkUniqueIds(
 export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema) }).superRefine(checkUniqueIds);
 
 function normalizeNode(node: WireNode): DocumentNode {
+  const rotation = normalizeRotation(node.rotation ?? 0);
   switch (node.type) {
-    case "image": return node;
-    case "text": return { ...node, style: { ...node.style,
+    case "image": return { ...node, rotation };
+    case "text": return { ...node, rotation, style: { ...node.style,
       fontFamily: node.style.fontFamily ?? DEFAULT_TEXT_STYLE.fontFamily,
       fontWeight: node.style.fontWeight ?? DEFAULT_TEXT_STYLE.fontWeight,
       lineHeight: node.style.lineHeight ?? DEFAULT_TEXT_STYLE.lineHeight,
       letterSpacing: node.style.letterSpacing ?? DEFAULT_TEXT_STYLE.letterSpacing,
     } };
-    case "ellipse": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null } };
-    case "rectangle": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } } };
-    case "frame": return { ...node, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
+    case "ellipse": return { ...node, rotation, style: { ...node.style, stroke: node.style.stroke ?? null } };
+    case "rectangle": return { ...node, rotation, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } } };
+    case "frame": return { ...node, rotation, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
   }
 }
 
 function compactNode(node: DocumentNode): WireNode {
-  if (node.type === "image") return node;
+  const rotationField = node.rotation === 0 ? {} : { rotation: node.rotation };
+  if (node.type === "image") {
+    const { rotation: _, ...rest } = node;
+    return { ...rest, ...rotationField };
+  }
   if (node.type === "text") {
+    const { rotation: _, ...rest } = node;
     const { fontFamily, fontWeight, lineHeight, letterSpacing, ...required } = node.style;
-    return { ...node, style: { ...required,
+    return { ...rest, ...rotationField, style: { ...required,
       ...(fontFamily === DEFAULT_TEXT_STYLE.fontFamily ? {} : { fontFamily }),
       ...(fontWeight === DEFAULT_TEXT_STYLE.fontWeight ? {} : { fontWeight }),
       ...(lineHeight === DEFAULT_TEXT_STYLE.lineHeight ? {} : { lineHeight }),
@@ -89,10 +97,11 @@ function compactNode(node: DocumentNode): WireNode {
   const style = { fill: node.style.fill, ...(node.style.stroke === null ? {} : { stroke: node.style.stroke }),
     ...(node.type !== "ellipse" && Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}) };
   if (node.type === "frame") {
-    const { clipContent, ...rest } = node;
-    return { ...rest, style, ...(clipContent ? {} : { clipContent }), children: node.children.map(compactNode) };
+    const { rotation: _rotation, clipContent: _clipContent, ...rest } = node;
+    return { ...rest, ...rotationField, style, ...(node.clipContent ? {} : { clipContent: false }), children: node.children.map(compactNode) };
   }
-  return { ...node, style };
+  const { rotation: _, ...rest } = node;
+  return { ...rest, ...rotationField, style };
 }
 
 const parseJson = Result.fn({

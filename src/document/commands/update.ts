@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { normalizeRotation } from "@/document/transform.ts";
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
@@ -44,4 +45,9 @@ export function setNodeGeometry(
   const validated = validateGeometry(geometry);
   if (Result.isFailure(validated)) return validated;
   return updateNode(document, id, (node) => ({ ...node, ...geometry }));
+}
+
+export function setRotation(document: Document, id: string, rotation: number): Result.Result<Document, Error> {
+  if (!Number.isFinite(rotation)) return Result.fail(new Error("回転角は有限の数値で指定してください"));
+  return updateNode(document, id, (node) => ({ ...node, rotation: normalizeRotation(rotation) }));
 }

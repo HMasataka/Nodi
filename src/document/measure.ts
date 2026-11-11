@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { composeTransform, cornersAabb, IDENTITY_TRANSFORM, nodeTransform, type Point, type Transform, transformedCorners } from "@/document/transform.ts";
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 import { type DocumentHistory, getRevision } from "@/document/history.ts";
 
@@ -21,6 +22,8 @@ export interface ElementMeasurement {
   type: DocumentNode["type"];
   local: Geometry;
   absolute: Bounds;
+  rotation: number;
+  corners: [Point, Point, Point, Point];
 }
 
 export interface RevisionComparison {
@@ -29,6 +32,7 @@ export interface RevisionComparison {
   delta: {
     local: Geometry;
     absolute: Pick<Bounds, "x" | "y" | "width" | "height" | "centerX" | "centerY">;
+    rotation: number;
   };
 }
 
@@ -45,29 +49,25 @@ export interface RelativeMeasurement {
 }
 
 function measureInDocument(document: Document, revisionId: string, id: string): Result.Result<ElementMeasurement, Error> {
-  function visit(nodes: DocumentNode[], offset: { x: number; y: number }, names: string[], parentId: string | null): ElementMeasurement | undefined {
+  function visit(nodes: DocumentNode[], parent: Transform, names: string[], parentId: string | null): ElementMeasurement | undefined {
     for (const node of nodes) {
-      const x = offset.x + node.x;
-      const y = offset.y + node.y;
+      const world = composeTransform(parent, nodeTransform(node));
       const path = [...names, node.name];
       if (node.id === id) {
+        const corners = transformedCorners(world, node.width, node.height);
         return {
           revisionId, id, name: node.name, path: path.join(" › "), parentId, type: node.type,
           local: { x: node.x, y: node.y, width: node.width, height: node.height },
-          absolute: {
-            x, y, width: node.width, height: node.height,
-            left: x, top: y, right: x + node.width, bottom: y + node.height,
-            centerX: x + node.width / 2, centerY: y + node.height / 2,
-          },
+          absolute: cornersAabb(corners), rotation: node.rotation, corners,
         };
       }
       if (node.type === "frame") {
-        const child = visit(node.children, { x, y }, path, node.id);
+        const child = visit(node.children, world, path, node.id);
         if (child) return child;
       }
     }
   }
-  const element = visit(document.children, { x: 0, y: 0 }, [], null);
+  const element = visit(document.children, IDENTITY_TRANSFORM, [], null);
   return element ? Result.succeed(element) : Result.fail(new Error(`リビジョン ${revisionId} に要素 ${id} が見つかりません`));
 }
 
@@ -102,6 +102,7 @@ export function compareElementRevisions(
         centerX: b.absolute.centerX - a.absolute.centerX,
         centerY: b.absolute.centerY - a.absolute.centerY,
       },
+      rotation: b.rotation - a.rotation,
     },
   });
 }

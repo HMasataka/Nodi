@@ -14,6 +14,7 @@ function fakeCanvas() {
   const ctx = {
     save: () => calls.push(["save"]), restore: () => calls.push(["restore"]),
     translate: (...args) => calls.push(["translate", ...args]),
+    rotate: (...args) => calls.push(["rotate", ...args]),
     beginPath: () => calls.push(["beginPath"]),
     rect: (...args) => calls.push(["rect", ...args]),
     clip: () => calls.push(["clip"]),
@@ -36,6 +37,20 @@ function fakeCanvas() {
   };
   return { canvas, calls };
 }
+
+test("PNG は入れ子フレームと子の中心回転を save/restore 内で合成する", async () => {
+  const child = makeRectangle({ x: 10, y: 20, width: 40, height: 20, rotation: 45 });
+  const nested = makeFrame({ id: "nested", x: 30, y: 40, width: 100, height: 80, rotation: 90, children: [child] });
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(makeFrame({ children: [nested] }), { createCanvas: () => canvas, loadImage: async () => {} }));
+  const transforms = calls.filter(([method]) => ["save", "restore", "translate", "rotate"].includes(method));
+  assert.deepEqual(transforms, [
+    ["save"], ["translate", 0, 0],
+    ["save"], ["translate", 30, 40], ["translate", 50, 40], ["rotate", Math.PI / 2], ["translate", -50, -40],
+    ["save"], ["translate", 10, 20], ["translate", 20, 10], ["rotate", Math.PI / 4], ["translate", -20, -10],
+    ["restore"], ["restore"], ["restore"],
+  ]);
+});
 
 test("サンプルのフレームを寸法どおりに描き、編集 UI を含めない", async () => {
   const text = await readFile(new URL("../samples/studio.nodi", import.meta.url), "utf8");
