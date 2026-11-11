@@ -17,16 +17,34 @@ const textMark = z.strictObject({ start: z.number().int().nonnegative(), end: z.
   underline: z.literal(true).optional(), code: z.literal(true).optional() });
 const radius = z.number().finite().nonnegative();
 const cornerRadii = z.strictObject({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
-const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: z.strictObject({ color, width: radius }).nullable().optional() });
+const stroke = z.strictObject({ color, width: radius }).nullable();
+const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: stroke.optional() });
+const normalizedShapeStyle = z.strictObject({ fill: color.nullable(), stroke });
 const borderEdge = z.strictObject({ color, width: radius });
 const border = z.strictObject({ top: borderEdge.optional(), right: borderEdge.optional(), bottom: borderEdge.optional(), left: borderEdge.optional() });
+const compatibleBorder = (style: { border?: z.infer<typeof border>; cornerRadii?: z.infer<typeof cornerRadii> }) =>
+  !style.border || Object.keys(style.border).length === 0 || !style.cornerRadii || Object.values(style.cornerRadii).every((value) => value === 0);
 const boxStyle = z.strictObject({ ...shapeStyle.shape, cornerRadii: cornerRadii.optional(), border: border.optional() }).refine(
-  (style) => !style.border || Object.keys(style.border).length === 0 || !style.cornerRadii || Object.values(style.cornerRadii).every((value) => value === 0),
+  compatibleBorder,
   { message: "辺線と角丸は併用できません", path: ["border"] },
 );
-const textStyle = z.strictObject({ fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(), lineHeight: z.number().finite().positive().optional(), letterSpacing: z.number().finite().optional() });
-const imageFilters = z.strictObject({ brightness: radius.optional(), contrast: radius.optional(), saturate: radius.optional(), grayscale: z.number().finite().min(0).max(1).optional(), sepia: z.number().finite().min(0).max(1).optional(), hueRotate: coordinate.optional() });
-const imageStyle = z.strictObject({ fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) }).optional(), cornerRadii: cornerRadii.optional(), filters: imageFilters.optional() });
+const normalizedBoxStyle = z.strictObject({ ...normalizedShapeStyle.shape, cornerRadii, border }).refine(
+  compatibleBorder, { message: "辺線と角丸は併用できません", path: ["border"] },
+);
+const fontWeight = z.number().int().min(100).max(900).refine((value) => value % 100 === 0);
+const fontFamily = z.enum(TEXT_FONT_FAMILIES);
+const lineHeight = z.number().finite().positive();
+const textStyleBase = { fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]) };
+const textStyle = z.strictObject({ ...textStyleBase, fontFamily: fontFamily.optional(), fontWeight: fontWeight.optional(), lineHeight: lineHeight.optional(), letterSpacing: coordinate.optional() });
+const normalizedTextStyle = z.strictObject({ ...textStyleBase, fontFamily, fontWeight, lineHeight, letterSpacing: coordinate });
+const intensity = z.number().finite().min(0).max(1);
+const filterFields = { brightness: radius, contrast: radius, saturate: radius, grayscale: intensity, sepia: intensity, hueRotate: coordinate };
+const imageFilters = z.strictObject({ brightness: radius.optional(), contrast: radius.optional(), saturate: radius.optional(), grayscale: intensity.optional(), sepia: intensity.optional(), hueRotate: coordinate.optional() });
+const normalizedImageFilters = z.strictObject(filterFields);
+const fit = z.enum(["cover", "contain", "fill"]);
+const focalPoint = z.strictObject({ x: intensity, y: intensity });
+const imageStyle = z.strictObject({ fit: fit.optional(), focalPoint: focalPoint.optional(), cornerRadii: cornerRadii.optional(), filters: imageFilters.optional() });
+const normalizedImageStyle = z.strictObject({ fit, focalPoint, cornerRadii, filters: normalizedImageFilters });
 
 type OptionalRotation<T> = Omit<T, "rotation"> & { rotation?: number };
 type OptionalMask<T> = Omit<T, "isMask"> & { isMask?: true };
@@ -49,11 +67,11 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
 );
 
 function checkUniqueIds(
-  document: WireDocument,
+  document: { children: (WireNode | DocumentNode)[] },
   context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
 ) {
   const seen = new Set<string>();
-  function visit(nodes: WireNode[], path: (string | number)[]) {
+  function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
     nodes.forEach((node, index) => {
       const nodePath = [...path, index];
       if (seen.has(node.id)) context.addIssue({ code: "custom", path: [...nodePath, "id"], message: `ID が重複しています: ${node.id}` });
@@ -69,6 +87,16 @@ function checkUniqueIds(
 }
 
 export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema) }).superRefine(checkUniqueIds);
+
+const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
+  z.strictObject({ id, name, type: z.literal("rectangle"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, isMask: z.boolean(), style: normalizedBoxStyle }),
+  z.strictObject({ id, name, type: z.literal("ellipse"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, isMask: z.boolean(), style: normalizedShapeStyle }),
+  z.strictObject({ id, name, type: z.literal("image"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
+  z.strictObject({ id, name, type: z.literal("frame"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, style: normalizedBoxStyle, clipContent: z.boolean(), children: z.array(internalNodeSchema) }),
+  z.strictObject({ id, name, type: z.literal("text"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
+]));
+
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema) }).superRefine(checkUniqueIds);
 
 function normalizeNode(node: WireNode): DocumentNode {
   const rotation = normalizeRotation(node.rotation ?? 0);
@@ -87,7 +115,8 @@ function normalizeNode(node: WireNode): DocumentNode {
 }
 
 function compactNode(node: DocumentNode): WireNode {
-  const rotationField = node.rotation === 0 ? {} : { rotation: node.rotation };
+  const rotation = normalizeRotation(node.rotation);
+  const rotationField = rotation === 0 ? {} : { rotation };
   if (node.type === "image") {
     const { rotation: _, ...rest } = node;
     return { ...rest, ...rotationField, style: {
@@ -134,15 +163,9 @@ export function parseDocument(json: string) {
 }
 
 export function serializeDocument(document: Document) {
-  function wireMask(node: DocumentNode): unknown {
-    if (node.type === "frame") return { ...node, children: Array.isArray(node.children) ? node.children.map(wireMask) : node.children };
-    if ((node.type === "rectangle" || node.type === "ellipse") && node.isMask === false) {
-      const { isMask: _, ...rest } = node;
-      return rest;
-    }
-    return node;
-  }
-  const parsed = Result.parse(documentSchema, { ...document, children: document.children.map(wireMask) });
+  const parsed = Result.parse(internalDocumentSchema, document);
   if (Result.isFailure(parsed)) return parsed;
-  return Result.succeed(JSON.stringify({ version: 1, children: parsed.value.children.map(normalizeNode).map(compactNode) }, null, 2));
+  const wire = Result.parse(documentSchema, { version: 1, children: parsed.value.children.map(compactNode) });
+  if (Result.isFailure(wire)) return wire;
+  return Result.succeed(JSON.stringify(wire.value, null, 2));
 }
