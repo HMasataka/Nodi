@@ -30,6 +30,7 @@ export interface EditorPort {
   getHistory(): DocumentHistory;
   getSelectedId(): string | null;
   apply(document: Document): void;
+  canEdit?(): Result.Result<void, Error>;
   focus?(id: string): Result.Result<FocusedViewport, Error>;
 }
 
@@ -74,12 +75,16 @@ export function createAgentApi(port: EditorPort) {
 
   function applyToElement(id: string, result: Result.Result<Document, Error>): Result.Result<ElementReference, Error> {
     if (Result.isFailure(result)) return result;
+    const editable = port.canEdit?.();
+    if (editable && Result.isFailure(editable)) return editable;
     if (result.value !== port.getDocument()) port.apply(result.value);
     return getElement(id);
   }
 
   function applyNewNode(result: Result.Result<{ document: Document; node: DocumentNode }, Error>): Result.Result<ElementReference, Error> {
     if (Result.isFailure(result)) return result;
+    const editable = port.canEdit?.();
+    if (editable && Result.isFailure(editable)) return editable;
     port.apply(result.value.document);
     return getElement(result.value.node.id);
   }
@@ -156,6 +161,8 @@ export function createAgentApi(port: EditorPort) {
     delete(id: string) {
       const element = getElement(id);
       if (Result.isFailure(element)) return element;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
       const removed = deleteNode(port.getDocument(), id);
       if (Result.isFailure(removed)) return removed;
       port.apply(removed.value);

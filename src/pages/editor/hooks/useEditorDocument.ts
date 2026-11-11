@@ -25,12 +25,19 @@ export function useEditorDocument() {
   const [filePath, setFilePath] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const revision = useRef(0);
+  const previewActive = useRef(false);
   const fileOperation = useRef(false);
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus>(() => isTauri() ? { kind: "checking" } : { kind: "none" });
   const recoveryQueue = useRef(Promise.resolve());
   const focusElementRef = useRef<(id: string) => Result.Result<FocusedViewport, Error>>(() => Result.fail(new Error("キャンバスを表示できません")));
   const selected = selectedId ? findNode(design, selectedId) : undefined;
   const isDirty = isDocumentDirty(history, design);
+
+  function ensureEditable(): Result.Result<void, Error> {
+    return previewActive.current ? Result.fail(new Error("ドラッグ中は他の編集やファイル操作を実行できません")) : Result.succeed();
+  }
+
+  function beginPreview() { previewActive.current = true; }
 
   function queueRecovery(action: () => Promise<Result.Result<void, Error>>) {
     recoveryQueue.current = recoveryQueue.current.then(async () => {
@@ -81,6 +88,8 @@ export function useEditorDocument() {
   }
 
   function recordDocument(document: Document) {
+    const editable = ensureEditable();
+    if (Result.isFailure(editable)) { setError(editable.error.message); return; }
     if (document === designRef.current) { setError(null); return; }
     const next = commit(historyRef.current, document);
     historyRef.current = next;
@@ -96,6 +105,7 @@ export function useEditorDocument() {
     getHistory: () => historyRef.current,
     getSelectedId: () => selectedId,
     apply: recordDocument,
+    canEdit: ensureEditable,
     focus: (id) => focusElementRef.current(id),
   });
   useMcpBridge(agentApi, setError, recoveryStatus.kind === "none");
@@ -113,6 +123,7 @@ export function useEditorDocument() {
   }
 
   function finishPreview(changed: boolean) {
+    previewActive.current = false;
     if (changed) {
       const next = commit(historyRef.current, designRef.current);
       historyRef.current = next;
@@ -136,6 +147,8 @@ export function useEditorDocument() {
   }
 
   async function openFile() {
+    const editable = ensureEditable();
+    if (Result.isFailure(editable)) { setError(editable.error.message); return; }
     if (fileOperation.current) return;
     if (isDocumentDirty(historyRef.current, designRef.current) && designRef.current.children.length > 0 && !window.confirm("未保存の変更があります。別のドキュメントを開きますか？")) return;
     fileOperation.current = true;
@@ -160,6 +173,8 @@ export function useEditorDocument() {
   }
 
   async function saveFile() {
+    const editable = ensureEditable();
+    if (Result.isFailure(editable)) { setError(editable.error.message); return; }
     if (fileOperation.current) return;
     fileOperation.current = true;
     setIsBusy(true);
@@ -183,6 +198,6 @@ export function useEditorDocument() {
   return {
     history, design, designRef, selectedId, selectedIds, setSelectedId, setSelectedIds, selected,
     error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery, focusElementRef,
-    recordDocument, applyDocument, previewDocument, finishPreview, stepHistory, openFile, saveFile,
+    recordDocument, applyDocument, beginPreview, previewDocument, finishPreview, stepHistory, openFile, saveFile,
   };
 }
