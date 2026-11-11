@@ -71,7 +71,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 `src/persistence/format.ts` の `WireDocument` / `WireNode` は保存用の省略可能な形式。`src/document/types.ts` の `Document` は既定値を補完した内部モデルで、編集・描画・履歴はこの型を使う。
 
 - `parseDocument`: JSON を読み取り、Zod で検証してから、子孫も含めて既定値を補完する。
-- `serializeDocument`: 検証後、既定値を除去して JSON を生成する。入力の文書は変更しない。
+- `serializeDocument`: 正規化済みの内部モデルをWireとは別のスキーマで検証し、既定値を除去したWire形式を再検証してJSONを生成する。入力の文書は変更しない。内部で必須の `isMask: false` はWireでは省略し、Wireに明示された `false` は拒否する。
 - 保存時に除去する値は、`stroke: null`、全隅 0 の `cornerRadii`、`clipContent: true`、文字の `fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0`。
 - `fill: null` は塗りなしを表す必須値なので保存する。画像の `style: {}` も保存する。
 - ルート・ノード・スタイル・線・角丸・文字装飾は `z.strictObject` で未知項目を拒否する。省略可能な項目でも不正な値を既定値に置き換えることはない。
