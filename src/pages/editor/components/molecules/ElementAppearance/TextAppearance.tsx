@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
 import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 import { graphemeBoundaries, graphemeSegments } from "@/document/textLayout";
@@ -59,8 +60,8 @@ export function TextAppearance({ node, onTextContent, onTextStyle, onTextMarkRan
           onClick={() => apply({ code: !code })}>コード</button>
       </div>
       <div className="text-mark-actions">
-        <label>文字色 <input type="color" value={color} disabled={!canStyle}
-          onChange={(event) => apply({ color: event.currentTarget.value })} /></label>
+        <ColorField key={`${node.id}:${selection.start}:${selection.end}:${color}`} label="文字色" value={color} fallback={node.style.color}
+          disabled={!canStyle} onChange={(value) => apply({ color: value })} />
         <button type="button" disabled={!canStyle} onMouseDown={(event) => event.preventDefault()}
           onClick={() => apply({ color: null })}>色を戻す</button>
       </div>

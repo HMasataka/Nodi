@@ -27,7 +27,7 @@ export type ImageStylePatch = Omit<Partial<ImageStyle>, "filters"> & { filters?:
 export const DEFAULT_IMAGE_STYLE: ImageStyle = { fit: "cover", focalPoint: { x: 0.5, y: 0.5 }, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 }, filters: DEFAULT_IMAGE_FILTERS };
 export const ZERO_CORNER_RADII: CornerRadii = { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 };
 
-export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?$/;
 
 export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   fill: "#f3d9c8",

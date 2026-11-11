@@ -43,7 +43,7 @@ export function setNodeStyle(
 
 function boxStyleIssue(patch: Partial<RectangleStyle>): string | undefined {
   if (Object.keys(patch).some((key) => !["fill", "stroke", "cornerRadii", "border"].includes(key))) return "未知のスタイル項目です";
-  if (patch.fill !== undefined && patch.fill !== null && (typeof patch.fill !== "string" || !HEX_COLOR_PATTERN.test(patch.fill))) return "色は #RRGGBB 形式で指定してください";
+  if (patch.fill !== undefined && patch.fill !== null && (typeof patch.fill !== "string" || !HEX_COLOR_PATTERN.test(patch.fill))) return "色は #RRGGBB または #RRGGBBAA 形式で指定してください";
   if (patch.stroke !== undefined && patch.stroke !== null &&
     (typeof patch.stroke !== "object" || Object.keys(patch.stroke).some((key) => !["color", "width"].includes(key)) || !HEX_COLOR_PATTERN.test(patch.stroke.color) || !Number.isFinite(patch.stroke.width) || patch.stroke.width < 0)) return "線の色と幅が不正です";
   if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return "角丸は 0 以上の有限の数値で指定してください";
@@ -157,7 +157,7 @@ export function setTextStyle(document: Document, id: string, patch: Partial<Text
     letterSpacing: patch.letterSpacing ?? node.style.letterSpacing,
   };
   if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) return Result.fail(new Error("文字サイズは正の有限値で指定してください"));
-  if (!HEX_COLOR_PATTERN.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB 形式で指定してください"));
+  if (!HEX_COLOR_PATTERN.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB または #RRGGBBAA 形式で指定してください"));
   if (!["left", "center", "right"].includes(style.textAlign)) return Result.fail(new Error("文字揃えが不正です"));
   if (!TEXT_FONT_FAMILIES.includes(style.fontFamily)) return Result.fail(new Error("フォントが不正です"));
   if (!Number.isInteger(style.fontWeight) || style.fontWeight < 100 || style.fontWeight > 900 || style.fontWeight % 100 !== 0) {

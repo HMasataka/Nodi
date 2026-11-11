@@ -1,3 +1,4 @@
+import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { useState } from "react";
 
 import type { Border, BoxStyle } from "@/document/types.ts";
@@ -24,7 +25,8 @@ export function BorderEditor({ style, onChange }: { style: BoxStyle; onChange(bo
     <legend>辺ごとの線{rounded ? "（角丸 0 のときのみ）" : ""}</legend>
     {sides.map(([side, label]) => <div className="border-edge" key={side}>
       <label><input type="checkbox" checked={!!style.border[side]} onChange={(event) => update(side, event.currentTarget.checked ? { color: colors[side], width: Number(widths[side]) } : undefined)} />{label}</label>
-      <label>色 <input type="color" value={colors[side]} disabled={!style.border[side]} onChange={(event) => setColors({ ...colors, [side]: event.currentTarget.value })} onBlur={() => { if (style.border[side] && colors[side] !== style.border[side].color) update(side, { ...style.border[side], color: colors[side] }); }} /></label>
+      <ColorField label="色" value={colors[side]} fallback="#000000" disabled={!style.border[side]}
+        onChange={(color) => { setColors({ ...colors, [side]: color }); if (style.border[side]) update(side, { ...style.border[side], color }); }} />
       <label>幅 <input type="number" min="0" step="any" value={widths[side]} disabled={!style.border[side]} onChange={(event) => setWidths({ ...widths, [side]: event.currentTarget.value })} onBlur={() => { if (style.border[side] && widths[side] !== String(style.border[side].width)) update(side, { color: colors[side], width: widths[side].trim() === "" ? NaN : Number(widths[side]) }); }} /></label>
     </div>)}
   </fieldset>;

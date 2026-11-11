@@ -50,15 +50,16 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - 各要素は `id`、`name`、`type`、`x`、`y`、`width`、`height` と、種別ごとの `style` を持つ。子要素の座標は親フレームの左上を基準とする。内側線の幅は子要素の原点に影響しない。
 - v1 の `type` は `frame`、`rectangle`、`ellipse`、`text`、`image`。`frame` は `children` 配列を持ち、それ以外は子を持たない。
 - `children` の順番は背面から前面への描画順。同じ親の子要素だけを並べ替え、ID・親基準の座標は変わらない。レイヤー一覧は前面の要素を上に表示する。
-- `text` も子を持たず、要素名 `name` とは別の文字列 `content` を持つ。`style` 内の `fontSize` は正の有限値、`color` は `#RRGGBB` 形式、`textAlign` は `left`・`center`・`right` で、いずれも必須。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
+- `text` も子を持たず、要素名 `name` とは別の文字列 `content` を持つ。`style` 内の `fontSize` は正の有限値、`color` は `#RRGGBB` または `#RRGGBBAA` 形式、`textAlign` は `left`・`center`・`right` で、いずれも必須。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
 - 折り返しは単語境界を優先し、枠に入らない長い単語は文字単位で分ける。明示改行と空行は維持し、編集画面と PNG は同じ行構成を使う。
 - `text` の `marks` はノード直下の省略可能な装飾範囲の配列。各範囲は本文の UTF-16 位置を示す `start`（含む）と `end`（含まない）を持ち、`color`、`fontWeight`、`underline: true`、`code: true` のうち1つ以上を指定する。範囲は文字（結合した絵文字を含む）の境界で始まり終わり、昇順で重複しない。省略時は装飾なしとして扱う。`code` は等幅フォントと淡い背景で表示する。
 - プロパティの本文欄で範囲を選んで装飾を付け外しできる。編集中の本文への装飾は本文と装飾範囲を一つの編集として保存し、既存の別属性の装飾は保持する。
 - `text.style` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。Wire 形式では省略可能で、省略時は `default`・400 に補完する。編集画面と PNG は同じフォントの代替順を使う。
 - `text.style` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。Wire 形式では省略可能で、省略時は行高 1.4 倍・字間 0px に補完する。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
-- 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`・`border`）。`fill` は必須の `#RRGGBB` または `null`（塗りなし）。フレームの `background` は廃止した。
-- `stroke` は `{ "color": "#RRGGBB", "width": 1 }` または `null`（線なし）。幅は 0 以上の有限値で、均一な内側線として描画する。省略時は `null`。幅 0 の線は明示した色とともに保持し、`null` に置き換えない。
+- 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`・`border`）。`fill` は必須の `#RRGGBB`・`#RRGGBBAA` または `null`（塗りなし）。フレームの `background` は廃止した。
+- 色はCSSのHEX表記で、8桁の場合は末尾の `AA` がアルファ値（`00` は透明、`ff` は不透明）。6桁は不透明として従来どおり読み書きする。塗り・線・辺線・テキスト・部分装飾の色に共通し、重なる要素は描画時に合成する。
+- `stroke` は `{ "color": "#RRGGBB", "width": 1 }`（8桁色も可）または `null`（線なし）。幅は 0 以上の有限値で、均一な内側線として描画する。省略時は `null`。幅 0 の線は明示した色とともに保持し、`null` に置き換えない。
 - `border` は矩形・フレームだけが持つ、`top`・`right`・`bottom`・`left` ごとの `{ color, width }`。省略した辺は線なし。既定の空オブジェクトは保存しない。初版では角丸（4隅のいずれかが非0）との併用を拒否する。
 - `cornerRadii` は `topLeft`・`topRight`・`bottomRight`・`bottomLeft` の4隅のオブジェクト。各値は 0 以上の有限値。オブジェクト全体の省略時は全隅 0 に補完する。指定する場合は4隅とも必須。単一値の `cornerRadius` は廃止し、同梱サンプルの旧角丸は全隅同値で再生成した。
 - フレームの `clipContent` はノード直下の真偽値。省略時は `true` に補完する。`true` なら子要素をフレームの輪郭で切り取り、`false` ならはみ出しを表示する（書き出し対象フレーム自体の外は PNG に含まれない）。
