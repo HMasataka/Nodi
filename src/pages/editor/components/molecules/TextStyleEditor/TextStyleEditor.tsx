@@ -1,3 +1,4 @@
+import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { useState } from "react";
 import type { TextNode, TextStyle } from "@/document/types";
 
@@ -5,7 +6,6 @@ export function TextStyleEditor({ node: { style }, onChange }: { node: TextNode;
   const [fontSize, setFontSize] = useState(String(style.fontSize));
   const [lineHeight, setLineHeight] = useState(String(style.lineHeight));
   const [letterSpacing, setLetterSpacing] = useState(String(style.letterSpacing));
-  const [color, setColor] = useState(style.color);
   return <div className="text-style-fields">
     <label>フォント
       <select className="font-family-select" value={style.fontFamily}
@@ -35,10 +35,7 @@ export function TextStyleEditor({ node: { style }, onChange }: { node: TextNode;
         onChange={(event) => setLetterSpacing(event.currentTarget.value)}
         onBlur={() => { if (letterSpacing !== String(style.letterSpacing)) onChange({ letterSpacing: letterSpacing.trim() === "" ? NaN : Number(letterSpacing) }); }} />
     </label>
-    <label>文字色
-      <input type="color" value={color} onChange={(event) => setColor(event.currentTarget.value)}
-        onBlur={() => { if (color !== style.color) onChange({ color }); }} />
-    </label>
+    <ColorField label="文字色" value={style.color} fallback="#272b29" onChange={(color) => onChange({ color })} />
     <label>揃え
       <select value={style.textAlign} onChange={(event) => onChange({ textAlign: event.currentTarget.value as TextStyle["textAlign"] })}>
         <option value="left">左</option><option value="center">中央</option><option value="right">右</option>
