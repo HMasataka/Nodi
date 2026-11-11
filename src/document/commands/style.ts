@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { type Document, type FrameStyle, HEX_COLOR_PATTERN, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
+import { type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageStyle, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
@@ -48,6 +48,22 @@ export function setFrameStyle(document: Document, id: string, patch: Partial<Fra
   if (patch.clipContent !== undefined && typeof patch.clipContent !== "boolean") return Result.fail(new Error("はみ出し表示の設定が不正です"));
   const clipContent = clipping ?? node.clipContent;
   return updateNode(document, id, (current) => current.type === "frame" ? { ...current, style: { ...current.style, ...boxStylePatch(style) }, clipContent } : current);
+}
+
+export function setImageStyle(document: Document, id: string, patch: Partial<ImageStyle>): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "image") return Result.fail(new Error(`画像が見つかりません: ${id}`));
+  if (Object.keys(patch).some((key) => !["fit", "focalPoint"].includes(key))) return Result.fail(new Error("未知の画像スタイル項目です"));
+  if (patch.fit !== undefined && !["cover", "contain", "fill"].includes(patch.fit)) return Result.fail(new Error("画像のフィットが不正です"));
+  const point = patch.focalPoint;
+  if (point !== undefined && (!point || typeof point !== "object" || Object.keys(point).some((key) => !["x", "y"].includes(key)) ||
+    ![point.x, point.y].every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1))) {
+    return Result.fail(new Error("焦点位置は 0 から 1 の有限値で指定してください"));
+  }
+  return updateNode(document, id, (current) => current.type === "image" ? { ...current, style: {
+    ...current.style, ...(patch.fit === undefined ? {} : { fit: patch.fit }),
+    ...(point === undefined ? {} : { focalPoint: { x: point.x, y: point.y } }),
+  } } : current);
 }
 
 export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {

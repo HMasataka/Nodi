@@ -1,12 +1,13 @@
 import type { CSSProperties } from "react";
 
 import type { CanvasExtent } from "@/pages/editor/viewport.ts";
+import { imageObjectPosition } from "@/document/imagePlacement.ts";
 import type { Point } from "@/pages/editor/geometry.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import type { CornerRadii, EllipseNode, FrameNode, Geometry, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
+import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
 
 const CANVAS_GRID_SIZE = 24;
 
@@ -94,6 +95,10 @@ function cornerRadiiCss(radii: CornerRadii): string {
   return `${radii.topLeft}px ${radii.topRight}px ${radii.bottomRight}px ${radii.bottomLeft}px`;
 }
 
-export function imageNodeStyle(node: Geometry): CSSProperties {
+export function imageNodeStyle(node: ImageNode): CSSProperties {
   return nodeBoxStyle(node);
+}
+
+export function imageContentStyle(node: ImageNode): CSSProperties {
+  return { objectFit: node.style.fit, objectPosition: imageObjectPosition(node.style) };
 }
