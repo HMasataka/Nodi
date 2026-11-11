@@ -6,7 +6,7 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import type { EllipseNode, FrameNode, Geometry, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
+import type { CornerRadii, EllipseNode, FrameNode, Geometry, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
 
 const CANVAS_GRID_SIZE = 24;
 
@@ -51,8 +51,7 @@ function nodeBoxStyle(node: Geometry): CSSProperties {
 }
 
 export function frameNodeStyle(node: FrameNode): CSSProperties {
-  const { borderColor, borderWidth, borderStyle: _borderStyle, ...appearance } = boxAppearance(node.style);
-  return { ...nodeBoxStyle(node), ...appearance, boxShadow: `inset 0 0 0 ${borderWidth}px ${borderColor}` };
+  return { ...nodeBoxStyle(node), borderRadius: cornerRadiiCss(node.style.cornerRadii) };
 }
 
 export function frameContentsStyle(node: FrameNode): CSSProperties {
@@ -88,16 +87,11 @@ export function textMarkStyle(node: TextNode, mark: TextMark): CSSProperties {
 }
 
 export function shapeNodeStyle(node: RectangleNode | EllipseNode): CSSProperties {
-  return {
-    ...nodeBoxStyle(node),
-    ...boxAppearance(node.style),
-    ...(node.type === "ellipse" ? { borderRadius: "50%" } : {}),
-  };
+  return nodeBoxStyle(node);
 }
 
-function boxAppearance(style: RectangleNode["style"] | EllipseNode["style"]): CSSProperties {
-  return { background: style.fill ?? "transparent", borderColor: style.stroke?.color ?? "transparent", borderWidth: style.stroke?.width ?? 0, borderStyle: "solid",
-    ...("cornerRadii" in style ? { borderRadius: `${style.cornerRadii.topLeft}px ${style.cornerRadii.topRight}px ${style.cornerRadii.bottomRight}px ${style.cornerRadii.bottomLeft}px` } : {}) };
+function cornerRadiiCss(radii: CornerRadii): string {
+  return `${radii.topLeft}px ${radii.topRight}px ${radii.bottomRight}px ${radii.bottomLeft}px`;
 }
 
 export function imageNodeStyle(node: Geometry): CSSProperties {

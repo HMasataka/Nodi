@@ -45,7 +45,8 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       onImageError: noOp,
     }));
     assert.match(canvas, /data-frame-id="frame-1"/);
-    assert.match(canvas, /background:#aabbcc/);
+    assert.match(canvas, /class="canvas-shape"/);
+    assert.match(canvas, /fill="#aabbcc"/);
     assert.match(canvas, /class="frame-contents" style="overflow:hidden;border-radius:inherit"/);
     assert.match(canvas, /aria-label="風景"/);
     assert.match(canvas, /class="resize-handle"/);

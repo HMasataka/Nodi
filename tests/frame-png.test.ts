@@ -20,6 +20,7 @@ function fakeCanvas() {
     roundRect: (...args) => calls.push(["roundRect", ...args]),
     moveTo: (...args) => calls.push(["moveTo", ...args]),
     lineTo: (...args) => calls.push(["lineTo", ...args]),
+    closePath: () => calls.push(["closePath"]),
     ellipse: (...args) => calls.push(["ellipse", ...args]),
     fill: () => calls.push(["fill", ctx.fillStyle]), stroke: () => calls.push(["stroke"]),
     fillRect: (...args) => calls.push(["fillRect", ...args, ctx.fillStyle]),
@@ -48,9 +49,9 @@ test("サンプルのフレームを寸法どおりに描き、編集 UI を含�
   assert.equal(canvas.height, 710);
   assert.equal(blob.type, "image/png");
   assert.deepEqual(calls.find(([method]) => method === "fill"), ["fill", "#fbfaf7"]);
-  assert.deepEqual(calls.find(([method]) => method === "roundRect"), ["roundRect", 0, 0, 960, 710, [0, 0, 0, 0]]);
-  assert.ok(calls.some(([method]) => method === "roundRect"));
+  assert.ok(calls.some(([method]) => method === "moveTo"));
   assert.ok(calls.some(([method]) => method === "ellipse"));
+  assert.ok(calls.some(([method]) => method === "closePath"));
   assert.ok(calls.some(([method]) => method === "drawImage"));
   const visibleText = calls.filter(([method]) => method === "fillText").map(([, value]) => value);
   assert.ok(visibleText.includes("ATLAS STUDIO"));
@@ -76,8 +77,10 @@ test("図形の線を領域内へ収め、テキストを編集画面の行ボ�
   const ctx = canvas.getContext("2d");
   ctx.measureText = (text) => ({ width: text.length * 8, fontBoundingBoxAscent: 16, fontBoundingBoxDescent: 6 });
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
-  assert.deepEqual(calls.find(([method, x]) => method === "roundRect" && x === 1), ["roundRect", 1, 1, 18, 8, [3, 3, 3, 3]]);
-  assert.deepEqual(calls.find(([method]) => method === "ellipse"), ["ellipse", 10, 5, 9, 4, 0, 0, Math.PI * 2]);
+  const ellipseCalls = calls.filter(([method]) => method === "ellipse");
+  assert.ok(ellipseCalls.some(([, , , rx, ry]) => rx === 10 && ry === 5), "楕円の塗りは全幅・全高");
+  assert.ok(ellipseCalls.some(([, , , rx, ry]) => rx === 9 && ry === 4), "楕円の内側線は線幅分だけ縮む");
+  assert.equal(ctx.lineWidth, 2);
   assert.equal(ctx.textBaseline, "alphabetic");
   assert.deepEqual(calls.find(([method]) => method === "fillText"), ["fillText", "1", 10, 18.2]);
 });
@@ -225,7 +228,7 @@ test("フレームの線と4隅は PNG に反映し、子要素の原点をず�
   const { canvas, calls } = fakeCanvas();
   success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
   assert.deepEqual(calls.filter(([method]) => method === "translate"), [["translate", 0, 0], ["translate", 10, 20]]);
-  assert.deepEqual(calls.find(([method, x]) => method === "roundRect" && x === 2), ["roundRect", 2, 2, 96, 76, [2, 4, 6, 8]]);
+  assert.ok(calls.some(([method, x, y]) => method === "moveTo" && x === 4 && y === 2), "内側線は線幅の半分だけ内側へ寄る");
   assert.equal(canvas.getContext("2d").strokeStyle, "#123456");
   assert.equal(calls.filter(([method]) => method === "stroke").length, 1);
 });

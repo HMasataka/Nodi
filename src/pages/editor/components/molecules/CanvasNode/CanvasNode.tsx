@@ -1,11 +1,21 @@
 import { type PointerEvent, useMemo } from "react";
 
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
+import { boxShape, ellipseShape, pathToString, type ShapePaths } from "@/document/shapePath.ts";
 import type { DocumentNode, TextNode } from "@/document/types";
 import { frameContentsStyle, frameNodeStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
+
+function shapeSvg(shape: ShapePaths) {
+  return (
+    <svg className="canvas-shape" aria-hidden="true">
+      <path d={pathToString(shape.fill)} fill={shape.fillColor ?? "none"} />
+      {shape.stroke && <path d={pathToString(shape.stroke)} fill="none" stroke={shape.strokeColor} strokeWidth={shape.strokeWidth} />}
+    </svg>
+  );
+}
 
 function visibleTextLines(node: TextNode): TextLine[] {
   const content = node.content.replace(/\r\n?/g, "\n");
@@ -46,6 +56,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       data-frame-id={node.id} role="group" aria-label={node.name} style={frameNodeStyle(node)}
       onPointerDown={(event) => { if (event.target === event.currentTarget) onNodePointerDown(event, node); }}
       {...pointerEvents}>
+      {shapeSvg(boxShape(node.width, node.height, node.style))}
       <div className="frame-contents" style={frameContentsStyle(node)}>
         {node.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
       </div>
@@ -77,10 +88,11 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
   );
   return (
     <button type="button"
-      className={`canvas-node${node.type === "ellipse" ? " canvas-ellipse" : ""}${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+      className={`canvas-node${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
       style={shapeNodeStyle(node)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
+      {shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style))}
       {handle}
     </button>
   );
