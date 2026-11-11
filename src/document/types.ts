@@ -19,7 +19,8 @@ export interface Stroke { color: string; width: number }
 export type Border = Partial<Record<"top" | "right" | "bottom" | "left", Stroke>>;
 export interface FillStop { position: number; color: string }
 export interface LinearFill { type: "linear"; start: { x: number; y: number }; end: { x: number; y: number }; stops: FillStop[] }
-export type Fill = string | LinearFill | null;
+export interface RadialFill { type: "radial"; center: { x: number; y: number }; radius: number; stops: FillStop[] }
+export type Fill = string | LinearFill | RadialFill | null;
 export interface ShapeStyle { fill: Fill; stroke: Stroke | null }
 export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii; border: Border }
 export type RectangleStyle = BoxStyle;

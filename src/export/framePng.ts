@@ -41,7 +41,10 @@ function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths, width: num
     if (typeof shape.fillColor === "string") ctx.fillStyle = shape.fillColor;
     else {
       const fill = shape.fillColor;
-      const gradient = ctx.createLinearGradient(fill.start.x * width, fill.start.y * height, fill.end.x * width, fill.end.y * height);
+      const gradient = fill.type === "linear"
+        ? ctx.createLinearGradient(fill.start.x * width, fill.start.y * height, fill.end.x * width, fill.end.y * height)
+        : ctx.createRadialGradient(fill.center.x * width, fill.center.y * height, 0,
+          fill.center.x * width, fill.center.y * height, fill.radius * Math.min(width, height));
       fill.stops.forEach((stop) => gradient.addColorStop(stop.position, stop.color));
       ctx.fillStyle = gradient;
     }
