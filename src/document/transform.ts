@@ -47,6 +47,19 @@ export function transformPoint(transform: Transform, point: Point): Point {
   return { x: transform.a * point.x + transform.c * point.y + transform.e, y: transform.b * point.x + transform.d * point.y + transform.f };
 }
 
+export function transformVector(transform: Transform, vector: Point): Point {
+  return { x: transform.a * vector.x + transform.c * vector.y, y: transform.b * vector.x + transform.d * vector.y };
+}
+
+export function invertTransform(transform: Transform): Transform {
+  const determinant = transform.a * transform.d - transform.b * transform.c;
+  const a = transform.d / determinant;
+  const b = -transform.b / determinant;
+  const c = -transform.c / determinant;
+  const d = transform.a / determinant;
+  return { a, b, c, d, e: -a * transform.e - c * transform.f, f: -b * transform.e - d * transform.f };
+}
+
 export function transformedCorners(transform: Transform, width: number, height: number): [Point, Point, Point, Point] {
   return [
     transformPoint(transform, { x: 0, y: 0 }),

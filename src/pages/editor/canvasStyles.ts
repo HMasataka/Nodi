@@ -9,6 +9,7 @@ import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
 import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, RectangleNode, RotatedGeometry, TextMark, TextNode } from "@/document/types.ts";
+import { type Transform, transformPoint } from "@/document/transform.ts";
 
 const CANVAS_GRID_SIZE = 24;
 
@@ -33,10 +34,15 @@ export function selectionPreviewStyle(selection: { start: Point; end: Point }): 
   };
 }
 
-export function drawPreviewStyle(preview: Geometry, parentOrigin: Point): CSSProperties {
+export function drawPreviewStyle(preview: Geometry, parent: Point | Transform): CSSProperties {
+  if ("a" in parent) {
+    const position = transformPoint(parent, { x: preview.x, y: preview.y });
+    return { left: position.x, top: position.y, width: preview.width, height: preview.height,
+      transform: `matrix(${parent.a}, ${parent.b}, ${parent.c}, ${parent.d}, 0, 0)`, transformOrigin: "top left" };
+  }
   return {
-    left: preview.x + parentOrigin.x,
-    top: preview.y + parentOrigin.y,
+    left: preview.x + parent.x,
+    top: preview.y + parent.y,
     width: preview.width,
     height: preview.height,
   };

@@ -1,21 +1,22 @@
+import { composeTransform, cornersAabb, IDENTITY_TRANSFORM, nodeTransform, type Transform, transformedCorners } from "@/document/transform.ts";
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 
-export interface LocatedNode { node: DocumentNode; absolute: Geometry }
+export interface LocatedNode { node: DocumentNode; absolute: Geometry; parent: Transform; world: Transform }
 
 type VisitDecision = "stop" | "skipChildren" | void;
 
 export function walkLocatedNodes(document: Document, visit: (entry: LocatedNode) => VisitDecision): void {
-  function walk(nodes: DocumentNode[], parentX: number, parentY: number): boolean {
+  function walk(nodes: DocumentNode[], parent: Transform): boolean {
     for (const node of nodes) {
-      const x = parentX + node.x;
-      const y = parentY + node.y;
-      const decision = visit({ node, absolute: { x, y, width: node.width, height: node.height } });
+      const world = composeTransform(parent, nodeTransform(node));
+      const { x, y, width, height } = cornersAabb(transformedCorners(world, node.width, node.height));
+      const decision = visit({ node, absolute: { x, y, width, height }, parent, world });
       if (decision === "stop") return true;
-      if (node.type === "frame" && decision !== "skipChildren" && walk(node.children, x, y)) return true;
+      if (node.type === "frame" && decision !== "skipChildren" && walk(node.children, world)) return true;
     }
     return false;
   }
-  walk(document.children, 0, 0);
+  walk(document.children, IDENTITY_TRANSFORM);
 }
 
 export function listLocatedNodes(document: Document): LocatedNode[] {
