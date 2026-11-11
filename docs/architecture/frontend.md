@@ -34,6 +34,8 @@
 
 依存方向はドキュメントの型・編集操作・履歴 → ファイル/MCP/画面側のアダプター。`src/document/` から React、Tauri、ファイル選択や MCP の都合を参照しない。編集コマンド内では `tree.ts` と `validation.ts` を共有し、各操作は他の操作ファイルを経由しない。
 
+MCP の公開ツールとアプリ側の要求検証は `src/agent/contracts.ts` の入力スキーマを共有する。`scripts/mcp-server.ts` はツール説明と接続、`src/agent/bridge.ts` は検証済み要求の振り分けを担う。ドキュメント編集の制約はコマンド側で維持する。
+
 ## 色
 
 - 編集画面の UI 色は `src/App.css` の `:root` に定義した CSS カスタムプロパティを使う。ルール内に色のリテラルを書かない。
