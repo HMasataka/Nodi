@@ -235,13 +235,15 @@ test("フレームの線と4隅は PNG に反映し、子要素の原点をず�
 
 test("フレームの子と画像を正規化した4隅のパスでクリップする", async () => {
   const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
-  const child = makeImage({ width: 15, height: 10, style: { cornerRadii: radii } });
+  const child = makeImage({ width: 15, height: 10, style: { cornerRadii: radii, fit: "contain", focalPoint: { x: 0.25, y: 0.75 } } });
   const frame = makeFrame({ width: 15, height: 10, style: { cornerRadii: radii, stroke: null }, children: [child] });
   const { canvas, calls } = fakeCanvas();
-  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => ({ naturalWidth: 30, naturalHeight: 20 }) }));
+  const picture = { naturalWidth: 30, naturalHeight: 10 };
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => picture }));
   const arcs = calls.filter(([method]) => method === "ellipse");
   assert.deepEqual(arcs.map(([, , , rx]) => rx), [5, 2.5, 10, 5, 2.5, 10, 5, 2.5, 10]);
   assert.equal(calls.filter(([method]) => method === "clip").length, 3);
+  assert.deepEqual(calls.find(([method]) => method === "drawImage"), ["drawImage", picture, 0, 0, 30, 10, 0, 3.75, 15, 5]);
   assert.ok(calls.findIndex(([method]) => method === "drawImage") > calls.findLastIndex(([method]) => method === "clip"));
   assert.equal(calls.filter(([method]) => method === "save").length, calls.filter(([method]) => method === "restore").length);
 });

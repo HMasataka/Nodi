@@ -12,11 +12,11 @@ test("画像の既定角丸は省略し、旧画像 style と非既定値を読�
   const plain = JSON.parse(success(serializeDocument(document(original))));
   assert.deepEqual(plain.children[0].style, {});
   assert.deepEqual(success(parseDocument(JSON.stringify(plain))), document(original));
-  const custom = { ...original, style: { cornerRadii: { topLeft: 3, topRight: 6, bottomRight: 9, bottomLeft: 12 } } };
-  assert.deepEqual(JSON.parse(success(serializeDocument(document(custom)))).children[0].style, custom.style);
+  const custom = { ...original, style: { ...original.style, cornerRadii: { topLeft: 3, topRight: 6, bottomRight: 9, bottomLeft: 12 } } };
+  assert.deepEqual(JSON.parse(success(serializeDocument(document(custom)))).children[0].style, { cornerRadii: custom.style.cornerRadii });
   assert.deepEqual(success(parseDocument(success(serializeDocument(document(custom))))), document(custom));
   for (const value of [-1, Infinity, NaN]) {
-    assert.equal(serializeDocument(document({ ...custom, style: { cornerRadii: { ...custom.style.cornerRadii, topLeft: value } } })).type, "Failure");
+    assert.equal(serializeDocument(document({ ...custom, style: { ...custom.style, cornerRadii: { ...custom.style.cornerRadii, topLeft: value } } })).type, "Failure");
   }
   assert.equal(parseDocument(JSON.stringify({ version: 1, children: [{ ...custom, style: { cornerRadii: { ...custom.style.cornerRadii, topLeft: -1 } } }] })).type, "Failure");
   assert.equal(parseDocument(JSON.stringify({ version: 1, children: [{ ...custom, style: { cornerRadii: { topLeft: 1 } } }] })).type, "Failure");

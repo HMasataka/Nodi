@@ -75,7 +75,7 @@ test("画像の4隅を MCP 経由で変更し、不正入力は履歴に残さ�
   const image = success(api.add({ type: "image", source: "data:image/png;base64,aGVsbG8=", x: 0, y: 0, width: 20, height: 20 }));
   const radii = { topLeft: 1, topRight: 2, bottomRight: 3, bottomLeft: 4 };
   assert.deepEqual(dispatchAgentRequest(api, "set_image_style", { id: image.id, cornerRadii: radii }), {
-    ok: true, data: { ...image, style: { cornerRadii: radii } },
+    ok: true, data: { ...image, style: { ...image.style, cornerRadii: radii } },
   });
   assert.equal(history.past.length, 2);
   for (const cornerRadii of [{ ...radii, bottomLeft: -1 }, { topLeft: 2 }, { ...radii, extra: 2 }]) {

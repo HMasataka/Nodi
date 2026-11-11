@@ -88,9 +88,12 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(layers, /風景/);
     const inspector = renderToStaticMarkup(createElement(Inspector, {
       selected: image, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
-      onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp,
+      onShapeStyle: noOp, onImageStyle: noOp, onDuplicate: noOp, onDelete: noOp,
     }));
     assert.match(inspector, /image-1/);
+    assert.match(inspector, /フィット/);
+    assert.match(inspector, /焦点 X/);
+    assert.match(inspector, /焦点 Y/);
     assert.match(inspector, /埋め込まれています/);
     const textInspector = renderToStaticMarkup(createElement(Inspector, {
       selected: text, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
@@ -124,7 +127,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(frameInspector, /はみ出しを表示/);
 
     const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
-    const clippedImage = makeImage({ width: 15, height: 10, style: { cornerRadii: radii } });
+    const clippedImage = makeImage({ width: 15, height: 10, style: { cornerRadii: radii, fit: "contain", focalPoint: { x: 0.2, y: 0.8 } } });
     const clippedFrame = makeFrame({ width: 15, height: 10, style: { cornerRadii: radii }, children: [clippedImage] });
     const clipped = renderToStaticMarkup(createElement(CanvasNode, { node: clippedFrame, selectedId: null,
       interaction: { onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp } }));
@@ -132,7 +135,8 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.equal(clipped.split(`d="${path}"`).length - 1, 2);
     assert.match(clipped, /border-radius:10px 5px 2.5px 0px/);
     assert.match(clipped, /<clipPath id="[^"]+"><path d="/);
-    assert.match(clipped, /preserveAspectRatio="xMidYMid slice"/);
+    assert.match(clipped, /<foreignObject[^>]+clip-path="url\(#[^)]+\)"/);
+    assert.match(clipped, /<img[^>]+style="object-fit:contain;object-position:20% 80%"/);
     assert.match(renderToStaticMarkup(createElement(Inspector, { selected: clippedImage, onImageStyle: noOp,
       onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp })), /左上[^]*右上[^]*右下[^]*左下/);
     assert.match(frameInspector, /左上[^]*右上[^]*右下[^]*左下/);

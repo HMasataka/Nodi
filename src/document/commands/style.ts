@@ -58,12 +58,20 @@ export function setFrameStyle(document: Document, id: string, patch: Partial<Fra
 export function setImageStyle(document: Document, id: string, patch: Partial<ImageStyle>): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "image") return Result.fail(new Error(`画像が見つかりません: ${id}`));
-  if (Object.keys(patch).some((key) => key !== "cornerRadii") ||
-    (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii))) return Result.fail(new Error("角丸は 0 以上の有限の数値で指定してください"));
-  return updateNode(document, id, (current) => current.type === "image" && patch.cornerRadii !== undefined
-    ? { ...current, style: { cornerRadii: structuredClone(patch.cornerRadii) } } : current);
+  if (Object.keys(patch).some((key) => !["fit", "focalPoint", "cornerRadii"].includes(key))) return Result.fail(new Error("未知の画像スタイル項目です"));
+  if (patch.fit !== undefined && !["cover", "contain", "fill"].includes(patch.fit)) return Result.fail(new Error("画像のフィットが不正です"));
+  if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return Result.fail(new Error("角丸は 0 以上の有限の数値で指定してください"));
+  const point = patch.focalPoint;
+  if (point !== undefined && (!point || typeof point !== "object" || Object.keys(point).some((key) => !["x", "y"].includes(key)) ||
+    ![point.x, point.y].every((value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 1))) {
+    return Result.fail(new Error("焦点位置は 0 から 1 の有限値で指定してください"));
+  }
+  return updateNode(document, id, (current) => current.type === "image" ? { ...current, style: {
+    ...current.style, ...(patch.fit === undefined ? {} : { fit: patch.fit }),
+    ...(point === undefined ? {} : { focalPoint: { x: point.x, y: point.y } }),
+    ...(patch.cornerRadii === undefined ? {} : { cornerRadii: structuredClone(patch.cornerRadii) }),
+  } } : current);
 }
-
 export function setTextContent(document: Document, id: string, content: string): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));

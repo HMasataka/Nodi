@@ -3,7 +3,7 @@ import { type PointerEvent, useId, useMemo } from "react";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import { boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths } from "@/document/shapePath.ts";
 import type { DocumentNode, TextNode } from "@/document/types";
-import { frameContentsStyle, frameNodeStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
+import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
@@ -85,8 +85,9 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       <svg viewBox={`0 0 ${node.width} ${node.height}`} aria-hidden="true">
         <defs><clipPath id={clipId}><path d={pathToString(roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii))} /></clipPath></defs>
-        <image href={node.source} width={node.width} height={node.height} preserveAspectRatio="xMidYMid slice"
-          clipPath={`url(#${clipId})`} onError={() => onImageError(node.id)} />
+        <foreignObject width={node.width} height={node.height} clipPath={`url(#${clipId})`}>
+          <img src={node.source} alt="" draggable={false} style={imageContentStyle(node)} onError={() => onImageError(node.id)} />
+        </foreignObject>
       </svg>
       {handle}
     </button>

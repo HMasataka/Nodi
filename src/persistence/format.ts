@@ -2,7 +2,7 @@ import { Result } from "@praha/byethrow";
 import { z } from "zod";
 
 import { textMarkIssue } from "@/document/textMarks.ts";
-import { DEFAULT_TEXT_STYLE, type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
+import { DEFAULT_IMAGE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");
@@ -18,8 +18,8 @@ const radius = z.number().finite().nonnegative();
 const cornerRadii = z.strictObject({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
 const shapeStyle = z.strictObject({ fill: color.nullable(), stroke: z.strictObject({ color, width: radius }).nullable().optional() });
 const boxStyle = z.strictObject({ ...shapeStyle.shape, cornerRadii: cornerRadii.optional() });
-const imageStyle = z.strictObject({ cornerRadii: cornerRadii.optional() });
 const textStyle = z.strictObject({ fontSize: z.number().finite().positive(), color, textAlign: z.enum(["left", "center", "right"]), fontFamily: z.enum(TEXT_FONT_FAMILIES).optional(), fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(), lineHeight: z.number().finite().positive().optional(), letterSpacing: z.number().finite().optional() });
+const imageStyle = z.strictObject({ fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) }).optional(), cornerRadii: cornerRadii.optional() });
 
 export type WireNode =
   | (Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> })
@@ -63,7 +63,7 @@ export const documentSchema = z.strictObject({ version: z.literal(1), children: 
 
 function normalizeNode(node: WireNode): DocumentNode {
   switch (node.type) {
-    case "image": return { ...node, style: { cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } } };
+    case "image": return { ...node, style: { fit: node.style.fit ?? DEFAULT_IMAGE_STYLE.fit, focalPoint: node.style.focalPoint ?? { ...DEFAULT_IMAGE_STYLE.focalPoint }, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII } } };
     case "text": return { ...node, style: { ...node.style,
       fontFamily: node.style.fontFamily ?? DEFAULT_TEXT_STYLE.fontFamily,
       fontWeight: node.style.fontWeight ?? DEFAULT_TEXT_STYLE.fontWeight,
@@ -77,8 +77,11 @@ function normalizeNode(node: WireNode): DocumentNode {
 }
 
 function compactNode(node: DocumentNode): WireNode {
-  if (node.type === "image") return { ...node, style: Object.values(node.style.cornerRadii).some((value) => value !== 0)
-    ? { cornerRadii: node.style.cornerRadii } : {} };
+  if (node.type === "image") return { ...node, style: {
+    ...(node.style.fit === DEFAULT_IMAGE_STYLE.fit ? {} : { fit: node.style.fit }),
+    ...(node.style.focalPoint.x === DEFAULT_IMAGE_STYLE.focalPoint.x && node.style.focalPoint.y === DEFAULT_IMAGE_STYLE.focalPoint.y ? {} : { focalPoint: node.style.focalPoint }),
+    ...(Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}),
+  } };
   if (node.type === "text") {
     const { fontFamily, fontWeight, lineHeight, letterSpacing, ...required } = node.style;
     return { ...node, style: { ...required,
