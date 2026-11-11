@@ -1,10 +1,11 @@
 import type { Alignment, LayerDirection } from "@/document/commands/index.ts";
-import type { DocumentNode, FrameStyle, Geometry, ImageStyle, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
+import type { DocumentNode, FrameStyle, Geometry, ImageStyle, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
+import { ShadowEditor } from "@/pages/editor/components/molecules/ShadowEditor";
 
 interface InspectorProps {
   selected?: DocumentNode;
@@ -13,6 +14,7 @@ interface InspectorProps {
   onGeometry(geometry: Geometry): void;
   onRotation(rotation: number): void;
   onOpacity(opacity: number): void;
+  onShadow(shadow: Shadow | null): void;
   onMask(isMask: boolean): void;
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
@@ -28,7 +30,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -72,6 +74,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           </label>
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onImageStyle={onImageStyle} />
+          <ShadowEditor key={`${selected.id}:${JSON.stringify(selected.shadow)}`} shadow={selected.shadow} onChange={onShadow} />
           {(selected.type === "rectangle" || selected.type === "ellipse") && <label className="mask-control">
             <input type="checkbox" checked={selected.isMask} onChange={(event) => onMask(event.currentTarget.checked)} />マスクとして使う
           </label>}

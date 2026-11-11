@@ -1,7 +1,7 @@
 import { Result } from "@praha/byethrow";
 
 import { locateSelection } from "@/document/geometry.ts";
-import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
+import { type Document, type DocumentNode, type Geometry, HEX_COLOR_PATTERN, type Shadow } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { invertTransform, normalizeRotation, transformVector } from "@/document/transform.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
@@ -65,6 +65,18 @@ export function setOpacity(document: Document, id: string, opacity: number): Res
     return Result.fail(new Error("不透明度は 0 から 1 の有限値で指定してください"));
   }
   return updateNode(document, id, (node) => node.opacity === opacity ? node : { ...node, opacity });
+}
+
+export function setShadow(document: Document, id: string, shadow: Shadow | null): Result.Result<Document, Error> {
+  if (shadow !== null && (!shadow || typeof shadow !== "object" || Array.isArray(shadow) ||
+    Object.keys(shadow).sort().join() !== "blur,color,offsetX,offsetY" ||
+    typeof shadow.color !== "string" || !HEX_COLOR_PATTERN.test(shadow.color) ||
+    !Number.isFinite(shadow.offsetX) || !Number.isFinite(shadow.offsetY) || !Number.isFinite(shadow.blur) || shadow.blur < 0)) {
+    return Result.fail(new Error("影の色・位置・ぼかし量が不正です"));
+  }
+  return updateNode(document, id, (node) => node.shadow === shadow || (node.shadow !== null && shadow !== null &&
+    node.shadow.color === shadow.color && node.shadow.offsetX === shadow.offsetX && node.shadow.offsetY === shadow.offsetY && node.shadow.blur === shadow.blur)
+    ? node : { ...node, shadow: shadow === null ? null : { ...shadow } });
 }
 
 export function setMask(document: Document, id: string, isMask: boolean): Result.Result<Document, Error> {

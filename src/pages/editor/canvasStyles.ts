@@ -58,6 +58,7 @@ export function guideStyle(guide: SnapGuide): CSSProperties {
 function nodeBoxStyle(node: NodeGeometry): CSSProperties {
   return { left: node.x, top: node.y, width: node.width, height: node.height,
     ...(node.opacity === 1 ? {} : { opacity: node.opacity }),
+    ...(node.shadow ? { filter: `drop-shadow(${node.shadow.offsetX}px ${node.shadow.offsetY}px ${node.shadow.blur}px ${node.shadow.color})` } : {}),
     ...(node.rotation === 0 ? {} : { transform: `rotate(${node.rotation}deg)`, transformOrigin: "center center" }) };
 }
 
