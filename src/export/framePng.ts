@@ -1,3 +1,4 @@
+import { blurPixels } from "@/document/blur.ts";
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
@@ -87,10 +88,11 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
 
 async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
   if (node.opacity === 0) return Result.succeed();
-  if (node.opacity < 1 || node.shadow) {
-    // 描画済みのシルエットに影を付けた後、グループ全体の透明度を一度だけ掛ける。
-    // 影の投影元が書き出し範囲の外にあっても描けるよう余白を設ける。
-    const padding = node.shadow ? Math.ceil(Math.abs(node.shadow.offsetX) + Math.abs(node.shadow.offsetY) + node.shadow.blur * 3 + 2) : 0;
+  if (node.opacity < 1 || node.shadow || node.blur > 0) {
+    // 描画済みのグループをぼかしてから影を付け、最後に透明度を一度だけ掛ける。
+    // 画面外の投影元やぼかしの縁が失われないように余白を設ける。
+    const padding = Math.ceil(node.blur * 3 + (node.shadow
+      ? Math.abs(node.shadow.offsetX) + Math.abs(node.shadow.offsetY) + node.shadow.blur * 3 : 0) + (node.blur > 0 || node.shadow ? 2 : 0));
     const layer = environment.createCanvas();
     layer.width = ctx.canvas.width + padding * 2;
     layer.height = ctx.canvas.height + padding * 2;
@@ -98,8 +100,13 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
     if (!layerContext) return Result.fail(new Error("不透明度の描画領域を作成できません"));
     const transform = ctx.getTransform();
     layerContext.setTransform(transform.a, transform.b, transform.c, transform.d, transform.e + padding, transform.f + padding);
-    const painted = await paintNode(layerContext, { ...node, opacity: 1, shadow: null }, environment);
+    const painted = await paintNode(layerContext, { ...node, opacity: 1, shadow: null, blur: 0 }, environment);
     if (Result.isFailure(painted)) return painted;
+    if (node.blur > 0) {
+      const pixels = layerContext.getImageData(0, 0, layer.width, layer.height);
+      pixels.data.set(blurPixels(pixels.data, layer.width, layer.height, node.blur));
+      layerContext.putImageData(pixels, 0, 0);
+    }
     ctx.save();
     try {
       ctx.setTransform(1, 0, 0, 1, 0, 0);

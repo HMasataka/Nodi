@@ -3,4 +3,4 @@ export { type AddNodeInput, addNode, createDocument } from "@/document/commands/
 export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNode } from "@/document/commands/structure.ts";
 export { setBorder, setFrameStyle, setImageFilters, setImageStyle, setNodeStyle, setTextContent, setTextMarkRange, setTextMarks, setTextStyle } from "@/document/commands/style.ts";
 export { findNode } from "@/document/commands/tree.ts";
-export { moveNode, moveNodes, renameNode, setMask, setNodeGeometry, setOpacity, setRotation, setShadow } from "@/document/commands/update.ts";
+export { moveNode, moveNodes, renameNode, setBlur, setMask, setNodeGeometry, setOpacity, setRotation, setShadow } from "@/document/commands/update.ts";

@@ -7,7 +7,7 @@ export interface Geometry {
 
 export interface RotatedGeometry extends Geometry { rotation: number }
 export interface Shadow { color: string; offsetX: number; offsetY: number; blur: number }
-export interface NodeGeometry extends RotatedGeometry { opacity: number; shadow: Shadow | null }
+export interface NodeGeometry extends RotatedGeometry { opacity: number; shadow: Shadow | null; blur: number }
 
 export interface CornerRadii {
   topLeft: number;
