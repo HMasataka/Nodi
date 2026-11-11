@@ -4,6 +4,24 @@ import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLO
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
+function sameValue(current: unknown, next: unknown): boolean {
+  if (Object.is(current, next)) return true;
+  if (current === null || next === null || typeof current !== "object" || typeof next !== "object") return false;
+  const entries = Object.entries(next);
+  return entries.length === Object.keys(current).length && entries.every(([key, value]) => sameValue((current as Record<string, unknown>)[key], value));
+}
+
+function matchesPatch(current: object, patch: object): boolean {
+  return Object.entries(patch).every(([key, value]) => {
+    if (value === undefined) return true;
+    const previous = (current as Record<string, unknown>)[key];
+    if (key === "filters" && value && typeof value === "object" && previous && typeof previous === "object") {
+      return Object.entries(value).every(([field, next]) => sameValue((previous as Record<string, unknown>)[field], next));
+    }
+    return sameValue(previous, value);
+  });
+}
+
 export function setNodeStyle(
   document: Document,
   id: string,
@@ -17,8 +35,8 @@ export function setNodeStyle(
   if (node.type === "rectangle" && borderCornerIssue({ ...node.style, ...patch })) return Result.fail(new Error("辺線と角丸は併用できません"));
   const style = boxStylePatch(patch);
   return updateNode(document, id, (current) => {
-    if (current.type === "rectangle") return { ...current, style: { ...current.style, ...style } };
-    if (current.type === "ellipse") return { ...current, style: { ...current.style, ...style } };
+    if (current.type === "rectangle") return matchesPatch(current.style, style) ? current : { ...current, style: { ...current.style, ...style } };
+    if (current.type === "ellipse") return matchesPatch(current.style, style) ? current : { ...current, style: { ...current.style, ...style } };
     return current;
   });
 }
@@ -62,7 +80,9 @@ export function setFrameStyle(document: Document, id: string, patch: Partial<Fra
   if (borderCornerIssue({ ...node.style, ...style })) return Result.fail(new Error("辺線と角丸は併用できません"));
   if (patch.clipContent !== undefined && typeof patch.clipContent !== "boolean") return Result.fail(new Error("はみ出し表示の設定が不正です"));
   const clipContent = clipping ?? node.clipContent;
-  return updateNode(document, id, (current) => current.type === "frame" ? { ...current, style: { ...current.style, ...boxStylePatch(style) }, clipContent } : current);
+  const stylePatch = boxStylePatch(style);
+  return updateNode(document, id, (current) => current.type === "frame" && (clipContent !== current.clipContent || !matchesPatch(current.style, stylePatch))
+    ? { ...current, style: { ...current.style, ...stylePatch }, clipContent } : current);
 }
 
 export function setBorder(document: Document, id: string, border: Border): Result.Result<Document, Error> {
@@ -87,7 +107,7 @@ export function setImageStyle(document: Document, id: string, patch: ImageStyleP
       typeof value !== "number" || !Number.isFinite(value) || (key !== "hueRotate" && value < 0) || (["grayscale", "sepia"].includes(key) && value > 1)))) {
     return Result.fail(new Error("画像フィルターの値が不正です"));
   }
-  return updateNode(document, id, (current) => current.type === "image" ? { ...current, style: {
+  return updateNode(document, id, (current) => current.type === "image" && !matchesPatch(current.style, patch) ? { ...current, style: {
     ...current.style, ...(patch.fit === undefined ? {} : { fit: patch.fit }),
     ...(point === undefined ? {} : { focalPoint: { x: point.x, y: point.y } }),
     ...(patch.cornerRadii === undefined ? {} : { cornerRadii: structuredClone(patch.cornerRadii) }),
@@ -102,7 +122,7 @@ export function setTextContent(document: Document, id: string, content: string):
   const node = findNode(document, id);
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
   if (typeof content !== "string") return Result.fail(new Error("本文は文字列で指定してください"));
-  return updateNode(document, id, (current) => current.type === "text"
+  return updateNode(document, id, (current) => current.type === "text" && current.content !== content
     ? { ...current, content, ...(current.marks ? { marks: remapTextMarks(current.content, content, current.marks) } : {}) }
     : current);
 }
@@ -112,7 +132,8 @@ export function setTextMarks(document: Document, id: string, marks: TextMark[]):
   if (!node || node.type !== "text") return Result.fail(new Error(`テキストが見つかりません: ${id}`));
   const issue = textMarkIssue(node.content, marks);
   if (issue) return Result.fail(new Error(issue));
-  return updateNode(document, id, (current) => ({ ...current, marks: marks.map((mark) => ({ ...mark })) }));
+  return updateNode(document, id, (current) => current.type === "text" && sameValue(current.marks ?? [], marks)
+    ? current : { ...current, marks: marks.map((mark) => ({ ...mark })) });
 }
 
 export function setTextMarkRange(document: Document, id: string, edit: TextMarkRangeEdit): Result.Result<Document, Error> {
@@ -121,7 +142,8 @@ export function setTextMarkRange(document: Document, id: string, edit: TextMarkR
   const issue = textMarkPatchIssue(edit.content, edit.start, edit.end, edit.patch);
   if (issue) return Result.fail(new Error(issue));
   const marks = patchTextMarks(remapTextMarks(node.content, edit.content, node.marks ?? []), edit.start, edit.end, edit.patch);
-  return updateNode(document, id, (current) => current.type === "text" ? { ...current, content: edit.content, marks } : current);
+  return updateNode(document, id, (current) => current.type === "text" && (current.content !== edit.content || !sameValue(current.marks ?? [], marks))
+    ? { ...current, content: edit.content, marks } : current);
 }
 
 export function setTextStyle(document: Document, id: string, patch: Partial<TextStyle>): Result.Result<Document, Error> {
@@ -143,5 +165,5 @@ export function setTextStyle(document: Document, id: string, patch: Partial<Text
   }
   if (!Number.isFinite(style.lineHeight) || style.lineHeight <= 0) return Result.fail(new Error("行高は正の有限値で指定してください"));
   if (!Number.isFinite(style.letterSpacing)) return Result.fail(new Error("字間は有限値で指定してください"));
-  return updateNode(document, id, (current) => current.type === "text" ? { ...current, style } : current);
+  return updateNode(document, id, (current) => current.type === "text" && !sameValue(current.style, style) ? { ...current, style } : current);
 }
