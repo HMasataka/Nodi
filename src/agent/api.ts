@@ -1,7 +1,7 @@
 import { Result } from "@praha/byethrow";
 
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
-import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageStyle, type RectangleStyle, type TextMark, type TextStyle } from "@/document/types.ts";
+import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type RectangleStyle, type TextMark, type TextStyle } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
 
@@ -141,8 +141,11 @@ export function createAgentApi(port: EditorPort) {
     setBorder(id: string, border: Border) {
       return applyToElement(id, setBorder(port.getDocument(), id, border));
     },
-    setImageStyle(id: string, style: Partial<ImageStyle>) {
+    setImageStyle(id: string, style: ImageStylePatch) {
       return applyToElement(id, setImageStyle(port.getDocument(), id, style));
+    },
+    setImageFilters(id: string, filters: Partial<ImageFilters>) {
+      return applyToElement(id, setImageFilters(port.getDocument(), id, filters));
     },
     setTextStyle(id: string, style: Partial<TextStyle>) {
       return applyToElement(id, setTextStyle(port.getDocument(), id, style));

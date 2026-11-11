@@ -1,3 +1,5 @@
+import { geometryWithFixedCorner } from "@/pages/editor/geometry.ts";
+import { composeTransform, invertTransform, nodeTransform, transformPoint, transformVector } from "@/document/transform.ts";
 import type { Document, Geometry } from "@/document/types.ts";
 import { locateSelection, walkLocatedNodes } from "@/document/geometry.ts";
 
@@ -111,6 +113,21 @@ export function snapMove(document: Document, ids: string[], dx: number, dy: numb
 export function snapResize(document: Document, id: string, geometry: Geometry, zoom: number) {
   const selected = locateSelection(document, new Set([id]))[0];
   if (!selected) return { geometry, guides: [] as SnapGuide[] };
+
+  if (selected.node.rotation !== 0 || selected.parent.b !== 0 || selected.parent.c !== 0) {
+    const orientation = composeTransform(selected.parent, nodeTransform({ ...selected.node, ...geometry }));
+    const handle = transformPoint(orientation, { x: geometry.width, y: geometry.height });
+    const point = { x: handle.x, y: handle.y, width: 0, height: 0 };
+    const others = otherElementBounds(document, [id]);
+    const xSnap = closestSnap(point, others, "x", "move", zoom);
+    const ySnap = closestSnap(point, others, "y", "move", zoom);
+    const local = transformVector(invertTransform(orientation), { x: xSnap?.adjustment ?? 0, y: ySnap?.adjustment ?? 0 });
+    const width = geometry.width + local.x;
+    const height = geometry.height + local.y;
+    return width > 0 && height > 0
+      ? { geometry: geometryWithFixedCorner(selected.node, width, height), guides: guidesFor(xSnap, ySnap) }
+      : { geometry, guides: [] as SnapGuide[] };
+  }
 
   // 提案された x/y は親基準なので、元の絶対位置との差分を足して比較する。
   const moving = {

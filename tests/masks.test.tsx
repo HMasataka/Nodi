@@ -4,11 +4,12 @@ import { test } from "vitest";
 
 import { CanvasNodes } from "../src/pages/editor/components/molecules/CanvasNode/CanvasNode.tsx";
 import { createAgentApi } from "../src/agent/api.ts";
+import { DEFAULT_IMAGE_FILTERS } from "../src/document/types.ts";
 import { dispatchAgentRequest } from "../src/agent/bridge.ts";
 import { LayersPanel } from "../src/pages/editor/components/organisms/LayersPanel/LayersPanel.tsx";
 import { renderFramePng } from "../src/export/framePng.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
-import { corners, document, ellipse, frame, rectangle, success } from "./support/factories.ts";
+import { corners, document, ellipse, frame, image, rectangle, success } from "./support/factories.ts";
 import { deleteNode, duplicateNode, reorderNode, setMask } from "../src/document/commands/index.ts";
 import { maskGroups, maskPath } from "../src/document/masks.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
@@ -68,6 +69,27 @@ test("PNGはマスクを塗らず、兄弟ごとにクリップを解除して�
   assert.deepEqual(calls.filter(([kind]) => kind === "fill").map(([, color]) => color), ["#ffffff", "#112233", "#445566", "#778899"]);
   assert.equal(calls.filter(([kind]) => kind === "clip").length, 4);
   assert.equal(calls.filter(([kind]) => kind === "save").length, calls.filter(([kind]) => kind === "restore").length);
+});
+
+test("回転マスク内の画像フィルターはオフスクリーン処理後もクリップを維持する", async () => {
+  const calls: string[] = [];
+  const pixelData = { data: new Uint8ClampedArray([100, 50, 0, 128, 0, 0, 0, 0]) };
+  const offscreen = { width: 0, height: 0, getContext: () => ({ scale() {}, drawImage: () => calls.push("offscreen.drawImage"),
+    getImageData: () => pixelData, putImageData: () => calls.push("putImageData") }) };
+  const ctx = { save() {}, restore() {}, translate() {}, rotate() {}, beginPath() {}, rect() {}, closePath() {}, moveTo() {}, lineTo() {},
+    clip: () => calls.push("clip"), fill() {}, drawImage: (source: unknown) => { assert.equal(source, offscreen); calls.push("drawImage"); } };
+  const child = image({ width: 2, height: 1, style: { filters: { ...DEFAULT_IMAGE_FILTERS, brightness: 0.5 } } });
+  const root = frame({ width: 2, height: 1, children: [rectangle({ id: "clip", width: 2, height: 1, isMask: true, rotation: 90,
+    style: { cornerRadii: corners(0) } }), child] });
+  let canvasCount = 0;
+  success(await renderFramePng(root, { createCanvas: () => ++canvasCount === 1
+    ? { width: 0, height: 0, getContext: () => ctx, toBlob: (callback: (blob: Blob) => void) => callback(new Blob(["png"])) } as unknown as HTMLCanvasElement
+    : offscreen as unknown as HTMLCanvasElement,
+  loadImage: async () => ({ naturalWidth: 2, naturalHeight: 1 }) as HTMLImageElement }));
+  assert.equal(canvasCount, 2);
+  assert.equal(calls.slice(0, calls.indexOf("drawImage")).filter((call) => call === "clip").length, 4);
+  assert.deepEqual(calls.slice(-3), ["offscreen.drawImage", "putImageData", "drawImage"]);
+  assert.deepEqual(Array.from(pixelData.data), [50, 25, 0, 128, 0, 0, 0, 0]);
 });
 
 test("マスクを外す・削除・複製・並べ替えると対象グループが変わり、Undoで戻る", () => {

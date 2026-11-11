@@ -44,7 +44,7 @@ export function Canvas(props: CanvasProps) {
     onNodePointerUp: props.onNodePointerUp,
     onImageError: props.onImageError,
   };
-  const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentOrigin) : null;
+  const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentTransform) : null;
   const extent = canvasExtent(design);
 
   return (
@@ -66,7 +66,7 @@ export function Canvas(props: CanvasProps) {
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}
             {drawing && preview && <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
-              style={drawPreviewStyle(preview, drawing.parentOrigin)} />}
+               style={drawPreviewStyle(preview, drawing.parentTransform)} />}
           </div>
         </div>
       </section>

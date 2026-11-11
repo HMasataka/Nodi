@@ -4,6 +4,7 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
 import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
+import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { maskGroups, maskPath } from "@/document/masks.ts";
 
@@ -56,7 +57,7 @@ function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: numbe
   }
 }
 
-async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
+async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
   for (const group of maskGroups(nodes)) {
     if (group.mask) {
       ctx.save();
@@ -65,7 +66,7 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
     }
     try {
       for (const child of group.children) {
-        const painted = await paintNode(ctx, child, loadImage);
+        const painted = await paintNode(ctx, child, environment);
         if (Result.isFailure(painted)) return painted;
       }
     } finally {
@@ -75,7 +76,7 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
   return Result.succeed();
 }
 
-async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, loadImage: PngRenderEnvironment["loadImage"]): Promise<Result.Result<void, Error>> {
+async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
   ctx.save();
   ctx.translate(node.x, node.y);
   if (node.rotation !== 0) {
@@ -91,7 +92,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         tracePath(ctx, shape.fill);
         ctx.clip();
       }
-      const painted = await paintChildren(ctx, node.children, loadImage);
+      const painted = await paintChildren(ctx, node.children, environment);
       if (Result.isFailure(painted)) return painted;
       paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "rectangle") {
@@ -156,7 +157,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
     } else {
       tracePath(ctx, roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii));
       ctx.clip();
-      const image = await loadImage(node.source);
+      const image = await environment.loadImage(node.source);
       const width = image.naturalWidth;
       const height = image.naturalHeight;
       if (width === 0 || height === 0) return Result.fail(new Error(`画像を描画できません: ${node.name}`));
@@ -165,7 +166,19 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         ctx.fillStyle = "#eeeeee";
         ctx.fillRect(0, 0, node.width, node.height);
       }
-      ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+      if (hasImageFilters(node.style.filters)) {
+        const filtered = environment.createCanvas();
+        filtered.width = Math.max(1, Math.round(node.width));
+        filtered.height = Math.max(1, Math.round(node.height));
+        const offscreen = filtered.getContext("2d", { willReadFrequently: true });
+        if (!offscreen) return Result.fail(new Error("画像フィルターの描画領域を作成できません"));
+        offscreen.scale(filtered.width / node.width, filtered.height / node.height);
+        offscreen.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+        const pixels = offscreen.getImageData(0, 0, filtered.width, filtered.height);
+        pixels.data.set(filterPixels(pixels.data, node.style.filters));
+        offscreen.putImageData(pixels, 0, 0);
+        ctx.drawImage(filtered, 0, 0, node.width, node.height);
+      } else ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
     }
     return Result.succeed();
   } finally {
@@ -183,7 +196,7 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();
-    const painted = await paintNode(ctx, { ...frame, x: 0, y: 0 }, environment.loadImage);
+    const painted = await paintNode(ctx, { ...frame, x: 0, y: 0 }, environment);
     if (Result.isFailure(painted)) return painted;
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     return blob ? Result.succeed(blob) : Result.fail(new Error("PNG を生成できません"));

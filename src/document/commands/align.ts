@@ -3,6 +3,7 @@ import { Result } from "@praha/byethrow";
 import { findNode } from "@/document/commands/tree.ts";
 import { locateSelection } from "@/document/geometry.ts";
 import type { Document, DocumentNode } from "@/document/types.ts";
+import { invertTransform, transformVector } from "@/document/transform.ts";
 
 export type Alignment = "left" | "centerX" | "right" | "top" | "centerY" | "bottom";
 
@@ -18,13 +19,14 @@ export function alignNodes(document: Document, ids: string[], alignment: Alignme
   const bottom = Math.max(...located.map(({ absolute }) => absolute.y + absolute.height));
   const target = alignment === "left" ? left : alignment === "right" ? right : alignment === "centerX" ? (left + right) / 2
     : alignment === "top" ? top : alignment === "bottom" ? bottom : (top + bottom) / 2;
-  const positions = new Map(located.map(({ node, absolute }) => {
+  const positions = new Map(located.map(({ node, absolute, parent }) => {
     const current = alignment === "left" ? absolute.x : alignment === "right" ? absolute.x + absolute.width
       : alignment === "centerX" ? absolute.x + absolute.width / 2 : alignment === "top" ? absolute.y
         : alignment === "bottom" ? absolute.y + absolute.height : absolute.y + absolute.height / 2;
-    return [node.id, alignment === "left" || alignment === "right" || alignment === "centerX"
-      ? { x: node.x + target - current, y: node.y }
-      : { x: node.x, y: node.y + target - current }] as const;
+    const delta = alignment === "left" || alignment === "right" || alignment === "centerX"
+      ? { x: target - current, y: 0 } : { x: 0, y: target - current };
+    const local = transformVector(invertTransform(parent), delta);
+    return [node.id, { x: node.x + local.x, y: node.y + local.y }] as const;
   }));
   if ([...positions.values()].some(({ x, y }) => !Number.isFinite(x) || !Number.isFinite(y))) return Result.fail(new Error("整列後の座標が不正です"));
   let changed = false;

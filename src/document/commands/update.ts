@@ -1,8 +1,9 @@
 import { Result } from "@praha/byethrow";
 
-import { normalizeRotation } from "@/document/transform.ts";
+import { locateSelection } from "@/document/geometry.ts";
 import type { Document, DocumentNode, Geometry } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
+import { invertTransform, normalizeRotation, transformVector } from "@/document/transform.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
 
 export function moveNodes(document: Document, ids: string[], dx: number, dy: number): Result.Result<Document, Error> {
@@ -12,12 +13,17 @@ export function moveNodes(document: Document, ids: string[], dx: number, dy: num
   for (const id of selected) {
     const node = findNode(document, id);
     if (!node) return Result.fail(new Error(`要素が見つかりません: ${id}`));
-    if (!Number.isFinite(node.x + dx) || !Number.isFinite(node.y + dy)) return Result.fail(new Error("移動後の座標が不正です"));
   }
   if (dx === 0 && dy === 0) return Result.succeed(document);
+  const positions = new Map(locateSelection(document, selected).map(({ node, parent }) => {
+    const delta = transformVector(invertTransform(parent), { x: dx, y: dy });
+    return [node.id, { x: node.x + delta.x, y: node.y + delta.y }] as const;
+  }));
+  if ([...positions.values()].some(({ x, y }) => !Number.isFinite(x) || !Number.isFinite(y))) return Result.fail(new Error("移動後の座標が不正です"));
   function move(nodes: DocumentNode[]): DocumentNode[] {
     return nodes.map((node) => {
-      if (selected.has(node.id)) return { ...node, x: node.x + dx, y: node.y + dy };
+      const position = positions.get(node.id);
+      if (position) return { ...node, ...position };
       return node.type === "frame" ? { ...node, children: move(node.children) } : node;
     });
   }

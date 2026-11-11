@@ -361,6 +361,8 @@ button {
 .canvas-image { position: absolute; border: 0; padding: 0; background: var(--image-placeholder); cursor: grab; touch-action: none; user-select: none; }
 .canvas-image.is-selected { outline: 2px solid var(--accent); outline-offset: 2px; }
 .canvas-image img { width: 100%; height: 100%; pointer-events: none; user-select: none; }
+.image-filter-fields { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 8px 0; border: 0; }
+.image-filter-fields legend { padding-bottom: 8px; color: var(--text-tertiary); font-size: 11px; }
 .canvas-image svg { display: block; width: 100%; height: 100%; pointer-events: none; user-select: none; }
 .corner-radii-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; border: 0; }
 .corner-radii-fields legend { margin-bottom: 8px; }
