@@ -9,14 +9,17 @@ import { maskGroups, maskPath } from "@/document/masks.ts";
 
 let measurementContext: CanvasRenderingContext2D | null = null;
 
-function shapeSvg(shape: ShapePaths, gradientId: string) {
+function shapeSvg(shape: ShapePaths, gradientId: string, width: number, height: number) {
   const fill = shape.fillColor;
+  const stops = fill && typeof fill !== "string" && fill.stops.map((stop, index) =>
+    <stop key={index} offset={stop.position} stopColor={stop.color} />);
   return (
     <svg className="canvas-shape" aria-hidden="true">
-      {fill && typeof fill !== "string" && <defs><linearGradient id={gradientId} x1={fill.start.x} y1={fill.start.y}
-        x2={fill.end.x} y2={fill.end.y} gradientUnits="objectBoundingBox">
-        {fill.stops.map((stop, index) => <stop key={index} offset={stop.position} stopColor={stop.color} />)}
-      </linearGradient></defs>}
+      {fill && typeof fill !== "string" && <defs>{fill.type === "linear"
+        ? <linearGradient id={gradientId} x1={fill.start.x} y1={fill.start.y} x2={fill.end.x} y2={fill.end.y} gradientUnits="objectBoundingBox">{stops}</linearGradient>
+        : <radialGradient id={gradientId} cx={fill.center.x * width} cy={fill.center.y * height}
+          r={fill.radius * Math.min(width, height)} gradientUnits="userSpaceOnUse">{stops}</radialGradient>}
+      </defs>}
       <path d={pathToString(shape.fill)} fill={typeof fill === "string" ? fill : fill ? `url(#${gradientId})` : "none"} />
       {shape.stroke && <path d={pathToString(shape.stroke)} fill="none" stroke={shape.strokeColor} strokeWidth={shape.strokeWidth} />}
     </svg>
@@ -79,7 +82,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       data-frame-id={node.id} role="group" aria-label={node.name} style={frameNodeStyle(node)}
       onPointerDown={(event) => { if (event.target === event.currentTarget) onNodePointerDown(event, node); }}
       {...pointerEvents}>
-       {shapeSvg(boxShape(node.width, node.height, node.style), clipId)}
+       {shapeSvg(boxShape(node.width, node.height, node.style), clipId, node.width, node.height)}
       <div className="frame-contents" style={frameContentsStyle(node)}>
         <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />
       </div>
@@ -126,7 +129,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
         ? <svg className="canvas-shape" aria-hidden="true"><path d={pathToString(node.type === "rectangle"
           ? boxShape(node.width, node.height, node.style).fill : ellipseShape(node.width, node.height, node.style).fill)}
           fill="none" stroke="currentColor" strokeDasharray="4 3" /></svg>
-        : shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style), clipId)}
+        : shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style), clipId, node.width, node.height)}
       {node.type === "rectangle" && !node.isMask && borderSvg(node.width, node.height, node.style.border)}
       {handle}
     </button>

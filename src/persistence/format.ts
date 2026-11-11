@@ -16,10 +16,11 @@ const color = z.string().regex(HEX_COLOR_PATTERN);
 const unit = z.number().finite().min(0).max(1);
 const point = z.strictObject({ x: unit, y: unit });
 const stop = z.strictObject({ position: unit, color });
-const linearFill = z.strictObject({ type: z.literal("linear"), start: point, end: point, stops: z.array(stop).min(2) })
-  .refine((value) => value.start.x !== value.end.x || value.start.y !== value.end.y, "方向の始点と終点は異なる位置にしてください")
-  .refine((value) => value.stops.every((item, index) => index === 0 || value.stops[index - 1].position <= item.position), "色ストップを位置順に指定してください");
-const fill = z.union([color, linearFill]).nullable();
+const stops = z.array(stop).min(2).refine((items) => items.every((item, index) => index === 0 || items[index - 1].position <= item.position), "色ストップを位置順に指定してください");
+const linearFill = z.strictObject({ type: z.literal("linear"), start: point, end: point, stops })
+  .refine((value) => value.start.x !== value.end.x || value.start.y !== value.end.y, "方向の始点と終点は異なる位置にしてください");
+const radialFill = z.strictObject({ type: z.literal("radial"), center: point, radius: unit.positive(), stops });
+const fill = z.union([color, linearFill, radialFill]).nullable();
 const textMark = z.strictObject({ start: z.number().int().nonnegative(), end: z.number().int().positive(), color: color.optional(),
   fontWeight: z.number().int().min(100).max(900).refine((value) => value % 100 === 0).optional(),
   underline: z.literal(true).optional(), code: z.literal(true).optional() });
