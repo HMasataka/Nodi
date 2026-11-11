@@ -24,8 +24,8 @@ test("未知の項目、型の変換、不正な数値と無名の要素を拒�
     { ...valid, children: [{ ...button, type: "circle" }] },
     { ...valid, children: [{ ...button, id: "" }] },
     { ...valid, children: [{ ...button, name: undefined }] },
-    { ...valid, children: [{ ...button, fill: "red" }] },
-    { ...valid, children: [{ ...button, strokeWidth: -1 }] },
+    { ...valid, children: [{ ...button, style: { ...button.style, fill: "red" } }] },
+    { ...valid, children: [{ ...button, style: { ...button.style, stroke: { color: "#000000", width: -1 } } }] },
     { ...valid, children: [{ ...valid.children[0], children: undefined }] },
   ]) {
     assert.ok(Array.isArray(failure(serializeDocument(invalid))));

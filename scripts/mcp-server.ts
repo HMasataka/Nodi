@@ -74,8 +74,9 @@ export function createNodiMcpServer(request: NodiRequest = callNodi) {
   tool("move_element", "ID で要素を移動", z.object({ id: z.string(), x: z.number(), y: z.number() }), true);
   tool("set_text_content", "ID でテキスト本文を変更", z.object({ id: z.string(), content: z.string() }), true);
   tool("set_element_geometry", "ID で要素の親基準 x・y・width・height を変更（px）", z.strictObject({ id: z.string().min(1), ...geometry }), true);
-  tool("set_shape_style", "矩形・楕円の塗り・線色・線幅、矩形の角丸を変更", z.strictObject({ id: z.string().min(1), fill: z.string().optional(), stroke: z.string().optional(), strokeWidth: z.number().optional(), cornerRadius: z.number().optional() }), true);
-  tool("set_frame_style", "フレームの背景色と子要素のクリップを変更", z.strictObject({ id: z.string().min(1), background: z.string().optional(), clipContent: z.boolean().optional() }), true);
+  const boxStyle = { fill: z.string().nullable().optional(), stroke: z.strictObject({ color: z.string(), width: z.number() }).nullable().optional(), cornerRadii: z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() }).optional() };
+  tool("set_shape_style", "矩形・楕円の塗り・内側線、矩形の角丸を変更", z.strictObject({ id: z.string().min(1), ...boxStyle }), true);
+  tool("set_frame_style", "フレームの塗り・内側線・角丸と子要素のクリップを変更", z.strictObject({ id: z.string().min(1), ...boxStyle, clipContent: z.boolean().optional() }), true);
   tool("set_text_style", "テキストの文字サイズ・色・揃え・フォント・太さ・行高・字間を変更", z.strictObject({ id: z.string().min(1), fontSize: z.number().optional(), color: z.string().optional(), textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(["default", "system", "serif", "monospace"]).optional(), fontWeight: z.number().optional(), lineHeight: z.number().optional(), letterSpacing: z.number().optional() }), true);
   tool("set_text_marks", "テキスト本文の装飾範囲を指定・置換（色・太さ・下線・インラインコード）", z.strictObject({ id: z.string().min(1), marks: z.array(z.strictObject({ start: z.number(), end: z.number(), color: z.string().optional(), fontWeight: z.number().optional(), underline: z.literal(true).optional(), code: z.literal(true).optional() })) }), true);
   tool("delete_element", "ID で要素とその子孫を削除", z.strictObject({ id: z.string().min(1) }), true);

@@ -89,7 +89,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     const text = JSON.parse(addedText.content[0].text);
     assert.equal(text.path, "画面 › 見出し");
     assert.equal(text.content, "Hello");
-    assert.equal(text.fontSize, 16);
+    assert.equal(text.style.fontSize, 16);
     const updated = await client.callTool({ name: "set_text_content", arguments: { id: text.id, content: "Nodi" } });
     assert.equal(JSON.parse(updated.content[0].text).content, "Nodi");
     const invalid = await client.callTool({ name: "set_text_content", arguments: { id: frameId, content: "invalid" } });
@@ -99,7 +99,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     const ellipseId = JSON.parse(ellipse.content[0].text).id;
     const ellipseRef = await client.callTool({ name: "get_element", arguments: { id: ellipseId } });
     assert.equal(JSON.parse(ellipseRef.content[0].text).type, "ellipse");
-    assert.equal(JSON.parse(ellipseRef.content[0].text).fill, "#f3d9c8");
+    assert.equal(JSON.parse(ellipseRef.content[0].text).style.fill, "#f3d9c8");
     const image = api.add({ type: "image", source: "data:image/png;base64,aGVsbG8=", x: 0, y: 0, width: 20, height: 20 });
     assert.equal(image.type, "Success");
     const imageRef = await client.callTool({ name: "get_element", arguments: { id: image.value.id } });
@@ -219,22 +219,22 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(JSON.parse(geometryChanged.content[0].text).width, 320);
     assert.equal(history.past.length, beforeEditCount + 1);
     assert.equal(undo(history).present.children.find((node) => node.id === frameId).children.find((node) => node.id === siblingId).width, 300);
-    const shapeChanged = await client.callTool({ name: "set_shape_style", arguments: { id: element.id, fill: "#123456", cornerRadius: 8 } });
-    assert.equal(JSON.parse(shapeChanged.content[0].text).fill, "#123456");
-    const frameChanged = await client.callTool({ name: "set_frame_style", arguments: { id: frameId, background: "#abcdef", clipContent: false } });
+    const shapeChanged = await client.callTool({ name: "set_shape_style", arguments: { id: element.id, fill: "#123456", cornerRadii: { topLeft: 8, topRight: 8, bottomRight: 8, bottomLeft: 8 } } });
+    assert.equal(JSON.parse(shapeChanged.content[0].text).style.fill, "#123456");
+    const frameChanged = await client.callTool({ name: "set_frame_style", arguments: { id: frameId, fill: "#abcdef", clipContent: false } });
     assert.equal(JSON.parse(frameChanged.content[0].text).clipContent, false);
     const textChanged = await client.callTool({ name: "set_text_style", arguments: { id: text.id, fontSize: 24, color: "#654321", textAlign: "center", fontFamily: "system", fontWeight: 700, lineHeight: 1.6, letterSpacing: -0.5 } });
-    assert.equal(JSON.parse(textChanged.content[0].text).fontSize, 24);
-    assert.equal(JSON.parse(textChanged.content[0].text).fontFamily, "system");
-    assert.equal(JSON.parse(textChanged.content[0].text).fontWeight, 700);
-    assert.equal(JSON.parse(textChanged.content[0].text).lineHeight, 1.6);
-    assert.equal(JSON.parse(textChanged.content[0].text).letterSpacing, -0.5);
+    assert.equal(JSON.parse(textChanged.content[0].text).style.fontSize, 24);
+    assert.equal(JSON.parse(textChanged.content[0].text).style.fontFamily, "system");
+    assert.equal(JSON.parse(textChanged.content[0].text).style.fontWeight, 700);
+    assert.equal(JSON.parse(textChanged.content[0].text).style.lineHeight, 1.6);
+    assert.equal(JSON.parse(textChanged.content[0].text).style.letterSpacing, -0.5);
     const marksChanged = await client.callTool({ name: "set_text_marks", arguments: { id: text.id, marks: [{ start: 0, end: 4, color: "#0969da", underline: true }] } });
     assert.deepEqual(JSON.parse(marksChanged.content[0].text).marks, [{ start: 0, end: 4, color: "#0969da", underline: true }]);
     const beforeInvalid = history;
     for (const [name, args] of [
       ["set_element_geometry", { id: siblingId, x: 0, y: 0, width: -1, height: 20 }],
-      ["set_shape_style", { id: element.id, strokeWidth: -1 }],
+      ["set_shape_style", { id: element.id, stroke: { color: "#000000", width: -1 } }],
       ["set_shape_style", { id: element.id }],
       ["set_text_style", { id: frameId, fontSize: 12 }],
       ["set_text_style", { id: text.id, fontFamily: "missing" }],

@@ -9,8 +9,9 @@
       "y": 70,
       "width": 960,
       "height": 710,
-      "background": "#fbfaf7",
-      "clipContent": true,
+      "style": {
+        "fill": "#fbfaf7"
+      },
       "children": [
         {
           "id": "nd_sample_header",
@@ -20,10 +21,19 @@
           "y": 44,
           "width": 920,
           "height": 68,
-          "fill": "#d9e8e1",
-          "stroke": "#a8bfb2",
-          "strokeWidth": 1,
-          "cornerRadius": 10
+          "style": {
+            "fill": "#d9e8e1",
+            "stroke": {
+              "color": "#a8bfb2",
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 10,
+              "topRight": 10,
+              "bottomRight": 10,
+              "bottomLeft": 10
+            }
+          }
         },
         {
           "id": "nd_sample_title",
@@ -34,13 +44,15 @@
           "width": 300,
           "height": 34,
           "content": "ATLAS STUDIO",
-          "fontSize": 22,
-          "color": "#24383a",
-          "textAlign": "left",
-          "fontFamily": "system",
-          "fontWeight": 700,
-          "lineHeight": 1.2,
-          "letterSpacing": 1
+          "style": {
+            "fontSize": 22,
+            "color": "#24383a",
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 700,
+            "lineHeight": 1.2,
+            "letterSpacing": 1
+          }
         },
         {
           "id": "nd_sample_sidebar",
@@ -50,10 +62,19 @@
           "y": 130,
           "width": 194,
           "height": 550,
-          "fill": "#e8e8e0",
-          "stroke": "#c9cbc2",
-          "strokeWidth": 1,
-          "cornerRadius": 10
+          "style": {
+            "fill": "#e8e8e0",
+            "stroke": {
+              "color": "#c9cbc2",
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 10,
+              "topRight": 10,
+              "bottomRight": 10,
+              "bottomLeft": 10
+            }
+          }
         },
         {
           "id": "nd_sample_landscape",
@@ -63,7 +84,8 @@
           "y": 180,
           "width": 162,
           "height": 102,
-          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20320%20200'%3E%3Crect%20width='320'%20height='200'%20fill='%23d9e8e1'/%3E%3Ccircle%20cx='220'%20cy='75'%20r='35'%20fill='%23f1e1d5'/%3E%3Cpath%20d='M0%20175L80%2090L145%20150L220%2070L320%20180V200H0Z'%20fill='%2386a992'/%3E%3C/svg%3E"
+          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20320%20200'%3E%3Crect%20width='320'%20height='200'%20fill='%23d9e8e1'/%3E%3Ccircle%20cx='220'%20cy='75'%20r='35'%20fill='%23f1e1d5'/%3E%3Cpath%20d='M0%20175L80%2090L145%20150L220%2070L320%20180V200H0Z'%20fill='%2386a992'/%3E%3C/svg%3E",
+          "style": {}
         },
         {
           "id": "nd_sample_overview",
@@ -73,8 +95,9 @@
           "y": 130,
           "width": 708,
           "height": 550,
-          "background": "#ffffff",
-          "clipContent": true,
+          "style": {
+            "fill": "#ffffff"
+          },
           "children": [
             {
               "id": "nd_sample_intro",
@@ -84,10 +107,19 @@
               "y": 42,
               "width": 672,
               "height": 76,
-              "fill": "#f1e1d5",
-              "stroke": "#d5b9a5",
-              "strokeWidth": 1,
-              "cornerRadius": 12
+              "style": {
+                "fill": "#f1e1d5",
+                "stroke": {
+                  "color": "#d5b9a5",
+                  "width": 1
+                },
+                "cornerRadii": {
+                  "topLeft": 12,
+                  "topRight": 12,
+                  "bottomRight": 12,
+                  "bottomLeft": 12
+                }
+              }
             },
             {
               "id": "nd_sample_overview_title",
@@ -98,13 +130,15 @@
               "width": 360,
               "height": 30,
               "content": "Overview",
-              "fontSize": 20,
-              "color": "#44352c",
-              "textAlign": "left",
-              "fontFamily": "system",
-              "fontWeight": 600,
-              "lineHeight": 1.3,
-              "letterSpacing": -0.3
+              "style": {
+                "fontSize": 20,
+                "color": "#44352c",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 600,
+                "lineHeight": 1.3,
+                "letterSpacing": -0.3
+              }
             },
             {
               "id": "nd_sample_overview_subtitle",
@@ -115,9 +149,11 @@
               "width": 600,
               "height": 22,
               "content": "作業状況をひと目で確認する",
-              "fontSize": 12,
-              "color": "#6a5a50",
-              "textAlign": "left"
+              "style": {
+                "fontSize": 12,
+                "color": "#6a5a50",
+                "textAlign": "left"
+              }
             },
             {
               "id": "nd_sample_metric_a",
@@ -127,10 +163,19 @@
               "y": 136,
               "width": 210,
               "height": 118,
-              "fill": "#e0e9dc",
-              "stroke": "#b2c8ae",
-              "strokeWidth": 2,
-              "cornerRadius": 12
+              "style": {
+                "fill": "#e0e9dc",
+                "stroke": {
+                  "color": "#b2c8ae",
+                  "width": 2
+                },
+                "cornerRadii": {
+                  "topLeft": 12,
+                  "topRight": 12,
+                  "bottomRight": 12,
+                  "bottomLeft": 12
+                }
+              }
             },
             {
               "id": "nd_sample_status_dot",
@@ -140,9 +185,13 @@
               "y": 152,
               "width": 24,
               "height": 24,
-              "fill": "#7bb591",
-              "stroke": "#4e8b68",
-              "strokeWidth": 2
+              "style": {
+                "fill": "#7bb591",
+                "stroke": {
+                  "color": "#4e8b68",
+                  "width": 2
+                }
+              }
             },
             {
               "id": "nd_sample_metric_b",
@@ -152,10 +201,19 @@
               "y": 136,
               "width": 210,
               "height": 118,
-              "fill": "#e4e6f0",
-              "stroke": "#b6bcd4",
-              "strokeWidth": 2,
-              "cornerRadius": 12
+              "style": {
+                "fill": "#e4e6f0",
+                "stroke": {
+                  "color": "#b6bcd4",
+                  "width": 2
+                },
+                "cornerRadii": {
+                  "topLeft": 12,
+                  "topRight": 12,
+                  "bottomRight": 12,
+                  "bottomLeft": 12
+                }
+              }
             },
             {
               "id": "nd_sample_metric_c",
@@ -165,10 +223,19 @@
               "y": 136,
               "width": 212,
               "height": 118,
-              "fill": "#f1e7cf",
-              "stroke": "#d7c79b",
-              "strokeWidth": 2,
-              "cornerRadius": 12
+              "style": {
+                "fill": "#f1e7cf",
+                "stroke": {
+                  "color": "#d7c79b",
+                  "width": 2
+                },
+                "cornerRadii": {
+                  "topLeft": 12,
+                  "topRight": 12,
+                  "bottomRight": 12,
+                  "bottomLeft": 12
+                }
+              }
             },
             {
               "id": "nd_sample_activity",
@@ -178,8 +245,9 @@
               "y": 276,
               "width": 440,
               "height": 252,
-              "background": "#f6f3ec",
-              "clipContent": true,
+              "style": {
+                "fill": "#f6f3ec"
+              },
               "children": [
                 {
                   "id": "nd_sample_activity_row_1",
@@ -189,10 +257,19 @@
                   "y": 48,
                   "width": 406,
                   "height": 52,
-                  "fill": "#ecede6",
-                  "stroke": "#d4d7cb",
-                  "strokeWidth": 1,
-                  "cornerRadius": 7
+                  "style": {
+                    "fill": "#ecede6",
+                    "stroke": {
+                      "color": "#d4d7cb",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 7,
+                      "topRight": 7,
+                      "bottomRight": 7,
+                      "bottomLeft": 7
+                    }
+                  }
                 },
                 {
                   "id": "nd_sample_activity_row_2",
@@ -202,10 +279,19 @@
                   "y": 116,
                   "width": 406,
                   "height": 52,
-                  "fill": "#ecede6",
-                  "stroke": "#d4d7cb",
-                  "strokeWidth": 1,
-                  "cornerRadius": 7
+                  "style": {
+                    "fill": "#ecede6",
+                    "stroke": {
+                      "color": "#d4d7cb",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 7,
+                      "topRight": 7,
+                      "bottomRight": 7,
+                      "bottomLeft": 7
+                    }
+                  }
                 }
               ]
             },
@@ -217,7 +303,9 @@
               "y": 276,
               "width": 212,
               "height": 252,
-              "background": "#f9f7f0",
+              "style": {
+                "fill": "#f9f7f0"
+              },
               "clipContent": false,
               "children": [
                 {
@@ -228,10 +316,19 @@
                   "y": 50,
                   "width": 178,
                   "height": 52,
-                  "fill": "#f3d9c8",
-                  "stroke": "#c77852",
-                  "strokeWidth": 2,
-                  "cornerRadius": 10
+                  "style": {
+                    "fill": "#f3d9c8",
+                    "stroke": {
+                      "color": "#c77852",
+                      "width": 2
+                    },
+                    "cornerRadii": {
+                      "topLeft": 10,
+                      "topRight": 10,
+                      "bottomRight": 10,
+                      "bottomLeft": 10
+                    }
+                  }
                 },
                 {
                   "id": "nd_sample_secondary_action",
@@ -241,10 +338,19 @@
                   "y": 120,
                   "width": 178,
                   "height": 52,
-                  "fill": "#f9f7f0",
-                  "stroke": "#b8b7a9",
-                  "strokeWidth": 1,
-                  "cornerRadius": 10
+                  "style": {
+                    "fill": "#f9f7f0",
+                    "stroke": {
+                      "color": "#b8b7a9",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 10,
+                      "topRight": 10,
+                      "bottomRight": 10,
+                      "bottomLeft": 10
+                    }
+                  }
                 }
               ]
             }

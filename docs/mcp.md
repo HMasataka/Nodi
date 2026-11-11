@@ -37,13 +37,28 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 - `move_element`: ID と親基準の X・Y で移動。
 - `set_text_content`: ID と本文でテキストを変更。
 - `set_element_geometry`: ID と親基準の `x`・`y`・`width`・`height`（px）で位置と寸法を変更。
-- `set_shape_style`: 矩形・楕円の `fill`・`stroke`・`strokeWidth`、矩形の `cornerRadius` を変更。
-- `set_frame_style`: フレームの `background` と `clipContent` を変更。
+- `set_shape_style`: 矩形・楕円の `fill`（`#RRGGBB` または `null`）・`stroke`（`{ color, width }` または `null`）、矩形の `cornerRadii`（`topLeft`・`topRight`・`bottomRight`・`bottomLeft`）を変更。線は均一な内側線。
+- `set_frame_style`: フレームの `fill`・`stroke`・`cornerRadii` と `clipContent` を変更。スタイルの形式は矩形と共通。
 - `set_text_style`: テキストの `fontSize`・`color`・`textAlign`・`fontFamily`（`default`・`system`・`serif`・`monospace`）・`fontWeight`（100〜900 の 100 刻み）・`lineHeight`（倍率）・`letterSpacing`（px、負値も可）を変更。
 - `set_text_marks`: テキスト本文の UTF-16 範囲 `start`・`end` と、その範囲の `color`・`fontWeight`・`underline: true`・`code: true` を配列で指定して置換。範囲は昇順・非重複で文字境界に揃える。
 - `delete_element` / `duplicate_element`: ID で削除・複製。フレームの子孫も対象に含み、複製した全要素の ID を再生成。
 
 `get_state` を呼び、続けて `add_element` で名前付き矩形を追加する。返された名前と ID を使って `rename_element`・`move_element` を呼ぶと、画面にも変更が反映される。画面の「元に戻す」で操作を戻せることを確認する。存在しない ID を指定した場合はエラーとなり、ドキュメントは変わらない。
+
+### 要素のスタイルと v1 の破壊的変更
+
+要素参照（`ElementReference`）は `id`・`name`・`path`・`parentId`・`type`・座標・寸法と、種別ごとの `style` を返す。文字の `content`・`marks`、フレームの `clipContent`、画像の `source` はノード直下にある。画像の `source` は `get_element` で取得でき、要素一覧では省略する。
+
+応答は既定値補完済み。たとえば線なしは `style.stroke: null`、角丸なしは4隅とも 0、標準の文字は `style.fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0` を返す。保存用 JSON ではこれらを省略するが、MCP の応答では省略しない。
+
+スタイル変更ツールの引数は `id` と変更するスタイル項目を直接指定する。`stroke` と `cornerRadii` は、それぞれオブジェクト全体を置換する。
+
+```text
+set_shape_style {"id":"nd_...","fill":null,"stroke":{"color":"#123456","width":2}}
+set_frame_style {"id":"nd_...","fill":"#ffffff","stroke":null,"clipContent":false}
+```
+
+文書の `version` は 1 のまま。未リリースのため、以前の平坦な応答や `background`・`strokeWidth`・`cornerRadius` の引数には互換対応しない。詳細は [文書形式](document-format.md)を参照。
 
 ### 履歴の数値照会例
 

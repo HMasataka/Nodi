@@ -1,6 +1,6 @@
 # Nodi ドキュメント形式 v1
 
-Nodi の現在のドキュメント形式。公開前のため、以前の開発版のファイルからの移行は行わない。
+Nodi の現在のドキュメント形式。未リリースで v1 の利用者がいないため、バージョン番号は 1 のまま構造を再設計した。スタイルがノード直下にある以前の開発版のファイルは読み込まず、移行処理も設けない。
 
 ファイルの拡張子は `.nodi` とし、中身は以下の JSON 形式で保存する。
 
@@ -22,8 +22,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
       "y": 0,
       "width": 390,
       "height": 844,
-      "background": "#ffffff",
-      "clipContent": true,
+      "style": { "fill": "#ffffff" },
       "children": [
         {
           "id": "nd_01JDEF",
@@ -33,10 +32,11 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
           "y": 680,
           "width": 342,
           "height": 48,
-          "fill": "#f3d9c8",
-          "stroke": "#d9bbaa",
-          "strokeWidth": 1,
-          "cornerRadius": 2
+          "style": {
+            "fill": "#f3d9c8",
+            "stroke": { "color": "#d9bbaa", "width": 1 },
+            "cornerRadii": { "topLeft": 2, "topRight": 2, "bottomRight": 2, "bottomLeft": 2 }
+          }
         }
       ]
     }
@@ -47,20 +47,34 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 ## v1 の構造
 
 - ルートは `version: 1` とトップレベルの `children` 配列を持つ。トップレベル要素の座標はドキュメント上の座標。
-- 各要素は `id`、`name`、`type`、`x`、`y`、`width`、`height` を持つ。子要素の座標は親フレームの左上を基準とする。
+- 各要素は `id`、`name`、`type`、`x`、`y`、`width`、`height` と、種別ごとの `style` を持つ。子要素の座標は親フレームの左上を基準とする。内側線の幅は子要素の原点に影響しない。
 - v1 の `type` は `frame`、`rectangle`、`ellipse`、`text`、`image`。`frame` は `children` 配列を持ち、それ以外は子を持たない。
 - `children` の順番は背面から前面への描画順。同じ親の子要素だけを並べ替え、ID・親基準の座標は変わらない。レイヤー一覧は前面の要素を上に表示する。
-- `text` も子を持たず、要素名 `name` とは別の文字列 `content`、正の有限値 `fontSize`、`#RRGGBB` 形式の `color`、`left`・`center`・`right` の `textAlign` を必ず持つ。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
+- `text` も子を持たず、要素名 `name` とは別の文字列 `content` を持つ。`style` 内の `fontSize` は正の有限値、`color` は `#RRGGBB` 形式、`textAlign` は `left`・`center`・`right` で、いずれも必須。本文には空文字や改行も使用できる。テキスト枠は固定幅・固定高で、幅に応じて折り返し、高さを超えた内容は表示しない。
 - 折り返しは単語境界を優先し、枠に入らない長い単語は文字単位で分ける。明示改行と空行は維持し、編集画面と PNG は同じ行構成を使う。
-- `text` の `marks` は省略可能な装飾範囲の配列。各範囲は本文の UTF-16 位置を示す `start`（含む）と `end`（含まない）を持ち、`color`、`fontWeight`、`underline: true`、`code: true` のうち1つ以上を指定する。範囲は文字（結合した絵文字を含む）の境界で始まり終わり、昇順で重複しない。古い文書で省略した場合は装飾なしとして扱う。`code` は等幅フォントと淡い背景で表示する。
+- `text` の `marks` はノード直下の省略可能な装飾範囲の配列。各範囲は本文の UTF-16 位置を示す `start`（含む）と `end`（含まない）を持ち、`color`、`fontWeight`、`underline: true`、`code: true` のうち1つ以上を指定する。範囲は文字（結合した絵文字を含む）の境界で始まり終わり、昇順で重複しない。省略時は装飾なしとして扱う。`code` は等幅フォントと淡い背景で表示する。
 - プロパティの本文欄で範囲を選んで装飾を付け外しできる。編集中の本文への装飾は本文と装飾範囲を一つの編集として保存し、既存の別属性の装飾は保持する。
-- `text` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。いずれも省略可能で、省略時は従来どおり `default`・400 として表示する。編集画面と PNG は同じフォントの代替順を使う。
-- `text` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。どちらも省略可能で、省略時は従来どおり行高 1.4 倍・字間 0px を使う。
+- `text.style` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。Wire 形式では省略可能で、省略時は `default`・400 に補完する。編集画面と PNG は同じフォントの代替順を使う。
+- `text.style` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。Wire 形式では省略可能で、省略時は行高 1.4 倍・字間 0px に補完する。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
-- フレームは `background`（`#RRGGBB` 形式）と `clipContent`（真偽値）を必ず持つ。既定値は白背景と `true`。`true` なら子要素をフレームの寸法で切り取り、`false` ならはみ出しを表示する（書き出し対象フレーム自体の外は PNG に含まれない）。
-- 矩形は `fill` と `stroke`（`#RRGGBB` 形式）、`strokeWidth` と `cornerRadius`（0 以上の有限値）を必ず持つ。フレームはこれらの項目を持たない。
-- 楕円は `fill` と `stroke`（`#RRGGBB` 形式）、`strokeWidth`（0 以上の有限値）を必ず持ち、`cornerRadius` は持たない。
-- 画像は `source` に PNG・JPEG・WEBP・SVG の data URI を持つ。画像は `.nodi` 内に埋め込むため、ファイルを単体で移動しても参照が切れない。画像を枠に合わせて表示し、はみ出す部分は切り取る。画像データは 8,000,000 文字以下。
+- 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`）。`fill` は必須の `#RRGGBB` または `null`（塗りなし）。フレームの `background` は廃止した。
+- `stroke` は `{ "color": "#RRGGBB", "width": 1 }` または `null`（線なし）。幅は 0 以上の有限値で、均一な内側線として描画する。省略時は `null`。幅 0 の線は明示した色とともに保持し、`null` に置き換えない。辺ごとの線は将来の `border` として別途扱う。
+- `cornerRadii` は `topLeft`・`topRight`・`bottomRight`・`bottomLeft` の4隅のオブジェクト。各値は 0 以上の有限値。オブジェクト全体の省略時は全隅 0 に補完する。指定する場合は4隅とも必須。単一値の `cornerRadius` は廃止し、同梱サンプルの旧角丸は全隅同値で再生成した。
+- フレームの `clipContent` はノード直下の真偽値。省略時は `true` に補完する。`true` なら子要素をフレームの輪郭で切り取り、`false` ならはみ出しを表示する（書き出し対象フレーム自体の外は PNG に含まれない）。
+- 楕円の `style` は `fill`・`stroke` のみで、`cornerRadii` は持たない。
+- 画像は `source` に PNG・JPEG・WEBP・SVG の data URI と、空の `style: {}` を持つ。画像スタイルの中身は将来の拡張で追加する。画像は `.nodi` 内に埋め込むため、ファイルを単体で移動しても参照が切れない。画像を枠に合わせて表示し、はみ出す部分は切り取る。画像データは 8,000,000 文字以下。
+
+## Wire 形式と内部モデル
+
+`src/persistence/format.ts` の `WireDocument` / `WireNode` は保存用の省略可能な形式。`src/document/types.ts` の `Document` は既定値を補完した内部モデルで、編集・描画・履歴はこの型を使う。
+
+- `parseDocument`: JSON を読み取り、Zod で検証してから、子孫も含めて既定値を補完する。
+- `serializeDocument`: 検証後、既定値を除去して JSON を生成する。入力の文書は変更しない。
+- 保存時に除去する値は、`stroke: null`、全隅 0 の `cornerRadii`、`clipContent: true`、文字の `fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0`。
+- `fill: null` は塗りなしを表す必須値なので保存する。画像の `style: {}` も保存する。
+- ルート・ノード・スタイル・線・角丸・文字装飾は `z.strictObject` で未知項目を拒否する。省略可能な項目でも不正な値を既定値に置き換えることはない。
+
+作成時の見た目と Wire 形式の既定値は別。新しい矩形は従来の塗り・幅 1 の線・全隅 2、新しいフレームは白い塗りで作る。
 
 ## 識別と編集の規則
 

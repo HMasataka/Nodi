@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, DEFAULT_TEXT_LETTER_SPACING, DEFAULT_TEXT_LINE_HEIGHT, type TextNode, type TextStyle } from "@/document/types";
+import type { TextNode, TextStyle } from "@/document/types";
 
-export function TextStyleEditor({ node, onChange }: { node: TextNode; onChange(style: Partial<TextStyle>): void }) {
-  const [fontSize, setFontSize] = useState(String(node.fontSize));
-  const [lineHeight, setLineHeight] = useState(String(node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT));
-  const [letterSpacing, setLetterSpacing] = useState(String(node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING));
-  const [color, setColor] = useState(node.color);
+export function TextStyleEditor({ node: { style }, onChange }: { node: TextNode; onChange(style: Partial<TextStyle>): void }) {
+  const [fontSize, setFontSize] = useState(String(style.fontSize));
+  const [lineHeight, setLineHeight] = useState(String(style.lineHeight));
+  const [letterSpacing, setLetterSpacing] = useState(String(style.letterSpacing));
+  const [color, setColor] = useState(style.color);
   return <div className="text-style-fields">
     <label>フォント
-      <select className="font-family-select" value={node.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY}
+      <select className="font-family-select" value={style.fontFamily}
         onChange={(event) => onChange({ fontFamily: event.currentTarget.value as TextStyle["fontFamily"] })}>
         <option value="default">標準</option><option value="system">システム</option>
         <option value="serif">セリフ</option><option value="monospace">等幅</option>
       </select>
     </label>
     <label>太さ
-      <select value={node.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT}
+      <select value={style.fontWeight}
         onChange={(event) => onChange({ fontWeight: Number(event.currentTarget.value) })}>
         {[100, 200, 300, 400, 500, 600, 700, 800, 900].map((weight) => <option key={weight} value={weight}>{weight}</option>)}
       </select>
@@ -23,24 +23,24 @@ export function TextStyleEditor({ node, onChange }: { node: TextNode; onChange(s
     <label>文字サイズ
       <input type="number" min="1" step="any" value={fontSize}
         onChange={(event) => setFontSize(event.currentTarget.value)}
-        onBlur={() => { if (fontSize !== String(node.fontSize)) onChange({ fontSize: fontSize.trim() === "" ? NaN : Number(fontSize) }); }} />
+        onBlur={() => { if (fontSize !== String(style.fontSize)) onChange({ fontSize: fontSize.trim() === "" ? NaN : Number(fontSize) }); }} />
     </label>
     <label>行高（倍）
       <input type="number" min="0.1" step="any" value={lineHeight}
         onChange={(event) => setLineHeight(event.currentTarget.value)}
-        onBlur={() => { if (lineHeight !== String(node.lineHeight ?? DEFAULT_TEXT_LINE_HEIGHT)) onChange({ lineHeight: lineHeight.trim() === "" ? NaN : Number(lineHeight) }); }} />
+        onBlur={() => { if (lineHeight !== String(style.lineHeight)) onChange({ lineHeight: lineHeight.trim() === "" ? NaN : Number(lineHeight) }); }} />
     </label>
     <label>字間（px）
       <input type="number" step="any" value={letterSpacing}
         onChange={(event) => setLetterSpacing(event.currentTarget.value)}
-        onBlur={() => { if (letterSpacing !== String(node.letterSpacing ?? DEFAULT_TEXT_LETTER_SPACING)) onChange({ letterSpacing: letterSpacing.trim() === "" ? NaN : Number(letterSpacing) }); }} />
+        onBlur={() => { if (letterSpacing !== String(style.letterSpacing)) onChange({ letterSpacing: letterSpacing.trim() === "" ? NaN : Number(letterSpacing) }); }} />
     </label>
     <label>文字色
       <input type="color" value={color} onChange={(event) => setColor(event.currentTarget.value)}
-        onBlur={() => { if (color !== node.color) onChange({ color }); }} />
+        onBlur={() => { if (color !== style.color) onChange({ color }); }} />
     </label>
     <label>揃え
-      <select value={node.textAlign} onChange={(event) => onChange({ textAlign: event.currentTarget.value as TextStyle["textAlign"] })}>
+      <select value={style.textAlign} onChange={(event) => onChange({ textAlign: event.currentTarget.value as TextStyle["textAlign"] })}>
         <option value="left">左</option><option value="center">中央</option><option value="right">右</option>
       </select>
     </label>

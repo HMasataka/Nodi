@@ -1,4 +1,4 @@
-import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_WEIGHT, type TextFontFamily, type TextStyle } from "@/document/types.ts";
+import type { TextFontFamily, TextStyle } from "@/document/types.ts";
 
 const FONT_STACKS: Record<TextFontFamily, string> = {
   default: '"Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif',
@@ -9,7 +9,7 @@ const FONT_STACKS: Record<TextFontFamily, string> = {
 
 export function resolvedTextFont(style: Pick<TextStyle, "fontFamily" | "fontWeight">) {
   return {
-    fontFamily: FONT_STACKS[style.fontFamily ?? DEFAULT_TEXT_FONT_FAMILY],
-    fontWeight: style.fontWeight ?? DEFAULT_TEXT_FONT_WEIGHT,
+    fontFamily: FONT_STACKS[style.fontFamily],
+    fontWeight: style.fontWeight,
   };
 }
