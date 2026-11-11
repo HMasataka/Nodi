@@ -25,15 +25,19 @@ export function updateNode(
 ): Result.Result<Document, Error> {
   let found = false;
   function updateChildren(nodes: DocumentNode[]): DocumentNode[] {
-    return nodes.map((node) => {
+    const updated = nodes.map((node) => {
+      if (found) return node;
       if (node.id === id) {
         found = true;
         return update(node);
       }
-      return node.type === "frame" ? { ...node, children: updateChildren(node.children) } : node;
+      if (node.type !== "frame") return node;
+      const children = updateChildren(node.children);
+      return children === node.children ? node : { ...node, children };
     });
+    return updated.every((node, index) => node === nodes[index]) ? nodes : updated;
   }
   const children = updateChildren(document.children);
   if (!found) return Result.fail(new Error(`要素が見つかりません: ${id}`));
-  return Result.succeed({ ...document, children });
+  return Result.succeed(children === document.children ? document : { ...document, children });
 }

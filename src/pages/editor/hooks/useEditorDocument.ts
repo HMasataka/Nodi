@@ -81,6 +81,7 @@ export function useEditorDocument() {
   }
 
   function recordDocument(document: Document) {
+    if (document === designRef.current) { setError(null); return; }
     const next = commit(historyRef.current, document);
     historyRef.current = next;
     setHistory(next);

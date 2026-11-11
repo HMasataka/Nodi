@@ -33,14 +33,14 @@ export function moveNodes(document: Document, ids: string[], dx: number, dy: num
 export function renameNode(document: Document, id: string, name: string): Result.Result<Document, Error> {
   const validated = validateName(name);
   if (Result.isFailure(validated)) return validated;
-  return updateNode(document, id, (node) => ({ ...node, name }));
+  return updateNode(document, id, (node) => node.name === name ? node : { ...node, name });
 }
 
 export function moveNode(document: Document, id: string, x: number, y: number): Result.Result<Document, Error> {
   if (![x, y].every(Number.isFinite)) {
     return Result.fail(new Error("座標は有限の数値で指定してください"));
   }
-  return updateNode(document, id, (node) => ({ ...node, x, y }));
+  return updateNode(document, id, (node) => node.x === x && node.y === y ? node : { ...node, x, y });
 }
 
 export function setNodeGeometry(
@@ -50,17 +50,20 @@ export function setNodeGeometry(
 ): Result.Result<Document, Error> {
   const validated = validateGeometry(geometry);
   if (Result.isFailure(validated)) return validated;
-  return updateNode(document, id, (node) => ({ ...node, ...geometry }));
+  return updateNode(document, id, (node) => node.x === geometry.x && node.y === geometry.y && node.width === geometry.width && node.height === geometry.height
+    ? node : { ...node, ...geometry });
 }
 
 export function setRotation(document: Document, id: string, rotation: number): Result.Result<Document, Error> {
   if (!Number.isFinite(rotation)) return Result.fail(new Error("回転角は有限の数値で指定してください"));
-  return updateNode(document, id, (node) => ({ ...node, rotation: normalizeRotation(rotation) }));
+  const normalized = normalizeRotation(rotation);
+  return updateNode(document, id, (node) => node.rotation === normalized ? node : { ...node, rotation: normalized });
 }
 
 export function setMask(document: Document, id: string, isMask: boolean): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`マスクにできる図形が見つかりません: ${id}`));
   if (typeof isMask !== "boolean") return Result.fail(new Error("マスクの指定が不正です"));
-  return updateNode(document, id, (current) => current.type === "rectangle" || current.type === "ellipse" ? { ...current, isMask } : current);
+  return updateNode(document, id, (current) => (current.type === "rectangle" || current.type === "ellipse") && current.isMask !== isMask
+    ? { ...current, isMask } : current);
 }

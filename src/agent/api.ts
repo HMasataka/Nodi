@@ -74,7 +74,7 @@ export function createAgentApi(port: EditorPort) {
 
   function applyToElement(id: string, result: Result.Result<Document, Error>): Result.Result<ElementReference, Error> {
     if (Result.isFailure(result)) return result;
-    port.apply(result.value);
+    if (result.value !== port.getDocument()) port.apply(result.value);
     return getElement(id);
   }
 
