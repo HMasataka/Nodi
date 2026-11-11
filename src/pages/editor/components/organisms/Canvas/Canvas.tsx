@@ -5,7 +5,7 @@ import type { Document } from "@/document/types";
 import { canvasExtent } from "@/pages/editor/viewport";
 import { drawingGeometry } from "@/pages/editor/geometry";
 import type { SnapGuide } from "@/pages/editor/snapping";
-import { CanvasNode, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
+import { CanvasNodes, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
 import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, guideStyle, selectionPreviewStyle } from "@/pages/editor/canvasStyles";
 import type { DrawingState, DrawTool } from "@/pages/editor/types";
 
@@ -61,7 +61,7 @@ export function Canvas(props: CanvasProps) {
             onPointerCancel={(event) => onWorldPointerCancel(event.pointerId)}
             onLostPointerCapture={(event) => onWorldPointerCancel(event.pointerId)}>
             {design.children.length === 0 && <div className="canvas-hint" aria-hidden="true"><span className="hint-symbol">＋</span><span>ここから、かたちをつくる。</span></div>}
-            {design.children.map((node) => <CanvasNode key={node.id} node={node} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
+            <CanvasNodes nodes={design.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}

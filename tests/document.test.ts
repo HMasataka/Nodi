@@ -41,10 +41,8 @@ test("スタイル項目の欠けた古い形のデータは移行せず拒否�
 });
 
 test("子孫を含む ID 重複は問題のパスとともに報告する", () => {
-  const duplicate = {
-    ...valid,
-    children: [{ ...valid.children[0], children: [{ ...button, id: "nd_screen" }] }],
-  };
+  const duplicate = JSON.parse(success(serializeDocument(valid)));
+  duplicate.children[0].children[0].id = "nd_screen";
   const issues = failure(parseDocument(JSON.stringify(duplicate)));
   assert.deepEqual(issues[0].path, ["children", 0, "children", 0, "id"]);
 });

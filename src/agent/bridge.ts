@@ -22,6 +22,7 @@ const compareInput = z.strictObject({ fromRevisionId: z.string().min(1), toRevis
 const relativeInput = z.strictObject({ revisionId: z.string().min(1), firstId: z.string().min(1), secondId: z.string().min(1) });
 const setGeometryInput = z.strictObject({ id: z.string().min(1), ...geometryInput });
 const rotationInput = z.strictObject({ id: z.string().min(1), rotation: z.number().finite() });
+const maskInput = z.strictObject({ id: z.string().min(1), isMask: z.boolean() });
 const hasChange = (value: { id: string }) => Object.keys(value).some((key) => key !== "id");
 const boxStyleInput = { fill: z.string().nullable().optional(), stroke: z.strictObject({ color: z.string(), width: z.number() }).nullable().optional(), cornerRadii: z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() }).optional() };
 const borderEdge = z.strictObject({ color: z.string(), width: z.number() });
@@ -61,6 +62,7 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_text_content": return withInput(contentInput, args, ({ id, content }) => api.setTextContent(id, content));
       case "set_element_geometry": return withInput(setGeometryInput, args, ({ id, ...geometry }) => api.setGeometry(id, geometry));
       case "set_rotation": return withInput(rotationInput, args, ({ id, rotation }) => api.setRotation(id, rotation));
+      case "set_mask": return withInput(maskInput, args, ({ id, isMask }) => api.setMask(id, isMask));
       case "set_shape_style": return withInput(shapeStyleInput, args, ({ id, ...style }) => api.setShapeStyle(id, style));
       case "set_frame_style": return withInput(frameStyleInput, args, ({ id, ...style }) => api.setFrameStyle(id, style));
       case "set_border": return withInput(setBorderInput, args, ({ id, border }) => api.setBorder(id, border));

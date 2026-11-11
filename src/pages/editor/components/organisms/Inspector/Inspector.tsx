@@ -12,6 +12,7 @@ interface InspectorProps {
   onRename(name: string): void;
   onGeometry(geometry: Geometry): void;
   onRotation(rotation: number): void;
+  onMask(isMask: boolean): void;
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
   onTextMarkRange(edit: TextMarkRangeEdit): void;
@@ -26,7 +27,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -59,6 +60,9 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           </label>
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onImageStyle={onImageStyle} />
+          {(selected.type === "rectangle" || selected.type === "ellipse") && <label className="mask-control">
+            <input type="checkbox" checked={selected.isMask} onChange={(event) => onMask(event.currentTarget.checked)} />マスクとして使う
+          </label>}
           <div className="property-divider" />
           <div className="field-label">要素 ID</div>
           <code className="node-id">{selected.id}</code>

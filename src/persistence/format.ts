@@ -29,9 +29,10 @@ const imageFilters = z.strictObject({ brightness: radius.optional(), contrast: r
 const imageStyle = z.strictObject({ fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) }).optional(), cornerRadii: cornerRadii.optional(), filters: imageFilters.optional() });
 
 type OptionalRotation<T> = Omit<T, "rotation"> & { rotation?: number };
+type OptionalMask<T> = Omit<T, "isMask"> & { isMask?: true };
 export type WireNode =
-  | OptionalRotation<Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> }>
-  | OptionalRotation<Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> }>
+  | OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> }>>
+  | OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>
   | OptionalRotation<Omit<Extract<DocumentNode, { type: "image" }>, "style"> & { style: z.infer<typeof imageStyle> }>
   | OptionalRotation<Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> }>
   | OptionalRotation<Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] }>;
@@ -39,8 +40,8 @@ export interface WireDocument { version: 1; children: WireNode[] }
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
-    z.strictObject({ id, name, type: z.literal("rectangle"), ...geometry, style: boxStyle }),
-    z.strictObject({ id, name, type: z.literal("ellipse"), ...geometry, style: shapeStyle }),
+    z.strictObject({ id, name, type: z.literal("rectangle"), ...geometry, isMask: z.literal(true).optional(), style: boxStyle }),
+    z.strictObject({ id, name, type: z.literal("ellipse"), ...geometry, isMask: z.literal(true).optional(), style: shapeStyle }),
     z.strictObject({ id, name, type: z.literal("image"), ...geometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
     z.strictObject({ id, name, type: z.literal("frame"), ...geometry, style: boxStyle, clipContent: z.boolean().optional(), children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...geometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
@@ -79,8 +80,8 @@ function normalizeNode(node: WireNode): DocumentNode {
       lineHeight: node.style.lineHeight ?? DEFAULT_TEXT_STYLE.lineHeight,
       letterSpacing: node.style.letterSpacing ?? DEFAULT_TEXT_STYLE.letterSpacing,
     } };
-    case "ellipse": return { ...node, rotation, style: { ...node.style, stroke: node.style.stroke ?? null } };
-    case "rectangle": return { ...node, rotation, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} } };
+    case "ellipse": return { ...node, rotation, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null } };
+    case "rectangle": return { ...node, rotation, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} } };
     case "frame": return { ...node, rotation, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
   }
 }
@@ -113,8 +114,11 @@ function compactNode(node: DocumentNode): WireNode {
     const { rotation: _rotation, clipContent: _clipContent, ...rest } = node;
     return { ...rest, ...rotationField, style, ...(node.clipContent ? {} : { clipContent: false }), children: node.children.map(compactNode) };
   }
-  const { rotation: _, ...rest } = node;
-  return { ...rest, ...rotationField, style };
+  if (node.type === "ellipse" || node.type === "rectangle") {
+    const { rotation: _, isMask: _mask, ...rest } = node;
+    return { ...rest, ...rotationField, ...(node.isMask ? { isMask: true as const } : {}), style };
+  }
+  return node;
 }
 
 const parseJson = Result.fn({
@@ -130,7 +134,15 @@ export function parseDocument(json: string) {
 }
 
 export function serializeDocument(document: Document) {
-  const parsed = Result.parse(documentSchema, document);
+  function wireMask(node: DocumentNode): unknown {
+    if (node.type === "frame") return { ...node, children: Array.isArray(node.children) ? node.children.map(wireMask) : node.children };
+    if ((node.type === "rectangle" || node.type === "ellipse") && node.isMask === false) {
+      const { isMask: _, ...rest } = node;
+      return rest;
+    }
+    return node;
+  }
+  const parsed = Result.parse(documentSchema, { ...document, children: document.children.map(wireMask) });
   if (Result.isFailure(parsed)) return parsed;
   return Result.succeed(JSON.stringify({ version: 1, children: parsed.value.children.map(normalizeNode).map(compactNode) }, null, 2));
 }

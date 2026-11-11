@@ -40,6 +40,7 @@ export interface RectangleNode extends RotatedGeometry {
   id: string;
   name: string;
   type: "rectangle";
+  isMask: boolean;
   style: BoxStyle;
 }
 
@@ -47,6 +48,7 @@ export interface EllipseNode extends RotatedGeometry {
   id: string;
   name: string;
   type: "ellipse";
+  isMask: boolean;
   style: ShapeStyle;
 }
 

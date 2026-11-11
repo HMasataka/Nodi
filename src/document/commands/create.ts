@@ -54,8 +54,8 @@ export function addNode(
       : input.type === "image"
         ? { id, name, type: "image", ...geometry, source: input.source, style: structuredClone(DEFAULT_IMAGE_STYLE) }
       : input.type === "ellipse"
-        ? { id, name, type: "ellipse", ...geometry, style: { fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: structuredClone(DEFAULT_RECTANGLE_STYLE.stroke) } }
-        : { id, name, type: "rectangle", ...geometry, style: structuredClone(DEFAULT_RECTANGLE_STYLE) };
+        ? { id, name, type: "ellipse", ...geometry, isMask: false, style: { fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: structuredClone(DEFAULT_RECTANGLE_STYLE.stroke) } }
+        : { id, name, type: "rectangle", ...geometry, isMask: false, style: structuredClone(DEFAULT_RECTANGLE_STYLE) };
 
   if (parent === undefined) {
     return Result.succeed({ document: { ...document, children: [...document.children, node] }, node });
