@@ -9,6 +9,7 @@ import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 
 import { absoluteGeometry } from "../src/pages/editor/geometry.ts";
+import { agentInputs } from "../src/agent/contracts.ts";
 import { createAgentApi } from "../src/agent/api.ts";
 import { createDocument } from "../src/document/commands/index.ts";
 import { dispatchAgentRequest } from "../src/agent/bridge.ts";
@@ -58,6 +59,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.match(client.getInstructions(), /変更前と変更後の実画面スクリーンショット/);
     assert.match(client.getInstructions(), /数値とテスト/);
     const tools = await client.listTools();
+    assert.deepEqual(tools.tools.map((tool) => tool.name).sort(), Object.keys(agentInputs).sort());
     assert.ok(tools.tools.some((tool) => tool.name === "add_element"));
     assert.ok(tools.tools.some((tool) => tool.name === "set_mask"));
     assert.ok(tools.tools.some((tool) => tool.name === "set_image_style"));
@@ -106,6 +108,10 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(image.type, "Success");
     const imageRef = await client.callTool({ name: "get_element", arguments: { id: image.value.id } });
     assert.equal(JSON.parse(imageRef.content[0].text).source, "data:image/png;base64,aGVsbG8=");
+    const invalidFilter = await client.callTool({ name: "set_image_filters", arguments: { id: image.value.id, filters: {} } });
+    assert.equal(invalidFilter.isError, true);
+    const unexpectedField = await client.callTool({ name: "add_element", arguments: { type: "rectangle", x: 0, y: 0, width: 20, height: 20, extra: true } });
+    assert.equal(unexpectedField.isError, true);
     assert.equal(history.past.length, 8);
     assert.ok(isDirty(history));
 
