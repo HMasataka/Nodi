@@ -1,7 +1,7 @@
 import { geometryWithFixedCorner } from "@/pages/editor/geometry.ts";
 import { composeTransform, invertTransform, nodeTransform, transformPoint, transformVector } from "@/document/transform.ts";
 import type { Document, Geometry } from "@/document/types.ts";
-import { locateSelection, walkLocatedNodes } from "@/document/geometry.ts";
+import { locateSelection, walkVisibleNodes } from "@/document/geometry.ts";
 
 export interface SnapGuide { orientation: "vertical" | "horizontal"; position: number; from: number; to: number }
 
@@ -17,10 +17,10 @@ const SNAP_DISTANCE_ON_SCREEN = 8;
 function otherElementBounds(document: Document, selectedIds: string[]): Geometry[] {
   const selectedRoots = new Set(locateSelection(document, new Set(selectedIds)).map(({ node }) => node.id));
   const bounds: Geometry[] = [];
-  walkLocatedNodes(document, ({ node, absolute }) => {
+  walkVisibleNodes(document, ({ node, visible }) => {
     // 選択フレームの子にも自分自身をスナップさせない。
     if (selectedRoots.has(node.id)) return "skipChildren";
-    bounds.push(absolute);
+    bounds.push(visible);
   });
   return bounds;
 }
