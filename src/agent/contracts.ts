@@ -39,6 +39,7 @@ export const agentInputs = {
   set_rotation: z.strictObject({ id, rotation: z.number().finite() }),
   set_opacity: z.strictObject({ id, opacity: z.number().finite().min(0).max(1) }),
   set_shadow: z.strictObject({ id, shadow: z.strictObject({ color: z.string(), offsetX: z.number().finite(), offsetY: z.number().finite(), blur: z.number().finite().nonnegative() }).nullable() }),
+  set_blur: z.strictObject({ id, blur: z.number().finite().nonnegative() }),
   set_mask: z.strictObject({ id, isMask: z.boolean() }),
   set_shape_style: z.strictObject({ id, ...boxStyle }).refine(hasChange, "変更するスタイルを指定してください"),
   set_frame_style: z.strictObject({ id, ...boxStyle, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください"),

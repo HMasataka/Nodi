@@ -15,6 +15,7 @@ interface InspectorProps {
   onRotation(rotation: number): void;
   onOpacity(opacity: number): void;
   onShadow(shadow: Shadow | null): void;
+  onBlur(blur: number): void;
   onMask(isMask: boolean): void;
   onTextContent(content: string): void;
   onTextStyle(style: Partial<TextStyle>): void;
@@ -30,7 +31,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -75,6 +76,17 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onImageStyle={onImageStyle} />
           <ShadowEditor key={`${selected.id}:${JSON.stringify(selected.shadow)}`} shadow={selected.shadow} onChange={onShadow} />
+          <label className="geometry-field">
+            <span>全体ぼかし px</span>
+            <input key={`${selected.id}:${selected.blur}`} type="number" min="0" step="any" defaultValue={selected.blur}
+              onBlur={(event) => {
+                const raw = event.currentTarget.value.trim();
+                const value = Number(raw);
+                if (raw !== "" && Number.isFinite(value) && value >= 0 && value !== selected.blur) onBlur(value);
+                else event.currentTarget.value = String(selected.blur);
+              }}
+              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+          </label>
           {(selected.type === "rectangle" || selected.type === "ellipse") && <label className="mask-control">
             <input type="checkbox" checked={selected.isMask} onChange={(event) => onMask(event.currentTarget.checked)} />マスクとして使う
           </label>}

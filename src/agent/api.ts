@@ -1,6 +1,6 @@
 import { Result } from "@praha/byethrow";
 
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBlur, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type RectangleStyle, type Shadow, type TextMark, type TextStyle } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -18,6 +18,7 @@ export interface ElementReference {
   rotation: number;
   opacity: number;
   shadow: Shadow | null;
+  blur: number;
   isMask?: boolean;
   content?: string;
   style: DocumentNode["style"];
@@ -55,6 +56,7 @@ export function listElements(document: Document, includeImageSource = false): El
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
         x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation, opacity: node.opacity,
         shadow: node.shadow ? { ...node.shadow } : null,
+        blur: node.blur,
         ...(node.type === "rectangle" || node.type === "ellipse" ? { isMask: node.isMask } : {}),
         style: structuredClone(node.style),
         ...(node.type === "rectangle" || node.type === "frame" ? { border: structuredClone(node.style.border) } : {}),
@@ -142,6 +144,9 @@ export function createAgentApi(port: EditorPort) {
     },
     setShadow(id: string, shadow: Shadow | null) {
       return applyToElement(id, setShadow(port.getDocument(), id, shadow));
+    },
+    setBlur(id: string, blur: number) {
+      return applyToElement(id, setBlur(port.getDocument(), id, blur));
     },
     setMask(id: string, isMask: boolean) {
       return applyToElement(id, setMask(port.getDocument(), id, isMask));

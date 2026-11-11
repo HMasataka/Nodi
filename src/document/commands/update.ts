@@ -79,6 +79,11 @@ export function setShadow(document: Document, id: string, shadow: Shadow | null)
     ? node : { ...node, shadow: shadow === null ? null : { ...shadow } });
 }
 
+export function setBlur(document: Document, id: string, blur: number): Result.Result<Document, Error> {
+  if (typeof blur !== "number" || !Number.isFinite(blur) || blur < 0) return Result.fail(new Error("ぼかし量は 0 以上の有限値で指定してください"));
+  return updateNode(document, id, (node) => node.blur === blur ? node : { ...node, blur });
+}
+
 export function setMask(document: Document, id: string, isMask: boolean): Result.Result<Document, Error> {
   const node = findNode(document, id);
   if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`マスクにできる図形が見つかりません: ${id}`));
