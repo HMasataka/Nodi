@@ -1,7 +1,8 @@
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
-import type { CornerRadii, DocumentNode, FrameNode, RectangleNode } from "@/document/types.ts";
+import { boxShape, ellipseShape, type ShapePaths, tracePath } from "@/document/shapePath.ts";
+import type { DocumentNode, FrameNode } from "@/document/types.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 
 export interface PngRenderEnvironment {
@@ -31,22 +32,16 @@ function drawSpacedText(ctx: CanvasRenderingContext2D, text: string, x: number, 
   });
 }
 
-function radii(value: CornerRadii): number[] {
-  return [value.topLeft, value.topRight, value.bottomRight, value.bottomLeft];
-}
-
-function paintBox(ctx: CanvasRenderingContext2D, node: FrameNode | RectangleNode) {
-  const { fill, stroke, cornerRadii } = node.style;
-  ctx.beginPath();
-  ctx.roundRect(0, 0, node.width, node.height, radii(cornerRadii));
-  if (fill !== null) { ctx.fillStyle = fill; ctx.fill(); }
-  const width = Math.min(stroke?.width ?? 0, node.width, node.height);
-  if (stroke && width > 0) {
-    const inset = width / 2;
-    ctx.beginPath();
-    ctx.roundRect(inset, inset, node.width - width, node.height - width, radii(cornerRadii).map((radius) => Math.max(0, radius - inset)));
-    ctx.strokeStyle = stroke.color;
-    ctx.lineWidth = width;
+function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths) {
+  if (shape.fillColor !== null) {
+    tracePath(ctx, shape.fill);
+    ctx.fillStyle = shape.fillColor;
+    ctx.fill();
+  }
+  if (shape.stroke) {
+    tracePath(ctx, shape.stroke);
+    ctx.strokeStyle = shape.strokeColor;
+    ctx.lineWidth = shape.strokeWidth;
     ctx.stroke();
   }
 }
@@ -56,10 +51,10 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
   ctx.translate(node.x, node.y);
   try {
     if (node.type === "frame") {
-      paintBox(ctx, node);
+      const shape = boxShape(node.width, node.height, node.style);
+      paintShape(ctx, shape);
       if (node.clipContent) {
-        ctx.beginPath();
-        ctx.roundRect(0, 0, node.width, node.height, radii(node.style.cornerRadii));
+        tracePath(ctx, shape.fill);
         ctx.clip();
       }
       for (const child of node.children) {
@@ -67,18 +62,9 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, load
         if (Result.isFailure(painted)) return painted;
       }
     } else if (node.type === "rectangle") {
-      paintBox(ctx, node);
+      paintShape(ctx, boxShape(node.width, node.height, node.style));
     } else if (node.type === "ellipse") {
-      const strokeWidth = Math.min(node.style.stroke?.width ?? 0, node.width, node.height);
-      const inset = strokeWidth / 2;
-      ctx.beginPath();
-      ctx.ellipse(node.width / 2, node.height / 2, Math.max(0, node.width / 2 - inset), Math.max(0, node.height / 2 - inset), 0, 0, Math.PI * 2);
-      if (node.style.fill !== null) { ctx.fillStyle = node.style.fill; ctx.fill(); }
-      if (node.style.stroke && strokeWidth > 0) {
-        ctx.strokeStyle = node.style.stroke.color;
-        ctx.lineWidth = strokeWidth;
-        ctx.stroke();
-      }
+      paintShape(ctx, ellipseShape(node.width, node.height, node.style));
     } else if (node.type === "text") {
       ctx.beginPath();
       ctx.rect(0, 0, node.width, node.height);

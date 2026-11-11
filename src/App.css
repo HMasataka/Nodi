@@ -36,7 +36,6 @@
   --surface-muted: #f0eee8;
   --surface-subtle: #f9f8f3;
   --panel-translucent: #fbfaf7ee;
-  --canvas-frame-surface: #fbfaf7c9;
   --image-placeholder: #eee;
 
   /* 線 */
@@ -54,10 +53,6 @@
   --accent-border: #b94f2f;
   --accent-translucent: #d56d4526;
   --accent-shadow: #d56d4522;
-
-  /* キャンバス図形の未指定時フォールバック。文書の既定色とは別に管理する */
-  --shape-fill: #f3d9c8;
-  --shape-stroke: #d9bbaa;
 
   /* 状態・通知 */
   --status-ok: #8b9b75;
@@ -336,16 +331,12 @@ button {
 }
 .canvas-node {
   position: absolute;
-  border: 1px solid var(--shape-stroke);
-  border-radius: 2px;
+  border: 0;
   padding: 0;
-  background: var(--shape-fill);
+  background: transparent;
   touch-action: none;
   user-select: none;
   cursor: grab;
-}
-.canvas-node:hover {
-  border-color: var(--accent);
 }
 .canvas-node.is-selected {
   outline: 2px solid var(--accent);
@@ -354,8 +345,8 @@ button {
 .canvas-node:active {
   cursor: grabbing;
 }
-.canvas-ellipse { border-radius: 50%; }
-.canvas-frame { position: absolute; outline: 1px dashed var(--canvas-frame-border); border-radius: 3px; background: var(--canvas-frame-surface); cursor: grab; }
+.canvas-shape { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.canvas-frame { position: absolute; outline: 1px dashed var(--canvas-frame-border); cursor: grab; }
 .frame-contents { position: absolute; inset: 0; pointer-events: none; }
 .frame-contents > * { pointer-events: auto; }
 .canvas-frame.is-selected { outline: 2px solid var(--accent); outline-offset: 3px; }

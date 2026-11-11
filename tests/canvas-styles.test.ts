@@ -33,7 +33,7 @@ test("ガイドは向きに応じて位置と長さを入れ替える", () => {
 
 test("フレームとテキストは既定値とクリップ設定を反映する", () => {
   const frameNode = frame({ id: "frame", name: "画面", x: 10, y: 20, width: 300, height: 200, style: { fill: "#aabbcc" } });
-  assert.deepEqual(frameNodeStyle(frameNode), { left: 10, top: 20, width: 300, height: 200, background: "#aabbcc", boxShadow: "inset 0 0 0 0px transparent", borderRadius: "0px 0px 0px 0px" });
+  assert.deepEqual(frameNodeStyle(frameNode), { left: 10, top: 20, width: 300, height: 200, borderRadius: "0px 0px 0px 0px" });
   assert.deepEqual(frameContentsStyle(frameNode), { overflow: "hidden", borderRadius: "inherit" });
   assert.deepEqual(frameContentsStyle({ ...frameNode, clipContent: false }), { overflow: "visible", borderRadius: "inherit" });
 
@@ -66,16 +66,12 @@ test("部分装飾は色・太さ・下線・コード背景をスタイルへ�
   });
 });
 
-test("矩形と楕円は同じ位置に異なる角丸を適用し、画像は位置だけを持つ", () => {
+test("矩形と楕円は位置のみを持ち、見た目は共通パスへ委ねる", () => {
   const rectangleNode = rectangle({ id: "rect", name: "矩形", x: 1, y: 2, width: 30, height: 40,
     style: { fill: "#ffffff", stroke: { color: "#000000", width: 2 }, cornerRadii: corners(6) } });
   const ellipseNode = ellipse({ id: "ellipse", name: "楕円", x: 1, y: 2, width: 30, height: 40,
     style: { fill: "#ffffff", stroke: { color: "#000000", width: 2 } } });
-  assert.deepEqual(shapeNodeStyle(rectangleNode), {
-    left: 1, top: 2, width: 30, height: 40, background: "#ffffff", borderColor: "#000000", borderWidth: 2, borderStyle: "solid", borderRadius: "6px 6px 6px 6px",
-  });
-  assert.deepEqual(shapeNodeStyle(ellipseNode), {
-    left: 1, top: 2, width: 30, height: 40, background: "#ffffff", borderColor: "#000000", borderWidth: 2, borderStyle: "solid", borderRadius: "50%",
-  });
+  assert.deepEqual(shapeNodeStyle(rectangleNode), { left: 1, top: 2, width: 30, height: 40 });
+  assert.deepEqual(shapeNodeStyle(ellipseNode), { left: 1, top: 2, width: 30, height: 40 });
   assert.deepEqual(imageNodeStyle(image({ x: 5, y: 6, width: 70, height: 80 })), { left: 5, top: 6, width: 70, height: 80 });
 });
