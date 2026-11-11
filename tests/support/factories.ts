@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { DEFAULT_FRAME_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
+import { DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
 
 type NodeOverrides<T extends DocumentNode> = Omit<Partial<T>, "style"> & { style?: Partial<T["style"]> };
 export const corners = (radius: number) => ({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
@@ -52,9 +52,9 @@ export function text({ style, ...overrides }: NodeOverrides<TextNode> = {}): Tex
   };
 }
 
-export function image(overrides: Partial<ImageNode> = {}): ImageNode {
+export function image({ style, ...overrides }: NodeOverrides<ImageNode> = {}): ImageNode {
   return {
     id: "image", name: "画像", type: "image", x: 0, y: 0, width: 100, height: 100, rotation: 0,
-    source: "data:image/png;base64,aGVsbG8=", style: {}, ...overrides,
+    source: "data:image/png;base64,aGVsbG8=", style: { ...structuredClone(DEFAULT_IMAGE_STYLE), ...style }, ...overrides,
   };
 }

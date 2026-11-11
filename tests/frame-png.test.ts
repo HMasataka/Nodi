@@ -7,7 +7,7 @@ import { RENDER_COLORS } from "../src/rendering/colors.ts";
 import { renderFramePng } from "../src/export/framePng.ts";
 import { savePng } from "../src/export/savePng.ts";
 import { wrapText } from "../src/document/textLayout.ts";
-import { corners, ellipse as makeEllipse, frame as makeFrame, rectangle as makeRectangle, text as makeText, success } from "./support/factories.ts";
+import { corners, ellipse as makeEllipse, frame as makeFrame, image as makeImage, rectangle as makeRectangle, text as makeText, success } from "./support/factories.ts";
 
 function fakeCanvas() {
   const calls = [];
@@ -50,6 +50,21 @@ test("PNG は入れ子フレームと子の中心回転を save/restore 内で�
     ["save"], ["translate", 10, 20], ["translate", 20, 10], ["rotate", Math.PI / 4], ["translate", -20, -10],
     ["restore"], ["restore"], ["restore"],
   ]);
+});
+
+test("回転したフレームは画像の角丸とフィットを保ち、辺線を子の後に描く", async () => {
+  const picture = { naturalWidth: 30, naturalHeight: 10 };
+  const child = makeImage({ width: 15, height: 10, rotation: 45,
+    style: { cornerRadii: corners(2), fit: "contain", focalPoint: { x: 0.25, y: 0.75 } } });
+  const frame = makeFrame({ width: 15, height: 10, rotation: 90,
+    style: { cornerRadii: corners(0), border: { top: { color: "#112233", width: 2 } } }, children: [child] });
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => picture }));
+  assert.deepEqual(calls.filter(([method]) => method === "rotate"), [["rotate", Math.PI / 2], ["rotate", Math.PI / 4]]);
+  const imageIndex = calls.findIndex(([method]) => method === "drawImage");
+  assert.deepEqual(calls[imageIndex], ["drawImage", picture, 0, 0, 30, 10, 0, 3.75, 15, 5]);
+  assert.equal(calls.slice(0, imageIndex).filter(([method]) => method === "clip").length, 3);
+  assert.ok(calls.findIndex(([method, color], index) => index > imageIndex && method === "fill" && color === "#112233") > imageIndex);
 });
 
 test("サンプルのフレームを寸法どおりに描き、編集 UI を含めない", async () => {
@@ -246,6 +261,21 @@ test("フレームの線と4隅は PNG に反映し、子要素の原点をず�
   assert.ok(calls.some(([method, x, y]) => method === "moveTo" && x === 4 && y === 2), "内側線は線幅の半分だけ内側へ寄る");
   assert.equal(canvas.getContext("2d").strokeStyle, "#123456");
   assert.equal(calls.filter(([method]) => method === "stroke").length, 1);
+});
+
+test("フレームの子と画像を正規化した4隅のパスでクリップする", async () => {
+  const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
+  const child = makeImage({ width: 15, height: 10, style: { cornerRadii: radii, fit: "contain", focalPoint: { x: 0.25, y: 0.75 } } });
+  const frame = makeFrame({ width: 15, height: 10, style: { cornerRadii: radii, stroke: null }, children: [child] });
+  const { canvas, calls } = fakeCanvas();
+  const picture = { naturalWidth: 30, naturalHeight: 10 };
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => picture }));
+  const arcs = calls.filter(([method]) => method === "ellipse");
+  assert.deepEqual(arcs.map(([, , , rx]) => rx), [5, 2.5, 10, 5, 2.5, 10, 5, 2.5, 10]);
+  assert.equal(calls.filter(([method]) => method === "clip").length, 3);
+  assert.deepEqual(calls.find(([method]) => method === "drawImage"), ["drawImage", picture, 0, 0, 30, 10, 0, 3.75, 15, 5]);
+  assert.ok(calls.findIndex(([method]) => method === "drawImage") > calls.findLastIndex(([method]) => method === "clip"));
+  assert.equal(calls.filter(([method]) => method === "save").length, calls.filter(([method]) => method === "restore").length);
 });
 
 test("PNG の保存・キャンセル・書き込み失敗を区別する", async () => {

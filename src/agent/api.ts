@@ -1,8 +1,8 @@
 import { Result } from "@praha/byethrow";
 
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setFrameStyle, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBorder, setFrameStyle, setImageStyle, setNodeGeometry, setNodeStyle, setRotation, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageStyle, type RectangleStyle, type TextMark, type TextStyle } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
-import { type Document, type DocumentNode, type FrameStyle, type Geometry, type RectangleStyle, type TextMark, type TextStyle } from "@/document/types.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
 
 export interface ElementReference {
@@ -18,6 +18,7 @@ export interface ElementReference {
   rotation: number;
   content?: string;
   style: DocumentNode["style"];
+  border?: Border;
   marks?: TextMark[];
   clipContent?: boolean;
   source?: string;
@@ -50,6 +51,7 @@ export function listElements(document: Document, includeImageSource = false): El
         id: node.id, name: node.name, path: path.join(" › "), parentId, type: node.type,
         x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation,
         style: structuredClone(node.style),
+        ...(node.type === "rectangle" || node.type === "frame" ? { border: structuredClone(node.style.border) } : {}),
         ...(node.type === "text" ? { content: node.content,
           ...(node.marks ? { marks: node.marks.map((mark) => ({ ...mark })) } : {}) } : {}),
         ...(node.type === "frame" ? { clipContent: node.clipContent } : {}),
@@ -130,6 +132,12 @@ export function createAgentApi(port: EditorPort) {
     },
     setFrameStyle(id: string, style: Partial<FrameStyle>) {
       return applyToElement(id, setFrameStyle(port.getDocument(), id, style));
+    },
+    setBorder(id: string, border: Border) {
+      return applyToElement(id, setBorder(port.getDocument(), id, border));
+    },
+    setImageStyle(id: string, style: Partial<ImageStyle>) {
+      return applyToElement(id, setImageStyle(port.getDocument(), id, style));
     },
     setTextStyle(id: string, style: Partial<TextStyle>) {
       return applyToElement(id, setTextStyle(port.getDocument(), id, style));

@@ -15,10 +15,13 @@ export interface CornerRadii {
 }
 
 export interface Stroke { color: string; width: number }
+export type Border = Partial<Record<"top" | "right" | "bottom" | "left", Stroke>>;
 export interface ShapeStyle { fill: string | null; stroke: Stroke | null }
-export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii }
+export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii; border: Border }
 export type RectangleStyle = BoxStyle;
-export type ImageStyle = Record<string, never>;
+export type ImageFit = "cover" | "contain" | "fill";
+export interface ImageStyle { fit: ImageFit; focalPoint: { x: number; y: number }; cornerRadii: CornerRadii }
+export const DEFAULT_IMAGE_STYLE: ImageStyle = { fit: "cover", focalPoint: { x: 0.5, y: 0.5 }, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 } };
 export const ZERO_CORNER_RADII: CornerRadii = { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 };
 
 export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
@@ -27,6 +30,7 @@ export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   fill: "#f3d9c8",
   stroke: { color: "#d9bbaa", width: 1 },
   cornerRadii: { topLeft: 2, topRight: 2, bottomRight: 2, bottomLeft: 2 },
+  border: {},
 };
 
 export interface RectangleNode extends RotatedGeometry {
@@ -58,7 +62,7 @@ export interface FrameStyle extends BoxStyle {
   clipContent: boolean;
 }
 
-export const DEFAULT_FRAME_STYLE: BoxStyle = { fill: "#ffffff", stroke: null, cornerRadii: ZERO_CORNER_RADII };
+export const DEFAULT_FRAME_STYLE: BoxStyle = { fill: "#ffffff", stroke: null, cornerRadii: ZERO_CORNER_RADII, border: {} };
 
 export const TEXT_FONT_FAMILIES = ["default", "system", "serif", "monospace"] as const;
 export type TextFontFamily = (typeof TEXT_FONT_FAMILIES)[number];

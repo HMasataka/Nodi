@@ -1,5 +1,5 @@
 import type { Alignment, LayerDirection } from "@/document/commands/index.ts";
-import type { DocumentNode, FrameStyle, Geometry, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
+import type { DocumentNode, FrameStyle, Geometry, ImageStyle, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
@@ -17,6 +17,7 @@ interface InspectorProps {
   onTextMarkRange(edit: TextMarkRangeEdit): void;
   onShapeStyle(style: Partial<RectangleStyle>): void;
   onFrameStyle(style: Partial<FrameStyle>): void;
+  onImageStyle(style: Partial<ImageStyle>): void;
   onDuplicate(): void;
   onDelete(): void;
   onReorder(direction: LayerDirection): void;
@@ -25,7 +26,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -57,7 +58,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
               onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
           </label>
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
-            onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} />
+            onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onImageStyle={onImageStyle} />
           <div className="property-divider" />
           <div className="field-label">要素 ID</div>
           <code className="node-id">{selected.id}</code>

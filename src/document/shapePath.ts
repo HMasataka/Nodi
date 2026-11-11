@@ -1,4 +1,4 @@
-import type { BoxStyle, CornerRadii, ShapeStyle } from "@/document/types.ts";
+import type { Border, BoxStyle, CornerRadii, ShapeStyle } from "@/document/types.ts";
 
 export type PathCommand =
   | { kind: "move"; x: number; y: number }
@@ -10,8 +10,16 @@ const HALF_TURN = Math.PI;
 const QUARTER_TURN = Math.PI / 2;
 const FULL_TURN = Math.PI * 2;
 
-export function roundedRectPath(x: number, y: number, width: number, height: number, radii: CornerRadii): PathCommand[] {
+export function normalizeRadii(radii: CornerRadii, width: number, height: number): CornerRadii {
   const { topLeft, topRight, bottomRight, bottomLeft } = radii;
+  const ratio = (size: number, sum: number) => sum > 0 ? size / sum : 1;
+  const factor = Math.min(1, ratio(width, topLeft + topRight), ratio(width, bottomLeft + bottomRight),
+    ratio(height, topLeft + bottomLeft), ratio(height, topRight + bottomRight));
+  return { topLeft: topLeft * factor, topRight: topRight * factor, bottomRight: bottomRight * factor, bottomLeft: bottomLeft * factor };
+}
+
+export function roundedRectPath(x: number, y: number, width: number, height: number, radii: CornerRadii): PathCommand[] {
+  const { topLeft, topRight, bottomRight, bottomLeft } = normalizeRadii(radii, width, height);
   const right = x + width;
   const bottom = y + height;
   const commands: PathCommand[] = [
@@ -53,6 +61,37 @@ export interface ShapePaths {
   stroke: PathCommand[] | null;
   strokeColor: string;
   strokeWidth: number;
+}
+
+export interface BorderPath { side: keyof Border; color: string; commands: PathCommand[] }
+
+export function borderPaths(width: number, height: number, border: Border): BorderPath[] {
+  const top = Math.min(border.top?.width ?? 0, height);
+  const right = Math.min(border.right?.width ?? 0, width);
+  const bottom = Math.min(border.bottom?.width ?? 0, height);
+  const left = Math.min(border.left?.width ?? 0, width);
+  const horizontalScale = left + right > width ? width / (left + right) : 1;
+  const verticalScale = top + bottom > height ? height / (top + bottom) : 1;
+  const innerLeft = left * horizontalScale;
+  const innerRight = width - right * horizontalScale;
+  const innerTop = top * verticalScale;
+  const innerBottom = height - bottom * verticalScale;
+  const corners = {
+    top: [[0, 0], [width, 0], [innerRight, innerTop], [innerLeft, innerTop]],
+    right: [[width, 0], [width, height], [innerRight, innerBottom], [innerRight, innerTop]],
+    bottom: [[width, height], [0, height], [innerLeft, innerBottom], [innerRight, innerBottom]],
+    left: [[0, height], [0, 0], [innerLeft, innerTop], [innerLeft, innerBottom]],
+  };
+  return (["top", "right", "bottom", "left"] as const).flatMap((side) => {
+    const edge = border[side];
+    if (!edge || edge.width === 0) return [];
+    const [first, ...rest] = corners[side];
+    return [{ side, color: edge.color, commands: [
+      { kind: "move" as const, x: first[0], y: first[1] },
+      ...rest.map(([x, y]) => ({ kind: "line" as const, x, y })),
+      { kind: "close" as const },
+    ] }];
+  });
 }
 
 export function boxShape(width: number, height: number, style: BoxStyle): ShapePaths {

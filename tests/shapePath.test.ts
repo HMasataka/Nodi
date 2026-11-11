@@ -2,7 +2,17 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import { corners } from "./support/factories.ts";
-import { boxShape, ellipsePath, ellipseShape, pathToString, roundedRectPath } from "../src/document/shapePath.ts";
+import { boxShape, ellipsePath, ellipseShape, normalizeRadii, pathToString, roundedRectPath } from "../src/document/shapePath.ts";
+
+test("4辺の合計から共通倍率で角丸を縮小し、0 は維持する", () => {
+  const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
+  assert.deepEqual(normalizeRadii(radii, 15, 10), { topLeft: 10, topRight: 5, bottomRight: 2.5, bottomLeft: 0 });
+  assert.deepEqual(normalizeRadii(radii, 50, 50), radii);
+  assert.deepEqual(normalizeRadii(corners(0), 10, 10), corners(0));
+  assert.deepEqual(normalizeRadii({ topLeft: 0, topRight: 0, bottomRight: 20, bottomLeft: 20 }, 20, 100),
+    { topLeft: 0, topRight: 0, bottomRight: 10, bottomLeft: 10 });
+  assert.deepEqual(roundedRectPath(0, 0, 15, 10, radii)[0], { kind: "move", x: 10, y: 0 });
+});
 
 test("roundedRectPath は4隅を円弧でつなぐ", () => {
   assert.deepEqual(roundedRectPath(0, 0, 20, 10, corners(4)), [

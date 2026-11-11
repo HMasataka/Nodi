@@ -7,6 +7,21 @@ import { corners, document, ellipse, frame, image, rectangle, success, text } fr
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { setFrameStyle, setNodeStyle } from "../src/document/commands/index.ts";
 
+test("画像の既定角丸は省略し、旧画像 style と非既定値を読み書きする", () => {
+  const original = image();
+  const plain = JSON.parse(success(serializeDocument(document(original))));
+  assert.deepEqual(plain.children[0].style, {});
+  assert.deepEqual(success(parseDocument(JSON.stringify(plain))), document(original));
+  const custom = { ...original, style: { ...original.style, cornerRadii: { topLeft: 3, topRight: 6, bottomRight: 9, bottomLeft: 12 } } };
+  assert.deepEqual(JSON.parse(success(serializeDocument(document(custom)))).children[0].style, { cornerRadii: custom.style.cornerRadii });
+  assert.deepEqual(success(parseDocument(success(serializeDocument(document(custom))))), document(custom));
+  for (const value of [-1, Infinity, NaN]) {
+    assert.equal(serializeDocument(document({ ...custom, style: { ...custom.style, cornerRadii: { ...custom.style.cornerRadii, topLeft: value } } })).type, "Failure");
+  }
+  assert.equal(parseDocument(JSON.stringify({ version: 1, children: [{ ...custom, style: { cornerRadii: { ...custom.style.cornerRadii, topLeft: -1 } } }] })).type, "Failure");
+  assert.equal(parseDocument(JSON.stringify({ version: 1, children: [{ ...custom, style: { cornerRadii: { topLeft: 1 } } }] })).type, "Failure");
+});
+
 test("v1 の Wire 形式を再帰的に正規化し、既定値だけを保存から除く", () => {
   const original = document(frame({ children: [
     rectangle({ style: { fill: null, stroke: null, cornerRadii: corners(0) } }),
@@ -36,7 +51,8 @@ test("非既定値と明示的な null を保持し、ゼロ幅の線を null �
     text({ style: { fontFamily: "monospace", fontWeight: 700, lineHeight: 2, letterSpacing: -1 } }),
   ] }));
   const json = success(serializeDocument(original));
-  assert.deepEqual(JSON.parse(json).children[0].style, original.children[0].style);
+  const { border: _border, ...wireStyle } = original.children[0].style;
+  assert.deepEqual(JSON.parse(json).children[0].style, wireStyle);
   assert.deepEqual(success(parseDocument(json)), original);
   const explicit = document(rectangle({ style: { stroke: null, cornerRadii: corners(0) } }));
   assert.deepEqual(success(parseDocument(JSON.stringify(explicit))), explicit);
