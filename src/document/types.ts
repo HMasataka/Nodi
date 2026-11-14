@@ -23,12 +23,34 @@ export const DEFAULT_LAYOUT_GAP = 0;
 export const DEFAULT_LAYOUT_ALIGNMENT: LayoutAlignment = "start";
 export const DEFAULT_LAYOUT_JUSTIFY: LayoutJustify = "start";
 
+export type AnimatableProperty = "x" | "y" | "scale" | "rotation" | "opacity";
+export const ANIMATABLE_PROPERTIES = ["x", "y", "scale", "rotation", "opacity"] as const;
+export type AnimationTrigger = "load" | "hover" | "click" | "scroll";
+export const ANIMATION_TRIGGERS = ["load", "hover", "click", "scroll"] as const;
+export type Easing = "linear" | "ease-in" | "ease-out" | "ease-in-out";
+export const EASINGS = ["linear", "ease-in", "ease-out", "ease-in-out"] as const;
+export const DEFAULT_EASING: Easing = "linear";
+export interface Keyframe { time: number; value: number; easing: Easing }
+export interface AnimationTrack { property: AnimatableProperty; keyframes: Keyframe[] }
+export interface Animation {
+  id: string;
+  name: string;
+  trigger: AnimationTrigger;
+  duration: number;
+  delay: number;
+  repeat: number;
+  tracks: AnimationTrack[];
+}
+export const DEFAULT_ANIMATION_DELAY = 0;
+export const DEFAULT_ANIMATION_REPEAT = 1;
+
 export interface NodeGeometry extends RotatedGeometry {
   opacity: number;
   shadow: Shadow | null;
   blur: number;
   widthConstraint: SizeConstraint;
   heightConstraint: SizeConstraint;
+  animations: Animation[];
 }
 
 export interface CornerRadii {

@@ -61,6 +61,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - `text.style` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。Wire 形式では省略可能で、省略時は行高 1.4 倍・字間 0px に補完する。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
 - 各要素は `widthConstraint`・`heightConstraint` で幅・高さのサイズモードを指定できる。`mode` は `fixed`（固定）・`fill`（親サイズへの伸縮）・`hug`（内容に追従）のいずれかで、`min`・`max`（0 より大きい有限値）を併記できる。`min` は `max` 以下でなければならない。省略時は `{ "mode": "fixed" }` に補完し、既定値は保存時に省略する。座標解決エンジンがこの制約を使って解決後の座標・サイズを計算する。
+- 各要素は `animations` に時間に沿って変化させるアニメーションの配列を持てる。各アニメーションは `id`・`name`・`trigger`（`load` / `hover` / `click` / `scroll`）・`duration`（正の有限値、ms）・`delay`（0 以上の有限値、既定 0）・`repeat`（正の整数、既定 1）・`tracks` を持つ。`tracks` は1つ以上の `{ property, keyframes }` で、`property` は `x`・`y`・`scale`・`rotation`・`opacity` のいずれか（1アニメーション内で重複不可）。`keyframes` は1つ以上の `{ time, value, easing }` を時刻順（昇順）に並べ、`time` は0以上の有限値、`value` は有限値、`easing` は `linear`・`ease-in`・`ease-out`・`ease-in-out` のいずれかで省略時は `linear`。省略時は空配列に補完し、空の場合は保存時に省略する。
 - 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`・`border`）。`fill` は必須の `#RRGGBB`・`#RRGGBBAA` または `null`（塗りなし）。フレームの `background` は廃止した。
 - 色はCSSのHEX表記で、8桁の場合は末尾の `AA` がアルファ値（`00` は透明、`ff` は不透明）。6桁は不透明として従来どおり読み書きする。塗り・線・辺線・テキスト・部分装飾の色に共通し、重なる要素は描画時に合成する。
 - 矩形・楕円・フレームの `fill` は単色と `null` に加え、`{ "type": "linear", "start": { "x": 0, "y": 0 }, "end": { "x": 1, "y": 0 }, "stops": [{ "position": 0, "color": "#ffffff" }, { "position": 1, "color": "#000000" }] }` を指定できる。始点・終点は異なる要素ローカルの正規化座標（各0〜1）で、サイズ変更に追従し要素とともに回転する。ストップは2個以上、位置は0〜1の昇順で同位置も可。色は6桁／8桁HEX。線と文字色は単色のみ。
@@ -83,7 +84,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 
 - `parseDocument`: JSON を読み取り、Zod で検証してから、子孫も含めて既定値を補完する。
 - `serializeDocument`: 正規化済みの内部モデルをWireとは別のスキーマで検証し、既定値を除去したWire形式を再検証してJSONを生成する。入力の文書は変更しない。内部で必須の `isMask: false` はWireでは省略し、Wireに明示された `false` は拒否する。
-- 保存時に除去する値は、`stroke: null`、全隅 0 の `cornerRadii`、`clipContent: true`、`layoutMode: "none"`・`padding: 0`・`gap: 0`・`alignItems: "start"`・`justifyContent: "start"`、`widthConstraint`・`heightConstraint` の `{ "mode": "fixed" }`（`min`・`max` なし）、文字の `fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0`。
+- 保存時に除去する値は、`stroke: null`、全隅 0 の `cornerRadii`、`clipContent: true`、`layoutMode: "none"`・`padding: 0`・`gap: 0`・`alignItems: "start"`・`justifyContent: "start"`、`widthConstraint`・`heightConstraint` の `{ "mode": "fixed" }`（`min`・`max` なし）、文字の `fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0`、空の `animations`、アニメーションの `delay: 0`・`repeat: 1`・キーフレームの `easing: "linear"`。
 - `fill: null` は塗りなしを表す必須値なので保存する。画像の `style: {}` も保存する。
 - ルート・ノード・スタイル・線・角丸・文字装飾は `z.strictObject` で未知項目を拒否する。省略可能な項目でも不正な値を既定値に置き換えることはない。
 

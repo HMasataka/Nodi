@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
+import type { Animation } from "../src/document/types.ts";
 import { createAgentApi } from "../src/agent/api.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { corners, document, ellipse, frame, image, rectangle, success, text } from "./support/factories.ts";
@@ -186,5 +187,59 @@ test("レイアウト設定とサイズ制約の不正値を拒否する", () =>
   ];
   for (const node of cases) {
     assert.equal(parseDocument(JSON.stringify({ version: 1, children: [node] })).type, "Failure");
+  }
+});
+
+function animation(overrides: Partial<Animation> = {}): Animation {
+  return {
+    id: "anim1", name: "フェード", trigger: "load", duration: 1000, delay: 0, repeat: 1,
+    tracks: [{ property: "opacity", keyframes: [{ time: 0, value: 1, easing: "linear" }, { time: 1000, value: 0, easing: "linear" }] }],
+    ...overrides,
+  };
+}
+
+test("アニメーションを読み書きし、既定値（delay 0・repeat 1・easing linear）は省略する", () => {
+  const custom = animation({ delay: 200, repeat: 3, tracks: [
+    { property: "opacity", keyframes: [{ time: 0, value: 1, easing: "linear" }, { time: 1000, value: 0, easing: "ease-out" }] },
+    { property: "x", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 500, value: 100, easing: "ease-in-out" }] },
+  ] });
+  const original = document(rectangle({ animations: [custom] }));
+  const wire = JSON.parse(success(serializeDocument(original))).children[0].animations[0];
+  assert.equal(wire.delay, 200);
+  assert.equal(wire.repeat, 3);
+  assert.equal(wire.tracks[0].keyframes[1].easing, "ease-out");
+  assert.equal(Object.hasOwn(wire.tracks[0].keyframes[0], "easing"), false);
+  assert.deepEqual(success(parseDocument(success(serializeDocument(original)))), original);
+
+  const plain = JSON.parse(success(serializeDocument(document(rectangle({ animations: [animation()] }))))).children[0].animations[0];
+  assert.equal(Object.hasOwn(plain, "delay"), false);
+  assert.equal(Object.hasOwn(plain, "repeat"), false);
+  assert.equal(Object.hasOwn(plain.tracks[0].keyframes[0], "easing"), false);
+});
+
+test("アニメーション未指定は空配列に補完し、保存時は省略する", () => {
+  const wire = JSON.parse(success(serializeDocument(document(rectangle())))).children[0];
+  assert.equal(Object.hasOwn(wire, "animations"), false);
+  assert.deepEqual(success(parseDocument(JSON.stringify({ version: 1, children: [wire] }))).children[0].animations, []);
+});
+
+test("不正なアニメーションの値と構造を拒否する", () => {
+  const cases: unknown[] = [
+    { animations: [{ ...animation(), trigger: "resize" }] },
+    { animations: [{ ...animation(), duration: 0 }] },
+    { animations: [{ ...animation(), delay: -1 }] },
+    { animations: [{ ...animation(), repeat: 0 }] },
+    { animations: [{ ...animation(), repeat: 1.5 }] },
+    { animations: [{ ...animation(), tracks: [] }] },
+    { animations: [{ ...animation(), tracks: [{ property: "opacity", keyframes: [] }] }] },
+    { animations: [{ ...animation(), tracks: [{ property: "opacity", keyframes: [{ time: 10, value: 1, easing: "linear" }, { time: 5, value: 0, easing: "linear" }] }] }] },
+    { animations: [{ ...animation(), tracks: [{ property: "opacity", keyframes: [{ time: 0, value: 1, easing: "bounce" }] }] }] },
+    { animations: [{ ...animation(), tracks: [
+      { property: "opacity", keyframes: [{ time: 0, value: 1, easing: "linear" }] },
+      { property: "opacity", keyframes: [{ time: 0, value: 0, easing: "linear" }] },
+    ] }] },
+  ];
+  for (const node of cases) {
+    assert.equal(parseDocument(JSON.stringify({ version: 1, children: [{ ...rectangle(), ...(node as object) }] })).type, "Failure");
   }
 });
