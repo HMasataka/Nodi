@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import type { Animation } from "../src/document/types.ts";
-import { evaluateAnimation } from "../src/document/animation.ts";
+import { applyAnimations, evaluateAnimation } from "../src/document/animation.ts";
+import { document, frame, rectangle } from "./support/factories.ts";
 
 function animation(overrides: Partial<Animation> = {}): Animation {
   return {
@@ -65,4 +66,21 @@ test("複数トラックを同時に評価する", () => {
     { property: "x", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 200, easing: "linear" }] },
   ] });
   assert.deepEqual(evaluateAnimation(a, 500), { opacity: 0.5, x: 100 });
+});
+
+test("applyAnimations は位置・回転・不透明度を適用し、scale は反映しない", () => {
+  const a = animation({ tracks: [
+    { property: "x", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 100, easing: "linear" }] },
+    { property: "opacity", keyframes: [{ time: 0, value: 1, easing: "linear" }, { time: 1000, value: 0, easing: "linear" }] },
+    { property: "rotation", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 90, easing: "linear" }] },
+    { property: "scale", keyframes: [{ time: 0, value: 1, easing: "linear" }, { time: 1000, value: 2, easing: "linear" }] },
+  ] });
+  const doc = document(frame({ id: "f", children: [rectangle({ id: "r", width: 50, height: 50, animations: [a] })] }));
+  const applied = applyAnimations(doc, 500);
+  const node = applied.children[0].children[0];
+  assert.equal(node.x, 50);
+  assert.equal(node.opacity, 0.5);
+  assert.equal(node.rotation, 45);
+  assert.equal(node.width, 50);
+  assert.deepEqual(applyAnimations(doc, 0).children[0].children[0].x, 0);
 });

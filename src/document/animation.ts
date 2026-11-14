@@ -1,4 +1,4 @@
-import type { AnimatableProperty, Animation, Easing, Keyframe } from "@/document/types.ts";
+import type { AnimatableProperty, Animation, Document, DocumentNode, Easing, Keyframe } from "@/document/types.ts";
 
 /** アニメーションが時刻 `t` に与える属性値。対象外の属性は含まれない。 */
 export type AnimatedValues = Partial<Record<AnimatableProperty, number>>;
@@ -50,4 +50,26 @@ export function evaluateAnimation(animation: Animation, timeMs: number): Animate
   const iterationTime = local % period;
   for (const track of animation.tracks) result[track.property] = interpolateTrack(track.keyframes, iterationTime);
   return result;
+}
+
+/**
+ * 文書の各要素に時刻 `timeMs` のアニメーション値を適用した文書を返す。入力は変更しない。
+ * 位置・回転・不透明度を上書きする。`scale` は要素の属性として未対応のため反映しない。
+ */
+export function applyAnimations(document: Document, timeMs: number): Document {
+  function applyNode(node: DocumentNode): DocumentNode {
+    const values: AnimatedValues = {};
+    for (const animation of node.animations) {
+      Object.assign(values, evaluateAnimation(animation, timeMs));
+    }
+    const overrides: { x?: number; y?: number; rotation?: number; opacity?: number } = {};
+    if (values.x !== undefined) overrides.x = values.x;
+    if (values.y !== undefined) overrides.y = values.y;
+    if (values.rotation !== undefined) overrides.rotation = values.rotation;
+    if (values.opacity !== undefined) overrides.opacity = values.opacity;
+    return node.type === "frame"
+      ? { ...node, ...overrides, children: node.children.map(applyNode) }
+      : { ...node, ...overrides };
+  }
+  return { ...document, children: document.children.map(applyNode) };
 }

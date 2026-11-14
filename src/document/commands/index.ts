@@ -1,4 +1,5 @@
 export { type Alignment, alignNodes } from "@/document/commands/align.ts";
+export { type AnimationTimingPatch, addAnimation, addKeyframe, type KeyframePatch, removeAnimation, removeKeyframe, setAnimationTiming, setKeyframe } from "@/document/commands/animation.ts";
 export { type AddNodeInput, addNode, createDocument } from "@/document/commands/create.ts";
 export { type FrameLayoutPatch, type SizeAxis, type SizeConstraintPatch, setFrameLayout, setNodeSizeConstraint } from "@/document/commands/layout.ts";
 export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNode } from "@/document/commands/structure.ts";
