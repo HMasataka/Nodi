@@ -6,6 +6,8 @@ export function listenForCanvasZoom(
   viewport: HTMLElement,
   getZoom: () => number,
   zoomAt: (zoom: number, clientX: number, clientY: number) => void,
+  panBy: (dx: number, dy: number) => void,
+  isInteracting: () => boolean = () => false,
 ): () => void {
   let gestureStartZoom: number | null = null;
 
@@ -13,18 +15,25 @@ export function listenForCanvasZoom(
     event.preventDefault();
     // gestureend が届かなくても、次のホイール入力を優先する。
     gestureStartZoom = null;
-    zoomAt(zoomFromWheel(getZoom(), event.deltaY, event.deltaMode, viewport.clientHeight), event.clientX, event.clientY);
+    if (isInteracting()) return;
+    if (event.ctrlKey || event.metaKey) {
+      zoomAt(zoomFromWheel(getZoom(), event.deltaY, event.deltaMode, viewport.clientHeight), event.clientX, event.clientY);
+    } else {
+      const dx = event.deltaX * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.clientWidth : 1);
+      const dy = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewport.clientHeight : 1);
+      if (Number.isFinite(dx) && Number.isFinite(dy)) panBy(event.shiftKey && dx === 0 ? dy : dx, event.shiftKey && dx === 0 ? 0 : dy);
+    }
   }
 
   function onGestureStart(event: Event) {
     event.preventDefault();
-    gestureStartZoom = getZoom();
+    gestureStartZoom = isInteracting() ? null : getZoom();
   }
 
   function onGestureChange(event: Event) {
     event.preventDefault();
     const gesture = event as WebKitGestureEvent;
-    if (gestureStartZoom === null || !Number.isFinite(gesture.scale) || gesture.scale <= 0) return;
+    if (isInteracting() || gestureStartZoom === null || !Number.isFinite(gesture.scale) || gesture.scale <= 0) return;
     const rect = viewport.getBoundingClientRect();
     const clientX = typeof gesture.clientX === "number" ? gesture.clientX : rect.left + viewport.clientWidth / 2;
     const clientY = typeof gesture.clientY === "number" ? gesture.clientY : rect.top + viewport.clientHeight / 2;

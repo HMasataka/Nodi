@@ -6,13 +6,11 @@ import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, frameContentsSt
   guideStyle, imageNodeStyle, selectionPreviewStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "../src/pages/editor/canvasStyles.ts";
 import { corners, ellipse, frame, image, rectangle, text } from "./support/factories.ts";
 
-const extent = { originX: 112, originY: 0, width: 1232, height: 932 };
-
 test("キャンバスの面とワールドはズームと原点を反映する", () => {
-  assert.deepEqual(canvasSurfaceStyle(extent, 2), {
-    width: "max(100%, 2464px)", height: "max(100%, 1864px)", backgroundSize: "48px 48px",
+  assert.deepEqual(canvasSurfaceStyle({ zoom: 2, scrollLeft: -112, scrollTop: 40 }), {
+    backgroundPosition: "111px -41px", backgroundSize: "48px 48px",
   });
-  assert.deepEqual(canvasWorldStyle(extent, 0.5), { transform: "translate(56px, 0px) scale(0.5)" });
+  assert.deepEqual(canvasWorldStyle({ zoom: 0.5, scrollLeft: -56, scrollTop: 0 }), { transform: "translate(56px, 0px) scale(0.5)" });
 });
 
 test("選択範囲と描画プレビューは負の座標や逆方向の範囲でも正の矩形になる", () => {

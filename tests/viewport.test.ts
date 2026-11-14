@@ -3,7 +3,8 @@ import { test } from "vitest";
 
 import { absoluteGeometry } from "../src/pages/editor/geometry.ts";
 import { addNode, createDocument } from "../src/document/commands/index.ts";
-import { canvasExtent, clampZoom, focusViewport, panScroll, screenDeltaToDocument, screenGeometry, zoomAroundPoint, zoomFromWheel } from "../src/pages/editor/viewport.ts";
+import { cameraScreenGeometry, focusCamera, zoomCamera } from "../src/pages/editor/camera.ts";
+import { clampZoom, panScroll, screenDeltaToDocument, zoomFromWheel } from "../src/pages/editor/viewport.ts";
 import { createHistory, isDirty } from "../src/document/history.ts";
 
 test("ズーム中のドラッグとリサイズはドキュメント座標に変換する", () => {
@@ -36,22 +37,21 @@ test("ホイールの移動量に応じて連続的に拡大・縮小し、倍�
 test("ズーム時はポインターの下にあるキャンバス座標を維持する", () => {
   const point = { x: 120, y: 70 };
   const scroll = { scrollLeft: 160, scrollTop: 80 };
-  const zoomed = zoomAroundPoint(1, 1.73, scroll, point);
+  const zoomed = zoomCamera({ zoom: 1, ...scroll }, 1.73, point);
   assert.equal(zoomed.zoom, 1.73);
   assert.ok(Math.abs((zoomed.scrollLeft + point.x) / zoomed.zoom - (scroll.scrollLeft + point.x)) < 1e-12);
   assert.ok(Math.abs((zoomed.scrollTop + point.y) / zoomed.zoom - (scroll.scrollTop + point.y)) < 1e-12);
-  const pinch = zoomAroundPoint(zoomed.zoom, 0.82, zoomed, point);
+  const pinch = zoomCamera(zoomed, 0.82, point);
   assert.ok(Math.abs((pinch.scrollLeft + point.x) / pinch.zoom - (scroll.scrollLeft + point.x)) < 1e-12);
-  assert.equal(zoomAroundPoint(1, 10, scroll, point).zoom, 4);
+  assert.equal(zoomCamera({ zoom: 1, ...scroll }, 10, point).zoom, 4);
 });
 
 test("パンの移動量とスクロール後の要素座標を画面ピクセルで計算する", () => {
   const start = { pointerId: 1, clientX: 100, clientY: 200, scrollLeft: 120, scrollTop: 80 };
   assert.deepEqual(panScroll(start, { clientX: 130, clientY: 170 }), { scrollLeft: 90, scrollTop: 110 });
-  assert.deepEqual(screenGeometry(
+  assert.deepEqual(cameraScreenGeometry(
     { x: -60, y: 150, width: 300, height: 100 },
-    { originX: 112, originY: 0, width: 1232, height: 932 },
-    0.5, { scrollLeft: 0, scrollTop: 25 },
+    { zoom: 0.5, scrollLeft: -56, scrollTop: 25 },
   ), { x: 26, y: 50, width: 150, height: 50 });
 });
 
@@ -62,12 +62,9 @@ test("入れ子や負の座標でも対象の境界が表示領域に入るパ�
   assert.equal(inner.type, "Success");
   const bounds = absoluteGeometry(inner.value.document, inner.value.node.id);
   assert.deepEqual(bounds, { x: -60, y: 150, width: 300, height: 100 });
-  const extent = canvasExtent(inner.value.document);
-  assert.equal(extent.originX, 112);
-  const view = focusViewport(bounds, extent, { width: 240, height: 160 }, 2);
+  const view = focusCamera(bounds, { width: 240, height: 160 }, 2);
   assert.equal(view.zoom, 176 / 300);
-  const left = (extent.originX + bounds.x) * view.zoom - view.scrollLeft;
-  const top = (extent.originY + bounds.y) * view.zoom - view.scrollTop;
+  const { x: left, y: top } = cameraScreenGeometry(bounds, view);
   assert.ok(left >= 0 && top >= 0);
   assert.ok(left + bounds.width * view.zoom <= 240);
   assert.ok(top + bounds.height * view.zoom <= 160);

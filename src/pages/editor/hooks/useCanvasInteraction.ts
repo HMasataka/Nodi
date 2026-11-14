@@ -1,6 +1,7 @@
 import { Result } from "@praha/byethrow";
 import { type PointerEvent, useEffect, useRef, useState } from "react";
 
+import { cameraWorldPoint } from "@/pages/editor/camera.ts";
 import { listLocatedNodes } from "@/document/geometry.ts";
 import { movePathPoint } from "@/document/pathEdit.ts";
 import type { PathPointPart } from "@/document/pathEdit.ts";
@@ -10,7 +11,7 @@ import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import type { Document, DocumentNode, PathNode } from "@/document/types";
 import type { DragState, DrawingState, DrawTool, PenState, SelectionRegion } from "@/pages/editor/types";
-import { drawingGeometry, frameTransform, nodesInBounds, pointOnCanvas, resizeFromWorldDelta } from "@/pages/editor/geometry";
+import { drawingGeometry, frameTransform, nodesInBounds, resizeFromWorldDelta } from "@/pages/editor/geometry";
 import { extendPen, finishPenInput, penLocalPoint } from "@/pages/editor/pen.ts";
 import { findNode, moveNodes, setNodeGeometry, setPath } from "@/document/commands/index.ts";
 import { IDENTITY_TRANSFORM, invertTransform, transformPoint, transformVector } from "@/document/transform.ts";
@@ -22,8 +23,8 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     beginPreview, previewDocument, finishPreview, stepHistory: stepDocumentHistory,
   } = session;
   const drag = useRef<DragState | null>(null);
-  const pathDrag = useRef<{ original: Document; node: PathNode; index: number; part: PathPointPart; pointerId: number; zoom: number } | null>(null);
-  const { zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
+  const pathDrag = useRef<{ original: Document; node: PathNode; index: number; part: PathPointPart; pointerId: number } | null>(null);
+  const { camera, zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag, pathDrag);
   const [drawTool, setDrawToolState] = useState<DrawTool>("select");
   const [pen, setPen] = useState<PenState | null>(null);
   const penRef = useRef<PenState | null>(null);
@@ -32,6 +33,12 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   const [selection, setSelection] = useState<SelectionRegion | null>(null);
   const selectionRef = useRef<SelectionRegion | null>(null);
   const [guides, setGuides] = useState<SnapGuide[]>([]);
+
+  function worldPoint(event: PointerEvent<Element>) {
+    const viewport = viewportRef.current!;
+    const rect = viewport.getBoundingClientRect();
+    return cameraWorldPoint(camera, { x: event.clientX - rect.left, y: event.clientY - rect.top });
+  }
 
   function cancelPen() {
     penRef.current = null;
@@ -51,15 +58,13 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     beginPreview();
-    pathDrag.current = { original: designRef.current, node, index, part, pointerId: event.pointerId, zoom };
+    pathDrag.current = { original: designRef.current, node, index, part, pointerId: event.pointerId };
   }
 
   function continuePathPointDrag(event: PointerEvent<SVGCircleElement>) {
     const active = pathDrag.current;
     if (!active || active.pointerId !== event.pointerId) return;
-    const bounds = event.currentTarget.closest(".canvas-world")?.getBoundingClientRect();
-    if (!bounds) return;
-    const world = pointOnCanvas(event.clientX, event.clientY, bounds, active.zoom);
+    const world = worldPoint(event);
     const located = listLocatedNodes(active.original).find(({ node }) => node.id === active.node.id);
     if (!located) return;
     const local = transformPoint(invertTransform(located.world), world);
@@ -101,7 +106,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     if (event.button !== 0 || spacePressed.current || pan.current) return;
     event.preventDefault();
     event.stopPropagation();
-    const world = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const world = worldPoint(event);
     const active = penRef.current;
     if (active) {
       const point = penLocalPoint(world, active.parentTransform);
@@ -123,7 +128,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   function updatePenCursor(event: PointerEvent<HTMLDivElement>) {
     const active = penRef.current;
     if (!active) return;
-    const world = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const world = worldPoint(event);
     const next = { ...active, cursor: penLocalPoint(world, active.parentTransform) };
     penRef.current = next;
     setPen(next);
@@ -222,7 +227,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     const frameId = event.target instanceof Element ? event.target.closest("[data-frame-id]")?.getAttribute("data-frame-id") ?? null : null;
     const parentTransform = frameId ? frameTransform(designRef.current, frameId) : IDENTITY_TRANSFORM;
     if (!parentTransform) return;
-    const start = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const start = worldPoint(event);
     const next = { pointerId: event.pointerId, tool: drawTool, start, end: start, parentId: frameId, parentTransform };
     drawingRef.current = next;
     setDrawing(next);
@@ -232,7 +237,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   function updateDrawing(event: PointerEvent<HTMLDivElement>) {
     const active = drawingRef.current;
     if (!active || active.pointerId !== event.pointerId) return;
-    const next = { ...active, end: pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom) };
+    const next = { ...active, end: worldPoint(event) };
     drawingRef.current = next;
     setDrawing(next);
   }
@@ -246,7 +251,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   function updateSelection(event: PointerEvent<HTMLDivElement>) {
     const active = selectionRef.current;
     if (!active || active.pointerId !== event.pointerId) return;
-    const next = { ...active, end: pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom) };
+    const next = { ...active, end: worldPoint(event) };
     selectionRef.current = next;
     setSelection(next);
   }
@@ -256,7 +261,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     if (!active || active.pointerId !== event.pointerId) return;
     selectionRef.current = null;
     setSelection(null);
-    const end = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const end = worldPoint(event);
     const bounds = drawingGeometry(active.start, end);
     if (bounds.width < 3 || bounds.height < 3) {
       if (!active.additive) setSelectedIds([]);
@@ -275,7 +280,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   function finishDrawing(event: PointerEvent<HTMLDivElement>) {
     const active = drawingRef.current;
     if (!active || active.pointerId !== event.pointerId) return;
-    const end = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const end = worldPoint(event);
     const geometry = drawingGeometry(active.start, end, active.parentTransform);
     cancelDrawing(event.pointerId);
     if (geometry.width < 4 || geometry.height < 4) return;
@@ -289,7 +294,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     if (drawTool === "path") penPointerDown(event);
     else if (drawTool !== "select") beginDrawing(event);
     else if (event.target === event.currentTarget && !spacePressed.current && event.button === 0) {
-      const start = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+      const start = worldPoint(event);
       const next = { pointerId: event.pointerId, start, end: start, additive: event.shiftKey };
       selectionRef.current = next;
       setSelection(next);
@@ -323,7 +328,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, pathDrag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+    drag, pathDrag, camera, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,

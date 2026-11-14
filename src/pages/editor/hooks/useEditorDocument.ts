@@ -24,6 +24,7 @@ export function useEditorDocument() {
   const [error, setError] = useState<string | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [documentSession, setDocumentSession] = useState(0);
   const revision = useRef(0);
   const previewActive = useRef(false);
   const fileOperation = useRef(false);
@@ -74,6 +75,7 @@ export function useEditorDocument() {
     designRef.current = next.present;
     setDesign(next.present);
     setFilePath(null);
+    setDocumentSession((value) => value + 1);
     setSelectedIds([]);
     revision.current += 1;
     setRecoveryStatus({ kind: "none" });
@@ -166,6 +168,7 @@ export function useEditorDocument() {
     designRef.current = result.value.document;
     setDesign(result.value.document);
     setFilePath(result.value.path);
+    setDocumentSession((value) => value + 1);
     setSelectedIds([]);
     revision.current += 1;
     setError(null);
@@ -196,7 +199,7 @@ export function useEditorDocument() {
   }
 
   return {
-    history, design, designRef, selectedId, selectedIds, setSelectedId, setSelectedIds, selected,
+    history, design, designRef, documentSession, selectedId, selectedIds, setSelectedId, setSelectedIds, selected,
     error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery, focusElementRef,
     recordDocument, applyDocument, beginPreview, previewDocument, finishPreview, stepHistory, openFile, saveFile,
   };

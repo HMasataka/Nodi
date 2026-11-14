@@ -4,11 +4,14 @@ import { type PointerEvent, type RefObject, useCallback, useEffect, useRef, useS
 
 import { absoluteGeometry } from "@/pages/editor/geometry";
 import { listenForCanvasZoom } from "@/pages/editor/canvasZoomEvents";
+import { measureNode } from "@/rendering/measure.ts";
+import { panScroll } from "@/pages/editor/viewport";
+import { resolveDocumentLayout } from "@/document/layout.ts";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
-import { canvasExtent, focusViewport, panScroll, screenGeometry, zoomAroundPoint } from "@/pages/editor/viewport";
+import { cameraScreenGeometry, focusCamera, INITIAL_CAMERA, initialCamera, zoomCamera } from "@/pages/editor/camera.ts";
 import type { DragState, PanState } from "@/pages/editor/types";
 
-const SPACE_PAN_EXCLUDED = "input, textarea, [contenteditable], button:not(.canvas-node)";
+const SPACE_PAN_EXCLUDED = "input, textarea, [contenteditable], button:not(.canvas-node):not(.canvas-text):not(.canvas-image)";
 
 function unavailableFocus() {
   return Result.fail(new Error("キャンバスを表示できません"));
@@ -38,53 +41,63 @@ function useSpacePressed() {
   return pressed;
 }
 
-export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>, drag: RefObject<DragState | null>) {
-  const { designRef, focusElementRef, setSelectedId } = session;
-  const [zoom, setZoom] = useState(1);
-  const zoomRef = useRef(zoom);
+export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>, drag: RefObject<DragState | null>, pointDrag?: RefObject<unknown>) {
+  const { designRef, focusElementRef, setSelectedId, documentSession } = session;
+  const [camera, setCamera] = useState(INITIAL_CAMERA);
+  const cameraRef = useRef(camera);
+  const zoom = camera.zoom;
   const viewportRef = useRef<HTMLElement | null>(null);
   const pan = useRef<PanState | null>(null);
   const spacePressed = useSpacePressed();
+  const isInteracting = useCallback(() => !!(drag.current || pointDrag?.current || pan.current), [drag, pointDrag]);
+
+  const updateCamera = useCallback((next: typeof camera) => {
+    if (![next.zoom, next.scrollLeft, next.scrollTop].every(Number.isFinite)) return;
+    cameraRef.current = next;
+    setCamera(next);
+  }, []);
 
   const zoomAt = useCallback((targetZoom: number, clientX: number, clientY: number) => {
     const viewport = viewportRef.current;
-    if (!viewport) return;
+    if (!viewport || isInteracting()) return;
     const rect = viewport.getBoundingClientRect();
-    const currentZoom = zoomRef.current;
-    const next = zoomAroundPoint(currentZoom, targetZoom,
-      { scrollLeft: viewport.scrollLeft, scrollTop: viewport.scrollTop },
-      { x: clientX - rect.left, y: clientY - rect.top });
-    if (next.zoom === currentZoom) return;
-    zoomRef.current = next.zoom;
-    // 新しいキャンバスの大きさを確定してからスクロールする。
-    flushSync(() => setZoom(next.zoom));
-    viewport.scrollLeft = next.scrollLeft;
-    viewport.scrollTop = next.scrollTop;
-  }, []);
+    updateCamera(zoomCamera(cameraRef.current, targetZoom, { x: clientX - rect.left, y: clientY - rect.top }));
+  }, [isInteracting, updateCamera]);
 
   function zoomBy(factor: number) {
     const viewport = viewportRef.current;
     if (!viewport) return;
     const rect = viewport.getBoundingClientRect();
-    zoomAt(zoomRef.current * factor, rect.left + viewport.clientWidth / 2, rect.top + viewport.clientHeight / 2);
+    zoomAt(cameraRef.current.zoom * factor, rect.left + viewport.clientWidth / 2, rect.top + viewport.clientHeight / 2);
   }
 
   function focusElement(id: string) {
     const viewport = viewportRef.current;
-    const absolute = absoluteGeometry(designRef.current, id);
+    if (isInteracting()) return Result.fail(new Error("操作中は表示位置を変更できません"));
+    const absolute = absoluteGeometry(resolveDocumentLayout(designRef.current, { measure: measureNode }), id);
     if (!absolute) return Result.fail(new Error(`要素が見つかりません: ${id}`));
     if (!viewport || viewport.clientWidth === 0 || viewport.clientHeight === 0) return unavailableFocus();
 
-    const extent = canvasExtent(designRef.current);
-    const target = focusViewport(absolute, extent, { width: viewport.clientWidth, height: viewport.clientHeight }, zoom);
-    // 先に倍率を画面へ反映し、新しいスクロール可能範囲で移動する。
-    zoomRef.current = target.zoom;
-    flushSync(() => { setZoom(target.zoom); setSelectedId(id); });
-    viewport.scrollLeft = target.scrollLeft;
-    viewport.scrollTop = target.scrollTop;
-    const scroll = { scrollLeft: viewport.scrollLeft, scrollTop: viewport.scrollTop };
-    return Result.succeed({ absolute, zoom: target.zoom, ...scroll, screen: screenGeometry(absolute, extent, target.zoom, scroll) });
+    const target = focusCamera(absolute, { width: viewport.clientWidth, height: viewport.clientHeight }, cameraRef.current.zoom);
+    flushSync(() => { updateCamera(target); setSelectedId(id); });
+    return Result.succeed({ absolute, ...target, screen: cameraScreenGeometry(absolute, target) });
   }
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    let initialized = false;
+    const initialize = () => {
+      if (initialized || !viewport.clientWidth || !viewport.clientHeight) return;
+      initialized = true;
+      const document = resolveDocumentLayout(designRef.current, { measure: measureNode });
+      updateCamera(initialCamera(document, { width: viewport.clientWidth, height: viewport.clientHeight }));
+    };
+    initialize();
+    const observer = new ResizeObserver(initialize);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [documentSession, designRef, updateCamera]);
 
   useEffect(() => {
     focusElementRef.current = focusElement;
@@ -94,17 +107,21 @@ export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>,
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-    return listenForCanvasZoom(viewport, () => zoomRef.current, zoomAt);
-  }, [zoomAt]);
+    return listenForCanvasZoom(viewport, () => cameraRef.current.zoom, zoomAt, (dx, dy) => {
+      const current = cameraRef.current;
+      updateCamera({ ...current, scrollLeft: current.scrollLeft + dx, scrollTop: current.scrollTop + dy });
+    }, isInteracting);
+  }, [zoomAt, updateCamera, isInteracting]);
 
   function startPan(event: PointerEvent<HTMLElement>) {
-    if (drag.current || pan.current) return;
+    if (isInteracting()) return;
     if (event.button !== 1 && !spacePressed.current) return;
     event.preventDefault();
+    event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     pan.current = {
       pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY,
-      scrollLeft: event.currentTarget.scrollLeft, scrollTop: event.currentTarget.scrollTop,
+      scrollLeft: cameraRef.current.scrollLeft, scrollTop: cameraRef.current.scrollTop,
     };
   }
 
@@ -112,13 +129,12 @@ export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>,
     const active = pan.current;
     if (!active || active.pointerId !== event.pointerId) return;
     const scroll = panScroll(active, event);
-    event.currentTarget.scrollLeft = scroll.scrollLeft;
-    event.currentTarget.scrollTop = scroll.scrollTop;
+    updateCamera({ ...cameraRef.current, ...scroll });
   }
 
   function finishPan(pointerId: number) {
     if (pan.current?.pointerId === pointerId) pan.current = null;
   }
 
-  return { zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan };
+  return { camera, zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan };
 }
