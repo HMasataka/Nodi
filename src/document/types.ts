@@ -7,7 +7,29 @@ export interface Geometry {
 
 export interface RotatedGeometry extends Geometry { rotation: number }
 export interface Shadow { color: string; offsetX: number; offsetY: number; blur: number }
-export interface NodeGeometry extends RotatedGeometry { opacity: number; shadow: Shadow | null; blur: number }
+export type LayoutMode = "none" | "horizontal" | "vertical";
+export const LAYOUT_MODES = ["none", "horizontal", "vertical"] as const;
+export type LayoutAlignment = "start" | "center" | "end";
+export const LAYOUT_ALIGNMENTS = ["start", "center", "end"] as const;
+export type LayoutJustify = "start" | "center" | "end" | "space-between";
+export const LAYOUT_JUSTIFIES = ["start", "center", "end", "space-between"] as const;
+export type SizeMode = "fixed" | "fill" | "hug";
+export const SIZE_MODES = ["fixed", "fill", "hug"] as const;
+export interface SizeConstraint { mode: SizeMode; min?: number; max?: number }
+export const DEFAULT_SIZE_CONSTRAINT: SizeConstraint = { mode: "fixed" };
+export const DEFAULT_LAYOUT_MODE: LayoutMode = "none";
+export const DEFAULT_LAYOUT_PADDING = 0;
+export const DEFAULT_LAYOUT_GAP = 0;
+export const DEFAULT_LAYOUT_ALIGNMENT: LayoutAlignment = "start";
+export const DEFAULT_LAYOUT_JUSTIFY: LayoutJustify = "start";
+
+export interface NodeGeometry extends RotatedGeometry {
+  opacity: number;
+  shadow: Shadow | null;
+  blur: number;
+  widthConstraint: SizeConstraint;
+  heightConstraint: SizeConstraint;
+}
 
 export interface CornerRadii {
   topLeft: number;
@@ -102,6 +124,11 @@ export interface FrameNode extends NodeGeometry {
   type: "frame";
   style: BoxStyle;
   clipContent: boolean;
+  layoutMode: LayoutMode;
+  padding: number;
+  gap: number;
+  alignItems: LayoutAlignment;
+  justifyContent: LayoutJustify;
   children: DocumentNode[];
 }
 

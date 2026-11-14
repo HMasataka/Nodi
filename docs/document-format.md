@@ -60,6 +60,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - `text.style` の `fontFamily` は `default`（Avenir Next、ヒラギノ角ゴ、游ゴシック、sans-serif の順）、`system`（システム UI 系）、`serif`（Georgia 系）、`monospace`（等幅系）から選べる。`fontWeight` は 100〜900 の 100 刻み。Wire 形式では省略可能で、省略時は `default`・400 に補完する。編集画面と PNG は同じフォントの代替順を使う。
 - `text.style` の `lineHeight` は文字サイズに対する正の有限な倍率、`letterSpacing` は px 単位の有限な数値。字間は負値で詰めることもできる。Wire 形式では省略可能で、省略時は行高 1.4 倍・字間 0px に補完する。
 - `x` と `y` は有限の数値。`width` と `height` は 0 より大きい有限の数値。
+- 各要素は `widthConstraint`・`heightConstraint` で幅・高さのサイズモードを指定できる。`mode` は `fixed`（固定）・`fill`（親サイズへの伸縮）・`hug`（内容に追従）のいずれかで、`min`・`max`（0 より大きい有限値）を併記できる。`min` は `max` 以下でなければならない。省略時は `{ "mode": "fixed" }` に補完し、既定値は保存時に省略する。座標解決エンジンがこの制約を使って解決後の座標・サイズを計算する。
 - 矩形とフレームの `style` は共通の `BoxStyle`（`fill`・`stroke`・`cornerRadii`・`border`）。`fill` は必須の `#RRGGBB`・`#RRGGBBAA` または `null`（塗りなし）。フレームの `background` は廃止した。
 - 色はCSSのHEX表記で、8桁の場合は末尾の `AA` がアルファ値（`00` は透明、`ff` は不透明）。6桁は不透明として従来どおり読み書きする。塗り・線・辺線・テキスト・部分装飾の色に共通し、重なる要素は描画時に合成する。
 - 矩形・楕円・フレームの `fill` は単色と `null` に加え、`{ "type": "linear", "start": { "x": 0, "y": 0 }, "end": { "x": 1, "y": 0 }, "stops": [{ "position": 0, "color": "#ffffff" }, { "position": 1, "color": "#000000" }] }` を指定できる。始点・終点は異なる要素ローカルの正規化座標（各0〜1）で、サイズ変更に追従し要素とともに回転する。ストップは2個以上、位置は0〜1の昇順で同位置も可。色は6桁／8桁HEX。線と文字色は単色のみ。
@@ -68,6 +69,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 - `border` は矩形・フレームだけが持つ、`top`・`right`・`bottom`・`left` ごとの `{ color, width }`。省略した辺は線なし。既定の空オブジェクトは保存しない。初版では角丸（4隅のいずれかが非0）との併用を拒否する。
 - `cornerRadii` は `topLeft`・`topRight`・`bottomRight`・`bottomLeft` の4隅のオブジェクト。各値は 0 以上の有限値。オブジェクト全体の省略時は全隅 0 に補完する。指定する場合は4隅とも必須。単一値の `cornerRadius` は廃止し、同梱サンプルの旧角丸は全隅同値で再生成した。
 - フレームの `clipContent` はノード直下の真偽値。省略時は `true` に補完する。`true` なら子要素をフレームの輪郭で切り取り、`false` ならはみ出しを表示する（書き出し対象フレーム自体の外は PNG に含まれない）。
+- フレームの `layoutMode` は `none`（絶対配置）・`horizontal`（横並び）・`vertical`（縦並び）で、省略時は `none` に補完する。自動レイアウト（`horizontal` / `vertical`）のフレームでは `padding`（内側の余白、0 以上の有限値、既定 0）、`gap`（子同士の間隔、同）、`alignItems`（交差軸の整列 `start`・`center`・`end`、既定 `start`）、`justifyContent`（主軸の分配 `start`・`center`・`end`・`space-between`、既定 `start`）を指定できる。これらは既定値を保存時に省略し、既存の絶対配置文書は `layoutMode: "none"` として読み込み、自動レイアウトへ強制変換しない。
 - 楕円の `style` は `fill`・`stroke` のみで、`cornerRadii` は持たない。
 - `path` の `commands` は要素の幅・高さに対するローカル座標の命令列（2〜2048個）。`{ "kind": "move" | "line", "x": 0, "y": 0 }`、`{ "kind": "cubic", "x1": 0, "y1": 0, "x2": 1, "y2": 1, "x": 1, "y": 1 }`、`{ "kind": "close" }` を使う。最初は `move`、各サブパスには線分を1本以上持たせ、`close` には2本以上必要。点と制御点は有限値で、0〜1の外にも置ける。幅・高さ変更時は座標を各軸で伸縮する。`fillRule` は `nonzero`（既定・保存時省略）または `evenodd`。開路は線を閉じず、塗りはSVG/Canvasの規則に従い暗黙に閉じる。`style` は塗り・線のみで、線はパス中心を基準に描く。矩形専用の角丸・辺線は持たない。
 - 矩形・楕円は `isMask: true` を指定すると、同じ親でその直後から次のマスクまでの兄弟要素を形状でクリップする。マスク自身は描画せず、塗りと線の色は使わない。未指定は `false` に補完し、保存時は省略する。`isMask: false` を Wire に明示した場合は拒否する。マスクの削除・並べ替えで対象の兄弟が変わり、複製ではマスク設定も引き継がれる。
@@ -81,7 +83,7 @@ AI が ID だけで要素を示しても人には識別しにくい。すべて�
 
 - `parseDocument`: JSON を読み取り、Zod で検証してから、子孫も含めて既定値を補完する。
 - `serializeDocument`: 正規化済みの内部モデルをWireとは別のスキーマで検証し、既定値を除去したWire形式を再検証してJSONを生成する。入力の文書は変更しない。内部で必須の `isMask: false` はWireでは省略し、Wireに明示された `false` は拒否する。
-- 保存時に除去する値は、`stroke: null`、全隅 0 の `cornerRadii`、`clipContent: true`、文字の `fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0`。
+- 保存時に除去する値は、`stroke: null`、全隅 0 の `cornerRadii`、`clipContent: true`、`layoutMode: "none"`・`padding: 0`・`gap: 0`・`alignItems: "start"`・`justifyContent: "start"`、`widthConstraint`・`heightConstraint` の `{ "mode": "fixed" }`（`min`・`max` なし）、文字の `fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0`。
 - `fill: null` は塗りなしを表す必須値なので保存する。画像の `style: {}` も保存する。
 - ルート・ノード・スタイル・線・角丸・文字装飾は `z.strictObject` で未知項目を拒否する。省略可能な項目でも不正な値を既定値に置き換えることはない。
 
