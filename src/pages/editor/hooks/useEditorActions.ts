@@ -8,8 +8,8 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type LayerDirection,
-  reorderNode, setBlur, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle,
+  type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type FrameLayoutPatch, type LayerDirection,
+  reorderNode, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle,
 } from "@/document/commands/index.ts";
 import type { FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
@@ -89,6 +89,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
       onShapeStyle: (value: Partial<RectangleStyle>) => changeSelected(value, setNodeStyle),
       onPath: (value: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }) => changeSelected(value, setPath),
       onFrameStyle: (value: Partial<FrameStyle>) => changeSelected(value, setFrameStyle),
+      onFrameLayout: (value: FrameLayoutPatch) => changeSelected(value, setFrameLayout),
       onImageStyle: (value: Partial<ImageStyle>) => changeSelected(value, setImageStyle),
       onDuplicate: duplicateSelected,
       onDelete: deleteSelected,
