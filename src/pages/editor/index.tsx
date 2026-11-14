@@ -16,9 +16,10 @@ function EditorPage() {
   const actions = useEditorActions(session);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
-  const { drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
+  const { drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
-    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection } = interaction;
+    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
+    updateSelection, finishSelection, cancelSelection } = interaction;
 
   return <main className="app-shell">
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
@@ -31,11 +32,11 @@ function EditorPage() {
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
       <Canvas design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
-        drawTool={drawTool} drawing={drawing} selection={selection} guides={guides}
+        drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
-        onWorldPointerDown={onWorldPointerDown}
-        onWorldPointerMove={(event) => { updateDrawing(event); updateSelection(event); }}
+        onWorldPointerDown={onWorldPointerDown} onWorldDoubleClick={() => finishPen(false)}
+        onWorldPointerMove={(event) => { updateDrawing(event); updatePenCursor(event); updateSelection(event); }}
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
