@@ -1,7 +1,7 @@
 import { Result } from "@praha/byethrow";
 
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBlur, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
-import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type RectangleStyle, type Shadow, type TextMark, type TextStyle } from "@/document/types.ts";
+import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBlur, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
 
@@ -24,6 +24,8 @@ export interface ElementReference {
   style: DocumentNode["style"];
   border?: Border;
   marks?: TextMark[];
+  commands?: VectorPathCommand[];
+  fillRule?: PathFillRule;
   clipContent?: boolean;
   source?: string;
 }
@@ -62,6 +64,7 @@ export function listElements(document: Document, includeImageSource = false): El
         ...(node.type === "rectangle" || node.type === "frame" ? { border: structuredClone(node.style.border) } : {}),
         ...(node.type === "text" ? { content: node.content,
           ...(node.marks ? { marks: node.marks.map((mark) => ({ ...mark })) } : {}) } : {}),
+        ...(node.type === "path" ? { commands: structuredClone(node.commands), fillRule: node.fillRule } : {}),
         ...(node.type === "frame" ? { clipContent: node.clipContent } : {}),
         ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
       });
@@ -153,6 +156,9 @@ export function createAgentApi(port: EditorPort) {
     },
     setShapeStyle(id: string, style: Partial<RectangleStyle>) {
       return applyToElement(id, setNodeStyle(port.getDocument(), id, style));
+    },
+    setPath(id: string, path: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }) {
+      return applyToElement(id, setPath(port.getDocument(), id, path));
     },
     setFrameStyle(id: string, style: Partial<FrameStyle>) {
       return applyToElement(id, setFrameStyle(port.getDocument(), id, style));

@@ -47,7 +47,7 @@ test("SVGとPNGは同じローカル方向と半透明のストップを用い�
   const noOp = () => {};
   const markup = renderToStaticMarkup(<CanvasNode node={node} selectedId={null}
     interaction={{ onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp }} />);
-  assert.match(markup, /<linearGradient[^>]*x1="0.25" y1="0" x2="0.75" y2="1"/);
+  assert.match(markup, /<linearGradient[^>]*x1="50" y1="0" x2="150" y2="100" gradientUnits="userSpaceOnUse"/);
   assert.match(markup, /offset="0.4" stop-color="#ff0000"/);
   assert.match(markup, /stop-color="#11223380"/);
   assert.match(markup, /canvas-mask-group/);

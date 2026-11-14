@@ -39,7 +39,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
         <div className="properties">
           <div className="selection-type">
             <LayerIcon type={selected.type} />{" "}
-            {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : "フレーム"}
+            {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "path" ? "パス" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : "フレーム"}
           </div>
           {selectedCount > 1 && <p className="property-help">{selectedCount} 個の要素を選択中。ドラッグで一括移動できます。</p>}
           {selectedCount > 1 && onAlign && <div className="alignment-actions" aria-label="選択要素の整列">

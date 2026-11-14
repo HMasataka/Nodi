@@ -455,6 +455,29 @@
               "x": 65, "y": 78, "width": 150, "height": 138, "rotation": 18,
               "style": { "fill": { "type": "radial", "center": { "x": 0.34, "y": 0.32 }, "radius": 0.72,
                 "stops": [{ "position": 0, "color": "#fff0cf" }, { "position": 0.48, "color": "#e9ad91dd" }, { "position": 1, "color": "#806c9ecc" }] } }
+            },
+            {
+              "id": "nd_sample_vector_icon", "name": "編集可能な星形アイコン", "type": "path",
+              "x": 187, "y": 145, "width": 54, "height": 54,
+              "commands": [
+                { "kind": "move", "x": 0.5, "y": 0 },
+                { "kind": "line", "x": 0.64, "y": 0.35 },
+                { "kind": "line", "x": 1, "y": 0.39 },
+                { "kind": "line", "x": 0.72, "y": 0.62 },
+                { "kind": "line", "x": 0.81, "y": 1 },
+                { "kind": "line", "x": 0.5, "y": 0.78 },
+                { "kind": "line", "x": 0.19, "y": 1 },
+                { "kind": "line", "x": 0.28, "y": 0.62 },
+                { "kind": "line", "x": 0, "y": 0.39 },
+                { "kind": "line", "x": 0.36, "y": 0.35 },
+                { "kind": "close" },
+                { "kind": "move", "x": 0.5, "y": 0.36 },
+                { "kind": "line", "x": 0.6, "y": 0.57 },
+                { "kind": "line", "x": 0.4, "y": 0.57 },
+                { "kind": "close" }
+              ],
+              "fillRule": "evenodd",
+              "style": { "fill": "#fff5dd", "stroke": { "color": "#685578", "width": 1 } }
             }
           ]
         },

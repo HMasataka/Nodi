@@ -4,7 +4,7 @@ import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { Result } from "@praha/byethrow";
 import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
-import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath } from "@/document/shapePath.ts";
+import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
 import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
 import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { maskGroups, maskPath } from "@/document/masks.ts";
@@ -49,7 +49,7 @@ function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths, width: num
       fill.stops.forEach((stop) => gradient.addColorStop(stop.position, stop.color));
       ctx.fillStyle = gradient;
     }
-    ctx.fill();
+    ctx.fill(shape.fillRule ?? "nonzero");
   }
   if (shape.stroke) {
     tracePath(ctx, shape.stroke);
@@ -148,6 +148,8 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
       paintBorder(ctx, node.width, node.height, node.style.border);
     } else if (node.type === "ellipse") {
       paintShape(ctx, ellipseShape(node.width, node.height, node.style), node.width, node.height);
+    } else if (node.type === "path") {
+      paintShape(ctx, vectorShape(node), node.width, node.height);
     } else if (node.type === "text") {
       ctx.beginPath();
       ctx.rect(0, 0, node.width, node.height);

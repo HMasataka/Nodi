@@ -73,7 +73,8 @@ export function createNodiMcpServer(request: NodiRequest = callNodi) {
   tool("set_opacity", "要素全体の不透明度を0〜1で設定", agentInputs.set_opacity, true);
   tool("set_shadow", "要素全体の外側影を設定または解除", agentInputs.set_shadow, true);
   tool("set_blur", "要素全体のぼかし量をpxで設定", agentInputs.set_blur, true);
-  tool("set_shape_style", "矩形・楕円の塗り・内側線、矩形の角丸を変更", agentInputs.set_shape_style, true);
+  tool("set_shape_style", "矩形・楕円・パスの塗りと線、矩形の角丸を変更", agentInputs.set_shape_style, true);
+  tool("set_path", "パスの命令列と塗り規則を変更", agentInputs.set_path, true);
   tool("set_frame_style", "フレームの塗り・内側線・角丸と子要素のクリップを変更", agentInputs.set_frame_style, true);
   tool("set_border", "矩形・フレームの4辺の内側線を置換（省略した辺は線なし、角丸との併用不可）", agentInputs.set_border, true);
   tool("set_image_style", "画像のフィット・焦点位置・4隅の角丸を変更", agentInputs.set_image_style, true);

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
 import { DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
+import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");
@@ -32,6 +33,15 @@ const cornerRadii = z.strictObject({ topLeft: radius, topRight: radius, bottomRi
 const stroke = z.strictObject({ color, width: radius }).nullable();
 const shapeStyle = z.strictObject({ fill, stroke: stroke.optional() });
 const normalizedShapeStyle = z.strictObject({ fill, stroke });
+const vectorCommand = z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("move"), x: coordinate, y: coordinate }),
+  z.strictObject({ kind: z.literal("line"), x: coordinate, y: coordinate }),
+  z.strictObject({ kind: z.literal("cubic"), x1: coordinate, y1: coordinate, x2: coordinate, y2: coordinate, x: coordinate, y: coordinate }),
+  z.strictObject({ kind: z.literal("close") }),
+]);
+const vectorCommands = z.array(vectorCommand).min(2).max(MAX_PATH_COMMANDS)
+  .refine((value) => vectorPathIssue(value, "nonzero") === null, "パス命令の順序が不正です");
+const fillRule = z.enum(["nonzero", "evenodd"]);
 const borderEdge = z.strictObject({ color, width: radius });
 const border = z.strictObject({ top: borderEdge.optional(), right: borderEdge.optional(), bottom: borderEdge.optional(), left: borderEdge.optional() });
 const compatibleBorder = (style: { border?: z.infer<typeof border>; cornerRadii?: z.infer<typeof cornerRadii> }) =>
@@ -63,9 +73,11 @@ type OptionalOpacity<T> = Omit<T, "opacity"> & { opacity?: number };
 type OptionalShadow<T> = Omit<T, "shadow"> & { shadow?: z.infer<typeof shadow> | null };
 type OptionalBlur<T> = Omit<T, "blur"> & { blur?: number };
 type OptionalMask<T> = Omit<T, "isMask"> & { isMask?: true };
+type OptionalFillRule<T> = Omit<T, "fillRule"> & { fillRule?: z.infer<typeof fillRule> };
 export type WireNode =
   | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> }>>>>>
   | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>>>>
+  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalFillRule<Omit<Extract<DocumentNode, { type: "path" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>>>>
   | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "image" }>, "style"> & { style: z.infer<typeof imageStyle> }>>>>
   | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> }>>>>
   | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] }>>>>;
@@ -75,6 +87,7 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
     z.strictObject({ id, name, type: z.literal("rectangle"), ...wireGeometry, isMask: z.literal(true).optional(), style: boxStyle }),
     z.strictObject({ id, name, type: z.literal("ellipse"), ...wireGeometry, isMask: z.literal(true).optional(), style: shapeStyle }),
+    z.strictObject({ id, name, type: z.literal("path"), ...wireGeometry, commands: vectorCommands, fillRule: fillRule.optional(), style: shapeStyle }),
     z.strictObject({ id, name, type: z.literal("image"), ...wireGeometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
     z.strictObject({ id, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(), children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
@@ -106,6 +119,7 @@ export const documentSchema = z.strictObject({ version: z.literal(1), children: 
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
   z.strictObject({ id, name, type: z.literal("rectangle"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, isMask: z.boolean(), style: normalizedBoxStyle }),
   z.strictObject({ id, name, type: z.literal("ellipse"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, isMask: z.boolean(), style: normalizedShapeStyle }),
+  z.strictObject({ id, name, type: z.literal("path"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
   z.strictObject({ id, name, type: z.literal("image"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
   z.strictObject({ id, name, type: z.literal("frame"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, style: normalizedBoxStyle, clipContent: z.boolean(), children: z.array(internalNodeSchema) }),
   z.strictObject({ id, name, type: z.literal("text"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
@@ -127,6 +141,7 @@ function normalizeNode(node: WireNode): DocumentNode {
       letterSpacing: node.style.letterSpacing ?? DEFAULT_TEXT_STYLE.letterSpacing,
     } };
     case "ellipse": return { ...node, rotation, opacity, shadow, blur, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null } };
+    case "path": return { ...node, rotation, opacity, shadow, blur, fillRule: node.fillRule ?? "nonzero", style: { ...node.style, stroke: node.style.stroke ?? null } };
     case "rectangle": return { ...node, rotation, opacity, shadow, blur, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} } };
     case "frame": return { ...node, rotation, opacity, shadow, blur, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
   }
@@ -156,6 +171,12 @@ function compactNode(node: DocumentNode): WireNode {
       ...(lineHeight === DEFAULT_TEXT_STYLE.lineHeight ? {} : { lineHeight }),
       ...(letterSpacing === DEFAULT_TEXT_STYLE.letterSpacing ? {} : { letterSpacing }),
     } };
+  }
+  if (node.type === "path") {
+    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, fillRule: _fillRule, ...rest } = node;
+    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField,
+      ...(node.fillRule === "nonzero" ? {} : { fillRule: node.fillRule }),
+      style: { fill: node.style.fill, ...(node.style.stroke ? { stroke: node.style.stroke } : {}) } };
   }
   const style = { fill: node.style.fill, ...(node.style.stroke === null ? {} : { stroke: node.style.stroke }),
     ...(node.type !== "ellipse" && Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}),
