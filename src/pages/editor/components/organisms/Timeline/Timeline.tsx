@@ -6,6 +6,8 @@ import type { AnimationTimingPatch, KeyframePatch } from "@/document/commands/in
 interface TimelineProps {
   node?: DocumentNode;
   playback: Playback;
+  scrollProgress: number;
+  onScrollProgress(progress: number): void;
   onAddAnimation(): void;
   onRemoveAnimation(id: string): void;
   onSetTiming(id: string, patch: AnimationTimingPatch): void;
@@ -25,9 +27,10 @@ function numberInput(value: number, onCommit: (value: number) => void, min?: num
     onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />;
 }
 
-export function Timeline({ node, playback, onAddAnimation, onRemoveAnimation, onSetTiming, onAddKeyframe, onSetKeyframe, onRemoveKeyframe }: TimelineProps) {
+export function Timeline({ node, playback, scrollProgress, onScrollProgress, onAddAnimation, onRemoveAnimation, onSetTiming, onAddKeyframe, onSetKeyframe, onRemoveKeyframe }: TimelineProps) {
   const animations = node?.animations ?? [];
   const maxTime = animations.reduce((max, animation) => Math.max(max, animation.delay + animation.duration * animation.repeat), 0);
+  const hasScroll = animations.some((animation) => animation.trigger === "scroll");
 
   return <div className="timeline" aria-label="タイムライン">
     <div className="timeline-playhead">
@@ -38,6 +41,11 @@ export function Timeline({ node, playback, onAddAnimation, onRemoveAnimation, on
       <input type="range" min="0" max={Math.max(1, Math.round(maxTime))} step="1" value={Math.round(playback.playhead)}
         onChange={(event) => playback.seek(Number(event.currentTarget.value))} disabled={maxTime <= 0} />
     </div>
+    {hasScroll && <div className="timeline-scroll">
+      <span className="timeline-time">スクロール</span>
+      <input type="range" min="0" max="1" step="0.01" value={scrollProgress}
+        onChange={(event) => onScrollProgress(Number(event.currentTarget.value))} />
+    </div>}
 
     {animations.length === 0 && <p className="timeline-empty">要素を選ぶとアニメーションを追加できます。</p>}
     {animations.map((animation) => <div key={animation.id} className="timeline-animation">

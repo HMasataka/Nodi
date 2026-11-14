@@ -22,6 +22,7 @@ test("タイムラインが再生・シークとキーフレーム編集欄を�
     const node = rectangle({ animations: [animation] });
     const markup = renderToStaticMarkup(createElement(Timeline, {
       node, playback: { playhead: 500, playing: false, play: noOp, pause: noOp, stop: noOp, seek: noOp },
+      scrollProgress: 0, onScrollProgress: noOp,
       onAddAnimation: noOp, onRemoveAnimation: noOp, onSetTiming: noOp,
       onAddKeyframe: noOp, onSetKeyframe: noOp, onRemoveKeyframe: noOp,
     }));
