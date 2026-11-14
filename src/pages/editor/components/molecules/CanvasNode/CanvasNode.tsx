@@ -2,7 +2,7 @@ import { Fragment, type PointerEvent, useId, useMemo } from "react";
 
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import type { Border, DocumentNode, TextNode } from "@/document/types";
-import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths } from "@/document/shapePath.ts";
+import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths, vectorShape } from "@/document/shapePath.ts";
 import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 import { maskGroups, maskPath } from "@/document/masks.ts";
@@ -16,11 +16,11 @@ function shapeSvg(shape: ShapePaths, gradientId: string, width: number, height: 
   return (
     <svg className="canvas-shape" aria-hidden="true">
       {fill && typeof fill !== "string" && <defs>{fill.type === "linear"
-        ? <linearGradient id={gradientId} x1={fill.start.x} y1={fill.start.y} x2={fill.end.x} y2={fill.end.y} gradientUnits="objectBoundingBox">{stops}</linearGradient>
+        ? <linearGradient id={gradientId} x1={fill.start.x * width} y1={fill.start.y * height} x2={fill.end.x * width} y2={fill.end.y * height} gradientUnits="userSpaceOnUse">{stops}</linearGradient>
         : <radialGradient id={gradientId} cx={fill.center.x * width} cy={fill.center.y * height}
           r={fill.radius * Math.min(width, height)} gradientUnits="userSpaceOnUse">{stops}</radialGradient>}
       </defs>}
-      <path d={pathToString(shape.fill)} fill={typeof fill === "string" ? fill : fill ? `url(#${gradientId})` : "none"} />
+      <path d={pathToString(shape.fill)} fill={typeof fill === "string" ? fill : fill ? `url(#${gradientId})` : "none"} fillRule={shape.fillRule} />
       {shape.stroke && <path d={pathToString(shape.stroke)} fill="none" stroke={shape.strokeColor} strokeWidth={shape.strokeWidth} />}
     </svg>
   );
@@ -115,6 +115,14 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
           <img src={node.source} alt="" draggable={false} style={imageContentStyle(node)} onError={() => onImageError(node.id)} />
         </foreignObject>
       </svg>
+      {handle}
+    </button>
+  );
+  if (node.type === "path") return (
+    <button type="button" className={`canvas-node${selectedIds.includes(node.id) ? " is-selected" : ""}`}
+      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={shapeNodeStyle(node)}
+      onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
+      {shapeSvg(vectorShape(node), clipId, node.width, node.height)}
       {handle}
     </button>
   );

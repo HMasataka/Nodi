@@ -3,9 +3,9 @@ import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FillEditor } from "@/pages/editor/components/molecules/FillEditor";
 import { useState } from "react";
-import type { EllipseNode, RectangleNode, RectangleStyle } from "@/document/types";
+import type { EllipseNode, PathNode, RectangleNode, RectangleStyle } from "@/document/types";
 
-export function ShapeStyleEditor({ node, onChange }: { node: RectangleNode | EllipseNode; onChange(style: Partial<RectangleStyle>): void }) {
+export function ShapeStyleEditor({ node, onChange }: { node: RectangleNode | EllipseNode | PathNode; onChange(style: Partial<RectangleStyle>): void }) {
   const [strokeWidth, setStrokeWidth] = useState(String(node.style.stroke?.width ?? 0));
   return <div className="style-fields">
     <FillEditor label="塗り" fill={node.style.fill} onChange={(fill) => onChange({ fill })} />

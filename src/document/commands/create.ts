@@ -1,13 +1,15 @@
 import { Result } from "@praha/byethrow";
 
+import { vectorPathIssue } from "@/document/vectorPath.ts";
 import { collectNodes, findNode, updateNode } from "@/document/commands/tree.ts";
-import { DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type Geometry, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH } from "@/document/types.ts";
+import { DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type Geometry, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, type PathFillRule, type VectorPathCommand } from "@/document/types.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
 
 export type AddNodeInput = Geometry & { parentId?: string; name?: string } & (
   | { type: "frame" | "rectangle" | "ellipse" }
   | { type: "text"; content?: string }
   | { type: "image"; source: string }
+  | { type: "path"; commands: VectorPathCommand[]; fillRule?: PathFillRule }
 );
 
 export function createDocument(): Document {
@@ -26,7 +28,7 @@ export function addNode(
     return Result.fail(new Error(`親フレームが見つかりません: ${input.parentId}`));
   }
 
-  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : input.type === "ellipse" ? "楕円" : input.type === "image" ? "画像" : "矩形";
+  const baseName = input.type === "frame" ? "フレーム" : input.type === "text" ? "テキスト" : input.type === "ellipse" ? "楕円" : input.type === "image" ? "画像" : input.type === "path" ? "パス" : "矩形";
   const names = new Set(existing.map((node) => node.name));
   let number = 1;
   while (names.has(`${baseName} ${number}`)) number++;
@@ -38,6 +40,10 @@ export function addNode(
   }
   if (input.type === "image" && (typeof input.source !== "string" || input.source.length > MAX_IMAGE_SOURCE_LENGTH || !IMAGE_SOURCE_PATTERN.test(input.source))) {
     return Result.fail(new Error("画像データが不正です"));
+  }
+  if (input.type === "path") {
+    const issue = vectorPathIssue(input.commands, input.fillRule ?? "nonzero");
+    if (issue) return Result.fail(new Error(issue));
   }
 
   const ids = new Set(existing.map((node) => node.id));
@@ -53,6 +59,9 @@ export function addNode(
       ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", style: { ...DEFAULT_TEXT_STYLE } }
       : input.type === "image"
         ? { id, name, type: "image", ...geometry, source: input.source, style: structuredClone(DEFAULT_IMAGE_STYLE) }
+      : input.type === "path"
+        ? { id, name, type: "path", ...geometry, commands: structuredClone(input.commands), fillRule: input.fillRule ?? "nonzero",
+          style: { fill: null, stroke: { color: "#24383a", width: 2 } } }
       : input.type === "ellipse"
         ? { id, name, type: "ellipse", ...geometry, isMask: false, style: { fill: DEFAULT_RECTANGLE_STYLE.fill, stroke: structuredClone(DEFAULT_RECTANGLE_STYLE.stroke) } }
         : { id, name, type: "rectangle", ...geometry, isMask: false, style: structuredClone(DEFAULT_RECTANGLE_STYLE) };

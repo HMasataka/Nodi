@@ -8,7 +8,7 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, NodeGeometry, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
+import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, NodeGeometry, PathNode, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
 import { cssImageFilter, hasImageFilters } from "@/document/imageFilters.ts";
 import { type Transform, transformPoint } from "@/document/transform.ts";
 
@@ -101,7 +101,7 @@ export function textMarkStyle(node: TextNode, mark: TextMark): CSSProperties {
   };
 }
 
-export function shapeNodeStyle(node: RectangleNode | EllipseNode): CSSProperties {
+export function shapeNodeStyle(node: RectangleNode | EllipseNode | PathNode): CSSProperties {
   return nodeBoxStyle(node);
 }
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
+import { DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
 
 type NodeOverrides<T extends DocumentNode> = Omit<Partial<T>, "style"> & { style?: Partial<T["style"]> };
 export const corners = (radius: number) => ({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
@@ -42,6 +42,14 @@ export function ellipse({ style, ...overrides }: NodeOverrides<EllipseNode> = {}
   return {
     id: "ellipse", name: "楕円", type: "ellipse", x: 0, y: 0, width: 100, height: 100, rotation: 0, opacity: 1, shadow: null, blur: 0, isMask: false,
     style: { fill: "#f3d9c8", stroke: { color: "#d9bbaa", width: 1 }, ...style }, ...overrides,
+  };
+}
+
+export function path({ style, ...overrides }: NodeOverrides<PathNode> = {}): PathNode {
+  return {
+    id: "path", name: "パス", type: "path", x: 0, y: 0, width: 100, height: 100, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    commands: [{ kind: "move", x: 0, y: 0 }, { kind: "line", x: 1, y: 0 }, { kind: "line", x: 0.5, y: 1 }, { kind: "close" }],
+    fillRule: "nonzero", style: { fill: "#f3d9c8", stroke: { color: "#d9bbaa", width: 1 }, ...style }, ...overrides,
   };
 }
 

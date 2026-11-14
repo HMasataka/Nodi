@@ -16,6 +16,13 @@ const filters = z.strictObject({ brightness: z.number().finite().nonnegative().o
   saturate: z.number().finite().nonnegative().optional(), grayscale: z.number().finite().min(0).max(1).optional(),
   sepia: z.number().finite().min(0).max(1).optional(), hueRotate: z.number().finite().optional() });
 const boxStyle = { fill: z.union([z.string(), gradient, radialGradient]).nullable().optional(), stroke: stroke.nullable().optional(), cornerRadii: cornerRadii.optional() };
+const pathCommands = z.array(z.discriminatedUnion("kind", [
+  z.strictObject({ kind: z.literal("move"), x: z.number(), y: z.number() }),
+  z.strictObject({ kind: z.literal("line"), x: z.number(), y: z.number() }),
+  z.strictObject({ kind: z.literal("cubic"), x1: z.number(), y1: z.number(), x2: z.number(), y2: z.number(), x: z.number(), y: z.number() }),
+  z.strictObject({ kind: z.literal("close") }),
+]));
+const pathFillRule = z.enum(["nonzero", "evenodd"]);
 const hasChange = (value: { id: string }) => Object.keys(value).some((key) => key !== "id");
 
 export const agentInputs = {
@@ -31,6 +38,8 @@ export const agentInputs = {
     z.strictObject({ type: z.literal("ellipse"), name: z.string().optional(), parentId: id.optional(), ...geometry }),
     z.strictObject({ type: z.literal("frame"), name: z.string().optional(), parentId: id.optional(), ...geometry }),
     z.strictObject({ type: z.literal("text"), name: z.string().min(1), content: z.string(), parentId: id.optional(), ...geometry }),
+    z.strictObject({ type: z.literal("path"), name: z.string().optional(), parentId: id.optional(), ...geometry,
+      commands: pathCommands, fillRule: pathFillRule.optional() }),
   ]),
   rename_element: z.strictObject({ id, name: z.string() }),
   move_element: z.strictObject({ id, x: z.number(), y: z.number() }),
@@ -42,6 +51,7 @@ export const agentInputs = {
   set_blur: z.strictObject({ id, blur: z.number().finite().nonnegative() }),
   set_mask: z.strictObject({ id, isMask: z.boolean() }),
   set_shape_style: z.strictObject({ id, ...boxStyle }).refine(hasChange, "変更するスタイルを指定してください"),
+  set_path: z.strictObject({ id, commands: pathCommands.optional(), fillRule: pathFillRule.optional() }).refine(hasChange, "変更するパスを指定してください"),
   set_frame_style: z.strictObject({ id, ...boxStyle, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください"),
   set_border: z.strictObject({ id, border }),
   set_image_style: z.strictObject({ id, fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: focalPoint.optional(),

@@ -1,9 +1,10 @@
-import type { Border, BoxStyle, CornerRadii, Fill, ShapeStyle } from "@/document/types.ts";
+import type { Border, BoxStyle, CornerRadii, Fill, PathNode, ShapeStyle } from "@/document/types.ts";
 import { type Transform, transformPoint } from "@/document/transform.ts";
 
 export type PathCommand =
   | { kind: "move"; x: number; y: number }
   | { kind: "line"; x: number; y: number }
+  | { kind: "cubic"; x1: number; y1: number; x2: number; y2: number; x: number; y: number }
   | { kind: "arc"; cx: number; cy: number; rx: number; ry: number; startAngle: number; endAngle: number; counterclockwise: boolean; rotation?: number }
   | { kind: "close" };
 
@@ -55,6 +56,11 @@ export function transformPath(commands: PathCommand[], transform: Transform): Pa
       const center = transformPoint(transform, { x: command.cx, y: command.cy });
       return { ...command, cx: center.x, cy: center.y, rotation: (command.rotation ?? 0) + angle };
     }
+    if (command.kind === "cubic") {
+      const first = transformPoint(transform, { x: command.x1, y: command.y1 });
+      const second = transformPoint(transform, { x: command.x2, y: command.y2 });
+      return { ...command, ...transformPoint(transform, command), x1: first.x, y1: first.y, x2: second.x, y2: second.y };
+    }
     return { ...command, ...transformPoint(transform, command) };
   });
 }
@@ -74,6 +80,16 @@ export interface ShapePaths {
   stroke: PathCommand[] | null;
   strokeColor: string;
   strokeWidth: number;
+  fillRule?: "nonzero" | "evenodd";
+}
+
+export function vectorShape(node: PathNode): ShapePaths {
+  const commands: PathCommand[] = node.commands.map((command) => command.kind === "close" ? command : command.kind === "cubic"
+    ? { kind: "cubic", x: command.x * node.width, y: command.y * node.height,
+      x1: command.x1 * node.width, y1: command.y1 * node.height, x2: command.x2 * node.width, y2: command.y2 * node.height }
+    : { kind: command.kind, x: command.x * node.width, y: command.y * node.height });
+  return { fill: commands, fillColor: node.style.fill, stroke: node.style.stroke?.width ? commands : null,
+    strokeColor: node.style.stroke?.color ?? "#000000", strokeWidth: node.style.stroke?.width ?? 0, fillRule: node.fillRule };
 }
 
 export interface BorderPath { side: keyof Border; color: string; commands: PathCommand[] }
@@ -145,6 +161,7 @@ export function pathToString(commands: PathCommand[]): string {
     switch (command.kind) {
       case "move": return `M ${format(command.x)} ${format(command.y)}`;
       case "line": return `L ${format(command.x)} ${format(command.y)}`;
+      case "cubic": return `C ${format(command.x1)} ${format(command.y1)} ${format(command.x2)} ${format(command.y2)} ${format(command.x)} ${format(command.y)}`;
       case "arc": {
         const rotation = command.rotation ?? 0;
         const x = command.rx * Math.cos(command.endAngle);
@@ -166,6 +183,7 @@ export function tracePath(ctx: CanvasRenderingContext2D, commands: PathCommand[]
     switch (command.kind) {
       case "move": ctx.moveTo(command.x, command.y); break;
       case "line": ctx.lineTo(command.x, command.y); break;
+      case "cubic": ctx.bezierCurveTo(command.x1, command.y1, command.x2, command.y2, command.x, command.y); break;
       case "arc": ctx.ellipse(command.cx, command.cy, command.rx, command.ry, command.rotation ?? 0, command.startAngle, command.endAngle, command.counterclockwise); break;
       case "close": ctx.closePath(); break;
     }

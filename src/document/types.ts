@@ -58,6 +58,20 @@ export interface EllipseNode extends NodeGeometry {
   style: ShapeStyle;
 }
 
+export type VectorPathCommand =
+  | { kind: "move" | "line"; x: number; y: number }
+  | { kind: "cubic"; x1: number; y1: number; x2: number; y2: number; x: number; y: number }
+  | { kind: "close" };
+export type PathFillRule = "nonzero" | "evenodd";
+export interface PathNode extends NodeGeometry {
+  id: string;
+  name: string;
+  type: "path";
+  commands: VectorPathCommand[];
+  fillRule: PathFillRule;
+  style: ShapeStyle;
+}
+
 export interface ImageNode extends NodeGeometry {
   id: string;
   name: string;
@@ -143,7 +157,7 @@ export interface TextNode extends NodeGeometry {
   marks?: TextMark[];
 }
 
-export type DocumentNode = FrameNode | RectangleNode | EllipseNode | TextNode | ImageNode;
+export type DocumentNode = FrameNode | RectangleNode | EllipseNode | PathNode | TextNode | ImageNode;
 
 export interface Document {
   version: 1;

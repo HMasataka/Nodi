@@ -43,6 +43,7 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 - `set_shadow`: 要素全体の外側影を `{ color, offsetX, offsetY, blur }` で設定する。`null` で解除する。色は6桁／8桁HEX、ぼかしは0以上。
 - `set_blur`: 要素全体のぼかしの標準偏差 `blur` を0以上のpx値で指定する。0で解除する。画像の色調整フィルターとは別。
 - `set_shape_style`・`set_frame_style` の `fill` は単色や `null` のほか、`type: "linear"`、正規化した `start`・`end`、2個以上の `{ position, color }` の `stops` を持つ線形グラデーションを指定できる。
+- `add_element` は `type: "path"` と `commands`、省略可能な `fillRule` に対応する。`set_path` でパスの命令列と塗り規則を更新でき、`set_shape_style` でパスの塗りと線も編集できる。パスの点は要素の幅・高さに対するローカル座標で、曲線は `cubic` 命令を使う。
 - `fill` に `type: "radial"`、正規化した `center`、短辺に対する0より大きく1以下の `radius`、線形と同じ `stops` を持つ放射状グラデーションも指定できる。
 - `set_frame_style`: フレームの `fill`・`stroke`・`cornerRadii` と `clipContent` を変更。スタイルの形式は矩形と共通。
 - `set_image_filters`: 画像の `filters` に明るさ・コントラスト・彩度・グレースケール・セピア・色相の変更項目を指定。未指定の項目は維持される。

@@ -1,7 +1,8 @@
 import { Result } from "@praha/byethrow";
 
 import { validFill } from "@/document/fill.ts";
-import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageFilters, type ImageStylePatch, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle } from "@/document/types.ts";
+import { vectorPathIssue } from "@/document/vectorPath.ts";
+import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageFilters, type ImageStylePatch, type PathFillRule, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
@@ -29,8 +30,8 @@ export function setNodeStyle(
   patch: Partial<RectangleStyle>,
 ): Result.Result<Document, Error> {
   const node = findNode(document, id);
-  if (!node || (node.type !== "rectangle" && node.type !== "ellipse")) return Result.fail(new Error(`図形が見つかりません: ${id}`));
-  if (node.type === "ellipse" && (patch.cornerRadii !== undefined || patch.border !== undefined)) return Result.fail(new Error("楕円に角丸や辺線は設定できません"));
+  if (!node || (node.type !== "rectangle" && node.type !== "ellipse" && node.type !== "path")) return Result.fail(new Error(`図形が見つかりません: ${id}`));
+  if (node.type !== "rectangle" && (patch.cornerRadii !== undefined || patch.border !== undefined)) return Result.fail(new Error("楕円やパスに角丸や辺線は設定できません"));
   const issue = boxStyleIssue(patch);
   if (issue) return Result.fail(new Error(issue));
   if (node.type === "rectangle" && borderCornerIssue({ ...node.style, ...patch })) return Result.fail(new Error("辺線と角丸は併用できません"));
@@ -38,8 +39,21 @@ export function setNodeStyle(
   return updateNode(document, id, (current) => {
     if (current.type === "rectangle") return matchesPatch(current.style, style) ? current : { ...current, style: { ...current.style, ...style } };
     if (current.type === "ellipse") return matchesPatch(current.style, style) ? current : { ...current, style: { ...current.style, ...style } };
+    if (current.type === "path") return matchesPatch(current.style, style) ? current : { ...current, style: { ...current.style, ...style } };
     return current;
   });
+}
+
+export function setPath(document: Document, id: string, patch: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }): Result.Result<Document, Error> {
+  const node = findNode(document, id);
+  if (!node || node.type !== "path") return Result.fail(new Error(`パスが見つかりません: ${id}`));
+  if (Object.keys(patch).some((key) => !["commands", "fillRule"].includes(key)) || Object.keys(patch).length === 0) return Result.fail(new Error("変更するパスを指定してください"));
+  const commands = patch.commands ?? node.commands;
+  const fillRule = patch.fillRule ?? node.fillRule;
+  const issue = vectorPathIssue(commands, fillRule);
+  if (issue) return Result.fail(new Error(issue));
+  return updateNode(document, id, (current) => current.type === "path" && (!sameValue(current.commands, commands) || current.fillRule !== fillRule)
+    ? { ...current, commands: structuredClone(commands), fillRule } : current);
 }
 
 function boxStyleIssue(patch: Partial<RectangleStyle>): string | undefined {
