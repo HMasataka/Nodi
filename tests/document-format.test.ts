@@ -4,7 +4,7 @@ import { test } from "vitest";
 import type { Animation } from "../src/document/types.ts";
 import { createAgentApi } from "../src/agent/api.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
-import { corners, document, ellipse, frame, image, rectangle, success, text } from "./support/factories.ts";
+import { corners, document, ellipse, frame, image, path, rectangle, success, text } from "./support/factories.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { setFrameStyle, setNodeStyle } from "../src/document/commands/index.ts";
 
@@ -221,6 +221,43 @@ test("アニメーション未指定は空配列に補完し、保存時は省�
   const wire = JSON.parse(success(serializeDocument(document(rectangle())))).children[0];
   assert.equal(Object.hasOwn(wire, "animations"), false);
   assert.deepEqual(success(parseDocument(JSON.stringify({ version: 1, children: [wire] }))).children[0].animations, []);
+});
+
+test("全ノード種別で共通項目の既定値を省略し、非既定値を再帰的に保持する", () => {
+  const nodes = [rectangle(), ellipse(), path(), image(), text({ marks: [] }), frame({ id: "nested" })];
+  const defaults = JSON.parse(success(serializeDocument(document(...nodes))));
+  const optionalKeys = ["rotation", "opacity", "shadow", "blur", "widthConstraint", "heightConstraint", "animations"];
+  for (const node of defaults.children) {
+    for (const key of optionalKeys) assert.equal(Object.hasOwn(node, key), false, `${node.type}.${key}`);
+  }
+  const common = {
+    rotation: 45, opacity: 0, shadow: { color: "#12345680", offsetX: -3, offsetY: 4, blur: 0 }, blur: 2,
+    widthConstraint: { mode: "fixed" as const, min: 10 }, heightConstraint: { mode: "fill" as const, max: 400 },
+    animations: [animation({ delay: 20, repeat: 2 })],
+  };
+  const original = document(frame({ children: nodes.map((node) => ({ ...node, ...structuredClone(common) })) }));
+  const before = structuredClone(original);
+  const json = success(serializeDocument(original));
+  const wire = JSON.parse(json);
+  for (const node of wire.children[0].children) {
+    for (const key of optionalKeys.filter((key) => key !== "animations")) assert.deepEqual(node[key], common[key], `${node.type}.${key}`);
+    assert.equal(node.animations[0].delay, 20);
+    assert.equal(node.animations[0].repeat, 2);
+  }
+  assert.deepEqual(wire.children[0].children.find((node) => node.type === "text").marks, []);
+  assert.deepEqual(success(parseDocument(json)), original);
+  assert.deepEqual(original, before);
+  assert.equal(success(serializeDocument(success(parseDocument(json)))), json);
+});
+
+test("内部モデルの必須共通項目が欠けていてもWireの既定値で補修しない", () => {
+  for (const node of [rectangle(), ellipse(), path(), image(), text(), frame()]) {
+    for (const key of ["rotation", "opacity", "shadow", "blur", "widthConstraint", "heightConstraint", "animations"]) {
+      const incomplete = { ...node };
+      delete incomplete[key];
+      assert.equal(serializeDocument(document(incomplete)).type, "Failure", `${node.type}.${key}`);
+    }
+  }
 });
 
 test("不正なアニメーションの値と構造を拒否する", () => {
