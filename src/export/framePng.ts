@@ -2,11 +2,12 @@ import { blurPixels } from "@/document/blur.ts";
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
+import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Result } from "@praha/byethrow";
 import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
+import { createLayoutMeasure, layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
-import { layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { maskGroups, maskPath } from "@/document/masks.ts";
 
 export interface PngRenderEnvironment {
@@ -243,10 +244,13 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     canvas.height = Math.round(frame.height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
+    // 編集画面と同じ座標解決エンジンを通し、自動レイアウトを解決してから描画する。
+    const resolved = resolveDocumentLayout({ version: 1, children: [{ ...frame, x: 0, y: 0 }] },
+      { measure: createLayoutMeasure(ctx) }).children[0] as FrameNode;
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();
-    const painted = await paintNode(ctx, { ...frame, x: 0, y: 0 }, environment);
+    const painted = await paintNode(ctx, resolved, environment);
     if (Result.isFailure(painted)) return painted;
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     return blob ? Result.succeed(blob) : Result.fail(new Error("PNG を生成できません"));

@@ -1,24 +1,16 @@
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
-import type { DocumentNode } from "@/document/types.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
-import { measureTextSize } from "@/rendering/textLayout.ts";
+import { measureNode } from "@/rendering/measure.ts";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import "@/App.css";
-
-let measureContext: CanvasRenderingContext2D | null = null;
-function measureNode(node: DocumentNode, wrapWidth?: number) {
-  if (node.type !== "text" || typeof document === "undefined") return { width: node.width, height: node.height };
-  measureContext ??= document.createElement("canvas").getContext("2d");
-  return measureContext ? measureTextSize(measureContext, node, wrapWidth) : { width: node.width, height: node.height };
-}
 
 function EditorPage() {
   const session = useEditorDocument();

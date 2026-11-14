@@ -519,6 +519,14 @@ button {
 .alignment-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 16px 0; }
 .alignment-actions .file-button { padding: 7px 3px; font-size: 10px; }
 .export-button { width: 100%; margin-top: 12px; }
+.frame-preview { margin: 4px 0 8px; }
+.preview-controls { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.preview-controls .file-button { padding: 5px 8px; font-size: 10px; }
+.preview-controls .file-button.is-active { border-color: var(--accent); color: var(--accent); }
+.preview-width-field { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-subtle); }
+.preview-width-field input { width: 60px; }
+.preview-stage { position: relative; overflow: hidden; margin-top: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--canvas-bg); }
+.preview-frame { position: absolute; top: 0; left: 0; transform-origin: top left; }
 
 .statusbar {
   display: flex;
