@@ -1,7 +1,23 @@
-import type { AnimatableProperty, Animation, Document, DocumentNode, Easing, Keyframe } from "@/document/types.ts";
+import type { AnimatableProperty, Animation, AnimationTrigger, Document, DocumentNode, Easing, Keyframe } from "@/document/types.ts";
 
 /** アニメーションが時刻 `t` に与える属性値。対象外の属性は含まれない。 */
 export type AnimatedValues = Partial<Record<AnimatableProperty, number>>;
+
+/** 要素の操作状態。ホバー中・クリック済みの要素 ID を保持する。 */
+export interface InteractionState {
+  hoveredIds: ReadonlySet<string>;
+  clickedIds: ReadonlySet<string>;
+}
+
+/** 要素が操作状態に応じて再生すべきトリガー。`load` は常に含む。 */
+export function activeAnimationTriggers(node: DocumentNode, state: InteractionState): ReadonlySet<AnimationTrigger> {
+  const triggers = new Set<AnimationTrigger>(["load"]);
+  if (state.hoveredIds.has(node.id)) triggers.add("hover");
+  if (state.clickedIds.has(node.id)) triggers.add("click");
+  return triggers;
+}
+
+export type TriggerResolver = (node: DocumentNode) => ReadonlySet<AnimationTrigger>;
 
 function ease(easing: Easing, progress: number): number {
   switch (easing) {
@@ -55,11 +71,14 @@ export function evaluateAnimation(animation: Animation, timeMs: number): Animate
 /**
  * 文書の各要素に時刻 `timeMs` のアニメーション値を適用した文書を返す。入力は変更しない。
  * 位置・回転・不透明度を上書きする。`scale` は要素の属性として未対応のため反映しない。
+ * `resolveTriggers` を渡すと、その要素で再生するトリガーだけに絞り込む（既定は全トリガー）。
  */
-export function applyAnimations(document: Document, timeMs: number): Document {
+export function applyAnimations(document: Document, timeMs: number, resolveTriggers?: TriggerResolver): Document {
   function applyNode(node: DocumentNode): DocumentNode {
+    const triggers = resolveTriggers?.(node);
     const values: AnimatedValues = {};
     for (const animation of node.animations) {
+      if (triggers && !triggers.has(animation.trigger)) continue;
       Object.assign(values, evaluateAnimation(animation, timeMs));
     }
     const overrides: { x?: number; y?: number; rotation?: number; opacity?: number } = {};

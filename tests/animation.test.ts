@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import type { Animation } from "../src/document/types.ts";
-import { applyAnimations, evaluateAnimation } from "../src/document/animation.ts";
+import { activeAnimationTriggers, applyAnimations, evaluateAnimation } from "../src/document/animation.ts";
 import { document, frame, rectangle } from "./support/factories.ts";
 
 function animation(overrides: Partial<Animation> = {}): Animation {
@@ -83,4 +83,22 @@ test("applyAnimations は位置・回転・不透明度を適用し、scale は�
   assert.equal(node.rotation, 45);
   assert.equal(node.width, 50);
   assert.deepEqual(applyAnimations(doc, 0).children[0].children[0].x, 0);
+});
+
+test("操作状態に応じて再生するトリガーを絞り込む", () => {
+  const load = animation({ trigger: "load", tracks: [{ property: "x", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 100, easing: "linear" }] }] });
+  const hover = animation({ trigger: "hover", tracks: [{ property: "opacity", keyframes: [{ time: 0, value: 1, easing: "linear" }, { time: 1000, value: 0, easing: "linear" }] }] });
+  const click = animation({ trigger: "click", tracks: [{ property: "rotation", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 90, easing: "linear" }] }] });
+  const doc = document(rectangle({ id: "r", x: 10, animations: [load, hover, click] }));
+
+  const none = applyAnimations(doc, 500, (n) => activeAnimationTriggers(n, { hoveredIds: new Set(), clickedIds: new Set() }));
+  assert.equal(none.children[0].x, 50);
+  assert.equal(none.children[0].opacity, 1);
+  assert.equal(none.children[0].rotation, 0);
+
+  const hovered = applyAnimations(doc, 500, (n) => activeAnimationTriggers(n, { hoveredIds: new Set(["r"]), clickedIds: new Set() }));
+  assert.equal(hovered.children[0].opacity, 0.5);
+
+  const clicked = applyAnimations(doc, 500, (n) => activeAnimationTriggers(n, { hoveredIds: new Set(), clickedIds: new Set(["r"]) }));
+  assert.equal(clicked.children[0].rotation, 45);
 });
