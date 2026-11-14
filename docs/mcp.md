@@ -53,6 +53,8 @@ Nodi デスクトップアプリを起動してドキュメントを開いた状
 
 `get_state` を呼び、続けて `add_element` で名前付き矩形を追加する。返された名前と ID を使って `rename_element`・`move_element` を呼ぶと、画面にも変更が反映される。画面の「元に戻す」で操作を戻せることを確認する。存在しない ID を指定した場合はエラーとなり、ドキュメントは変わらない。
 
+`select_element` の `scrollLeft` / `scrollTop` は、文書原点に対する画面px単位の仮想表示オフセット。負値も返す。DOMのスクロール位置ではなく、画面座標は `文書座標 × zoom − オフセット` で求める。位置は自動レイアウト解決後の文書から計算する。要素・パスの点のドラッグやパン中は、表示位置の変更を拒否する。
+
 ### 要素のスタイルと v1 の破壊的変更
 
 要素参照（`ElementReference`）は `id`・`name`・`path`・`parentId`・`type`・座標・寸法と、種別ごとの `style` を返す。文字の `content`・`marks`、フレームの `clipContent`、画像の `source` はノード直下にある。画像の `source` は `get_element` で取得でき、要素一覧では省略する。

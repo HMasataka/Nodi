@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-import type { CanvasExtent } from "@/pages/editor/viewport.ts";
+import type { CanvasCamera } from "@/pages/editor/camera.ts";
 import { imageObjectPosition } from "@/document/imagePlacement.ts";
 import { normalizeRadii } from "@/document/shapePath.ts";
 import type { Point } from "@/pages/editor/geometry.ts";
@@ -14,16 +14,15 @@ import { type Transform, transformPoint } from "@/document/transform.ts";
 
 const CANVAS_GRID_SIZE = 24;
 
-export function canvasSurfaceStyle(extent: CanvasExtent, zoom: number): CSSProperties {
+export function canvasSurfaceStyle(camera: CanvasCamera): CSSProperties {
   return {
-    width: `max(100%, ${extent.width * zoom}px)`,
-    height: `max(100%, ${extent.height * zoom}px)`,
-    backgroundSize: `${CANVAS_GRID_SIZE * zoom}px ${CANVAS_GRID_SIZE * zoom}px`,
+    backgroundSize: `${CANVAS_GRID_SIZE * camera.zoom}px ${CANVAS_GRID_SIZE * camera.zoom}px`,
+    backgroundPosition: `${-camera.scrollLeft - 1}px ${-camera.scrollTop - 1}px`,
   };
 }
 
-export function canvasWorldStyle(extent: CanvasExtent, zoom: number): CSSProperties {
-  return { transform: `translate(${extent.originX * zoom}px, ${extent.originY * zoom}px) scale(${zoom})` };
+export function canvasWorldStyle(camera: CanvasCamera): CSSProperties {
+  return { transform: `translate(${-camera.scrollLeft}px, ${-camera.scrollTop}px) scale(${camera.zoom})` };
 }
 
 export function selectionPreviewStyle(selection: { start: Point; end: Point }): CSSProperties {

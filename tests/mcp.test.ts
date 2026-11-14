@@ -13,7 +13,7 @@ import { agentInputs } from "../src/agent/contracts.ts";
 import { createAgentApi } from "../src/agent/api.ts";
 import { createDocument } from "../src/document/commands/index.ts";
 import { dispatchAgentRequest } from "../src/agent/bridge.ts";
-import { canvasExtent, focusViewport } from "../src/pages/editor/viewport.ts";
+import { cameraScreenGeometry, focusCamera } from "../src/pages/editor/camera.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
 
 test("MCP クライアントから編集と履歴の数値照会ができ、照会は履歴を変えない", { timeout: 20000 }, async () => {
@@ -26,12 +26,11 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     apply: (document) => { history = commit(history, document); },
     focus: (id) => {
       const absolute = absoluteGeometry(history.present, id);
-      const extent = canvasExtent(history.present);
-      const view = focusViewport(absolute, extent, { width: 240, height: 160 }, 1);
+      const view = focusCamera(absolute, { width: 240, height: 160 }, 1);
       selectedId = id;
       return { type: "Success", value: {
         absolute, ...view,
-        screen: { x: (extent.originX + absolute.x) * view.zoom - view.scrollLeft, y: (extent.originY + absolute.y) * view.zoom - view.scrollTop, width: absolute.width * view.zoom, height: absolute.height * view.zoom },
+        screen: cameraScreenGeometry(absolute, view),
       } };
     },
   });

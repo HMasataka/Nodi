@@ -2,7 +2,7 @@ import type { PointerEvent, Ref } from "react";
 
 import type { Document } from "@/document/types";
 
-import { canvasExtent } from "@/pages/editor/viewport";
+import type { CanvasCamera } from "@/pages/editor/camera.ts";
 import { drawingGeometry } from "@/pages/editor/geometry";
 import type { SnapGuide } from "@/pages/editor/snapping";
 import { transformPoint } from "@/document/transform.ts";
@@ -17,6 +17,7 @@ interface CanvasProps extends NodeInteraction {
   selectedId: string | null;
   selectedIds?: string[];
   zoom: number;
+  camera?: CanvasCamera;
   onZoom(factor: number): void;
   viewportRef?: Ref<HTMLElement>;
   drawTool: DrawTool;
@@ -36,7 +37,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, selectedIds, zoom, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [],
+    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [],
     onPanPointerDown, onPanPointerMove, onPanPointerUp, onWorldDoubleClick,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -57,21 +58,20 @@ export function Canvas(props: CanvasProps) {
   const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentTransform) : null;
   const penPoints = pen?.points.map((point) => transformPoint(pen.parentTransform, point)) ?? [];
   const penCursor = pen ? transformPoint(pen.parentTransform, pen.cursor) : null;
-  const extent = canvasExtent(design);
 
   return (
     <div className="canvas-container">
       <section ref={viewportRef} className="canvas-viewport" aria-label="キャンバス"
-        onPointerDown={onPanPointerDown} onPointerMove={onPanPointerMove}
+        onPointerDownCapture={onPanPointerDown} onPointerMove={onPanPointerMove}
         onPointerUp={(event) => onPanPointerUp(event.pointerId)}
         onPointerCancel={(event) => onPanPointerUp(event.pointerId)}
         onLostPointerCapture={(event) => onPanPointerUp(event.pointerId)}>
-        <div className="canvas-surface" style={canvasSurfaceStyle(extent, zoom)}>
-          <div className={`canvas-world${drawTool !== "select" ? " is-drawing" : ""}`}
-            style={canvasWorldStyle(extent, zoom)} onPointerDown={onWorldPointerDown} onDoubleClick={onWorldDoubleClick}
+        <div className={`canvas-surface${drawTool !== "select" ? " is-drawing" : ""}`} style={canvasSurfaceStyle(camera)}
+            onPointerDown={onWorldPointerDown} onDoubleClick={onWorldDoubleClick}
             onPointerMove={onWorldPointerMove} onPointerUp={onWorldPointerUp}
             onPointerCancel={(event) => onWorldPointerCancel(event.pointerId)}
             onLostPointerCapture={(event) => onWorldPointerCancel(event.pointerId)}>
+          <div className="canvas-world" style={canvasWorldStyle(camera)}>
             {design.children.length === 0 && <div className="canvas-hint" aria-hidden="true"><span className="hint-symbol">＋</span><span>ここから、かたちをつくる。</span></div>}
             <CanvasNodes nodes={design.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
