@@ -1,17 +1,19 @@
 import { Result } from "@praha/byethrow";
 import { type PointerEvent, useEffect, useRef, useState } from "react";
 
-import type { DocumentNode } from "@/document/types";
 import { listLocatedNodes } from "@/document/geometry.ts";
+import { movePathPoint } from "@/document/pathEdit.ts";
+import type { PathPointPart } from "@/document/pathEdit.ts";
 import { screenDeltaToDocument } from "@/pages/editor/viewport";
 import { toggleSelection } from "@/pages/editor/selection";
 import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import type { Document, DocumentNode, PathNode } from "@/document/types";
 import type { DragState, DrawingState, DrawTool, PenState, SelectionRegion } from "@/pages/editor/types";
 import { drawingGeometry, frameTransform, nodesInBounds, pointOnCanvas, resizeFromWorldDelta } from "@/pages/editor/geometry";
 import { extendPen, finishPenInput, penLocalPoint } from "@/pages/editor/pen.ts";
-import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
-import { IDENTITY_TRANSFORM, invertTransform, transformVector } from "@/document/transform.ts";
+import { findNode, moveNodes, setNodeGeometry, setPath } from "@/document/commands/index.ts";
+import { IDENTITY_TRANSFORM, invertTransform, transformPoint, transformVector } from "@/document/transform.ts";
 import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
@@ -20,6 +22,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     beginPreview, previewDocument, finishPreview, stepHistory: stepDocumentHistory,
   } = session;
   const drag = useRef<DragState | null>(null);
+  const pathDrag = useRef<{ original: Document; node: PathNode; index: number; part: PathPointPart; pointerId: number; zoom: number } | null>(null);
   const { zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
   const [drawTool, setDrawToolState] = useState<DrawTool>("select");
   const [pen, setPen] = useState<PenState | null>(null);
@@ -36,9 +39,50 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   }
 
   function setDrawTool(tool: DrawTool) {
+    cancelPathPointDrag();
     if (tool !== "path") cancelPen();
     if (tool !== "rectangle" && tool !== "ellipse") cancelDrawing();
     setDrawToolState(tool);
+  }
+
+  function startPathPointDrag(event: PointerEvent<SVGCircleElement>, node: PathNode, index: number, part: PathPointPart) {
+    if (event.button !== 0 || drag.current || pathDrag.current || spacePressed.current || drawTool !== "select") return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    beginPreview();
+    pathDrag.current = { original: designRef.current, node, index, part, pointerId: event.pointerId, zoom };
+  }
+
+  function continuePathPointDrag(event: PointerEvent<SVGCircleElement>) {
+    const active = pathDrag.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    const bounds = event.currentTarget.closest(".canvas-world")?.getBoundingClientRect();
+    if (!bounds) return;
+    const world = pointOnCanvas(event.clientX, event.clientY, bounds, active.zoom);
+    const located = listLocatedNodes(active.original).find(({ node }) => node.id === active.node.id);
+    if (!located) return;
+    const local = transformPoint(invertTransform(located.world), world);
+    const commands = movePathPoint(active.node.commands, active.index, active.part,
+      { x: local.x / active.node.width, y: local.y / active.node.height });
+    if (!commands) return;
+    const result = setPath(active.original, active.node.id, { commands });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    previewDocument(result.value);
+  }
+
+  function finishPathPointDrag(pointerId: number) {
+    const active = pathDrag.current;
+    if (!active || active.pointerId !== pointerId) return;
+    pathDrag.current = null;
+    const final = findNode(designRef.current, active.node.id);
+    finishPreview(final?.type === "path" && JSON.stringify(final.commands) !== JSON.stringify(active.node.commands));
+  }
+
+  function cancelPathPointDrag() {
+    if (!pathDrag.current) return;
+    pathDrag.current = null;
+    finishPreview(false);
   }
 
   function finishPen(closed: boolean) {
@@ -168,7 +212,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   }
 
   function stepHistory(direction: "undo" | "redo") {
-    if (!drag.current && !penRef.current) stepDocumentHistory(direction);
+    if (!drag.current && !pathDrag.current && !penRef.current) stepDocumentHistory(direction);
   }
 
   function beginDrawing(event: PointerEvent<HTMLDivElement>) {
@@ -255,6 +299,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && pathDrag.current) { cancelPathPointDrag(); event.preventDefault(); return; }
       if (event.key === "Escape" && drawingRef.current) {
         cancelDrawing();
         setDrawTool("select");
@@ -278,10 +323,11 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+    drag, pathDrag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
+    startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
     updateSelection, finishSelection, cancelSelection,
   };
 }
