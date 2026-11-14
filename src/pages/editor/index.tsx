@@ -5,6 +5,7 @@ import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
+import { resolveDocumentLayout } from "@/document/layout.ts";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
@@ -32,7 +33,7 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={resolveDocumentLayout(design)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}

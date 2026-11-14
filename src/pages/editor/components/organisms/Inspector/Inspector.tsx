@@ -1,4 +1,4 @@
-import type { Alignment, LayerDirection } from "@/document/commands/index.ts";
+import type { Alignment, FrameLayoutPatch, LayerDirection } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
@@ -22,6 +22,7 @@ interface InspectorProps {
   onTextMarkRange(edit: TextMarkRangeEdit): void;
   onShapeStyle(style: Partial<RectangleStyle>): void;
   onFrameStyle(style: Partial<FrameStyle>): void;
+  onFrameLayout(patch: FrameLayoutPatch): void;
   onImageStyle(style: Partial<ImageStyle>): void;
   onPath(patch: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }): void;
   onDuplicate(): void;
@@ -32,7 +33,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -75,7 +76,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
               onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
           </label>
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
-            onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onImageStyle={onImageStyle} onPath={onPath} />
+            onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onFrameLayout={onFrameLayout} onImageStyle={onImageStyle} onPath={onPath} />
           <ShadowEditor key={`${selected.id}:${JSON.stringify(selected.shadow)}`} shadow={selected.shadow} onChange={onShadow} />
           <label className="geometry-field">
             <span>全体ぼかし px</span>
