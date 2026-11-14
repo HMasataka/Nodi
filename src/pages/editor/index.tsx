@@ -1,5 +1,7 @@
-import { applyAnimations } from "@/document/animation.ts";
+import { useState } from "react";
+
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
+import type { DocumentNode } from "@/document/types.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
@@ -13,6 +15,7 @@ import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction"
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
+import { activeAnimationTriggers, applyAnimations } from "@/document/animation.ts";
 import "@/App.css";
 
 function EditorPage() {
@@ -20,6 +23,10 @@ function EditorPage() {
   const interaction = useCanvasInteraction(session);
   const actions = useEditorActions(session);
   const playback = usePlayback();
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
+  const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
+  const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
   const { drag, pathDrag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
@@ -38,9 +45,16 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead, resolveTriggers)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
+        onNodeEnter={(id) => setHoveredId(id)}
+        onNodeLeave={(id) => setHoveredId((current) => current === id ? null : current)}
+        onNodeClick={(id) => setClickedIds((current) => {
+          const next = new Set(current);
+          if (next.has(id)) next.delete(id); else next.add(id);
+          return next;
+        })}
         onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
         onPathPointPointerUp={finishPathPointDrag} onPathPointPointerCancel={cancelPathPointDrag}
         onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}

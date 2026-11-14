@@ -48,6 +48,9 @@ export interface NodeInteraction {
   onNodePointerMove(event: PointerEvent<HTMLElement>): void;
   onNodePointerUp(pointerId: number): void;
   onImageError(id: string): void;
+  onNodeEnter?(id: string): void;
+  onNodeLeave?(id: string): void;
+  onNodeClick?(id: string): void;
   onPathPointPointerDown?(event: PointerEvent<SVGCircleElement>, node: PathNode, index: number, part: PathPointPart): void;
   onPathPointPointerMove?(event: PointerEvent<SVGCircleElement>): void;
   onPathPointPointerUp?(pointerId: number): void;
@@ -118,6 +121,9 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
     onPointerUp: (event: PointerEvent<HTMLElement>) => onNodePointerUp(event.pointerId),
     onPointerCancel: (event: PointerEvent<HTMLElement>) => onNodePointerUp(event.pointerId),
     onLostPointerCapture: (event: PointerEvent<HTMLElement>) => onNodePointerUp(event.pointerId),
+    onPointerEnter: interaction.onNodeEnter ? () => interaction.onNodeEnter?.(node.id) : undefined,
+    onPointerLeave: interaction.onNodeLeave ? () => interaction.onNodeLeave?.(node.id) : undefined,
+    onClick: interaction.onNodeClick ? (event: { stopPropagation(): void }) => { event.stopPropagation(); interaction.onNodeClick?.(node.id); } : undefined,
   };
 
   if (node.type === "frame") return (
