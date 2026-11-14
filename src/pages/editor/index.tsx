@@ -21,11 +21,11 @@ import "@/App.css";
 function EditorPage() {
   const session = useEditorDocument();
   const interaction = useCanvasInteraction(session);
-  const actions = useEditorActions(session);
   const playback = usePlayback();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
   const [scrollProgress, setScrollProgress] = useState(0);
+  const actions = useEditorActions(session, { playhead: playback.playhead, scrollProgress });
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
