@@ -131,3 +131,60 @@ test("スタイルの省略パッチは既存値を維持し、入れ子入力�
   assert.equal(edited.children[0].style.stroke.width, 3);
   assert.equal(edited.children[0].style.cornerRadii.topLeft, 7);
 });
+
+test("フレームのレイアウト設定を読み書きし、既定値は省略して none に補完する", () => {
+  const custom = frame({ layoutMode: "vertical", padding: 16, gap: 8, alignItems: "center", justifyContent: "space-between" });
+  const json = success(serializeDocument(document(custom)));
+  const wire = JSON.parse(json).children[0];
+  assert.deepEqual({ layoutMode: wire.layoutMode, padding: wire.padding, gap: wire.gap, alignItems: wire.alignItems, justifyContent: wire.justifyContent },
+    { layoutMode: "vertical", padding: 16, gap: 8, alignItems: "center", justifyContent: "space-between" });
+  assert.deepEqual(success(parseDocument(json)), document(custom));
+
+  const plain = JSON.parse(success(serializeDocument(document(frame())))).children[0];
+  for (const key of ["layoutMode", "padding", "gap", "alignItems", "justifyContent"]) assert.equal(Object.hasOwn(plain, key), false);
+  const reloaded = success(parseDocument(success(serializeDocument(document(frame()))))).children[0];
+  assert.equal(reloaded.type === "frame" && reloaded.layoutMode, "none");
+});
+
+test("子要素のサイズ制約を読み書きし、既定値 fixed は省略する", () => {
+  const custom = rectangle({ widthConstraint: { mode: "fill" }, heightConstraint: { mode: "hug", min: 20, max: 200 } });
+  const wire = JSON.parse(success(serializeDocument(document(custom)))).children[0];
+  assert.deepEqual(wire.widthConstraint, { mode: "fill" });
+  assert.deepEqual(wire.heightConstraint, { mode: "hug", min: 20, max: 200 });
+  assert.deepEqual(success(parseDocument(success(serializeDocument(document(custom))))), document(custom));
+
+  const plain = JSON.parse(success(serializeDocument(document(rectangle())))).children[0];
+  assert.equal(Object.hasOwn(plain, "widthConstraint"), false);
+  assert.equal(Object.hasOwn(plain, "heightConstraint"), false);
+});
+
+test("レイアウト設定とサイズ制約の未知項目を拒否する", () => {
+  const base = rectangle();
+  const cases = [
+    { ...base, widthConstraint: { mode: "fill", extra: 1 } },
+    { ...frame(), layoutMode: "horizontal", extraLayout: true },
+  ];
+  for (const node of cases) {
+    const invalid = { version: 1, children: [node] };
+    assert.equal(parseDocument(JSON.stringify(invalid)).type, "Failure");
+    assert.equal(serializeDocument(invalid).type, "Failure");
+  }
+});
+
+test("レイアウト設定とサイズ制約の不正値を拒否する", () => {
+  const base = rectangle();
+  const cases: unknown[] = [
+    { ...base, widthConstraint: { mode: "grow" } },
+    { ...base, widthConstraint: { mode: "fill", min: -1 } },
+    { ...base, widthConstraint: { mode: "fill", min: 20, max: 10 } },
+    { ...base, heightConstraint: null },
+    { ...frame(), layoutMode: "grid" },
+    { ...frame(), padding: -1 },
+    { ...frame(), gap: -1 },
+    { ...frame(), alignItems: "stretch" },
+    { ...frame(), justifyContent: "between" },
+  ];
+  for (const node of cases) {
+    assert.equal(parseDocument(JSON.stringify({ version: 1, children: [node] })).type, "Failure");
+  }
+});

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
-import { DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, MAX_IMAGE_SOURCE_LENGTH, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
+import { DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, SIZE_MODES, type SizeConstraint, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
@@ -16,7 +16,15 @@ const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimen
 const color = z.string().regex(HEX_COLOR_PATTERN);
 const shadow = z.strictObject({ color, offsetX: coordinate, offsetY: coordinate, blur: z.number().finite().nonnegative() });
 const blur = z.number().finite().nonnegative();
-const wireGeometry = { ...geometry, shadow: shadow.nullable().optional(), blur: blur.optional() };
+const sizeMode = z.enum(SIZE_MODES);
+const sizeConstraint = z.strictObject({ mode: sizeMode, min: dimension.optional(), max: dimension.optional() })
+  .refine((value) => value.min === undefined || value.max === undefined || value.min <= value.max, "最小値は最大値以下にしてください");
+const layoutMode = z.enum(LAYOUT_MODES);
+const layoutAlignment = z.enum(LAYOUT_ALIGNMENTS);
+const layoutJustify = z.enum(LAYOUT_JUSTIFIES);
+const layoutPadding = z.number().finite().nonnegative();
+const layoutGap = z.number().finite().nonnegative();
+const wireGeometry = { ...geometry, shadow: shadow.nullable().optional(), blur: blur.optional(), widthConstraint: sizeConstraint.optional(), heightConstraint: sizeConstraint.optional() };
 const unit = z.number().finite().min(0).max(1);
 const point = z.strictObject({ x: unit, y: unit });
 const stop = z.strictObject({ position: unit, color });
@@ -74,13 +82,24 @@ type OptionalShadow<T> = Omit<T, "shadow"> & { shadow?: z.infer<typeof shadow> |
 type OptionalBlur<T> = Omit<T, "blur"> & { blur?: number };
 type OptionalMask<T> = Omit<T, "isMask"> & { isMask?: true };
 type OptionalFillRule<T> = Omit<T, "fillRule"> & { fillRule?: z.infer<typeof fillRule> };
+type OptionalSize<T> = Omit<T, "widthConstraint" | "heightConstraint"> & {
+  widthConstraint?: z.infer<typeof sizeConstraint>;
+  heightConstraint?: z.infer<typeof sizeConstraint>;
+};
+type OptionalLayout<T> = Omit<T, "layoutMode" | "padding" | "gap" | "alignItems" | "justifyContent"> & {
+  layoutMode?: z.infer<typeof layoutMode>;
+  padding?: number;
+  gap?: number;
+  alignItems?: z.infer<typeof layoutAlignment>;
+  justifyContent?: z.infer<typeof layoutJustify>;
+};
 export type WireNode =
-  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> }>>>>>
-  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>>>>
-  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalFillRule<Omit<Extract<DocumentNode, { type: "path" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>>>>
-  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "image" }>, "style"> & { style: z.infer<typeof imageStyle> }>>>>
-  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> }>>>>
-  | OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] }>>>>;
+  | OptionalSize<OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "rectangle" }>, "style"> & { style: z.infer<typeof boxStyle> }>>>>>>
+  | OptionalSize<OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalMask<Omit<Extract<DocumentNode, { type: "ellipse" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>>>>>
+  | OptionalSize<OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<OptionalFillRule<Omit<Extract<DocumentNode, { type: "path" }>, "style"> & { style: z.infer<typeof shapeStyle> }>>>>>>
+  | OptionalSize<OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "image" }>, "style"> & { style: z.infer<typeof imageStyle> }>>>>>
+  | OptionalSize<OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "text" }>, "style"> & { style: z.infer<typeof textStyle> }>>>>>
+  | OptionalSize<OptionalLayout<OptionalBlur<OptionalShadow<OptionalOpacity<OptionalRotation<Omit<Extract<DocumentNode, { type: "frame" }>, "style" | "children" | "clipContent"> & { style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] }>>>>>>;
 export interface WireDocument { version: 1; children: WireNode[] }
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
@@ -89,7 +108,9 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
     z.strictObject({ id, name, type: z.literal("ellipse"), ...wireGeometry, isMask: z.literal(true).optional(), style: shapeStyle }),
     z.strictObject({ id, name, type: z.literal("path"), ...wireGeometry, commands: vectorCommands, fillRule: fillRule.optional(), style: shapeStyle }),
     z.strictObject({ id, name, type: z.literal("image"), ...wireGeometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-    z.strictObject({ id, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(), children: z.array(nodeSchema) }),
+    z.strictObject({ id, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(),
+      layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
+      children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
   ]),
 );
@@ -116,13 +137,14 @@ function checkUniqueIds(
 
 export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema) }).superRefine(checkUniqueIds);
 
+const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
-  z.strictObject({ id, name, type: z.literal("rectangle"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, isMask: z.boolean(), style: normalizedBoxStyle }),
-  z.strictObject({ id, name, type: z.literal("ellipse"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, isMask: z.boolean(), style: normalizedShapeStyle }),
-  z.strictObject({ id, name, type: z.literal("path"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
-  z.strictObject({ id, name, type: z.literal("image"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-  z.strictObject({ id, name, type: z.literal("frame"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, style: normalizedBoxStyle, clipContent: z.boolean(), children: z.array(internalNodeSchema) }),
-  z.strictObject({ id, name, type: z.literal("text"), x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
+  z.strictObject({ id, name, type: z.literal("rectangle"), ...internalGeometry, isMask: z.boolean(), style: normalizedBoxStyle }),
+  z.strictObject({ id, name, type: z.literal("ellipse"), ...internalGeometry, isMask: z.boolean(), style: normalizedShapeStyle }),
+  z.strictObject({ id, name, type: z.literal("path"), ...internalGeometry, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
+  z.strictObject({ id, name, type: z.literal("image"), ...internalGeometry, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
+  z.strictObject({ id, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
+  z.strictObject({ id, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
 ]));
 
 export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema) }).superRefine(checkUniqueIds);
@@ -132,19 +154,26 @@ function normalizeNode(node: WireNode): DocumentNode {
   const opacity = node.opacity ?? 1;
   const shadow = node.shadow ?? null;
   const blur = node.blur ?? 0;
+  const widthConstraint = node.widthConstraint ? { ...node.widthConstraint } : { ...DEFAULT_SIZE_CONSTRAINT };
+  const heightConstraint = node.heightConstraint ? { ...node.heightConstraint } : { ...DEFAULT_SIZE_CONSTRAINT };
   switch (node.type) {
-    case "image": return { ...node, rotation, opacity, shadow, blur, style: { fit: node.style.fit ?? DEFAULT_IMAGE_STYLE.fit, focalPoint: node.style.focalPoint ?? { ...DEFAULT_IMAGE_STYLE.focalPoint }, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, filters: { ...DEFAULT_IMAGE_FILTERS, ...node.style.filters } } };
-    case "text": return { ...node, rotation, opacity, shadow, blur, style: { ...node.style,
+    case "image": return { ...node, rotation, opacity, shadow, blur, widthConstraint, heightConstraint, style: { fit: node.style.fit ?? DEFAULT_IMAGE_STYLE.fit, focalPoint: node.style.focalPoint ?? { ...DEFAULT_IMAGE_STYLE.focalPoint }, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, filters: { ...DEFAULT_IMAGE_FILTERS, ...node.style.filters } } };
+    case "text": return { ...node, rotation, opacity, shadow, blur, widthConstraint, heightConstraint, style: { ...node.style,
       fontFamily: node.style.fontFamily ?? DEFAULT_TEXT_STYLE.fontFamily,
       fontWeight: node.style.fontWeight ?? DEFAULT_TEXT_STYLE.fontWeight,
       lineHeight: node.style.lineHeight ?? DEFAULT_TEXT_STYLE.lineHeight,
       letterSpacing: node.style.letterSpacing ?? DEFAULT_TEXT_STYLE.letterSpacing,
     } };
-    case "ellipse": return { ...node, rotation, opacity, shadow, blur, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null } };
-    case "path": return { ...node, rotation, opacity, shadow, blur, fillRule: node.fillRule ?? "nonzero", style: { ...node.style, stroke: node.style.stroke ?? null } };
-    case "rectangle": return { ...node, rotation, opacity, shadow, blur, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} } };
-    case "frame": return { ...node, rotation, opacity, shadow, blur, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} }, clipContent: node.clipContent ?? true, children: node.children.map(normalizeNode) };
+    case "ellipse": return { ...node, rotation, opacity, shadow, blur, widthConstraint, heightConstraint, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null } };
+    case "path": return { ...node, rotation, opacity, shadow, blur, widthConstraint, heightConstraint, fillRule: node.fillRule ?? "nonzero", style: { ...node.style, stroke: node.style.stroke ?? null } };
+    case "rectangle": return { ...node, rotation, opacity, shadow, blur, widthConstraint, heightConstraint, isMask: node.isMask ?? false, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} } };
+    case "frame": return { ...node, rotation, opacity, shadow, blur, widthConstraint, heightConstraint, style: { ...node.style, stroke: node.style.stroke ?? null, cornerRadii: node.style.cornerRadii ?? { ...ZERO_CORNER_RADII }, border: node.style.border ?? {} }, clipContent: node.clipContent ?? true, layoutMode: node.layoutMode ?? DEFAULT_LAYOUT_MODE, padding: node.padding ?? DEFAULT_LAYOUT_PADDING, gap: node.gap ?? DEFAULT_LAYOUT_GAP, alignItems: node.alignItems ?? DEFAULT_LAYOUT_ALIGNMENT, justifyContent: node.justifyContent ?? DEFAULT_LAYOUT_JUSTIFY, children: node.children.map(normalizeNode) };
   }
+}
+
+function compactSize(key: "widthConstraint" | "heightConstraint", constraint: SizeConstraint) {
+  if (constraint.mode === "fixed" && constraint.min === undefined && constraint.max === undefined) return {};
+  return { [key]: { mode: constraint.mode, ...(constraint.min === undefined ? {} : { min: constraint.min }), ...(constraint.max === undefined ? {} : { max: constraint.max }) } };
 }
 
 function compactNode(node: DocumentNode): WireNode {
@@ -153,9 +182,10 @@ function compactNode(node: DocumentNode): WireNode {
   const opacityField = node.opacity === 1 ? {} : { opacity: node.opacity };
   const shadowField = node.shadow === null ? {} : { shadow: node.shadow };
   const blurField = node.blur === 0 ? {} : { blur: node.blur };
+  const sizeFields = { ...compactSize("widthConstraint", node.widthConstraint), ...compactSize("heightConstraint", node.heightConstraint) };
   if (node.type === "image") {
-    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, ...rest } = node;
-    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, style: {
+    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, widthConstraint: _width, heightConstraint: _height, ...rest } = node;
+    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, ...sizeFields, style: {
       ...(node.style.fit === DEFAULT_IMAGE_STYLE.fit ? {} : { fit: node.style.fit }),
       ...(node.style.focalPoint.x === DEFAULT_IMAGE_STYLE.focalPoint.x && node.style.focalPoint.y === DEFAULT_IMAGE_STYLE.focalPoint.y ? {} : { focalPoint: node.style.focalPoint }),
       ...(Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}),
@@ -163,9 +193,9 @@ function compactNode(node: DocumentNode): WireNode {
     } };
   }
   if (node.type === "text") {
-    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, ...rest } = node;
+    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, widthConstraint: _width, heightConstraint: _height, ...rest } = node;
     const { fontFamily, fontWeight, lineHeight, letterSpacing, ...required } = node.style;
-    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, style: { ...required,
+    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, ...sizeFields, style: { ...required,
       ...(fontFamily === DEFAULT_TEXT_STYLE.fontFamily ? {} : { fontFamily }),
       ...(fontWeight === DEFAULT_TEXT_STYLE.fontWeight ? {} : { fontWeight }),
       ...(lineHeight === DEFAULT_TEXT_STYLE.lineHeight ? {} : { lineHeight }),
@@ -173,8 +203,8 @@ function compactNode(node: DocumentNode): WireNode {
     } };
   }
   if (node.type === "path") {
-    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, fillRule: _fillRule, ...rest } = node;
-    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField,
+    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, fillRule: _fillRule, widthConstraint: _width, heightConstraint: _height, ...rest } = node;
+    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, ...sizeFields,
       ...(node.fillRule === "nonzero" ? {} : { fillRule: node.fillRule }),
       style: { fill: node.style.fill, ...(node.style.stroke ? { stroke: node.style.stroke } : {}) } };
   }
@@ -182,12 +212,19 @@ function compactNode(node: DocumentNode): WireNode {
     ...(node.type !== "ellipse" && Object.values(node.style.cornerRadii).some((value) => value !== 0) ? { cornerRadii: node.style.cornerRadii } : {}),
     ...(node.type !== "ellipse" && Object.keys(node.style.border).length ? { border: node.style.border } : {}) };
   if (node.type === "frame") {
-    const { rotation: _rotation, opacity: _opacity, shadow: _shadow, blur: _blur, clipContent: _clipContent, ...rest } = node;
-    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, style, ...(node.clipContent ? {} : { clipContent: false }), children: node.children.map(compactNode) };
+    const { rotation: _rotation, opacity: _opacity, shadow: _shadow, blur: _blur, clipContent: _clipContent, widthConstraint: _width, heightConstraint: _height, layoutMode, padding, gap, alignItems, justifyContent, ...rest } = node;
+    const layoutFields = {
+      ...(layoutMode === DEFAULT_LAYOUT_MODE ? {} : { layoutMode }),
+      ...(padding === DEFAULT_LAYOUT_PADDING ? {} : { padding }),
+      ...(gap === DEFAULT_LAYOUT_GAP ? {} : { gap }),
+      ...(alignItems === DEFAULT_LAYOUT_ALIGNMENT ? {} : { alignItems }),
+      ...(justifyContent === DEFAULT_LAYOUT_JUSTIFY ? {} : { justifyContent }),
+    };
+    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, ...sizeFields, ...layoutFields, style, ...(node.clipContent ? {} : { clipContent: false }), children: node.children.map(compactNode) };
   }
   if (node.type === "ellipse" || node.type === "rectangle") {
-    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, isMask: _mask, ...rest } = node;
-    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, ...(node.isMask ? { isMask: true as const } : {}), style };
+    const { rotation: _, opacity: _opacity, shadow: _shadow, blur: _blur, isMask: _mask, widthConstraint: _width, heightConstraint: _height, ...rest } = node;
+    return { ...rest, ...rotationField, ...opacityField, ...shadowField, ...blurField, ...sizeFields, ...(node.isMask ? { isMask: true as const } : {}), style };
   }
   return node;
 }

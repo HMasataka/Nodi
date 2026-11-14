@@ -52,9 +52,11 @@ export function addNode(
     id = `nd_${crypto.randomUUID()}`;
   } while (ids.has(id));
 
-  const geometry = { x: input.x, y: input.y, width: input.width, height: input.height, rotation: 0, opacity: 1, shadow: null, blur: 0 };
+  const geometry = { x: input.x, y: input.y, width: input.width, height: input.height, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    widthConstraint: { mode: "fixed" as const }, heightConstraint: { mode: "fixed" as const } };
   const node: DocumentNode = input.type === "frame"
-    ? { id, name, type: "frame", ...geometry, style: structuredClone(DEFAULT_FRAME_STYLE), clipContent: true, children: [] }
+    ? { id, name, type: "frame", ...geometry, style: structuredClone(DEFAULT_FRAME_STYLE), clipContent: true,
+      layoutMode: "none" as const, padding: 0, gap: 0, alignItems: "start" as const, justifyContent: "start" as const, children: [] }
     : input.type === "text"
       ? { id, name, type: "text", ...geometry, content: input.content ?? "テキスト", style: { ...DEFAULT_TEXT_STYLE } }
       : input.type === "image"
