@@ -35,5 +35,6 @@ export type DragState = SingleDragState | GroupDragState;
 
 export interface PanState { pointerId: number; clientX: number; clientY: number; scrollLeft: number; scrollTop: number }
 export interface SelectionRegion { pointerId: number; start: Point; end: Point; additive: boolean }
-export type DrawTool = "select" | "rectangle" | "ellipse";
-export interface DrawingState { pointerId: number; tool: Exclude<DrawTool, "select">; start: Point; end: Point; parentId: string | null; parentTransform: Transform }
+export type DrawTool = "select" | "rectangle" | "ellipse" | "path";
+export interface DrawingState { pointerId: number; tool: "rectangle" | "ellipse"; start: Point; end: Point; parentId: string | null; parentTransform: Transform }
+export interface PenState { points: Point[]; cursor: Point; parentId: string | null; parentTransform: Transform }

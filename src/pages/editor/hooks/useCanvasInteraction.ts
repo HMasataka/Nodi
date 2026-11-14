@@ -7,8 +7,9 @@ import { screenDeltaToDocument } from "@/pages/editor/viewport";
 import { toggleSelection } from "@/pages/editor/selection";
 import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
-import type { DragState, DrawingState, DrawTool, SelectionRegion } from "@/pages/editor/types";
+import type { DragState, DrawingState, DrawTool, PenState, SelectionRegion } from "@/pages/editor/types";
 import { drawingGeometry, frameTransform, nodesInBounds, pointOnCanvas, resizeFromWorldDelta } from "@/pages/editor/geometry";
+import { extendPen, finishPenInput, penLocalPoint } from "@/pages/editor/pen.ts";
 import { findNode, moveNodes, setNodeGeometry } from "@/document/commands/index.ts";
 import { IDENTITY_TRANSFORM, invertTransform, transformVector } from "@/document/transform.ts";
 import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
@@ -20,12 +21,69 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   } = session;
   const drag = useRef<DragState | null>(null);
   const { zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan } = useCanvasViewport(session, drag);
-  const [drawTool, setDrawTool] = useState<DrawTool>("select");
+  const [drawTool, setDrawToolState] = useState<DrawTool>("select");
+  const [pen, setPen] = useState<PenState | null>(null);
+  const penRef = useRef<PenState | null>(null);
   const [drawing, setDrawing] = useState<DrawingState | null>(null);
   const drawingRef = useRef<DrawingState | null>(null);
   const [selection, setSelection] = useState<SelectionRegion | null>(null);
   const selectionRef = useRef<SelectionRegion | null>(null);
   const [guides, setGuides] = useState<SnapGuide[]>([]);
+
+  function cancelPen() {
+    penRef.current = null;
+    setPen(null);
+  }
+
+  function setDrawTool(tool: DrawTool) {
+    if (tool !== "path") cancelPen();
+    if (tool !== "rectangle" && tool !== "ellipse") cancelDrawing();
+    setDrawToolState(tool);
+  }
+
+  function finishPen(closed: boolean) {
+    const active = penRef.current;
+    if (!active) return;
+    const input = finishPenInput(active, closed);
+    if (!input) return;
+    const result = agentApi.add(input);
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    cancelPen();
+    setSelectedId(result.value.id);
+    setDrawTool("select");
+  }
+
+  function penPointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (event.button !== 0 || spacePressed.current || pan.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const world = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const active = penRef.current;
+    if (active) {
+      const point = penLocalPoint(world, active.parentTransform);
+      const result = extendPen(active, point, zoom);
+      if (result.kind === "close") finishPen(true);
+      else if (result.kind === "limit") setError("ペンで追加できる点は2047個までです");
+      else if (result.kind === "append") { penRef.current = result.draft; setPen(result.draft); }
+      return;
+    }
+    const frameId = event.target instanceof Element ? event.target.closest("[data-frame-id]")?.getAttribute("data-frame-id") ?? null : null;
+    const parentTransform = frameId ? frameTransform(designRef.current, frameId) : IDENTITY_TRANSFORM;
+    if (!parentTransform) return;
+    const point = penLocalPoint(world, parentTransform);
+    const next = { parentId: frameId, parentTransform, points: [point], cursor: point };
+    penRef.current = next;
+    setPen(next);
+  }
+
+  function updatePenCursor(event: PointerEvent<HTMLDivElement>) {
+    const active = penRef.current;
+    if (!active) return;
+    const world = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
+    const next = { ...active, cursor: penLocalPoint(world, active.parentTransform) };
+    penRef.current = next;
+    setPen(next);
+  }
 
   function startDrag(event: PointerEvent<HTMLElement>, node: DocumentNode) {
     if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
@@ -110,11 +168,11 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   }
 
   function stepHistory(direction: "undo" | "redo") {
-    if (!drag.current) stepDocumentHistory(direction);
+    if (!drag.current && !penRef.current) stepDocumentHistory(direction);
   }
 
   function beginDrawing(event: PointerEvent<HTMLDivElement>) {
-    if (drawTool === "select" || event.button !== 0 || spacePressed.current || pan.current || drawingRef.current) return;
+    if (drawTool === "select" || drawTool === "path" || event.button !== 0 || spacePressed.current || pan.current || drawingRef.current) return;
     event.preventDefault();
     event.stopPropagation();
     const frameId = event.target instanceof Element ? event.target.closest("[data-frame-id]")?.getAttribute("data-frame-id") ?? null : null;
@@ -184,7 +242,8 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   }
 
   function onWorldPointerDown(event: PointerEvent<HTMLDivElement>) {
-    if (drawTool !== "select") beginDrawing(event);
+    if (drawTool === "path") penPointerDown(event);
+    else if (drawTool !== "select") beginDrawing(event);
     else if (event.target === event.currentTarget && !spacePressed.current && event.button === 0) {
       const start = pointOnCanvas(event.clientX, event.clientY, event.currentTarget.getBoundingClientRect(), zoom);
       const next = { pointerId: event.pointerId, start, end: start, additive: event.shiftKey };
@@ -202,9 +261,11 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
         event.preventDefault();
         return;
       }
+      if (event.key === "Escape" && penRef.current) { cancelPen(); setDrawTool("select"); event.preventDefault(); return; }
       if (event.key === "Escape" && selectionRef.current) { cancelSelection(); event.preventDefault(); return; }
       const target = event.target instanceof HTMLElement ? event.target : null;
       const editing = target?.closest("input, textarea, [contenteditable]");
+      if (event.key === "Enter" && penRef.current && !editing) { finishPen(false); event.preventDefault(); return; }
       if (!(event.metaKey || event.ctrlKey) || event.altKey || event.key.toLowerCase() !== "z") return;
       if (editing) return;
       event.preventDefault();
@@ -217,9 +278,10 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, selection, guides,
+    drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
-    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updateSelection, finishSelection, cancelSelection,
+    onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
+    updateSelection, finishSelection, cancelSelection,
   };
 }
