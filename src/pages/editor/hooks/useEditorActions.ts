@@ -9,9 +9,9 @@ import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
   type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type LayerDirection,
-  reorderNode, setBlur, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle,
+  reorderNode, setBlur, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle,
 } from "@/document/commands/index.ts";
-import type { FrameStyle, Geometry, ImageStyle, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle } from "@/document/types";
+import type { FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 export function useEditorActions(session: ReturnType<typeof useEditorDocument>) {
   const { designRef, selected, selectedId, selectedIds, setSelectedId, setSelectedIds, setError, applyDocument, recordDocument, agentApi } = session;
@@ -87,6 +87,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
       onTextStyle: (value: Partial<TextStyle>) => changeSelected(value, setTextStyle),
       onTextMarkRange: (value: TextMarkRangeEdit) => changeSelected(value, setTextMarkRange),
       onShapeStyle: (value: Partial<RectangleStyle>) => changeSelected(value, setNodeStyle),
+      onPath: (value: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }) => changeSelected(value, setPath),
       onFrameStyle: (value: Partial<FrameStyle>) => changeSelected(value, setFrameStyle),
       onImageStyle: (value: Partial<ImageStyle>) => changeSelected(value, setImageStyle),
       onDuplicate: duplicateSelected,

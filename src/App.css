@@ -303,6 +303,17 @@ button {
 .draw-preview { position: absolute; border: 2px dashed var(--accent); border-radius: 2px; background: var(--accent-translucent); pointer-events: none; z-index: 10; }
 .draw-preview.is-ellipse { border-radius: 50%; }
 .pen-preview { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; color: var(--accent); pointer-events: none; z-index: 11; }
+.path-controls { position: absolute; overflow: visible; pointer-events: none; z-index: 12; }
+.frame-contents > .path-controls { pointer-events: none; }
+.canvas-mask-group > .path-controls { pointer-events: none; }
+.path-controls line { stroke: var(--accent); stroke-width: 1; pointer-events: none; }
+.path-controls circle { cursor: move; pointer-events: all; stroke: var(--accent); stroke-width: 1.5; fill: var(--surface); }
+.path-controls .path-handles circle { fill: var(--accent-soft); }
+.path-point-editor { display: grid; gap: 6px; border: 0; border-top: 1px solid var(--field-border); padding: 10px 0; min-width: 0; }
+.path-point-editor legend { color: var(--text-tertiary); font-size: 11px; }
+.path-point-editor label, .path-point-row { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-tertiary); }
+.path-point-row span { flex: 1; }
+.path-point-row button, .path-point-editor select { padding: 3px 5px; border: 1px solid var(--field-border); border-radius: 4px; background: var(--surface); color: var(--ink); font-size: 10px; }
 .selection-preview { position: absolute; border: 1px solid var(--accent); background: var(--accent-translucent); pointer-events: none; z-index: 9; }
 .alignment-guide { position: absolute; z-index: 11; pointer-events: none; background: var(--accent); box-shadow: 0 0 0 1px var(--guide-halo); }
 .alignment-guide.vertical { width: 1px; }

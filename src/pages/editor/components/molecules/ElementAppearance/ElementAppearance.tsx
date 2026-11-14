@@ -1,8 +1,9 @@
-import type { DocumentNode, FrameStyle, ImageStyle, RectangleStyle, TextMarkRangeEdit, TextStyle } from "@/document/types";
+import type { DocumentNode, FrameStyle, ImageStyle, PathFillRule, RectangleStyle, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
 import { ImageStyleEditor } from "@/pages/editor/components/molecules/ImageStyleEditor";
+import { PathPointEditor } from "@/pages/editor/components/molecules/PathPointEditor";
 import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/ElementAppearance/TextAppearance";
 
@@ -14,9 +15,10 @@ interface ElementAppearanceProps {
   onShapeStyle(style: Partial<RectangleStyle>): void;
   onFrameStyle(style: Partial<FrameStyle>): void;
   onImageStyle(style: Partial<ImageStyle>): void;
+  onPath(patch: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }): void;
 }
 
-export function ElementAppearance({ node, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle }: ElementAppearanceProps) {
+export function ElementAppearance({ node, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onImageStyle, onPath }: ElementAppearanceProps) {
   if (node.type === "image") return <>
     <div className="field-label">画像の表示</div>
     <ImageStyleEditor key={`${node.id}:${node.style.fit}:${JSON.stringify(node.style.focalPoint)}`} node={node} onChange={onImageStyle} />
@@ -28,6 +30,11 @@ export function ElementAppearance({ node, onTextContent, onTextStyle, onTextMark
   if (node.type === "frame") return <>
     <div className="field-label">フレームの見た目</div>
     <FrameStyleEditor key={`${node.id}:${JSON.stringify(node.style)}:${node.clipContent}`} node={node} onChange={onFrameStyle} />
+  </>;
+  if (node.type === "path") return <>
+    <div className="field-label">スタイル</div>
+    <ShapeStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onShapeStyle} />
+    <PathPointEditor node={node} onChange={onPath} />
   </>;
   return <>
     <div className="field-label">スタイル</div>

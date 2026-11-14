@@ -1,7 +1,8 @@
-import { Fragment, type PointerEvent, useId, useMemo } from "react";
+import { Fragment, type PointerEvent, type ReactNode, useId, useMemo } from "react";
 
+import type { PathPointPart } from "@/document/pathEdit.ts";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
-import type { Border, DocumentNode, TextNode } from "@/document/types";
+import type { Border, DocumentNode, PathNode, TextNode } from "@/document/types";
 import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths, vectorShape } from "@/document/shapePath.ts";
 import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
@@ -47,6 +48,10 @@ export interface NodeInteraction {
   onNodePointerMove(event: PointerEvent<HTMLElement>): void;
   onNodePointerUp(pointerId: number): void;
   onImageError(id: string): void;
+  onPathPointPointerDown?(event: PointerEvent<SVGCircleElement>, node: PathNode, index: number, part: PathPointPart): void;
+  onPathPointPointerMove?(event: PointerEvent<SVGCircleElement>): void;
+  onPathPointPointerUp?(pointerId: number): void;
+  onPathPointPointerCancel?(): void;
 }
 
 interface CanvasNodeProps {
@@ -54,18 +59,56 @@ interface CanvasNodeProps {
   selectedId: string | null;
   selectedIds?: string[];
   interaction: NodeInteraction;
+  zoom?: number;
 }
 
-export function CanvasNodes({ nodes, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction }: { nodes: DocumentNode[] } & Omit<CanvasNodeProps, "node">) {
+function pathControls(node: PathNode, zoom: number, interaction: NodeInteraction) {
+  if (!interaction.onPathPointPointerDown) return null;
+  const controls: ReactNode[] = [];
+  let previous: { x: number; y: number } | null = null;
+  node.commands.forEach((command, index) => {
+    if (command.kind === "close") return;
+    const handler = (part: PathPointPart) => ({
+      onPointerDown: (event: PointerEvent<SVGCircleElement>) => interaction.onPathPointPointerDown?.(event, node, index, part),
+      onPointerMove: interaction.onPathPointPointerMove,
+      onPointerUp: (event: PointerEvent<SVGCircleElement>) => interaction.onPathPointPointerUp?.(event.pointerId),
+      onPointerCancel: interaction.onPathPointPointerCancel,
+      onLostPointerCapture: interaction.onPathPointPointerCancel,
+    });
+    const x = command.x * node.width;
+    const y = command.y * node.height;
+    if (command.kind === "cubic" && previous) {
+      const x1 = command.x1 * node.width;
+      const y1 = command.y1 * node.height;
+      const x2 = command.x2 * node.width;
+      const y2 = command.y2 * node.height;
+      controls.push(<g key={`handles-${index}`} className="path-handles">
+        <line x1={previous.x * node.width} y1={previous.y * node.height} x2={x1} y2={y1} />
+        <line x1={x2} y1={y2} x2={x} y2={y} />
+        <circle data-path-control={`in-${index}`} cx={x1} cy={y1} r={4 / zoom} {...handler("in")} />
+        <circle data-path-control={`out-${index}`} cx={x2} cy={y2} r={4 / zoom} {...handler("out")} />
+      </g>);
+    }
+    controls.push(<circle key={`anchor-${index}`} className="path-anchor" data-path-control={`anchor-${index}`}
+      cx={x} cy={y} r={5 / zoom} {...handler("anchor")} />);
+    previous = command;
+  });
+  return <svg className="path-controls" aria-label="パスの点とハンドル" style={{ left: node.x, top: node.y, width: node.width, height: node.height,
+    ...(node.rotation ? { transform: `rotate(${node.rotation}deg)`, transformOrigin: "center center" } : {}) }}>
+    {controls}
+  </svg>;
+}
+
+export function CanvasNodes({ nodes, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction, zoom = 1 }: { nodes: DocumentNode[] } & Omit<CanvasNodeProps, "node">) {
   return <>{maskGroups(nodes).map((group, index) => <Fragment key={group.mask?.id ?? `unmasked-${index}`}>
-    {group.mask && <CanvasNode node={group.mask} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />}
+    {group.mask && <CanvasNode node={group.mask} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />}
     {group.mask ? <div className="canvas-mask-group" style={{ clipPath: `path("${pathToString(maskPath(group.mask))}")` }}>
-      {group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
-    </div> : group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />)}
+      {group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />)}
+    </div> : group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />)}
   </Fragment>)}</>;
 }
 
-export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction }: CanvasNodeProps) {
+export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction, zoom = 1 }: CanvasNodeProps) {
   const { onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError } = interaction;
   const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
   const clipId = useId();
@@ -84,7 +127,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       {...pointerEvents}>
        {shapeSvg(boxShape(node.width, node.height, node.style), clipId, node.width, node.height)}
       <div className="frame-contents" style={frameContentsStyle(node)}>
-        <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />
+        <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
       </div>
       {borderSvg(node.width, node.height, node.style.border)}
       {handle}
@@ -118,14 +161,15 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       {handle}
     </button>
   );
-  if (node.type === "path") return (
+  if (node.type === "path") return <Fragment>
     <button type="button" className={`canvas-node${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={shapeNodeStyle(node)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {shapeSvg(vectorShape(node), clipId, node.width, node.height)}
       {handle}
     </button>
-  );
+    {selectedId === node.id && pathControls(node, zoom, interaction)}
+  </Fragment>;
   if (node.isMask && !selectedIds.includes(node.id)) return null;
   return (
     <button type="button"

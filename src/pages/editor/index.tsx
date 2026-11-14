@@ -16,14 +16,15 @@ function EditorPage() {
   const actions = useEditorActions(session);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
-  const { drag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+  const { drag, pathDrag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
+    startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
     updateSelection, finishSelection, cancelSelection } = interaction;
 
   return <main className="app-shell">
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
-      canUndo={history.past.length > 0 && !drag.current} canRedo={history.future.length > 0 && !drag.current}
+      canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
       isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
       onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage}
       drawTool={drawTool} onDrawToolChange={setDrawTool} />
@@ -34,6 +35,8 @@ function EditorPage() {
       <Canvas design={design} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
+        onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
+        onPathPointPointerUp={finishPathPointDrag} onPathPointPointerCancel={cancelPathPointDrag}
         onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
         onWorldPointerDown={onWorldPointerDown} onWorldDoubleClick={() => finishPen(false)}
         onWorldPointerMove={(event) => { updateDrawing(event); updatePenCursor(event); updateSelection(event); }}

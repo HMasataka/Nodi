@@ -46,6 +46,10 @@ export function Canvas(props: CanvasProps) {
     onNodePointerMove: props.onNodePointerMove,
     onNodePointerUp: props.onNodePointerUp,
     onImageError: props.onImageError,
+    onPathPointPointerDown: props.onPathPointPointerDown,
+    onPathPointPointerMove: props.onPathPointPointerMove,
+    onPathPointPointerUp: props.onPathPointPointerUp,
+    onPathPointPointerCancel: props.onPathPointPointerCancel,
   };
   const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentTransform) : null;
   const penPoints = pen?.points.map((point) => transformPoint(pen.parentTransform, point)) ?? [];
@@ -66,7 +70,7 @@ export function Canvas(props: CanvasProps) {
             onPointerCancel={(event) => onWorldPointerCancel(event.pointerId)}
             onLostPointerCapture={(event) => onWorldPointerCancel(event.pointerId)}>
             {design.children.length === 0 && <div className="canvas-hint" aria-hidden="true"><span className="hint-symbol">＋</span><span>ここから、かたちをつくる。</span></div>}
-            <CanvasNodes nodes={design.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} />
+            <CanvasNodes nodes={design.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}
