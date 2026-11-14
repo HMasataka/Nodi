@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "children": [
+    {
+      "id": "nd_editor_screen", "name": "Nodi / エディタ — フレーム選択", "type": "frame",
+      "x": 1160, "y": 80, "width": 1440, "height": 960,
+      "style": { "fill": "#f5f5f5" },
+      "children": [
+        {
+          "id": "ed_header", "name": "01 / 文書操作", "type": "frame",
+          "x": 0, "y": 0, "width": 1440, "height": 64,
+          "style": { "fill": "#ffffff", "border": { "bottom": { "color": "#e5e5e5", "width": 1 } } },
+          "children": [
+            { "id": "ed_brand", "name": "Nodi / 行中央32px", "type": "text", "x": 22, "y": 18, "width": 56, "height": 28, "content": "nodi", "style": { "fontSize": 24, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 700, "lineHeight": 1, "letterSpacing": -1 } },
+            { "id": "ed_file_menu", "name": "ファイルメニュー / 8×4pxシェブロン", "type": "path", "x": 90, "y": 30, "width": 8, "height": 4, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_header_rule", "name": "区切り", "type": "rectangle", "x": 120, "y": 22, "width": 1, "height": 20, "style": { "fill": "#e5e5e5" } },
+            { "id": "ed_document", "name": "文書名", "type": "text", "x": 144, "y": 21, "width": 168, "height": 26, "content": "Studio — Website.nodi", "style": { "fontSize": 14, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_saved", "name": "保存状態", "type": "text", "x": 320, "y": 22, "width": 64, "height": 24, "content": "保存済み", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_undo", "name": "Undo / 中央32px", "type": "path", "x": 1193, "y": 24, "width": 18, "height": 16, "commands": [{ "kind": "move", "x": 0.3, "y": 0 }, { "kind": "line", "x": 0, "y": 0.3 }, { "kind": "line", "x": 0.3, "y": 0.6 }, { "kind": "move", "x": 0, "y": 0.3 }, { "kind": "line", "x": 0.6, "y": 0.3 }, { "kind": "cubic", "x1": 1.1, "y1": 0.3, "x2": 1.1, "y2": 1, "x": 0.6, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#404040", "width": 1.5 } } },
+            { "id": "ed_redo", "name": "Redo / 中央32px", "type": "path", "x": 1237, "y": 24, "width": 18, "height": 16, "commands": [{ "kind": "move", "x": 0.7, "y": 0 }, { "kind": "line", "x": 1, "y": 0.3 }, { "kind": "line", "x": 0.7, "y": 0.6 }, { "kind": "move", "x": 1, "y": 0.3 }, { "kind": "line", "x": 0.4, "y": 0.3 }, { "kind": "cubic", "x1": -0.1, "y1": 0.3, "x2": -0.1, "y2": 1, "x": 0.4, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#a3a3a3", "width": 1.5 } } },
+            { "id": "ed_save_bg", "name": "保存ボタン", "type": "rectangle", "x": 1272, "y": 14, "width": 104, "height": 36, "style": { "fill": "#171717", "cornerRadii": { "topLeft": 6, "topRight": 6, "bottomRight": 6, "bottomLeft": 6 } } },
+            { "id": "ed_save_label", "name": "保存", "type": "text", "x": 1284, "y": 21, "width": 40, "height": 23, "content": "保存", "style": { "fontSize": 12, "color": "#ffffff", "textAlign": "center", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_save_shortcut", "name": "保存のショートカット", "type": "text", "x": 1332, "y": 21, "width": 32, "height": 23, "content": "⌘S", "style": { "fontSize": 12, "color": "#d4d4d4", "textAlign": "center", "fontFamily": "system" } },
+            { "id": "ed_header_more", "name": "文書のその他の操作 / 中央32px", "type": "frame", "x": 1394, "y": 30.5, "width": 16, "height": 3, "style": { "fill": null }, "children": [
+              { "id": "ed_header_dot1", "name": "点1", "type": "ellipse", "x": 0, "y": 0, "width": 3, "height": 3, "style": { "fill": "#525252" } },
+              { "id": "ed_header_dot2", "name": "点2", "type": "ellipse", "x": 6.5, "y": 0, "width": 3, "height": 3, "style": { "fill": "#525252" } },
+              { "id": "ed_header_dot3", "name": "点3", "type": "ellipse", "x": 13, "y": 0, "width": 3, "height": 3, "style": { "fill": "#525252" } }
+            ] }
+          ]
+        },
+        {
+          "id": "ed_layers", "name": "02 / レイヤー", "type": "frame",
+          "x": 0, "y": 64, "width": 240, "height": 864,
+          "style": { "fill": "#ffffff", "border": { "right": { "color": "#e5e5e5", "width": 1 } } },
+          "children": [
+            { "id": "ed_layers_title", "name": "レイヤー見出し", "type": "text", "x": 20, "y": 19, "width": 160, "height": 22, "content": "レイヤー", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_layers_more", "name": "レイヤー操作メニュー / 中央30px", "type": "frame", "x": 200, "y": 28.5, "width": 16, "height": 3, "style": { "fill": null }, "children": [
+              { "id": "ed_layers_dot1", "name": "点1", "type": "ellipse", "x": 0, "y": 0, "width": 3, "height": 3, "style": { "fill": "#737373" } },
+              { "id": "ed_layers_dot2", "name": "点2", "type": "ellipse", "x": 6.5, "y": 0, "width": 3, "height": 3, "style": { "fill": "#737373" } },
+              { "id": "ed_layers_dot3", "name": "点3", "type": "ellipse", "x": 13, "y": 0, "width": 3, "height": 3, "style": { "fill": "#737373" } }
+            ] },
+            { "id": "ed_layers_line", "name": "見出し区切り", "type": "rectangle", "x": 16, "y": 56, "width": 208, "height": 1, "style": { "fill": "#e5e5e5" } },
+            { "id": "ed_layer_root", "name": "Desktop 階層", "type": "text", "x": 52, "y": 79, "width": 172, "height": 22, "content": "Desktop", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#404040", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_layer_root_toggle", "name": "Desktop / 開閉", "type": "path", "x": 20, "y": 88, "width": 8, "height": 4, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_root_icon", "name": "Desktop / フレーム", "type": "rectangle", "x": 36, "y": 84, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_header", "name": "Header レイヤー", "type": "text", "x": 72, "y": 115, "width": 152, "height": 22, "content": "Header", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_header_toggle", "name": "Header / 開閉", "type": "path", "x": 42, "y": 122, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_header_icon", "name": "Header / フレーム", "type": "rectangle", "x": 56, "y": 120, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_intro", "name": "Introduction レイヤー", "type": "text", "x": 72, "y": 151, "width": 152, "height": 22, "content": "Introduction", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_intro_toggle", "name": "Introduction / 開閉", "type": "path", "x": 42, "y": 158, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_intro_icon", "name": "Introduction / フレーム", "type": "rectangle", "x": 56, "y": 156, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_work", "name": "Selected work 階層", "type": "text", "x": 72, "y": 187, "width": 152, "height": 22, "content": "Selected work", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#404040", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_work_toggle", "name": "Selected work / 開閉", "type": "path", "x": 40, "y": 196, "width": 8, "height": 4, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_work_icon", "name": "Selected work / フレーム", "type": "rectangle", "x": 56, "y": 192, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_active_bg", "name": "選択行", "type": "rectangle", "x": 8, "y": 219, "width": 224, "height": 36, "style": { "fill": "#e5e5e5", "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_layer_active_mark", "name": "選択行のマーカー", "type": "rectangle", "x": 8, "y": 225, "width": 3, "height": 24, "style": { "fill": "#171717" } },
+            { "id": "ed_layer_active", "name": "選択中 / Project card", "type": "text", "x": 92, "y": 226, "width": 132, "height": 22, "content": "Project card", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_layer_active_toggle", "name": "Project card / 開閉", "type": "path", "x": 60, "y": 235, "width": 8, "height": 4, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#171717", "width": 1.5 } } },
+            { "id": "ed_layer_active_icon", "name": "Project card / フレーム", "type": "rectangle", "x": 76, "y": 231, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#171717", "width": 1 } } },
+            { "id": "ed_layer_image", "name": "Cover レイヤー", "type": "text", "x": 112, "y": 262, "width": 112, "height": 22, "content": "Cover", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_image_icon", "name": "Cover / 画像", "type": "path", "x": 96, "y": 267, "width": 12, "height": 12, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0 }, { "kind": "line", "x": 1, "y": 1 }, { "kind": "line", "x": 0, "y": 1 }, { "kind": "close" }, { "kind": "move", "x": 0, "y": 0.8 }, { "kind": "line", "x": 0.35, "y": 0.4 }, { "kind": "line", "x": 0.6, "y": 0.65 }, { "kind": "line", "x": 0.8, "y": 0.45 }, { "kind": "line", "x": 1, "y": 0.7 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_title", "name": "Title レイヤー", "type": "text", "x": 112, "y": 298, "width": 112, "height": 22, "content": "Title", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_title_icon", "name": "Title / 文字", "type": "path", "x": 96, "y": 303, "width": 12, "height": 12, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0 }, { "kind": "move", "x": 0.5, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "move", "x": 0.2, "y": 1 }, { "kind": "line", "x": 0.8, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_description", "name": "Description レイヤー", "type": "text", "x": 112, "y": 334, "width": 112, "height": 22, "content": "Description", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_description_icon", "name": "Description / 文字", "type": "path", "x": 96, "y": 339, "width": 12, "height": 12, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0 }, { "kind": "move", "x": 0.5, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "move", "x": 0.2, "y": 1 }, { "kind": "line", "x": 0.8, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_second", "name": "次のカード", "type": "text", "x": 92, "y": 370, "width": 132, "height": 22, "content": "Project card 02", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_second_toggle", "name": "Project card 02 / 開閉", "type": "path", "x": 62, "y": 377, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_second_icon", "name": "Project card 02 / フレーム", "type": "rectangle", "x": 76, "y": 375, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_footer", "name": "Footer レイヤー", "type": "text", "x": 72, "y": 406, "width": 152, "height": 22, "content": "Footer", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_footer_toggle", "name": "Footer / 開閉", "type": "path", "x": 42, "y": 413, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_footer_icon", "name": "Footer / フレーム", "type": "rectangle", "x": 56, "y": 411, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } },
+            { "id": "ed_layer_other", "name": "別フレーム", "type": "text", "x": 52, "y": 442, "width": 172, "height": 22, "content": "Grayscale", "style": { "fontSize": 13, "lineHeight": 1.3846153846153846, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layer_other_toggle", "name": "Grayscale / 開閉", "type": "path", "x": 22, "y": 449, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_layer_other_icon", "name": "Grayscale / フレーム", "type": "rectangle", "x": 36, "y": 447, "width": 12, "height": 12, "style": { "fill": null, "stroke": { "color": "#737373", "width": 1 } } }
+          ]
+        },
+        {
+          "id": "ed_canvas", "name": "03 / キャンバス", "type": "frame",
+          "x": 240, "y": 64, "width": 900, "height": 864,
+          "style": { "fill": "#f5f5f5" },
+          "children": [
+            { "id": "ed_breadcrumb", "name": "選択階層", "type": "text", "x": 24, "y": 16, "width": 560, "height": 26, "content": "Desktop  /  Selected work  /  Project card", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_zoom_bg", "name": "ズーム", "type": "rectangle", "x": 742, "y": 13, "width": 132, "height": 32, "style": { "fill": "#ffffff", "stroke": { "color": "#e5e5e5", "width": 1 }, "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_zoom_minus", "name": "縮小", "type": "text", "x": 746, "y": 19, "width": 28, "height": 24, "content": "−", "style": { "fontSize": 12, "color": "#404040", "textAlign": "center", "fontFamily": "system" } },
+            { "id": "ed_zoom_text", "name": "ズーム値", "type": "text", "x": 778, "y": 19, "width": 60, "height": 24, "content": "100%", "style": { "fontSize": 12, "color": "#404040", "textAlign": "center", "fontFamily": "system" } },
+            { "id": "ed_zoom_plus", "name": "拡大", "type": "text", "x": 842, "y": 19, "width": 28, "height": 24, "content": "+", "style": { "fontSize": 12, "color": "#404040", "textAlign": "center", "fontFamily": "system" } },
+            { "id": "ed_artboard_label", "name": "アートボード名", "type": "text", "x": 52, "y": 83, "width": 350, "height": 25, "content": "Desktop     796 × 636", "style": { "fontSize": 11, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            {
+              "id": "ed_artboard", "name": "編集対象 / StudioのWebサイト", "type": "frame",
+              "x": 52, "y": 112, "width": 796, "height": 636,
+              "style": { "fill": "#ffffff", "stroke": { "color": "#e5e5e5", "width": 1 } },
+              "children": [
+                { "id": "ed_site_logo", "name": "サイトのロゴ", "type": "text", "x": 36, "y": 26, "width": 170, "height": 28, "content": "ATLAS STUDIO", "style": { "fontSize": 15, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 700, "letterSpacing": 1 } },
+                { "id": "ed_site_nav", "name": "サイトのナビゲーション", "type": "text", "x": 546, "y": 27, "width": 212, "height": 24, "content": "Work     About     Contact", "style": { "fontSize": 11, "color": "#737373", "textAlign": "right", "fontFamily": "system" } },
+                { "id": "ed_site_rule", "name": "サイトの区切り", "type": "rectangle", "x": 36, "y": 73, "width": 724, "height": 1, "style": { "fill": "#e5e5e5" } },
+                { "id": "ed_site_eyebrow", "name": "サイトの肩書き", "type": "text", "x": 36, "y": 103, "width": 350, "height": 24, "content": "INDEPENDENT DESIGN PRACTICE", "style": { "fontSize": 10, "color": "#737373", "textAlign": "left", "fontFamily": "system", "letterSpacing": 1.2 } },
+                { "id": "ed_site_hero", "name": "サイトの見出し", "type": "text", "x": 36, "y": 137, "width": 680, "height": 108, "content": "Less noise.\nMore meaning.", "style": { "fontSize": 42, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600, "lineHeight": 1.05, "letterSpacing": -1.4 } },
+                { "id": "ed_site_summary", "name": "サイトの概要", "type": "text", "x": 415, "y": 189, "width": 320, "height": 48, "content": "Thoughtful identities and digital spaces,\nbuilt around what matters.", "style": { "fontSize": 11, "color": "#737373", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.65 } },
+                { "id": "ed_site_section", "name": "作品セクション", "type": "text", "x": 36, "y": 280, "width": 340, "height": 26, "content": "Selected work", "style": { "fontSize": 14, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+                { "id": "ed_site_year", "name": "作品の年", "type": "text", "x": 650, "y": 283, "width": 108, "height": 22, "content": "2024 — 2026", "style": { "fontSize": 10, "color": "#737373", "textAlign": "right", "fontFamily": "system" } },
+                {
+                  "id": "ed_project_card", "name": "選択対象のカード", "type": "frame",
+                  "x": 36, "y": 324, "width": 350, "height": 264,
+                  "style": { "fill": "#ffffff", "stroke": { "color": "#d4d4d4", "width": 1 }, "cornerRadii": { "topLeft": 8, "topRight": 8, "bottomRight": 8, "bottomLeft": 8 } },
+                  "children": [
+                    { "id": "ed_project_cover", "name": "Cover / グレースケール構成", "type": "rectangle", "x": 16, "y": 16, "width": 318, "height": 158, "style": { "fill": "#e5e5e5", "cornerRadii": { "topLeft": 4, "topRight": 4, "bottomRight": 4, "bottomLeft": 4 } } },
+                    { "id": "ed_project_form_a", "name": "カバーの形A", "type": "ellipse", "x": 75, "y": 40, "width": 110, "height": 110, "style": { "fill": "#a3a3a3" } },
+                    { "id": "ed_project_form_b", "name": "カバーの形B", "type": "rectangle", "x": 173, "y": 47, "width": 98, "height": 98, "rotation": 12, "style": { "fill": "#525252" } },
+                    { "id": "ed_project_title", "name": "Title", "type": "text", "x": 16, "y": 192, "width": 278, "height": 27, "content": "Forma — A quieter identity", "style": { "fontSize": 14, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+                    { "id": "ed_project_description", "name": "Description", "type": "text", "x": 16, "y": 226, "width": 300, "height": 22, "content": "Brand strategy  /  Visual identity", "style": { "fontSize": 10, "color": "#737373", "textAlign": "left", "fontFamily": "system" } }
+                  ]
+                },
+                { "id": "ed_site_second_cover", "name": "次の作品 / Cover", "type": "rectangle", "x": 410, "y": 324, "width": 350, "height": 174, "style": { "fill": "#f5f5f5", "cornerRadii": { "topLeft": 8, "topRight": 8, "bottomRight": 8, "bottomLeft": 8 } } },
+                { "id": "ed_site_second_form", "name": "次の作品 / 形", "type": "rectangle", "x": 530, "y": 350, "width": 110, "height": 123, "style": { "fill": "#404040", "cornerRadii": { "topLeft": 55, "topRight": 55, "bottomRight": 0, "bottomLeft": 0 } } },
+                { "id": "ed_site_second_title", "name": "次の作品 / 見出し", "type": "text", "x": 410, "y": 516, "width": 330, "height": 28, "content": "Still — Space for the everyday", "style": { "fontSize": 14, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+                { "id": "ed_site_second_description", "name": "次の作品 / 説明", "type": "text", "x": 410, "y": 550, "width": 330, "height": 22, "content": "Digital experience  /  Web design", "style": { "fontSize": 10, "color": "#737373", "textAlign": "left", "fontFamily": "system" } }
+              ]
+            },
+            { "id": "ed_selection_border", "name": "選択枠 / UI", "type": "rectangle", "x": 86, "y": 434, "width": 354, "height": 268, "style": { "fill": null, "stroke": { "color": "#171717", "width": 1 } } },
+            { "id": "ed_selection_tl", "name": "左上ハンドル", "type": "rectangle", "x": 83, "y": 431, "width": 7, "height": 7, "style": { "fill": "#ffffff", "stroke": { "color": "#171717", "width": 1 } } },
+            { "id": "ed_selection_tr", "name": "右上ハンドル", "type": "rectangle", "x": 436, "y": 431, "width": 7, "height": 7, "style": { "fill": "#ffffff", "stroke": { "color": "#171717", "width": 1 } } },
+            { "id": "ed_selection_bl", "name": "左下ハンドル", "type": "rectangle", "x": 83, "y": 698, "width": 7, "height": 7, "style": { "fill": "#ffffff", "stroke": { "color": "#171717", "width": 1 } } },
+            { "id": "ed_selection_br", "name": "右下ハンドル", "type": "rectangle", "x": 436, "y": 698, "width": 7, "height": 7, "style": { "fill": "#ffffff", "stroke": { "color": "#171717", "width": 1 } } },
+            { "id": "ed_size_badge", "name": "選択サイズ背景", "type": "rectangle", "x": 216, "y": 711, "width": 94, "height": 23, "style": { "fill": "#171717", "cornerRadii": { "topLeft": 4, "topRight": 4, "bottomRight": 4, "bottomLeft": 4 } } },
+            { "id": "ed_size_text", "name": "選択サイズ", "type": "text", "x": 219, "y": 713, "width": 88, "height": 20, "content": "350 × 264", "style": { "fontSize": 10, "color": "#ffffff", "textAlign": "center", "fontFamily": "monospace" } },
+            {
+              "id": "ed_tool_dock", "name": "作成ツール / フローティング", "type": "frame",
+              "x": 246, "y": 788, "width": 408, "height": 56,
+              "style": { "fill": "#ffffff", "stroke": { "color": "#d4d4d4", "width": 1 }, "cornerRadii": { "topLeft": 10, "topRight": 10, "bottomRight": 10, "bottomLeft": 10 } },
+              "children": [
+                { "id": "ed_tool_selected", "name": "選択ツール / 48×40px", "type": "rectangle", "x": 8, "y": 8, "width": 48, "height": 40, "style": { "fill": "#171717", "cornerRadii": { "topLeft": 6, "topRight": 6, "bottomRight": 6, "bottomLeft": 6 } } },
+                { "id": "ed_tool_cursor", "name": "選択 / 16×20px", "type": "path", "x": 24, "y": 18, "width": 16, "height": 20, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.65 }, { "kind": "line", "x": 0.48, "y": 0.65 }, { "kind": "line", "x": 0.28, "y": 1 }, { "kind": "close" }], "style": { "fill": "#ffffff" } },
+                { "id": "ed_tool_frame", "name": "フレーム / 20×20px", "type": "path", "x": 74, "y": 18, "width": 20, "height": 20, "commands": [{ "kind": "move", "x": 0.2, "y": 0 }, { "kind": "line", "x": 0.2, "y": 1 }, { "kind": "move", "x": 0.8, "y": 0 }, { "kind": "line", "x": 0.8, "y": 1 }, { "kind": "move", "x": 0, "y": 0.2 }, { "kind": "line", "x": 1, "y": 0.2 }, { "kind": "move", "x": 0, "y": 0.8 }, { "kind": "line", "x": 1, "y": 0.8 }], "style": { "fill": null, "stroke": { "color": "#525252", "width": 1.5 } } },
+                { "id": "ed_tool_shape", "name": "図形 / 18×18px", "type": "rectangle", "x": 121, "y": 19, "width": 18, "height": 18, "style": { "fill": null, "stroke": { "color": "#525252", "width": 1.5 }, "cornerRadii": { "topLeft": 3, "topRight": 3, "bottomRight": 3, "bottomLeft": 3 } } },
+                { "id": "ed_tool_shape_more", "name": "図形メニュー / 6×3px", "type": "path", "x": 145, "y": 27, "width": 6, "height": 3, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+                { "id": "ed_tool_pen", "name": "ペン / 20×20px", "type": "path", "x": 178, "y": 18, "width": 20, "height": 20, "commands": [{ "kind": "move", "x": 0, "y": 1 }, { "kind": "line", "x": 0.25, "y": 0.25 }, { "kind": "line", "x": 1, "y": 0 }, { "kind": "line", "x": 0.75, "y": 0.75 }, { "kind": "close" }, { "kind": "move", "x": 0, "y": 1 }, { "kind": "line", "x": 0.55, "y": 0.45 }], "style": { "fill": null, "stroke": { "color": "#525252", "width": 1.5 } } },
+                { "id": "ed_tool_text", "name": "文字 / 18×20px", "type": "path", "x": 231, "y": 18, "width": 18, "height": 20, "commands": [{ "kind": "move", "x": 0, "y": 0.15 }, { "kind": "line", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0 }, { "kind": "line", "x": 1, "y": 0.15 }, { "kind": "move", "x": 0.5, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "move", "x": 0.25, "y": 1 }, { "kind": "line", "x": 0.75, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#525252", "width": 1.5 } } },
+                { "id": "ed_tool_divider", "name": "作成と取り込みの区切り", "type": "rectangle", "x": 279.5, "y": 16, "width": 1, "height": 24, "style": { "fill": "#e5e5e5" } },
+                { "id": "ed_tool_import_plus", "name": "取り込み / 12×12px", "type": "path", "x": 300, "y": 22, "width": 12, "height": 12, "commands": [{ "kind": "move", "x": 0, "y": 0.5 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "move", "x": 0.5, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#525252", "width": 1.5 } } },
+                { "id": "ed_tool_import", "name": "取り込み / 行中央28px", "type": "text", "x": 320, "y": 18, "width": 56, "height": 20, "content": "取り込む", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#404040", "textAlign": "center", "fontFamily": "system" } },
+                { "id": "ed_tool_import_more", "name": "取り込みメニュー / 6×3px", "type": "path", "x": 384, "y": 26.5, "width": 6, "height": 3, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ed_inspector", "name": "04 / 選択要素のプロパティ", "type": "frame",
+          "x": 1140, "y": 64, "width": 300, "height": 864,
+          "style": { "fill": "#ffffff", "border": { "left": { "color": "#e5e5e5", "width": 1 } } },
+          "children": [
+            { "id": "ed_inspector_type", "name": "選択要素の種類", "type": "text", "x": 20, "y": 14, "width": 200, "height": 22, "content": "フレーム", "style": { "fontSize": 11, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_inspector_name", "name": "編集可能な要素名", "type": "text", "x": 20, "y": 38, "width": 220, "height": 26, "content": "Project card", "style": { "fontSize": 17, "lineHeight": 1.2941176470588236, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_inspector_more", "name": "複製・削除・重なり順 / 中央51px", "type": "frame", "x": 259, "y": 49.5, "width": 16, "height": 3, "style": { "fill": null }, "children": [
+              { "id": "ed_inspector_dot1", "name": "点1", "type": "ellipse", "x": 0, "y": 0, "width": 3, "height": 3, "style": { "fill": "#737373" } },
+              { "id": "ed_inspector_dot2", "name": "点2", "type": "ellipse", "x": 6.5, "y": 0, "width": 3, "height": 3, "style": { "fill": "#737373" } },
+              { "id": "ed_inspector_dot3", "name": "点3", "type": "ellipse", "x": 13, "y": 0, "width": 3, "height": 3, "style": { "fill": "#737373" } }
+            ] },
+            { "id": "ed_prop_div1", "name": "区切り1", "type": "rectangle", "x": 20, "y": 84, "width": 260, "height": 1, "style": { "fill": "#e5e5e5" } },
+            { "id": "ed_geometry_title", "name": "位置・サイズ", "type": "text", "x": 20, "y": 100, "width": 240, "height": 24, "content": "位置・サイズ", "style": { "fontSize": 12, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_field_x_bg", "name": "X入力", "type": "rectangle", "x": 20, "y": 136, "width": 124, "height": 32, "style": { "fill": "#f5f5f5", "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_field_x", "name": "Xラベル", "type": "text", "x": 28, "y": 142, "width": 24, "height": 24, "content": "X", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "monospace" } },
+            { "id": "ed_field_x_value", "name": "X値", "type": "text", "x": 60, "y": 142, "width": 76, "height": 24, "content": "36", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_field_y_bg", "name": "Y入力", "type": "rectangle", "x": 156, "y": 136, "width": 124, "height": 32, "style": { "fill": "#f5f5f5", "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_field_y", "name": "Yラベル", "type": "text", "x": 164, "y": 142, "width": 24, "height": 24, "content": "Y", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "monospace" } },
+            { "id": "ed_field_y_value", "name": "Y値", "type": "text", "x": 196, "y": 142, "width": 76, "height": 24, "content": "324", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_field_w_bg", "name": "幅入力", "type": "rectangle", "x": 20, "y": 176, "width": 124, "height": 32, "style": { "fill": "#f5f5f5", "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_field_w", "name": "幅ラベル", "type": "text", "x": 28, "y": 182, "width": 24, "height": 24, "content": "W", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "monospace" } },
+            { "id": "ed_field_w_value", "name": "幅値", "type": "text", "x": 60, "y": 182, "width": 76, "height": 24, "content": "350", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_field_h_bg", "name": "高さ入力", "type": "rectangle", "x": 156, "y": 176, "width": 124, "height": 32, "style": { "fill": "#f5f5f5", "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_field_h", "name": "高さラベル", "type": "text", "x": 164, "y": 182, "width": 24, "height": 24, "content": "H", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "monospace" } },
+            { "id": "ed_field_h_value", "name": "高さ値", "type": "text", "x": 196, "y": 182, "width": 76, "height": 24, "content": "264", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_rotation", "name": "回転ラベル", "type": "text", "x": 20, "y": 222, "width": 124, "height": 24, "content": "回転", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_rotation_value", "name": "回転値", "type": "text", "x": 156, "y": 222, "width": 124, "height": 24, "content": "0°", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "system" } },
+            { "id": "ed_prop_div2", "name": "区切り2", "type": "rectangle", "x": 20, "y": 262, "width": 260, "height": 1, "style": { "fill": "#e5e5e5" } },
+            { "id": "ed_layout_title", "name": "レイアウト見出し", "type": "text", "x": 20, "y": 278, "width": 260, "height": 24, "content": "レイアウト", "style": { "fontSize": 12, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_layout_mode_bg", "name": "配置モード / 内側余白4px", "type": "rectangle", "x": 20, "y": 314, "width": 260, "height": 36, "style": { "fill": "#f5f5f5", "cornerRadii": { "topLeft": 5, "topRight": 5, "bottomRight": 5, "bottomLeft": 5 } } },
+            { "id": "ed_layout_active", "name": "縦配置 / 選択中", "type": "rectangle", "x": 108, "y": 318, "width": 84, "height": 28, "style": { "fill": "#ffffff", "stroke": { "color": "#d4d4d4", "width": 1 }, "cornerRadii": { "topLeft": 4, "topRight": 4, "bottomRight": 4, "bottomLeft": 4 } } },
+            { "id": "ed_layout_mode_text", "name": "自由配置 / 幅84px", "type": "text", "x": 24, "y": 321, "width": 84, "height": 22, "content": "自由", "style": { "fontSize": 12, "color": "#737373", "textAlign": "center", "fontFamily": "system" } },
+            { "id": "ed_layout_vertical", "name": "縦配置 / 幅84px", "type": "text", "x": 108, "y": 321, "width": 84, "height": 22, "content": "縦", "style": { "fontSize": 12, "color": "#171717", "textAlign": "center", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_layout_horizontal", "name": "横配置 / 幅84px", "type": "text", "x": 192, "y": 321, "width": 84, "height": 22, "content": "横", "style": { "fontSize": 12, "color": "#737373", "textAlign": "center", "fontFamily": "system" } },
+            { "id": "ed_layout_gap", "name": "要素間隔ラベル", "type": "text", "x": 20, "y": 367, "width": 64, "height": 24, "content": "間隔", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layout_gap_value", "name": "要素間隔値", "type": "text", "x": 92, "y": 367, "width": 52, "height": 24, "content": "16", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_layout_padding", "name": "内側余白ラベル", "type": "text", "x": 156, "y": 367, "width": 64, "height": 24, "content": "余白", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layout_padding_value", "name": "内側余白値", "type": "text", "x": 228, "y": 367, "width": 52, "height": 24, "content": "16", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_layout_align", "name": "整列", "type": "text", "x": 20, "y": 402, "width": 120, "height": 24, "content": "整列", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_layout_align_value", "name": "整列値", "type": "text", "x": 140, "y": 404, "width": 120, "height": 20, "content": "左揃え", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#404040", "textAlign": "right", "fontFamily": "system" } },
+            { "id": "ed_layout_align_toggle", "name": "整列メニュー / 中央414px", "type": "path", "x": 268, "y": 412, "width": 8, "height": 4, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_clip_box", "name": "クリップ / チェック", "type": "rectangle", "x": 22, "y": 445, "width": 14, "height": 14, "style": { "fill": "#404040", "cornerRadii": { "topLeft": 3, "topRight": 3, "bottomRight": 3, "bottomLeft": 3 } } },
+            { "id": "ed_clip_check", "name": "チェックマーク", "type": "path", "x": 25, "y": 449, "width": 8, "height": 6, "commands": [{ "kind": "move", "x": 0, "y": 0.4 }, { "kind": "line", "x": 0.35, "y": 1 }, { "kind": "line", "x": 1, "y": 0 }], "style": { "fill": null, "stroke": { "color": "#ffffff", "width": 1.5 } } },
+            { "id": "ed_clip_label", "name": "クリップ設定 / 中央452px", "type": "text", "x": 44, "y": 442, "width": 232, "height": 20, "content": "はみ出した内容を隠す", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#525252", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_prop_div3", "name": "区切り3", "type": "rectangle", "x": 20, "y": 483, "width": 260, "height": 1, "style": { "fill": "#e5e5e5" } },
+            { "id": "ed_appearance_title", "name": "見た目見出し", "type": "text", "x": 20, "y": 498, "width": 260, "height": 24, "content": "見た目", "style": { "fontSize": 12, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_fill_label", "name": "塗りラベル", "type": "text", "x": 20, "y": 539, "width": 58, "height": 24, "content": "塗り", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_fill_chip", "name": "塗り色見本", "type": "rectangle", "x": 92, "y": 539, "width": 24, "height": 24, "style": { "fill": "#ffffff", "stroke": { "color": "#d4d4d4", "width": 1 }, "cornerRadii": { "topLeft": 4, "topRight": 4, "bottomRight": 4, "bottomLeft": 4 } } },
+            { "id": "ed_fill_value", "name": "塗り色値", "type": "text", "x": 124, "y": 539, "width": 88, "height": 24, "content": "FFFFFF", "style": { "fontSize": 11, "color": "#404040", "textAlign": "left", "fontFamily": "monospace" } },
+            { "id": "ed_fill_alpha", "name": "塗りのアルファ", "type": "text", "x": 224, "y": 539, "width": 56, "height": 24, "content": "100%", "style": { "fontSize": 11, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_stroke_label", "name": "線ラベル", "type": "text", "x": 20, "y": 580, "width": 58, "height": 24, "content": "線", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_stroke_chip", "name": "線色見本", "type": "rectangle", "x": 92, "y": 580, "width": 24, "height": 24, "style": { "fill": "#d4d4d4", "cornerRadii": { "topLeft": 4, "topRight": 4, "bottomRight": 4, "bottomLeft": 4 } } },
+            { "id": "ed_stroke_value", "name": "線色", "type": "text", "x": 124, "y": 580, "width": 88, "height": 24, "content": "D4D4D4", "style": { "fontSize": 11, "color": "#404040", "textAlign": "left", "fontFamily": "monospace" } },
+            { "id": "ed_stroke_width", "name": "線幅", "type": "text", "x": 224, "y": 580, "width": 56, "height": 24, "content": "1px", "style": { "fontSize": 11, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_radius", "name": "角丸ラベル", "type": "text", "x": 20, "y": 620, "width": 64, "height": 24, "content": "角丸", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_radius_value", "name": "角丸値", "type": "text", "x": 92, "y": 620, "width": 52, "height": 24, "content": "8", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_opacity", "name": "不透明度ラベル", "type": "text", "x": 156, "y": 620, "width": 64, "height": 24, "content": "不透明度", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_opacity_value", "name": "不透明度値", "type": "text", "x": 228, "y": 620, "width": 52, "height": 24, "content": "100%", "style": { "fontSize": 12, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } },
+            { "id": "ed_prop_div4", "name": "区切り4", "type": "rectangle", "x": 20, "y": 666, "width": 260, "height": 1, "style": { "fill": "#e5e5e5" } },
+            { "id": "ed_effects", "name": "効果 / 折りたたみ", "type": "text", "x": 40, "y": 684, "width": 196, "height": 20, "content": "効果", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#404040", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_effects_toggle", "name": "効果 / 開閉", "type": "path", "x": 26, "y": 690, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_effects_plus", "name": "影・ぼかしを追加 / 中央694px", "type": "path", "x": 260, "y": 688, "width": 12, "height": 12, "commands": [{ "kind": "move", "x": 0, "y": 0.5 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "move", "x": 0.5, "y": 0 }, { "kind": "line", "x": 0.5, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_details", "name": "要素ID / 折りたたみ", "type": "text", "x": 40, "y": 726, "width": 236, "height": 20, "content": "要素の詳細", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
+            { "id": "ed_details_toggle", "name": "要素の詳細 / 開閉", "type": "path", "x": 26, "y": 732, "width": 4, "height": 8, "commands": [{ "kind": "move", "x": 0, "y": 0 }, { "kind": "line", "x": 1, "y": 0.5 }, { "kind": "line", "x": 0, "y": 1 }], "style": { "fill": null, "stroke": { "color": "#737373", "width": 1.5 } } },
+            { "id": "ed_export_bg", "name": "選択フレームの書き出し", "type": "rectangle", "x": 20, "y": 788, "width": 260, "height": 40, "style": { "fill": "#ffffff", "stroke": { "color": "#d4d4d4", "width": 1 }, "cornerRadii": { "topLeft": 6, "topRight": 6, "bottomRight": 6, "bottomLeft": 6 } } },
+            { "id": "ed_export_label", "name": "PNG書き出し / 中央808px", "type": "text", "x": 68, "y": 798, "width": 184, "height": 20, "content": "フレームをPNGに書き出す", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#404040", "textAlign": "center", "fontFamily": "system", "fontWeight": 600 } },
+            { "id": "ed_export_icon", "name": "書き出しアイコン / 中央808px", "type": "path", "x": 48, "y": 802, "width": 12, "height": 12, "commands": [{ "kind": "move", "x": 0.5, "y": 0 }, { "kind": "line", "x": 0.5, "y": 0.75 }, { "kind": "move", "x": 0.2, "y": 0.45 }, { "kind": "line", "x": 0.5, "y": 0.75 }, { "kind": "line", "x": 0.8, "y": 0.45 }, { "kind": "move", "x": 0, "y": 0.8 }, { "kind": "line", "x": 0, "y": 1 }, { "kind": "line", "x": 1, "y": 1 }, { "kind": "line", "x": 1, "y": 0.8 }], "style": { "fill": null, "stroke": { "color": "#525252", "width": 1.5 } } }
+          ]
+        },
+        {
+          "id": "ed_status", "name": "05 / 操作状態", "type": "frame", "x": 0, "y": 928, "width": 1440, "height": 32,
+          "style": { "fill": "#ffffff", "border": { "top": { "color": "#e5e5e5", "width": 1 } } },
+          "children": [
+            { "id": "ed_status_left", "name": "選択状態", "type": "text", "x": 20, "y": 6, "width": 300, "height": 22, "content": "1 フレームを選択中", "style": { "fontSize": 11, "color": "#737373", "textAlign": "left", "fontFamily": "system" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nd_design_grayscale",
+      "name": "Nodi / グレースケール",
+      "type": "frame",
+      "x": 80, "y": 80, "width": 1000, "height": 540,
+      "style": { "fill": "#ffffff" },
+      "children": [
+        {
+          "id": "nd_gray_heading", "name": "パレット見出し", "type": "text",
+          "x": 40, "y": 28, "width": 900, "height": 42,
+          "content": "Nodi / Grayscale",
+          "style": { "fontSize": 28, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 700 }
+        },
+        {
+          "id": "nd_gray_description", "name": "パレットの説明", "type": "text",
+          "x": 40, "y": 78, "width": 900, "height": 30,
+          "content": "形・余白・階層を整えるための10色。色見本を複製するか、HEX値を指定して使います。",
+          "style": { "fontSize": 14, "color": "#737373", "textAlign": "left", "fontFamily": "system" }
+        },
+        {
+          "id": "nd_gray_000", "name": "Gray 000 / #FFFFFF", "type": "rectangle",
+          "x": 40, "y": 136, "width": 168, "height": 104,
+          "style": { "fill": "#ffffff", "stroke": { "color": "#d4d4d4", "width": 1 } }
+        },
+        {
+          "id": "nd_gray_000_label", "name": "Gray 000 の値", "type": "text",
+          "x": 40, "y": 250, "width": 168, "height": 52, "content": "Gray 000\n#FFFFFF",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_100", "name": "Gray 100 / #F5F5F5", "type": "rectangle",
+          "x": 228, "y": 136, "width": 168, "height": 104,
+          "style": { "fill": "#f5f5f5" }
+        },
+        {
+          "id": "nd_gray_100_label", "name": "Gray 100 の値", "type": "text",
+          "x": 228, "y": 250, "width": 168, "height": 52, "content": "Gray 100\n#F5F5F5",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_200", "name": "Gray 200 / #E5E5E5", "type": "rectangle",
+          "x": 416, "y": 136, "width": 168, "height": 104,
+          "style": { "fill": "#e5e5e5" }
+        },
+        {
+          "id": "nd_gray_200_label", "name": "Gray 200 の値", "type": "text",
+          "x": 416, "y": 250, "width": 168, "height": 52, "content": "Gray 200\n#E5E5E5",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_300", "name": "Gray 300 / #D4D4D4", "type": "rectangle",
+          "x": 604, "y": 136, "width": 168, "height": 104,
+          "style": { "fill": "#d4d4d4" }
+        },
+        {
+          "id": "nd_gray_300_label", "name": "Gray 300 の値", "type": "text",
+          "x": 604, "y": 250, "width": 168, "height": 52, "content": "Gray 300\n#D4D4D4",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_400", "name": "Gray 400 / #A3A3A3", "type": "rectangle",
+          "x": 792, "y": 136, "width": 168, "height": 104,
+          "style": { "fill": "#a3a3a3" }
+        },
+        {
+          "id": "nd_gray_400_label", "name": "Gray 400 の値", "type": "text",
+          "x": 792, "y": 250, "width": 168, "height": 52, "content": "Gray 400\n#A3A3A3",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_500", "name": "Gray 500 / #737373", "type": "rectangle",
+          "x": 40, "y": 328, "width": 168, "height": 104,
+          "style": { "fill": "#737373" }
+        },
+        {
+          "id": "nd_gray_500_label", "name": "Gray 500 の値", "type": "text",
+          "x": 40, "y": 442, "width": 168, "height": 52, "content": "Gray 500\n#737373",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_600", "name": "Gray 600 / #525252", "type": "rectangle",
+          "x": 228, "y": 328, "width": 168, "height": 104,
+          "style": { "fill": "#525252" }
+        },
+        {
+          "id": "nd_gray_600_label", "name": "Gray 600 の値", "type": "text",
+          "x": 228, "y": 442, "width": 168, "height": 52, "content": "Gray 600\n#525252",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_700", "name": "Gray 700 / #404040", "type": "rectangle",
+          "x": 416, "y": 328, "width": 168, "height": 104,
+          "style": { "fill": "#404040" }
+        },
+        {
+          "id": "nd_gray_700_label", "name": "Gray 700 の値", "type": "text",
+          "x": 416, "y": 442, "width": 168, "height": 52, "content": "Gray 700\n#404040",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_800", "name": "Gray 800 / #171717", "type": "rectangle",
+          "x": 604, "y": 328, "width": 168, "height": 104,
+          "style": { "fill": "#171717" }
+        },
+        {
+          "id": "nd_gray_800_label", "name": "Gray 800 の値", "type": "text",
+          "x": 604, "y": 442, "width": 168, "height": 52, "content": "Gray 800\n#171717",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        },
+        {
+          "id": "nd_gray_900", "name": "Gray 900 / #000000", "type": "rectangle",
+          "x": 792, "y": 328, "width": 168, "height": 104,
+          "style": { "fill": "#000000" }
+        },
+        {
+          "id": "nd_gray_900_label", "name": "Gray 900 の値", "type": "text",
+          "x": 792, "y": 442, "width": 168, "height": 52, "content": "Gray 900\n#000000",
+          "style": { "fontSize": 14, "color": "#404040", "textAlign": "left", "fontFamily": "monospace", "lineHeight": 1.6 }
+        }
+      ]
+    }
+  ]
+}
