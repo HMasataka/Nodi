@@ -1,3 +1,4 @@
+import type { LayoutMeasure } from "@/document/layout.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import { graphemeSegments, type TextUnit, wrapTextUnits } from "@/document/textLayout.ts";
 import type { TextMark, TextNode } from "@/document/types.ts";
@@ -51,4 +52,9 @@ export function measureTextSize(ctx: CanvasRenderingContext2D, node: TextNode, w
   const width = lines.reduce((max, line) => Math.max(max, line.width), 0) + 4;
   const height = lines.length * lineHeight + 4;
   return { width, height };
+}
+
+/** テキストだけを内容サイズで測り、それ以外は格納サイズを返す座標解決用の measure。 */
+export function createLayoutMeasure(ctx: CanvasRenderingContext2D): LayoutMeasure {
+  return (node, wrapWidth) => node.type === "text" ? measureTextSize(ctx, node, wrapWidth) : { width: node.width, height: node.height };
 }

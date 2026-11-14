@@ -2,6 +2,7 @@ import type { Alignment, FrameLayoutPatch, LayerDirection, SizeAxis, SizeConstra
 import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
+import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
@@ -108,9 +109,14 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
             <button type="button" className="file-button" onClick={() => onReorder("front")}>最前面へ</button>
             <button type="button" className="file-button" onClick={() => onReorder("back")}>最背面へ</button>
           </div>
-          {selected.type === "frame" && <button type="button" className="file-button export-button" onClick={onExportFrame} disabled={isExporting}>
-            {isExporting ? "PNG を生成中…" : "PNG に書き出す"}
-          </button>}
+          {selected.type === "frame" && <>
+            <div className="property-divider" />
+            <div className="field-label">プレビュー</div>
+            <FramePreview key={selected.id} frame={selected} />
+            <button type="button" className="file-button export-button" onClick={onExportFrame} disabled={isExporting}>
+              {isExporting ? "PNG を生成中…" : "PNG に書き出す"}
+            </button>
+          </>}
         </div>
       ) : <p className="panel-empty">キャンバス上の要素を選択すると、ここに詳細が表示されます。</p>}
     </aside>

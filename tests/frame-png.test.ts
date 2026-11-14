@@ -278,6 +278,16 @@ test("フレームの子と画像を正規化した4隅のパスでクリップ�
   assert.equal(calls.filter(([method]) => method === "save").length, calls.filter(([method]) => method === "restore").length);
 });
 
+test("PNG は自動レイアウトを解決してから描画する", async () => {
+  const frame = makeFrame({ layoutMode: "horizontal", padding: 0, gap: 0, width: 100, height: 50, children: [
+    makeRectangle({ id: "fixed", width: 20, height: 10 }),
+    makeRectangle({ id: "fill", widthConstraint: { mode: "fill" }, height: 10 }),
+  ] });
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }));
+  assert.deepEqual(calls.filter(([method]) => method === "translate"), [["translate", 0, 0], ["translate", 0, 0], ["translate", 20, 0]]);
+});
+
 test("PNG の保存・キャンセル・書き込み失敗を区別する", async () => {
   const blob = new Blob(["png"], { type: "image/png" });
   const writes = [];
