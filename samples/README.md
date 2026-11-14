@@ -6,6 +6,8 @@
 
 `github-docs-hello-world.nodi` は [GitHub Docs の Hello World ページ](https://docs.github.com/en/get-started/start-your-journey/hello-world) の冒頭から「Step 1: Create a repository」までを、幅1440pxのデスクトップ表示でトレースしたサンプル。2026年11月時点の表示を参考に、案内帯、ヘッダー、パンくず、左右のナビゲーション、記事本文と手順の図を再現しています。GitHub マークのみ埋め込み SVG 画像で、文字や罫線、ボタン、選択状態、手順の図は編集可能な Nodi の要素です。本文中のリンク色・下線、太字、インラインコードは一つのテキスト要素内の装飾範囲で表現しています。専用アイコンなど、現在の文書形式にない表現は近似しています。
 
+`path-icon.svg` は2つのパスで作った取り込み用アイコン。ツールバーの「SVGパスを取り込む」から選ぶと、透明なフレーム内に編集可能なパス2個として追加される。通常の「画像を追加」を選んだ場合は、従来どおり埋め込み画像になる。取り込みは `viewBox` と単色の `<path>` に限定し、楕円弧、基本図形、transform、CSS、外部参照などを含むSVGは理由を表示して拒否する。
+
 ## 試し方
 
 1. `pnpm tauri dev` でアプリを起動し、「開く」から `samples/studio.nodi` を選ぶ。

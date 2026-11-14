@@ -1,5 +1,7 @@
 import { Result } from "@praha/byethrow";
 
+import { importSvgIcon } from "@/document/commands/svgImport.ts";
+import type { SvgIcon } from "@/document/svgPath.ts";
 import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBlur, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
@@ -129,6 +131,9 @@ export function createAgentApi(port: EditorPort) {
     },
     add(input: AddNodeInput): Result.Result<ElementReference, Error> {
       return applyNewNode(addNode(port.getDocument(), input));
+    },
+    importSvg(input: { icon: SvgIcon; name: string; x: number; y: number; parentId?: string }) {
+      return applyNewNode(importSvgIcon(port.getDocument(), input));
     },
     rename(id: string, name: string): Result.Result<ElementReference, Error> {
       return applyToElement(id, renameNode(port.getDocument(), id, name));
