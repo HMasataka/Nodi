@@ -1,4 +1,4 @@
-import type { Alignment, FrameLayoutPatch, LayerDirection } from "@/document/commands/index.ts";
+import type { Alignment, FrameLayoutPatch, LayerDirection, SizeAxis, SizeConstraintPatch } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
@@ -6,6 +6,7 @@ import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEdit
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { ShadowEditor } from "@/pages/editor/components/molecules/ShadowEditor";
+import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 
 interface InspectorProps {
   selected?: DocumentNode;
@@ -23,6 +24,7 @@ interface InspectorProps {
   onShapeStyle(style: Partial<RectangleStyle>): void;
   onFrameStyle(style: Partial<FrameStyle>): void;
   onFrameLayout(patch: FrameLayoutPatch): void;
+  onSizeConstraint(axis: SizeAxis, patch: SizeConstraintPatch): void;
   onImageStyle(style: Partial<ImageStyle>): void;
   onPath(patch: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }): void;
   onDuplicate(): void;
@@ -33,7 +35,7 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -54,6 +56,8 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           <div className="field-label">位置・サイズ</div>
           <GeometryEditor key={`${selected.id}:${selected.x}:${selected.y}:${selected.width}:${selected.height}`}
             node={selected} onChange={onGeometry} />
+          <SizeConstraintEditor key={`${selected.id}:${JSON.stringify(selected.widthConstraint)}:${JSON.stringify(selected.heightConstraint)}`}
+            node={selected} onChange={onSizeConstraint} />
           <label className="geometry-field">
             <span>回転 °</span>
             <input key={`${selected.id}:${selected.rotation}`} type="number" step="any" defaultValue={selected.rotation}

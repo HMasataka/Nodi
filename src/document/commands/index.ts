@@ -1,6 +1,6 @@
 export { type Alignment, alignNodes } from "@/document/commands/align.ts";
 export { type AddNodeInput, addNode, createDocument } from "@/document/commands/create.ts";
-export { type FrameLayoutPatch, setFrameLayout } from "@/document/commands/layout.ts";
+export { type FrameLayoutPatch, type SizeAxis, type SizeConstraintPatch, setFrameLayout, setNodeSizeConstraint } from "@/document/commands/layout.ts";
 export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNode } from "@/document/commands/structure.ts";
 export { setBorder, setFrameStyle, setImageFilters, setImageStyle, setNodeStyle, setPath, setTextContent, setTextMarkRange, setTextMarks, setTextStyle } from "@/document/commands/style.ts";
 export { importSvgIcon } from "@/document/commands/svgImport.ts";

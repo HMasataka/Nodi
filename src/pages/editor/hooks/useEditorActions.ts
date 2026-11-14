@@ -9,7 +9,7 @@ import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
   type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type FrameLayoutPatch, type LayerDirection,
-  reorderNode, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle,
+  reorderNode, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch,
 } from "@/document/commands/index.ts";
 import type { FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
@@ -90,6 +90,9 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
       onPath: (value: { commands?: VectorPathCommand[]; fillRule?: PathFillRule }) => changeSelected(value, setPath),
       onFrameStyle: (value: Partial<FrameStyle>) => changeSelected(value, setFrameStyle),
       onFrameLayout: (value: FrameLayoutPatch) => changeSelected(value, setFrameLayout),
+      onSizeConstraint: (axis: SizeAxis, patch: SizeConstraintPatch) => {
+        if (selected) applyDocument(setNodeSizeConstraint(designRef.current, selected.id, axis, patch));
+      },
       onImageStyle: (value: Partial<ImageStyle>) => changeSelected(value, setImageStyle),
       onDuplicate: duplicateSelected,
       onDelete: deleteSelected,
