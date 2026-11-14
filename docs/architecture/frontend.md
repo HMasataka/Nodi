@@ -24,6 +24,7 @@
 | `src/document/commands/` | ツリー走査と作成・更新・スタイル・構造変更。`index.ts` が公開操作の入口 |
 | `src/document/history.ts`・`measure.ts` | 編集履歴と履歴時点の数値計測 |
 | `src/document/layout.ts` | 自動レイアウトの座標解決（編集画面と PNG 書き出しが共用する純粋関数） |
+| `src/document/animation.ts` | キーフレーム・遅延・緩急・繰り返しから時刻 `t` の属性値を計算する純粋関数 |
 | `src/persistence/` | 保存形式の検証・JSON 変換、ファイル選択・読み書き、復元データの検証 |
 | `src/agent/` | ドキュメント操作を MCP 用の参照・要求・応答へ変換 |
 | `src/export/` | フレームの画像描画とファイル保存処理 |
