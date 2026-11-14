@@ -13,7 +13,7 @@ import {
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
-export function useEditorActions(session: ReturnType<typeof useEditorDocument>) {
+export function useEditorActions(session: ReturnType<typeof useEditorDocument>, playback: { playhead: number; scrollProgress: number }) {
   const { designRef, selected, selectedId, selectedIds, setSelectedId, setSelectedIds, setError, applyDocument, recordDocument, agentApi } = session;
   const creation = useElementCreation(session);
   const [isExporting, setIsExporting] = useState(false);
@@ -40,7 +40,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
     exporting.current = true;
     setIsExporting(true);
     try {
-      const rendered = await renderFramePng(selected);
+      const rendered = await renderFramePng(selected, undefined, { timeMs: playback.playhead, scrollProgress: playback.scrollProgress });
       if (Result.isFailure(rendered)) { setError(rendered.error.message); return; }
       const name = selected.name.trim().replace(/[\\/:*?"<>|]/g, "_") || "frame";
       const saved = await savePng(pngFiles, rendered.value, `${name}.png`);

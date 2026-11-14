@@ -288,6 +288,17 @@ test("PNG は自動レイアウトを解決してから描画する", async () =
   assert.deepEqual(calls.filter(([method]) => method === "translate"), [["translate", 0, 0], ["translate", 0, 0], ["translate", 20, 0]]);
 });
 
+test("PNG は指定時刻のアニメーションを適用して描画する", async () => {
+  const child = makeRectangle({ id: "r", x: 0, y: 0, width: 10, height: 10, animations: [
+    { id: "a1", name: "移動", trigger: "load", duration: 1000, delay: 0, repeat: 1,
+      tracks: [{ property: "x", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 100, easing: "linear" }] }] },
+  ] });
+  const frame = makeFrame({ width: 100, height: 50, children: [child] });
+  const { canvas, calls } = fakeCanvas();
+  success(await renderFramePng(frame, { createCanvas: () => canvas, loadImage: async () => {} }, { timeMs: 500 }));
+  assert.deepEqual(calls.filter(([method]) => method === "translate"), [["translate", 0, 0], ["translate", 50, 0]]);
+});
+
 test("PNG の保存・キャンセル・書き込み失敗を区別する", async () => {
   const blob = new Blob(["png"], { type: "image/png" });
   const writes = [];

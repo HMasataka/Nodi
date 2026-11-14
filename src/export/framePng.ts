@@ -4,6 +4,7 @@ import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Result } from "@praha/byethrow";
+import { applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
 import { createLayoutMeasure, layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
@@ -237,7 +238,12 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
   }
 }
 
-export async function renderFramePng(frame: FrameNode, environment: PngRenderEnvironment = browserEnvironment): Promise<Result.Result<Blob, Error>> {
+export interface PngRenderOptions {
+  timeMs?: number;
+  scrollProgress?: number;
+}
+
+export async function renderFramePng(frame: FrameNode, environment: PngRenderEnvironment = browserEnvironment, options: PngRenderOptions = {}): Promise<Result.Result<Blob, Error>> {
   try {
     const canvas = environment.createCanvas();
     canvas.width = Math.round(frame.width);
@@ -247,10 +253,13 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     // 編集画面と同じ座標解決エンジンを通し、自動レイアウトを解決してから描画する。
     const resolved = resolveDocumentLayout({ version: 1, children: [{ ...frame, x: 0, y: 0 }] },
       { measure: createLayoutMeasure(ctx) }).children[0] as FrameNode;
+    // 指定した時刻（状態）のアニメーションを適用してから描画する。
+    const timeMs = options.timeMs ?? 0;
+    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();
-    const painted = await paintNode(ctx, resolved, environment);
+    const painted = await paintNode(ctx, animated, environment);
     if (Result.isFailure(painted)) return painted;
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     return blob ? Result.succeed(blob) : Result.fail(new Error("PNG を生成できません"));

@@ -49,6 +49,13 @@ function lastValue(keyframes: Keyframe[]): number {
   return keyframes[keyframes.length - 1].value;
 }
 
+/** 遅延・繰り返しを無視して、1周期内のローカル時刻でキーフレームを評価する。 */
+export function evaluateAnimationLocal(animation: Animation, localTime: number): AnimatedValues {
+  const result: AnimatedValues = {};
+  for (const track of animation.tracks) result[track.property] = interpolateTrack(track.keyframes, localTime);
+  return result;
+}
+
 /**
  * キーフレーム・時間・遅延・緩急・繰り返しから、任意の時刻 `timeMs` における各属性の値を返す。
  * 遅延前は空オブジェクト（元の属性値を使う）、繰り返し完了後は最終キーフレームの値を保持する。
