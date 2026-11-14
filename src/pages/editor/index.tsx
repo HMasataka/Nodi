@@ -1,15 +1,24 @@
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
+import type { DocumentNode } from "@/document/types.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
+import { measureTextSize } from "@/rendering/textLayout.ts";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import "@/App.css";
+
+let measureContext: CanvasRenderingContext2D | null = null;
+function measureNode(node: DocumentNode, wrapWidth?: number) {
+  if (node.type !== "text" || typeof document === "undefined") return { width: node.width, height: node.height };
+  measureContext ??= document.createElement("canvas").getContext("2d");
+  return measureContext ? measureTextSize(measureContext, node, wrapWidth) : { width: node.width, height: node.height };
+}
 
 function EditorPage() {
   const session = useEditorDocument();
@@ -33,7 +42,7 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={resolveDocumentLayout(design)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={resolveDocumentLayout(design, { measure: measureNode })} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}

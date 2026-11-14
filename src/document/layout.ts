@@ -1,11 +1,11 @@
-import type { Document, DocumentNode, FrameNode, SizeConstraint } from "@/document/types.ts";
+import type { Document, DocumentNode, FrameNode } from "@/document/types.ts";
 
 /**
- * テキストなど内容から必要なサイズを測る関数。省略時は `hug` を格納済みサイズへ
- * フォールバックする（座標解決は `fixed` / `fill` のみを扱う #158 時点の挙動）。
+ * テキストなど内容から必要なサイズを測る関数。`wrapWidth` を渡すと、その幅で折り返した
+ * ときの高さを返す。省略時は `hug` を格納済みサイズへフォールバックする。
  */
 export interface LayoutMeasure {
-  (node: DocumentNode): { width: number; height: number };
+  (node: DocumentNode, wrapWidth?: number): { width: number; height: number };
 }
 
 export interface LayoutResolveOptions {
@@ -18,55 +18,67 @@ function clampSize(value: number, min: number | undefined, max: number | undefin
   return value;
 }
 
+function naturalWidth(child: DocumentNode, measure?: LayoutMeasure): number {
+  const constraint = child.widthConstraint;
+  if (constraint.mode === "fill") return 0;
+  if (constraint.mode === "hug") return measure ? measure(child).width : child.width;
+  return child.width;
+}
+
+function naturalHeight(child: DocumentNode, width: number, measure?: LayoutMeasure): number {
+  const constraint = child.heightConstraint;
+  if (constraint.mode === "fill") return 0;
+  if (constraint.mode === "hug") return measure ? measure(child, width).height : child.height;
+  return child.height;
+}
+
 /**
  * フレームの直接の子を、レイアウト設定とサイズ制約から位置・サイズを解決して返す。
+ * テキストの高さは幅に依存するため、まず幅を解決してから高さを決める。
  * 子がフレームの場合は解決後のサイズで再帰的に子を解決する。
  */
 function resolveFrameChildren(frame: FrameNode, measure?: LayoutMeasure): DocumentNode[] {
   const horizontal = frame.layoutMode === "horizontal";
-  const innerMain = Math.max(0, frame.width - frame.padding * 2);
-  const innerCross = Math.max(0, frame.height - frame.padding * 2);
-  // 主軸が横なら innerMain が幅・innerCross が高さ。縦なら逆。
-  const mainInner = horizontal ? innerMain : innerCross;
-  const crossInner = horizontal ? innerCross : innerMain;
-
+  const innerW = Math.max(0, frame.width - frame.padding * 2);
+  const innerH = Math.max(0, frame.height - frame.padding * 2);
+  const innerMain = horizontal ? innerW : innerH;
+  const innerCross = horizontal ? innerH : innerW;
   const children = frame.children;
   const count = children.length;
   if (count === 0) return [];
 
-  const mainConstraint = (node: DocumentNode): SizeConstraint => horizontal ? node.widthConstraint : node.heightConstraint;
-  const crossConstraint = (node: DocumentNode): SizeConstraint => horizontal ? node.heightConstraint : node.widthConstraint;
-
-  // 交差軸のサイズ（横並びなら高さ、縦並びなら幅）を先に決定する。
-  const crossSizes = children.map((child) => {
-    const constraint = crossConstraint(child);
-    const natural = constraint.mode === "fill" ? crossInner
-      : constraint.mode === "hug" ? (horizontal ? (measure?.(child).height ?? child.height) : (measure?.(child).width ?? child.width))
-      : horizontal ? child.height : child.width;
-    return clampSize(natural, constraint.min, constraint.max);
-  });
-
-  // 主軸の自然サイズ。`fill` は残りを分け合うため一旦 0 として集計する。
-  const naturalMains = children.map((child) => {
-    const constraint = mainConstraint(child);
-    if (constraint.mode === "fill") return 0;
-    if (constraint.mode === "hug") return horizontal ? (measure?.(child).width ?? child.width) : (measure?.(child).height ?? child.height);
-    return horizontal ? child.width : child.height;
-  });
-
+  // 1. 幅を解決する。主軸（横並び）の fill は残りを分け、交差軸（縦並び）の fill は内寸まで伸ばす。
+  const naturalWidths = children.map((child) => naturalWidth(child, measure));
   const gapSum = frame.gap * Math.max(0, count - 1);
-  const extra = Math.max(0, mainInner - naturalMains.reduce((sum, size) => sum + size, 0) - gapSum);
-  const fillCount = children.filter((child) => mainConstraint(child).mode === "fill").length;
-  const fillMain = fillCount > 0 ? extra / fillCount : 0;
+  const widths = horizontal
+    ? (() => {
+      const extra = Math.max(0, innerMain - naturalWidths.reduce((sum, size) => sum + size, 0) - gapSum);
+      const fillCount = children.filter((child) => child.widthConstraint.mode === "fill").length;
+      const fillWidth = fillCount > 0 ? extra / fillCount : 0;
+      return children.map((child, index) => clampSize(child.widthConstraint.mode === "fill" ? fillWidth : naturalWidths[index], child.widthConstraint.min, child.widthConstraint.max));
+    })()
+    : children.map((child, index) => {
+      const constraint = child.widthConstraint;
+      return clampSize(constraint.mode === "fill" ? innerCross : naturalWidths[index], constraint.min, constraint.max);
+    });
 
-  const mains = children.map((child, index) => {
-    const constraint = mainConstraint(child);
-    const natural = constraint.mode === "fill" ? fillMain : naturalMains[index];
-    return clampSize(natural, constraint.min, constraint.max);
-  });
+  // 2. 高さを解決する。hug は解決後の幅で折り返した内容の高さを使う。
+  const naturalHeights = children.map((child, index) => naturalHeight(child, widths[index], measure));
+  const heights = horizontal
+    ? children.map((child, index) => {
+      const constraint = child.heightConstraint;
+      return clampSize(constraint.mode === "fill" ? innerCross : naturalHeights[index], constraint.min, constraint.max);
+    })
+    : (() => {
+      const extra = Math.max(0, innerMain - naturalHeights.reduce((sum, size) => sum + size, 0) - gapSum);
+      const fillCount = children.filter((child) => child.heightConstraint.mode === "fill").length;
+      const fillHeight = fillCount > 0 ? extra / fillCount : 0;
+      return children.map((child, index) => clampSize(child.heightConstraint.mode === "fill" ? fillHeight : naturalHeights[index], child.heightConstraint.min, child.heightConstraint.max));
+    })();
 
-  // 主軸の分配（justifyContent）。`fill` が余白を吸収するため、残りは固定・内容追従のみに生じる。
-  const free = Math.max(0, mainInner - mains.reduce((sum, size) => sum + size, 0) - gapSum);
+  // 3. 主軸の位置を決める（justifyContent）。fill が余白を吸収するため、残りは固定・内容追従のみに生じる。
+  const mainSizes = horizontal ? widths : heights;
+  const free = Math.max(0, innerMain - mainSizes.reduce((sum, size) => sum + size, 0) - gapSum);
   let offset = 0;
   if (frame.justifyContent === "center") offset = free / 2;
   else if (frame.justifyContent === "end") offset = free;
@@ -74,14 +86,14 @@ function resolveFrameChildren(frame: FrameNode, measure?: LayoutMeasure): Docume
 
   let main = frame.padding + offset;
   return children.map((child, index) => {
-    const cross = crossSizes[index];
-    const crossPosition = frame.alignItems === "center" ? frame.padding + (crossInner - cross) / 2
-      : frame.alignItems === "end" ? frame.padding + crossInner - cross
+    const cross = horizontal ? heights[index] : widths[index];
+    const crossPosition = frame.alignItems === "center" ? frame.padding + (innerCross - cross) / 2
+      : frame.alignItems === "end" ? frame.padding + innerCross - cross
       : frame.padding;
     const positioned: DocumentNode = horizontal
-      ? { ...child, x: main, y: crossPosition, width: mains[index], height: cross }
-      : { ...child, x: crossPosition, y: main, width: cross, height: mains[index] };
-    main += mains[index] + frame.gap + spacing;
+      ? { ...child, x: main, y: crossPosition, width: widths[index], height: heights[index] }
+      : { ...child, x: crossPosition, y: main, width: widths[index], height: heights[index] };
+    main += mainSizes[index] + frame.gap + spacing;
     return resolveNode(positioned, measure);
   });
 }

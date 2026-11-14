@@ -11,7 +11,7 @@ export function textFragmentStyle(node: TextNode, mark: TextMark | null) {
   return { ...font, color: mark?.color ?? node.style.color, underline: mark?.underline === true, code: mark?.code === true };
 }
 
-export function layoutTextLines(ctx: CanvasRenderingContext2D, node: TextNode) {
+export function layoutTextLines(ctx: CanvasRenderingContext2D, node: TextNode, wrapWidth = node.width) {
   const baseFont = resolvedTextFont(node.style);
   ctx.font = `${baseFont.fontWeight} ${node.style.fontSize}px ${baseFont.fontFamily}`;
   const letterSpacing = node.style.letterSpacing;
@@ -31,7 +31,7 @@ export function layoutTextLines(ctx: CanvasRenderingContext2D, node: TextNode) {
       return { text, mark, width: ctx.measureText(text).width + (nativeSpacing ? 0 : graphemeSegments(text).length * letterSpacing) };
     });
   }
-  const lines: TextLine[] = wrapTextUnits(node.content, node.width - 4,
+  const lines: TextLine[] = wrapTextUnits(node.content, wrapWidth - 4,
     (units) => fragments(units).reduce((width, fragment) => width + fragment.width, 0))
     .map((units) => {
       const parts = fragments(units);
@@ -39,4 +39,16 @@ export function layoutTextLines(ctx: CanvasRenderingContext2D, node: TextNode) {
     });
   ctx.font = `${baseFont.fontWeight} ${node.style.fontSize}px ${baseFont.fontFamily}`;
   return { lines, nativeSpacing, letterSpacing };
+}
+
+/**
+ * テキストの内容とフォントから必要な幅・高さを測る。`wrapWidth` を渡すとその幅で
+ * 折り返したときの高さを返す（省略時は折り返さず明示改行だけを数える）。
+ */
+export function measureTextSize(ctx: CanvasRenderingContext2D, node: TextNode, wrapWidth = Number.POSITIVE_INFINITY): { width: number; height: number } {
+  const { lines } = layoutTextLines(ctx, node, wrapWidth);
+  const lineHeight = node.style.fontSize * node.style.lineHeight;
+  const width = lines.reduce((max, line) => Math.max(max, line.width), 0) + 4;
+  const height = lines.length * lineHeight + 4;
+  return { width, height };
 }
