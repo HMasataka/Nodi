@@ -13,11 +13,13 @@
 | `src/pages/editor/creation.ts`・`hooks/useElementCreation.ts` | 要素の作成初期値と作成・画像読み込み操作 |
 | `src/pages/editor/hooks/useEditorActions.ts` | 選択要素の編集・削除・複製・書き出し |
 | `src/pages/editor/components/organisms/EditorToolbar/` | 文書操作と作成・描画ツールの組み立て |
+| `src/pages/editor/components/organisms/Timeline/` | 再生操作とキーフレーム・タイムラインの編集 |
 | `src/pages/editor/components/molecules/CreationTools/`・`DocumentControls/`・`DrawingTools/` | ツールバー内の操作群 |
 | `src/pages/editor/components/molecules/ElementAppearance/` | 要素種別ごとの編集欄の切り替え |
 | `src/pages/editor/hooks/useCanvasInteraction.ts` | 要素のドラッグ・範囲選択・描画ツールと Undo / Redo |
 | `src/pages/editor/hooks/useCanvasViewport.ts` | パン・ズーム、Space キー操作、MCP からの表示位置調整 |
 | `src/pages/editor/hooks/useMcpBridge.ts` | 実行中のアプリへの MCP 要求を編集 API に渡す |
+| `src/pages/editor/hooks/usePlayback.ts` | アニメーション再生ヘッドの再生・停止・シーク |
 | `src/pages/editor/geometry.ts`・`viewport.ts` | 画面座標・ズームからドキュメント座標への変換 |
 | `src/document/types.ts` | ドキュメントの型・既定値 |
 | `src/document/geometry.ts` | 親フレームのアフィン変換を含む絶対座標・AABB走査と、マスク／クリップを加味した表示領域AABBの問い合わせ |

@@ -1,3 +1,4 @@
+import { applyAnimations } from "@/document/animation.ts";
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
@@ -7,15 +8,18 @@ import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveDocumentLayout } from "@/document/layout.ts";
+import { Timeline } from "@/pages/editor/components/organisms/Timeline";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import "@/App.css";
 
 function EditorPage() {
   const session = useEditorDocument();
   const interaction = useCanvasInteraction(session);
   const actions = useEditorActions(session);
+  const playback = usePlayback();
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
   const { drag, pathDrag, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
@@ -34,7 +38,7 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={resolveDocumentLayout(design, { measure: measureNode })} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
@@ -48,6 +52,7 @@ function EditorPage() {
       <Inspector selected={selected} selectedCount={selectedIds.length} {...actions.inspector} />
     </div>
 
+    <Timeline node={selected} playback={playback} {...actions.timeline} />
     <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
     {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}

@@ -8,10 +8,10 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  type Alignment, alignNodes, deleteNode, deleteNodes, duplicateNode, type FrameLayoutPatch, type LayerDirection,
-  reorderNode, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch,
+  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, deleteNode, deleteNodes, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
+  removeAnimation, removeKeyframe, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch,
 } from "@/document/commands/index.ts";
-import type { FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 export function useEditorActions(session: ReturnType<typeof useEditorDocument>) {
   const { designRef, selected, selectedId, selectedIds, setSelectedId, setSelectedIds, setError, applyDocument, recordDocument, agentApi } = session;
@@ -100,6 +100,29 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>) 
       onAlign: (alignment: Alignment) => applyDocument(alignNodes(designRef.current, selectedIds, alignment)),
       onExportFrame: () => { void exportSelectedFrame(); },
       isExporting,
+    },
+    timeline: {
+      onAddAnimation: () => {
+        if (!selectedId) return;
+        const result = addAnimation(designRef.current, selectedId, { name: "アニメーション", trigger: "load" });
+        if (Result.isFailure(result)) { setError(result.error.message); return; }
+        recordDocument(result.value.document);
+      },
+      onRemoveAnimation: (animationId: string) => {
+        if (selectedId) applyDocument(removeAnimation(designRef.current, selectedId, animationId));
+      },
+      onSetTiming: (animationId: string, patch: AnimationTimingPatch) => {
+        if (selectedId) applyDocument(setAnimationTiming(designRef.current, selectedId, animationId, patch));
+      },
+      onAddKeyframe: (animationId: string, property: AnimatableProperty, keyframe: Keyframe) => {
+        if (selectedId) applyDocument(addKeyframe(designRef.current, selectedId, animationId, property, keyframe));
+      },
+      onSetKeyframe: (animationId: string, property: AnimatableProperty, time: number, patch: KeyframePatch) => {
+        if (selectedId) applyDocument(setKeyframe(designRef.current, selectedId, animationId, property, time, patch));
+      },
+      onRemoveKeyframe: (animationId: string, property: AnimatableProperty, time: number) => {
+        if (selectedId) applyDocument(removeKeyframe(designRef.current, selectedId, animationId, property, time));
+      },
     },
   };
 }

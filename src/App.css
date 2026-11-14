@@ -527,6 +527,23 @@ button {
 .preview-width-field input { width: 60px; }
 .preview-stage { position: relative; overflow: hidden; margin-top: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--canvas-bg); }
 .preview-frame { position: absolute; top: 0; left: 0; transform-origin: top left; }
+.timeline { display: flex; flex-direction: column; gap: 6px; flex: none; padding: 10px 17px; border-top: 1px solid var(--line); background: var(--panel); }
+.timeline-playhead { display: flex; align-items: center; gap: 8px; }
+.timeline-playhead input[type="range"] { flex: 1; }
+.timeline-time { font: 11px ui-monospace, monospace; color: var(--text-subtle); min-width: 72px; }
+.timeline-empty { margin: 0; color: var(--text-subtle); font-size: 11px; }
+.timeline-animation { border: 1px solid var(--line); border-radius: 5px; padding: 8px; }
+.timeline-animation-head { display: flex; gap: 6px; align-items: center; }
+.timeline-animation-head input { flex: 1; }
+.timeline-timing { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; font-size: 11px; }
+.timeline-timing label { display: inline-flex; align-items: center; gap: 4px; }
+.timeline-timing input { width: 60px; }
+.timeline-track { margin-top: 6px; }
+.timeline-property { display: inline-block; font: 10px ui-monospace, monospace; color: var(--accent); margin-right: 8px; }
+.timeline-keyframe { display: flex; gap: 8px; align-items: center; font-size: 11px; }
+.timeline-keyframe label { display: inline-flex; align-items: center; gap: 4px; }
+.timeline-keyframe input { width: 64px; }
+.timeline-add { display: flex; }
 
 .statusbar {
   display: flex;
