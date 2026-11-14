@@ -357,6 +357,213 @@
           ]
         }
       ]
+    },
+    {
+      "id": "nd_sample_effects",
+      "name": "Studio / 色と視覚効果",
+      "type": "frame",
+      "x": 1120,
+      "y": 70,
+      "width": 960,
+      "height": 680,
+      "style": { "fill": "#f4f1eb" },
+      "children": [
+        {
+          "id": "nd_sample_effects_title", "name": "視覚効果の見出し", "type": "text",
+          "x": 36, "y": 28, "width": 840, "height": 42, "content": "COLOR & EFFECTS",
+          "style": { "fontSize": 30, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "fontWeight": 700, "letterSpacing": 1.5 }
+        },
+        {
+          "id": "nd_sample_effects_intro", "name": "視覚効果の説明", "type": "text",
+          "x": 38, "y": 82, "width": 860, "height": 26,
+          "content": "6つのカードを選び、色・不透明度・影・ぼかしを編集してPNGと見比べる。",
+          "style": { "fontSize": 13, "color": "#697976", "textAlign": "left", "fontFamily": "system" }
+        },
+        {
+          "id": "nd_sample_alpha_panel", "name": "01 / 半透明色", "type": "frame",
+          "x": 36, "y": 138, "width": 280, "height": 244,
+          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "children": [
+            {
+              "id": "nd_sample_alpha_label", "name": "半透明色のラベル", "type": "text",
+              "x": 20, "y": 16, "width": 240, "height": 48, "content": "01  COLOR ALPHA\n8桁HEX / 塗り・線・文字",
+              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 },
+              "marks": [{ "start": 16, "end": 21, "color": "#237b7588" }]
+            },
+            {
+              "id": "nd_sample_alpha_back", "name": "半透明の辺線を持つ下地", "type": "rectangle",
+              "x": 20, "y": 76, "width": 240, "height": 140,
+              "style": { "fill": "#d9e8e1", "border": { "top": { "color": "#ffffffbb", "width": 5 }, "bottom": { "color": "#698d8499", "width": 3 } } }
+            },
+            {
+              "id": "nd_sample_alpha_rect", "name": "半透明の矩形", "type": "rectangle",
+              "x": 42, "y": 98, "width": 116, "height": 96,
+              "style": { "fill": "#158c8299", "stroke": { "color": "#075a5480", "width": 2 },
+                "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+            },
+            {
+              "id": "nd_sample_alpha_ellipse", "name": "半透明の楕円", "type": "ellipse",
+              "x": 125, "y": 104, "width": 100, "height": 100,
+              "style": { "fill": "#ed9d6688", "stroke": { "color": "#9b594d99", "width": 2 } }
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_linear_panel", "name": "02 / 線形グラデーション", "type": "frame",
+          "x": 340, "y": 138, "width": 280, "height": 244,
+          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "children": [
+            {
+              "id": "nd_sample_linear_label", "name": "線形のラベル", "type": "text",
+              "x": 20, "y": 16, "width": 240, "height": 52, "content": "02  LINEAR\n3ストップ / ローカル座標",
+              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+            },
+            {
+              "id": "nd_sample_linear_back", "name": "線形塗りの下地", "type": "rectangle",
+              "x": 20, "y": 76, "width": 240, "height": 140,
+              "style": { "fill": "#e1e9e5", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+            },
+            {
+              "id": "nd_sample_linear_fill", "name": "半透明の線形塗り", "type": "rectangle",
+              "x": 31, "y": 88, "width": 218, "height": 116, "rotation": -4,
+              "style": {
+                "fill": { "type": "linear", "start": { "x": 0, "y": 0 }, "end": { "x": 1, "y": 1 },
+                  "stops": [{ "position": 0, "color": "#1d6f7688" }, { "position": 0.48, "color": "#72b5aabb" }, { "position": 1, "color": "#e9bb8aaa" }] },
+                "stroke": { "color": "#356d7180", "width": 1 },
+                "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 }
+              }
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_radial_panel", "name": "03 / 放射状グラデーション", "type": "frame",
+          "x": 644, "y": 138, "width": 280, "height": 244,
+          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "children": [
+            {
+              "id": "nd_sample_radial_label", "name": "放射状のラベル", "type": "text",
+              "x": 20, "y": 16, "width": 240, "height": 52, "content": "03  RADIAL\n中心と短辺基準の半径",
+              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+            },
+            {
+              "id": "nd_sample_radial_back", "name": "放射状塗りの下地", "type": "rectangle",
+              "x": 20, "y": 76, "width": 240, "height": 140,
+              "style": { "fill": "#e6e3ed", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+            },
+            {
+              "id": "nd_sample_radial_fill", "name": "中心をずらした放射状塗り", "type": "ellipse",
+              "x": 65, "y": 78, "width": 150, "height": 138, "rotation": 18,
+              "style": { "fill": { "type": "radial", "center": { "x": 0.34, "y": 0.32 }, "radius": 0.72,
+                "stops": [{ "position": 0, "color": "#fff0cf" }, { "position": 0.48, "color": "#e9ad91dd" }, { "position": 1, "color": "#806c9ecc" }] } }
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_opacity_panel", "name": "04 / グループ不透明度", "type": "frame",
+          "x": 36, "y": 402, "width": 280, "height": 244,
+          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "children": [
+            {
+              "id": "nd_sample_opacity_label", "name": "不透明度のラベル", "type": "text",
+              "x": 20, "y": 16, "width": 240, "height": 52, "content": "04  GROUP OPACITY\n重なり全体に一度だけ62%",
+              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+            },
+            {
+              "id": "nd_sample_opacity_back", "name": "不透明度の下地", "type": "rectangle",
+              "x": 20, "y": 76, "width": 240, "height": 140,
+              "style": { "fill": "#dce8e6", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+            },
+            {
+              "id": "nd_sample_opacity_group", "name": "重なった子の半透明フレーム", "type": "frame",
+              "x": 29, "y": 85, "width": 222, "height": 122, "opacity": 0.62,
+              "style": { "fill": null },
+              "children": [
+                {
+                  "id": "nd_sample_opacity_first", "name": "重なる青緑", "type": "rectangle",
+                  "x": 12, "y": 15, "width": 130, "height": 90,
+                  "style": { "fill": "#176f78", "cornerRadii": { "topLeft": 12, "topRight": 12, "bottomRight": 12, "bottomLeft": 12 } }
+                },
+                {
+                  "id": "nd_sample_opacity_second", "name": "重なる橙", "type": "rectangle",
+                  "x": 91, "y": 28, "width": 120, "height": 78,
+                  "style": { "fill": "#df9a69", "cornerRadii": { "topLeft": 12, "topRight": 12, "bottomRight": 12, "bottomLeft": 12 } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_shadow_panel", "name": "05 / 透過画像と外側影", "type": "frame",
+          "x": 340, "y": 402, "width": 280, "height": 244,
+          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "children": [
+            {
+              "id": "nd_sample_shadow_label", "name": "外側影のラベル", "type": "text",
+              "x": 20, "y": 16, "width": 240, "height": 52, "content": "05  DROP SHADOW\n透過画像と文字の輪郭",
+              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+            },
+            {
+              "id": "nd_sample_shadow_back", "name": "外側影の下地", "type": "rectangle",
+              "x": 20, "y": 76, "width": 240, "height": 140,
+              "style": { "fill": "#e4ebed", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+            },
+            {
+              "id": "nd_sample_shadow_image", "name": "透明SVG画像の影", "type": "image",
+              "x": 35, "y": 88, "width": 115, "height": 110,
+              "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'%3E%3Ccircle%20cx='60'%20cy='60'%20r='46'%20fill='%23e8b487'/%3E%3Cpath%20d='M60%2020L95%2085H25Z'%20fill='%231e797f'/%3E%3C/svg%3E",
+              "style": { "filters": { "saturate": 1.15 } },
+              "shadow": { "color": "#1c465866", "offsetX": 7, "offsetY": 8, "blur": 8 }
+            },
+            {
+              "id": "nd_sample_shadow_text", "name": "文字の外側影", "type": "text",
+              "x": 151, "y": 119, "width": 100, "height": 40, "content": "studio",
+              "style": { "fontSize": 22, "color": "#2b656b", "textAlign": "left", "fontFamily": "system", "fontWeight": 700 },
+              "shadow": { "color": "#22556388", "offsetX": 3, "offsetY": 4, "blur": 4 }
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_blur_panel", "name": "06 / ぼかしとマスク", "type": "frame",
+          "x": 644, "y": 402, "width": 280, "height": 244,
+          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "children": [
+            {
+              "id": "nd_sample_blur_label", "name": "ぼかしのラベル", "type": "text",
+              "x": 20, "y": 16, "width": 240, "height": 52, "content": "06  BLUR & MASK\n子をまとめてぼかす",
+              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+            },
+            {
+              "id": "nd_sample_blur_back", "name": "ぼかしの下地", "type": "rectangle",
+              "x": 20, "y": 76, "width": 240, "height": 140,
+              "style": { "fill": "#e9e1db", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+            },
+            {
+              "id": "nd_sample_blur_group", "name": "ぼかし・影・不透明度を持つフレーム", "type": "frame",
+              "x": 31, "y": 89, "width": 218, "height": 114, "opacity": 0.88, "blur": 2.2,
+              "shadow": { "color": "#344d5c77", "offsetX": 4, "offsetY": 6, "blur": 5 },
+              "style": { "fill": "#e9f0ef", "cornerRadii": { "topLeft": 12, "topRight": 12, "bottomRight": 12, "bottomLeft": 12 } },
+              "children": [
+                {
+                  "id": "nd_sample_blur_mask", "name": "子の表示範囲を決めるマスク", "type": "rectangle",
+                  "x": 13, "y": 13, "width": 192, "height": 88, "isMask": true,
+                  "style": { "fill": "#000000", "cornerRadii": { "topLeft": 10, "topRight": 10, "bottomRight": 10, "bottomLeft": 10 } }
+                },
+                {
+                  "id": "nd_sample_blur_gradient", "name": "マスク内の線形塗り", "type": "rectangle",
+                  "x": -5, "y": 6, "width": 228, "height": 100,
+                  "style": { "fill": { "type": "linear", "start": { "x": 0, "y": 0 }, "end": { "x": 1, "y": 1 },
+                    "stops": [{ "position": 0, "color": "#177782" }, { "position": 1, "color": "#d6b284" }] } }
+                },
+                {
+                  "id": "nd_sample_blur_text", "name": "ぼかした文字", "type": "text",
+                  "x": 31, "y": 39, "width": 170, "height": 34, "content": "SOFT FOCUS",
+                  "style": { "fontSize": 18, "color": "#ffffff", "textAlign": "center", "fontFamily": "system", "fontWeight": 700, "letterSpacing": 1 }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
