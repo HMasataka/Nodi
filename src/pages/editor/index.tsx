@@ -26,7 +26,7 @@ function EditorPage() {
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
       canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
       isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
-      onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage}
+       onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
       drawTool={drawTool} onDrawToolChange={setDrawTool} />
 
     <div className="workspace">
