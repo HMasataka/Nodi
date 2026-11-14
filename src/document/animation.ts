@@ -69,6 +69,15 @@ export function evaluateAnimation(animation: Animation, timeMs: number): Animate
 }
 
 /**
+ * スクロール量（進行度 0〜1）をアニメーションの時間軸に対応付けて評価する。
+ * 進行度 0 は開始、1 は繰り返し完了時点に相当する。
+ */
+export function evaluateScrollAnimation(animation: Animation, progress: number): AnimatedValues {
+  const clamped = Math.max(0, Math.min(1, progress));
+  return evaluateAnimation(animation, animation.delay + clamped * animation.duration * animation.repeat);
+}
+
+/**
  * 文書の各要素に時刻 `timeMs` のアニメーション値を適用した文書を返す。入力は変更しない。
  * 位置・回転・不透明度を上書きする。`scale` は要素の属性として未対応のため反映しない。
  * `resolveTriggers` を渡すと、その要素で再生するトリガーだけに絞り込む（既定は全トリガー）。
@@ -80,6 +89,28 @@ export function applyAnimations(document: Document, timeMs: number, resolveTrigg
     for (const animation of node.animations) {
       if (triggers && !triggers.has(animation.trigger)) continue;
       Object.assign(values, evaluateAnimation(animation, timeMs));
+    }
+    const overrides: { x?: number; y?: number; rotation?: number; opacity?: number } = {};
+    if (values.x !== undefined) overrides.x = values.x;
+    if (values.y !== undefined) overrides.y = values.y;
+    if (values.rotation !== undefined) overrides.rotation = values.rotation;
+    if (values.opacity !== undefined) overrides.opacity = values.opacity;
+    return node.type === "frame"
+      ? { ...node, ...overrides, children: node.children.map(applyNode) }
+      : { ...node, ...overrides };
+  }
+  return { ...document, children: document.children.map(applyNode) };
+}
+
+/**
+ * スクロール連動（trigger: scroll）のアニメーションだけを進行度 `progress` で適用した文書を返す。
+ */
+export function applyScrollAnimations(document: Document, progress: number): Document {
+  function applyNode(node: DocumentNode): DocumentNode {
+    const values: AnimatedValues = {};
+    for (const animation of node.animations) {
+      if (animation.trigger !== "scroll") continue;
+      Object.assign(values, evaluateScrollAnimation(animation, progress));
     }
     const overrides: { x?: number; y?: number; rotation?: number; opacity?: number } = {};
     if (values.x !== undefined) overrides.x = values.x;

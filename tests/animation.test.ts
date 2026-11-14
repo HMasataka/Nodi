@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import type { Animation } from "../src/document/types.ts";
-import { activeAnimationTriggers, applyAnimations, evaluateAnimation } from "../src/document/animation.ts";
+import { activeAnimationTriggers, applyAnimations, applyScrollAnimations, evaluateAnimation, evaluateScrollAnimation } from "../src/document/animation.ts";
 import { document, frame, rectangle } from "./support/factories.ts";
 
 function animation(overrides: Partial<Animation> = {}): Animation {
@@ -101,4 +101,21 @@ test("操作状態に応じて再生するトリガーを絞り込む", () => {
 
   const clicked = applyAnimations(doc, 500, (n) => activeAnimationTriggers(n, { hoveredIds: new Set(), clickedIds: new Set(["r"]) }));
   assert.equal(clicked.children[0].rotation, 45);
+});
+
+test("スクロール進行度を時間軸に対応付けて評価する", () => {
+  const a = animation({ trigger: "scroll" });
+  assert.equal(evaluateScrollAnimation(a, 0).opacity, 0);
+  assert.equal(evaluateScrollAnimation(a, 0.5).opacity, 0.5);
+  assert.equal(evaluateScrollAnimation(a, 1).opacity, 1);
+  assert.equal(evaluateScrollAnimation(a, 1.5).opacity, 1);
+});
+
+test("スクロール連動だけを進行度で適用する", () => {
+  const scroll = animation({ trigger: "scroll", tracks: [{ property: "y", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 200, easing: "linear" }] }] });
+  const load = animation({ trigger: "load", tracks: [{ property: "x", keyframes: [{ time: 0, value: 0, easing: "linear" }, { time: 1000, value: 100, easing: "linear" }] }] });
+  const doc = document(rectangle({ id: "r", animations: [scroll, load] }));
+  const applied = applyScrollAnimations(doc, 0.5);
+  assert.equal(applied.children[0].y, 100);
+  assert.equal(applied.children[0].x, 0);
 });

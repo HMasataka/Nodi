@@ -15,7 +15,7 @@ import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction"
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
-import { activeAnimationTriggers, applyAnimations } from "@/document/animation.ts";
+import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import "@/App.css";
 
 function EditorPage() {
@@ -25,6 +25,7 @@ function EditorPage() {
   const playback = usePlayback();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
+  const [scrollProgress, setScrollProgress] = useState(0);
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
@@ -45,7 +46,7 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead, resolveTriggers)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onNodeEnter={(id) => setHoveredId(id)}
@@ -66,7 +67,7 @@ function EditorPage() {
       <Inspector selected={selected} selectedCount={selectedIds.length} {...actions.inspector} />
     </div>
 
-    <Timeline node={selected} playback={playback} {...actions.timeline} />
+    <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
     <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
     {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
