@@ -6,7 +6,7 @@ export { type FrameLayoutPatch, type SizeAxis, type SizeConstraintPatch, setFram
 export { addSpacingToken, removeSpacingToken, renameSpacingToken, setSpacingToken } from "@/document/commands/spacing.ts";
 export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNode } from "@/document/commands/structure.ts";
 export { setBorder, setFrameStyle, setImageFilters, setImageStyle, setNodeStyle, setPath, setTextContent, setTextMarkRange, setTextMarks, setTextStyle } from "@/document/commands/style.ts";
-export { addPaletteColor, detachPaletteColor, duplicatePaletteColor, removePaletteColor, renamePaletteColor, setPaletteColor } from "@/document/commands/palette.ts";
+export { addPaletteColor, detachPaletteColor, duplicatePaletteColor, importPalette, removePaletteColor, renamePaletteColor, setPaletteColor } from "@/document/commands/palette.ts";
 export { createComponent, duplicateComponent, removeComponent, renameComponent } from "@/document/commands/component.ts";
 export { createInstance, type CreateInstanceInput } from "@/document/commands/instance.ts";
 export { importSvgIcon } from "@/document/commands/svgImport.ts";

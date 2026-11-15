@@ -226,6 +226,71 @@ button {
   font-size: 12px;
   line-height: 1.8;
 }
+.left-panels {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+}
+.left-panels .layers {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-right: none;
+}
+.left-panels .palette {
+  flex: none;
+  max-height: 42%;
+  border-top: 1px solid var(--line);
+}
+.palette-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+.palette-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.palette-swatch input {
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+}
+.palette-alpha {
+  width: 42px;
+}
+.palette-name {
+  flex: 1;
+  min-width: 0;
+}
+.palette-action {
+  flex: none;
+  border: 0;
+  border-radius: 4px;
+  padding: 2px 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  cursor: pointer;
+}
+.palette-action:hover { color: var(--accent-strong); background: var(--accent-soft); }
+.palette-actions {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+}
+.color-palette-select {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 .layer-list {
   padding: 10px;
 }
