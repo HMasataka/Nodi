@@ -80,4 +80,16 @@ export const agentInputs = {
     fontWeight: z.number().optional(), underline: z.literal(true).optional(), code: z.literal(true).optional() })) }),
   delete_element: idInput,
   duplicate_element: idInput,
+  list_components: z.strictObject({}),
+  create_component: z.strictObject({ sourceId: id, name: z.string().min(1) }),
+  rename_component: z.strictObject({ id, name: z.string().min(1) }),
+  remove_component: idInput,
+  duplicate_component: idInput,
+  add_instance: z.strictObject({ componentRef: id, name: z.string().optional(), parentId: id.optional(), x: z.number(), y: z.number(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional() }),
+  set_instance_override: z.strictObject({ id, childId: id, content: z.string().optional(),
+    fill: z.union([z.string(), gradient, radialGradient]).nullable().optional(), stroke: stroke.nullable().optional(), color: z.string().optional(),
+    source: z.string().optional(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional() })
+    .refine((value) => ["content", "fill", "stroke", "color", "source", "width", "height"].some((key) => key in value), "変更する属性を指定してください"),
+  reset_instance_override: z.strictObject({ id, childId: id }),
+  detach_instance: idInput,
 } as const;
