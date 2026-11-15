@@ -46,7 +46,7 @@
           "content": "ATLAS STUDIO",
           "style": {
             "fontSize": 22,
-            "color": "#24383a",
+            "color": { "type": "palette", "id": "pc_sample_ink" },
             "textAlign": "left",
             "fontFamily": "system",
             "fontWeight": 700,
@@ -151,7 +151,7 @@
               "content": "作業状況をひと目で確認する",
               "style": {
                 "fontSize": 12,
-                "color": "#6a5a50",
+                "color": { "type": "palette", "id": "pc_sample_muted" },
                 "textAlign": "left"
               }
             },
@@ -317,7 +317,7 @@
                   "width": 178,
                   "height": 52,
                   "style": {
-                    "fill": "#f3d9c8",
+                    "fill": { "type": "palette", "id": "pc_sample_accent" },
                     "stroke": {
                       "color": "#c77852",
                       "width": 2
@@ -609,6 +609,13 @@
           ] }
       ]
     }
+  ],
+  "palette": [
+    { "id": "pc_sample_background", "name": "背景", "color": "#fbfaf7" },
+    { "id": "pc_sample_surface", "name": "面", "color": "#ffffff" },
+    { "id": "pc_sample_ink", "name": "本文", "color": "#24383a" },
+    { "id": "pc_sample_muted", "name": "補足", "color": "#6a5a50" },
+    { "id": "pc_sample_accent", "name": "アクセント", "color": "#f3d9c8" }
   ],
   "spacing": [{ "id": "sp_sample_card", "name": "カード内側", "value": 20 }]
 }
