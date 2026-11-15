@@ -12,13 +12,16 @@ import { absoluteGeometry } from "../src/pages/editor/geometry.ts";
 import { agentInputs } from "../src/agent/contracts.ts";
 import { createAgentApi } from "../src/agent/api.ts";
 import { createDocument } from "../src/document/commands/index.ts";
-import { dispatchAgentRequest } from "../src/agent/bridge.ts";
+import { instanceInputs } from "../scripts/nodi-instances.ts";
 import { cameraScreenGeometry, focusCamera } from "../src/pages/editor/camera.ts";
 import { commit, createHistory, isDirty, redo, undo } from "../src/document/history.ts";
+import { createDocumentSession, dispatchSessionRequest } from "../src/agent/sessionBridge.ts";
 
 test("MCP クライアントから編集と履歴の数値照会ができ、照会は履歴を変えない", { timeout: 20000 }, async () => {
   let history = createHistory(createDocument(), true);
   let selectedId = null;
+  const instanceId = "f6533716-2155-4bc0-b148-711df7a6aa6f";
+  const session = createDocumentSession();
   const api = createAgentApi({
     getDocument: () => history.present,
     getHistory: () => history,
@@ -38,19 +41,22 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(request.headers["x-nodi-token"], "test-secret");
     const chunks = [];
     for await (const chunk of request) chunks.push(chunk);
-    const { method, args } = JSON.parse(Buffer.concat(chunks).toString());
+    const payload = JSON.parse(Buffer.concat(chunks).toString());
+    assert.equal(payload.instanceId, instanceId);
+    const result = dispatchSessionRequest(api, session.info(), payload);
+    if (payload.method === "get_instance_info" && result.ok) result.data = { ...result.data, instanceId, pid: process.pid };
     response.setHeader("Content-Type", "application/json");
-    response.end(JSON.stringify(dispatchAgentRequest(api, method, args)));
+    response.end(JSON.stringify(result));
   });
   await new Promise((done) => http.listen(0, "127.0.0.1", done));
   const directory = await mkdtemp(join(tmpdir(), "nodi-mcp-"));
-  const discovery = join(directory, "mcp-bridge.json");
-  await writeFile(discovery, JSON.stringify({ port: http.address().port, token: "test-secret" }));
+  const discovery = join(directory, `${instanceId}.json`);
+  await writeFile(discovery, JSON.stringify({ instanceId, pid: process.pid, port: http.address().port, token: "test-secret" }));
   const client = new Client({ name: "nodi-test", version: "0.1.0" });
   const transport = new StdioClientTransport({
     command: process.execPath,
     args: [resolve("scripts/mcp-server.ts")],
-    env: { ...process.env, NODI_BRIDGE_FILE: discovery },
+    env: { ...process.env, NODI_INSTANCES_DIR: directory },
     stderr: "pipe",
   });
   try {
@@ -58,7 +64,7 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.match(client.getInstructions(), /変更前と変更後の実画面スクリーンショット/);
     assert.match(client.getInstructions(), /数値とテスト/);
     const tools = await client.listTools();
-    assert.deepEqual(tools.tools.map((tool) => tool.name).sort(), Object.keys(agentInputs).sort());
+    assert.deepEqual(tools.tools.map((tool) => tool.name).sort(), [...Object.keys(agentInputs), ...Object.keys(instanceInputs)].sort());
     assert.ok(tools.tools.some((tool) => tool.name === "add_element"));
     assert.ok(tools.tools.some((tool) => tool.name === "set_mask"));
     assert.ok(tools.tools.some((tool) => tool.name === "set_image_style"));
@@ -66,6 +72,13 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     for (const name of ["list_revisions", "get_revision_element", "compare_revisions", "measure_elements"]) {
       assert.ok(tools.tools.some((tool) => tool.name === name));
     }
+    assert.equal((await client.callTool({ name: "get_state", arguments: {} })).isError, true);
+    const instances = await client.callTool({ name: "list_instances", arguments: {} });
+    const listedInstances = JSON.parse(instances.content[0].text).instances;
+    assert.equal(listedInstances.length, 1);
+    assert.equal(listedInstances[0].documentSessionId, session.info().documentSessionId);
+    assert.equal(Object.hasOwn(listedInstances[0], "token"), false);
+    assert.equal((await client.callTool({ name: "select_instance", arguments: { instanceId, documentSessionId: listedInstances[0].documentSessionId } })).isError, false);
     const initial = await client.callTool({ name: "list_revisions", arguments: {} });
     assert.equal(initial.isError, false);
     assert.deepEqual(JSON.parse(initial.content[0].text).revisions, [{
@@ -281,6 +294,16 @@ test("MCP クライアントから編集と履歴の数値照会ができ、照�
     assert.equal(JSON.parse(measuredRotation.content[0].text).rotation, 270);
     const invalidRotation = await client.callTool({ name: "set_rotation", arguments: { id: element.id, rotation: "invalid" } });
     assert.equal(invalidRotation.isError, true);
+    const beforeSwitch = history;
+    session.replace("/designs/other.nodi");
+    const stale = await client.callTool({ name: "rename_element", arguments: { id: element.id, name: "wrong document" } });
+    assert.equal(stale.isError, true);
+    assert.equal(history, beforeSwitch);
+    assert.equal((await client.callTool({ name: "select_instance", arguments: { instanceId, documentSessionId: listedInstances[0].documentSessionId } })).isError, true);
+    const refreshed = JSON.parse((await client.callTool({ name: "list_instances", arguments: {} })).content[0].text).instances[0];
+    assert.equal(refreshed.documentName, "other.nodi");
+    assert.equal((await client.callTool({ name: "select_instance", arguments: { instanceId, documentSessionId: refreshed.documentSessionId } })).isError, false);
+    assert.equal((await client.callTool({ name: "get_state", arguments: {} })).isError, false);
   } finally {
     await client.close();
     await new Promise((done) => http.close(done));

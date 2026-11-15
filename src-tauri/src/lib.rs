@@ -1,5 +1,6 @@
 mod document_storage;
 mod mcp_bridge;
+mod mcp_registry;
 use tauri::Manager;
 
 #[tauri::command]
@@ -87,6 +88,11 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|app, event| {
+            if let tauri::RunEvent::Exit = event
+                && let Some(bridge) = app.try_state::<mcp_bridge::BridgeState>()
+            {
+                let _ = bridge.cleanup();
+            }
             if let tauri::RunEvent::Exit = event
                 && let Ok(directory) = app.path().app_config_dir()
                 && let Some(state) = app.try_state::<document_storage::RecoveryState>()
