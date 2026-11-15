@@ -1,4 +1,5 @@
 mod document_storage;
+mod document_watcher;
 mod mcp_bridge;
 mod mcp_registry;
 use tauri::Manager;
@@ -76,10 +77,13 @@ pub fn run() {
             write_recovery,
             clear_recovery,
             write_png,
-            resolve_mcp_request
+            resolve_mcp_request,
+            document_watcher::start_watch,
+            document_watcher::stop_watch
         ])
         .setup(|app| {
             app.manage(document_storage::RecoveryState::default());
+            app.manage(document_watcher::WatchState::default());
             let bridge = mcp_bridge::BridgeState::start(app.handle().clone())
                 .map_err(std::io::Error::other)?;
             app.manage(bridge);

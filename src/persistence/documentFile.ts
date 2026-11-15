@@ -13,6 +13,7 @@ export interface DocumentFileAccess {
 export interface OpenedDocument {
   path: string;
   document: Document;
+  contents: string;
 }
 
 function fileError(action: string, error: unknown): Error {
@@ -42,15 +43,35 @@ export async function openDocumentFile(
   const path = chosen.value;
   if (path === null) return Result.succeed(null);
 
-  const contents = await Result.fn({
+  return readPathDocument(access, path);
+}
+
+export async function readDocumentContents(
+  access: DocumentFileAccess,
+  path: string,
+): Promise<Result.Result<string, Error>> {
+  return Result.fn({
     try: () => access.read(path),
     catch: (error) => fileError("ファイルを読み込めません", error),
   })();
+}
+
+export function parseDocumentContents(contents: string): Result.Result<Document, Error> {
+  const parsed = parseDocument(contents);
+  if (Result.isFailure(parsed)) return Result.fail(documentError(parsed.error));
+  return parsed;
+}
+
+export async function readPathDocument(
+  access: DocumentFileAccess,
+  path: string,
+): Promise<Result.Result<OpenedDocument, Error>> {
+  const contents = await readDocumentContents(access, path);
   if (Result.isFailure(contents)) return contents;
 
-  const parsed = parseDocument(contents.value);
-  if (Result.isFailure(parsed)) return Result.fail(documentError(parsed.error));
-  return Result.succeed({ path, document: parsed.value });
+  const parsed = parseDocumentContents(contents.value);
+  if (Result.isFailure(parsed)) return Result.fail(parsed.error);
+  return Result.succeed({ path, document: parsed.value, contents: contents.value });
 }
 
 export async function saveDocumentFile(

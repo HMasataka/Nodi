@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { createDocumentSession } from "@/agent/sessionBridge.ts";
 import type { Document } from "@/document/types";
 import { documentFiles } from "@/ipc/documentFiles";
+import { documentWatch } from "@/ipc/documentWatch";
 import { recoveryFiles } from "@/ipc/recoveryFiles";
 import type { RecoveryStatus } from "@/pages/editor/types";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
@@ -12,7 +13,7 @@ import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft } from "@/per
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
 import { createAgentApi, type FocusedViewport } from "@/agent/api";
 import { createDocument, findNode } from "@/document/commands/index.ts";
-import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
+import { openDocumentFile, parseDocumentContents, readDocumentContents, saveDocumentFile } from "@/persistence/documentFile";
 
 export function useEditorDocument() {
   const [mcpSession] = useState(createDocumentSession);
@@ -30,6 +31,9 @@ export function useEditorDocument() {
   const revision = useRef(0);
   const previewActive = useRef(false);
   const fileOperation = useRef(false);
+  const filePathRef = useRef<string | null>(null);
+  const onDiskContentRef = useRef<string | null>(null);
+  const onExternalChangeRef = useRef<() => void>(() => {});
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus>(() => isTauri() ? { kind: "checking" } : { kind: "none" });
   const recoveryQueue = useRef(Promise.resolve());
   const focusElementRef = useRef<(id: string) => Result.Result<FocusedViewport, Error>>(() => Result.fail(new Error("キャンバスを表示できません")));
@@ -76,7 +80,7 @@ export function useEditorDocument() {
     setHistory(next);
     designRef.current = next.present;
     setDesign(next.present);
-    setFilePath(null);
+    applyFilePath(null);
     mcpSession.replace(null);
     setDocumentSession((value) => value + 1);
     setSelectedIds([]);
@@ -91,6 +95,72 @@ export function useEditorDocument() {
     setRecoveryStatus({ kind: "none" });
     setError(null);
   }
+
+  function applyFilePath(path: string | null) {
+    filePathRef.current = path;
+    setFilePath(path);
+  }
+
+  function replaceDocument(document: Document, path: string) {
+    const next = createHistory(document, true);
+    historyRef.current = next;
+    setHistory(next);
+    designRef.current = document;
+    setDesign(document);
+    applyFilePath(path);
+    mcpSession.replace(path);
+    setDocumentSession((value) => value + 1);
+    setSelectedIds([]);
+    revision.current += 1;
+    setError(null);
+    queueRecovery(() => clearRecoveryDraft(recoveryFiles));
+  }
+
+  async function reloadFromDisk() {
+    if (fileOperation.current || previewActive.current) return;
+    const path = filePathRef.current;
+    if (!path) return;
+    const startedAt = revision.current;
+    const contents = await readDocumentContents(documentFiles, path);
+    if (Result.isFailure(contents)) {
+      setError(`外部の変更を読み込めませんでした: ${contents.error.message}`);
+      return;
+    }
+    if (contents.value === onDiskContentRef.current) return;
+    onDiskContentRef.current = contents.value;
+    if (revision.current !== startedAt) {
+      setError("外部の変更を読み込む間に編集されたため、現在のドキュメントを維持しました");
+      return;
+    }
+    const parsed = parseDocumentContents(contents.value);
+    if (Result.isFailure(parsed)) {
+      setError(`外部で更新されたファイルを読み込めませんでした: ${parsed.error.message}`);
+      return;
+    }
+    if (isDocumentDirty(historyRef.current, designRef.current)
+      && !window.confirm("ファイルが外部で更新されました。未保存の変更を破棄して再読み込みしますか？")) {
+      return;
+    }
+    replaceDocument(parsed.value, path);
+  }
+
+  onExternalChangeRef.current = () => { void reloadFromDisk(); };
+
+  useEffect(() => {
+    if (!isTauri()) return;
+    let unlisten: (() => void) | undefined;
+    let active = true;
+    documentWatch.onChange(() => onExternalChangeRef.current())
+      .then((stop) => { if (active) unlisten = stop; })
+      .catch(() => {});
+    return () => { active = false; unlisten?.(); };
+  }, []);
+
+  useEffect(() => {
+    if (!isTauri() || !filePath) return;
+    documentWatch.start(filePath).catch(() => {});
+    return () => { documentWatch.stop().catch(() => {}); };
+  }, [filePath]);
 
   function recordDocument(document: Document) {
     const editable = ensureEditable();
@@ -165,18 +235,8 @@ export function useEditorDocument() {
     if (Result.isFailure(result)) { setError(result.error.message); return; }
     if (result.value === null) return;
     if (revision.current !== startedAt) { setError("読み込み中に編集されたため、現在のドキュメントを維持しました"); return; }
-    const next = createHistory(result.value.document, true);
-    historyRef.current = next;
-    setHistory(next);
-    designRef.current = result.value.document;
-    setDesign(result.value.document);
-    setFilePath(result.value.path);
-    mcpSession.replace(result.value.path);
-    setDocumentSession((value) => value + 1);
-    setSelectedIds([]);
-    revision.current += 1;
-    setError(null);
-    queueRecovery(() => clearRecoveryDraft(recoveryFiles));
+    onDiskContentRef.current = result.value.contents;
+    replaceDocument(result.value.document, result.value.path);
   }
 
   async function saveFile() {
@@ -187,11 +247,23 @@ export function useEditorDocument() {
     setIsBusy(true);
     const snapshot = designRef.current;
     const result = await saveDocumentFile(documentFiles, snapshot, filePath);
+    if (Result.isFailure(result)) {
+      fileOperation.current = false;
+      setIsBusy(false);
+      setError(result.error.message);
+      return;
+    }
+    if (result.value === null) {
+      fileOperation.current = false;
+      setIsBusy(false);
+      return;
+    }
+    applyFilePath(result.value);
+    // 保存直後の自分の書き込みを外部変更と誤認しないよう、実際のディスク内容を記録する。
+    const contents = await readDocumentContents(documentFiles, result.value);
+    if (Result.isSuccess(contents)) onDiskContentRef.current = contents.value;
     fileOperation.current = false;
     setIsBusy(false);
-    if (Result.isFailure(result)) { setError(result.error.message); return; }
-    if (result.value === null) return;
-    setFilePath(result.value);
     mcpSession.saved(result.value);
     const next = markSaved(historyRef.current, snapshot);
     historyRef.current = next;

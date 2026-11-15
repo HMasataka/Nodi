@@ -20,7 +20,7 @@ pnpm tauri dev
 
 初回ビルドの後、別の worktree でビルドし、`kache stats --last-build` で再利用状況を確認できます。新しい worktree の依存関係を `target/` に先に複製する機能も使う場合は、`kache daemon start` を実行してください。
 
-エディタの「保存」「開く」は Tauri のデスクトップアプリで使用します。`.nodi` ファイルの中身は JSON（[v1 形式](docs/document-format.md)）です。読み込みに失敗した場合は編集中のドキュメントを維持します。
+エディタの「保存」「開く」は Tauri のデスクトップアプリで使用します。`.nodi` ファイルの中身は JSON（[v1 形式](docs/document-format.md)）です。読み込みに失敗した場合は編集中のドキュメントを維持します。開いている `.nodi` ファイルが外部で更新された場合は、未保存の変更がなければ自動で再読み込みし、未保存の変更があれば確認してから再読み込みします。
 
 フレームを選択すると [PNG 書き出し](docs/export-png.md) で画面を共有できます。
 
