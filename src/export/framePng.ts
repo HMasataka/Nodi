@@ -251,11 +251,11 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
     // 編集画面と同じ座標解決エンジンを通し、自動レイアウトを解決してから描画する。
-    const resolved = resolveDocumentLayout({ version: 1, children: [{ ...frame, x: 0, y: 0 }] },
+    const resolved = resolveDocumentLayout({ version: 1, children: [{ ...frame, x: 0, y: 0 }], palette: [] },
       { measure: createLayoutMeasure(ctx) }).children[0] as FrameNode;
     // 指定した時刻（状態）のアニメーションを適用してから描画する。
     const timeMs = options.timeMs ?? 0;
-    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
+    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved], palette: [] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();
