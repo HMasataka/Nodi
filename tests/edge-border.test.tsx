@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { test } from "vitest";
 
 import { borderPaths, pathToString } from "../src/document/shapePath.ts";
-import { corners, document, ellipse, failure, frame, rectangle, success } from "./support/factories.ts";
+import { corners, document, ellipse, failure, frame, rectangle, resolveHex, success } from "./support/factories.ts";
 import { documentSchema, parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { setBorder, setFrameStyle, setNodeStyle } from "../src/document/commands/index.ts";
 
@@ -17,14 +17,14 @@ const border = {
 };
 
 test("四辺をそれぞれ異なる内側台形にし、省略・幅0の辺は描かない", () => {
-  assert.deepEqual(borderPaths(20, 10, border).map(({ side, color, commands }) => [side, color, pathToString(commands)]), [
+  assert.deepEqual(borderPaths(20, 10, border, resolveHex).map(({ side, color, commands }) => [side, color, pathToString(commands)]), [
     ["top", "#112233", "M 0 0 L 20 0 L 17 2 L 5 2 Z"],
     ["right", "#223344", "M 20 0 L 20 10 L 17 6 L 17 2 Z"],
     ["bottom", "#334455", "M 20 10 L 0 10 L 5 6 L 17 6 Z"],
     ["left", "#445566", "M 0 10 L 0 0 L 5 2 L 5 6 Z"],
   ]);
-  assert.deepEqual(borderPaths(20, 10, { right: border.right, top: { color: "#ffffff", width: 0 } }).map(({ side }) => side), ["right"]);
-  assert.equal(pathToString(borderPaths(10, 10, { top: border.top, bottom: { ...border.bottom, width: 12 } })[0].commands), "M 0 0 L 10 0 L 10 1.667 L 0 1.667 Z");
+  assert.deepEqual(borderPaths(20, 10, { right: border.right, top: { color: "#ffffff", width: 0 } }, resolveHex).map(({ side }) => side), ["right"]);
+  assert.equal(pathToString(borderPaths(10, 10, { top: border.top, bottom: { ...border.bottom, width: 12 } }, resolveHex)[0].commands), "M 0 0 L 10 0 L 10 1.667 L 0 1.667 Z");
 });
 
 test("保存時に空の辺線を省略し、片辺と既存の均一線を保持する", () => {
@@ -68,7 +68,7 @@ test("SVG の辺色とパスは PNG と同じ順で、フレームの子要素�
   const root = frame({ width: 20, height: 10, style: { fill: "#ffffff", stroke: { color: "#000000", width: 1 }, border }, children: [child] });
   const svg = renderToStaticMarkup(<CanvasNode node={root} selectedId={null} interaction={{ onNodePointerDown() {}, onResizePointerDown() {}, onNodePointerMove() {}, onNodePointerUp() {}, onImageError() {} }} />);
   assert.ok(svg.indexOf("frame-contents") < svg.lastIndexOf("canvas-border"));
-  for (const edge of borderPaths(20, 10, border)) assert.ok(svg.includes(`d="${pathToString(edge.commands)}" fill="${edge.color}"`));
+  for (const edge of borderPaths(20, 10, border, resolveHex)) assert.ok(svg.includes(`d="${pathToString(edge.commands)}" fill="${edge.color}"`));
   const calls: unknown[][] = [];
   const ctx = {
     save() {}, restore() {}, translate() {}, clip() {}, rect() {}, beginPath() {}, closePath() {},

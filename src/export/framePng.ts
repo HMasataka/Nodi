@@ -2,11 +2,12 @@ import { blurPixels } from "@/document/blur.ts";
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
+import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Result } from "@praha/byethrow";
 import { applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
-import type { Border, ComponentDefinition, Document, DocumentNode, FrameNode, SpacingToken } from "@/document/types.ts";
+import type { Border, Color, ComponentDefinition, Document, DocumentNode, FrameNode, PaletteColor, SpacingToken } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
 import { createLayoutMeasure, layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
@@ -62,15 +63,15 @@ function paintShape(ctx: CanvasRenderingContext2D, shape: ShapePaths, width: num
   }
 }
 
-function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: number, border: Border) {
-  for (const edge of borderPaths(width, height, border)) {
+function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: number, border: Border, resolve: (color: Color) => string) {
+  for (const edge of borderPaths(width, height, border, resolve)) {
     tracePath(ctx, edge.commands);
     ctx.fillStyle = edge.color;
     ctx.fill();
   }
 }
 
-async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
+async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], environment: PngRenderEnvironment, resolve: (color: Color) => string): Promise<Result.Result<void, Error>> {
   for (const group of maskGroups(nodes)) {
     if (group.mask) {
       ctx.save();
@@ -79,7 +80,7 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
     }
     try {
       for (const child of group.children) {
-        const painted = await paintNode(ctx, child, environment);
+        const painted = await paintNode(ctx, child, environment, resolve);
         if (Result.isFailure(painted)) return painted;
       }
     } finally {
@@ -89,7 +90,7 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
   return Result.succeed();
 }
 
-async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment): Promise<Result.Result<void, Error>> {
+async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment, resolve: (color: Color) => string): Promise<Result.Result<void, Error>> {
   if (node.opacity === 0) return Result.succeed();
   if (node.opacity < 1 || node.shadow || node.blur > 0) {
     // 描画済みのグループをぼかしてから影を付け、最後に透明度を一度だけ掛ける。
@@ -103,7 +104,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
     if (!layerContext) return Result.fail(new Error("不透明度の描画領域を作成できません"));
     const transform = ctx.getTransform();
     layerContext.setTransform(transform.a, transform.b, transform.c, transform.d, transform.e + padding, transform.f + padding);
-    const painted = await paintNode(layerContext, { ...node, opacity: 1, shadow: null, blur: 0 }, environment);
+    const painted = await paintNode(layerContext, { ...node, opacity: 1, shadow: null, blur: 0 }, environment, resolve);
     if (Result.isFailure(painted)) return painted;
     if (node.blur > 0) {
       const pixels = layerContext.getImageData(0, 0, layer.width, layer.height);
@@ -119,7 +120,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
         const y = node.shadow.offsetX * Math.sin(angle) + node.shadow.offsetY * Math.cos(angle);
         const offsetX = Number((x * transform.a + y * transform.c).toFixed(6));
         const offsetY = Number((x * transform.b + y * transform.d).toFixed(6));
-        ctx.filter = `drop-shadow(${offsetX}px ${offsetY}px ${node.shadow.blur}px ${node.shadow.color})`;
+        ctx.filter = `drop-shadow(${offsetX}px ${offsetY}px ${node.shadow.blur}px ${resolve(node.shadow.color)})`;
       }
       ctx.globalAlpha *= node.opacity;
       ctx.drawImage(layer, -padding, -padding);
@@ -137,22 +138,22 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
   }
   try {
     if (node.type === "frame") {
-      const shape = boxShape(node.width, node.height, node.style);
+      const shape = boxShape(node.width, node.height, node.style, resolve);
       paintShape(ctx, shape, node.width, node.height);
       if (node.clipContent) {
         tracePath(ctx, shape.fill);
         ctx.clip();
       }
-      const painted = await paintChildren(ctx, node.children, environment);
+      const painted = await paintChildren(ctx, node.children, environment, resolve);
       if (Result.isFailure(painted)) return painted;
-      paintBorder(ctx, node.width, node.height, node.style.border);
+      paintBorder(ctx, node.width, node.height, node.style.border, resolve);
     } else if (node.type === "rectangle") {
-      paintShape(ctx, boxShape(node.width, node.height, node.style), node.width, node.height);
-      paintBorder(ctx, node.width, node.height, node.style.border);
+      paintShape(ctx, boxShape(node.width, node.height, node.style, resolve), node.width, node.height);
+      paintBorder(ctx, node.width, node.height, node.style.border, resolve);
     } else if (node.type === "ellipse") {
-      paintShape(ctx, ellipseShape(node.width, node.height, node.style), node.width, node.height);
+      paintShape(ctx, ellipseShape(node.width, node.height, node.style, resolve), node.width, node.height);
     } else if (node.type === "path") {
-      paintShape(ctx, vectorShape(node), node.width, node.height);
+      paintShape(ctx, vectorShape(node, resolve), node.width, node.height);
     } else if (node.type === "text") {
       ctx.beginPath();
       ctx.rect(0, 0, node.width, node.height);
@@ -160,7 +161,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
       const { lines, nativeSpacing, letterSpacing } = layoutTextLines(ctx, node);
       ctx.textAlign = node.style.textAlign;
       ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = node.style.color;
+      ctx.fillStyle = resolve(node.style.color);
       const x = node.style.textAlign === "center" ? node.width / 2 : node.style.textAlign === "right" ? node.width - 2 : 2;
       const lineHeight = node.style.fontSize * node.style.lineHeight;
       const metrics = ctx.measureText("Mg");
@@ -193,14 +194,14 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
             ctx.fillStyle = RENDER_COLORS.codeBackground;
             ctx.fill();
           }
-          ctx.fillStyle = appearance.color;
+          ctx.fillStyle = resolve(appearance.color);
           if (nativeSpacing || letterSpacing === 0) ctx.fillText(fragment.text, left, y);
           else drawSpacedText(ctx, fragment.text, left, y, letterSpacing, "left");
           if (appearance.underline) {
             ctx.beginPath();
             ctx.moveTo(left, y + 2);
             ctx.lineTo(left + fragment.width, y + 2);
-            ctx.strokeStyle = appearance.color;
+            ctx.strokeStyle = resolve(appearance.color);
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -246,24 +247,25 @@ export interface PngRenderOptions {
   spacing?: SpacingToken[];
 }
 
-export async function renderFramePng(frame: FrameNode, environment: PngRenderEnvironment = browserEnvironment, options: PngRenderOptions = {}): Promise<Result.Result<Blob, Error>> {
+export async function renderFramePng(frame: FrameNode, environment: PngRenderEnvironment = browserEnvironment, options: PngRenderOptions = {}, palette: PaletteColor[] = []): Promise<Result.Result<Blob, Error>> {
   try {
     const canvas = environment.createCanvas();
     canvas.width = Math.round(frame.width);
     canvas.height = Math.round(frame.height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
+    const resolve = (color: Color) => resolveColor(color, palette);
     // 編集画面と同じ解決エンジンを通し、インスタンスと自動レイアウトを解決してから描画する。
-    const document: Document = { version: 1, children: [{ ...frame, x: 0, y: 0 }], palette: [], spacing: options.spacing ?? [], components: options.components ?? [] };
+    const document: Document = { version: 1, children: [{ ...frame, x: 0, y: 0 }], palette, spacing: options.spacing ?? [], components: options.components ?? [] };
     const resolved = resolveDocumentLayout(resolveDocumentInstances(document),
       { measure: createLayoutMeasure(ctx) }).children[0] as FrameNode;
     // 指定した時刻（状態）のアニメーションを適用してから描画する。
     const timeMs = options.timeMs ?? 0;
-    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved], palette: [], spacing: [], components: [] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
+    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved], palette, spacing: [], components: [] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();
-    const painted = await paintNode(ctx, animated, environment);
+    const painted = await paintNode(ctx, animated, environment, resolve);
     if (Result.isFailure(painted)) return painted;
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
     return blob ? Result.succeed(blob) : Result.fail(new Error("PNG を生成できません"));

@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { detachPaletteReferences } from "@/document/colorRef.ts";
 import { validateName } from "@/document/commands/validation.ts";
 import { type Document, HEX_COLOR_PATTERN, type PaletteColor } from "@/document/types.ts";
 
@@ -43,7 +44,13 @@ export function setPaletteColor(document: Document, id: string, color: string): 
 
 export function removePaletteColor(document: Document, id: string): Result.Result<Document, Error> {
   if (!document.palette.some((item) => item.id === id)) return Result.fail(new Error(`パレットの色が見つかりません: ${id}`));
-  return Result.succeed({ ...document, palette: document.palette.filter((item) => item.id !== id) });
+  const detached = detachPaletteReferences(document, id);
+  return Result.succeed({ ...detached, palette: detached.palette.filter((item) => item.id !== id) });
+}
+
+export function detachPaletteColor(document: Document, id: string): Result.Result<Document, Error> {
+  if (!document.palette.some((item) => item.id === id)) return Result.fail(new Error(`パレットの色が見つかりません: ${id}`));
+  return Result.succeed(detachPaletteReferences(document, id));
 }
 
 export function duplicatePaletteColor(document: Document, id: string): Result.Result<{ document: Document; color: PaletteColor }, Error> {

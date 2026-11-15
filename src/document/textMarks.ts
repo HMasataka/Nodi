@@ -1,5 +1,6 @@
+import { validColor } from "@/document/colorRef.ts";
 import { graphemeBoundaries, graphemeSegments } from "@/document/textLayout.ts";
-import { HEX_COLOR_PATTERN, type TextMark, type TextMarkPatch } from "@/document/types.ts";
+import { type TextMark, type TextMarkPatch } from "@/document/types.ts";
 
 const MARK_KEYS = new Set(["start", "end", "color", "fontWeight", "underline", "code"]);
 
@@ -15,7 +16,7 @@ export function textMarkIssue(content: string, marks: TextMark[]): string | null
       return "装飾範囲の順序または位置が不正です";
     }
     if (!boundaries.has(mark.start) || !boundaries.has(mark.end)) return "装飾範囲は文字の境界で指定してください";
-    if (mark.color !== undefined && (typeof mark.color !== "string" || !HEX_COLOR_PATTERN.test(mark.color))) return "装飾の文字色が不正です";
+    if (mark.color !== undefined && !validColor(mark.color)) return "装飾の文字色が不正です";
     if (mark.fontWeight !== undefined && (!Number.isInteger(mark.fontWeight) || mark.fontWeight < 100 || mark.fontWeight > 900 || mark.fontWeight % 100 !== 0)) {
       return "装飾の文字の太さが不正です";
     }
@@ -63,7 +64,7 @@ export function textMarkPatchIssue(content: string, start: number, end: number, 
   if (!patch || typeof patch !== "object" || Array.isArray(patch) ||
     Object.keys(patch).length === 0 || Object.keys(patch).some((key) => !PATCH_KEYS.has(key)) ||
     Object.values(patch).every((value) => value === undefined)) return "装飾の変更内容が不正です";
-  if (patch.color !== undefined && patch.color !== null && (typeof patch.color !== "string" || !HEX_COLOR_PATTERN.test(patch.color))) return "装飾の文字色が不正です";
+  if (patch.color !== undefined && patch.color !== null && !validColor(patch.color)) return "装飾の文字色が不正です";
   if (patch.fontWeight !== undefined && patch.fontWeight !== null &&
     (!Number.isInteger(patch.fontWeight) || patch.fontWeight < 100 || patch.fontWeight > 900 || patch.fontWeight % 100 !== 0)) return "装飾の文字の太さが不正です";
   if (patch.underline !== undefined && typeof patch.underline !== "boolean") return "下線の指定が不正です";

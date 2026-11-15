@@ -13,8 +13,10 @@ const dimension = z.number().finite().positive();
 const opacity = z.number().finite().min(0).max(1);
 const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate.optional(), opacity: opacity.optional() };
 
-const color = z.string().regex(HEX_COLOR_PATTERN);
-const paletteColor = z.strictObject({ id, name, color });
+const hexColor = z.string().regex(HEX_COLOR_PATTERN);
+const paletteRef = z.strictObject({ type: z.literal("palette"), id });
+const color = z.union([hexColor, paletteRef]);
+const paletteColor = z.strictObject({ id, name, color: hexColor });
 const spacingToken = z.strictObject({ id, name, value: z.number().finite().nonnegative() });
 const shadow = z.strictObject({ color, offsetX: coordinate, offsetY: coordinate, blur: z.number().finite().nonnegative() });
 const blur = z.number().finite().nonnegative();
@@ -267,7 +269,65 @@ function checkComponentReferences(
   }
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkSpacingReferences);
+function checkPaletteReferences(
+  document: { children: (WireNode | DocumentNode)[]; palette?: PaletteColor[]; components?: { node: WireNode | DocumentNode }[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const ids = new Set((document.palette ?? []).map((item) => item.id));
+  const visitColor = (value: unknown, path: (string | number)[]) => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return;
+    const ref = value as { type?: unknown; id?: unknown };
+    if (ref.type !== "palette" || typeof ref.id !== "string" || ids.has(ref.id)) return;
+    context.addIssue({ code: "custom", path: ["palette", ...path], message: `参照先のパレット色が見つかりません: ${ref.id}` });
+  };
+  const visitFill = (value: unknown, path: (string | number)[]) => {
+    if (value === null || typeof value === "string") return;
+    if (!value || typeof value !== "object" || Array.isArray(value)) return;
+    const fill = value as { type?: unknown; stops?: unknown };
+    if (fill.type === "palette") { visitColor(value, path); return; }
+    if (Array.isArray(fill.stops)) {
+      fill.stops.forEach((stop, index) => {
+        if (stop && typeof stop === "object") visitColor((stop as { color?: unknown }).color, [...path, "stops", index, "color"]);
+      });
+    }
+  };
+  const visitStyle = (value: unknown, path: (string | number)[]) => {
+    if (!value || typeof value !== "object") return;
+    const style = value as Record<string, unknown>;
+    if ("fill" in style) visitFill(style.fill, [...path, "fill"]);
+    if ("stroke" in style && style.stroke && typeof style.stroke === "object") visitColor((style.stroke as { color?: unknown }).color, [...path, "stroke", "color"]);
+    if ("border" in style && style.border && typeof style.border === "object") {
+      for (const side of ["top", "right", "bottom", "left"] as const) {
+        const edge = (style.border as Record<string, unknown>)[side];
+        if (edge && typeof edge === "object") visitColor((edge as { color?: unknown }).color, [...path, "border", side, "color"]);
+      }
+    }
+    if ("color" in style) visitColor(style.color, [...path, "color"]);
+  };
+  const visitNode = (value: unknown, path: (string | number)[]) => {
+    if (!value || typeof value !== "object") return;
+    const node = value as Record<string, unknown>;
+    if (node.shadow && typeof node.shadow === "object") visitColor((node.shadow as { color?: unknown }).color, [...path, "shadow", "color"]);
+    if (node.style) visitStyle(node.style, [...path, "style"]);
+    if (Array.isArray(node.marks)) {
+      node.marks.forEach((mark, index) => {
+        if (mark && typeof mark === "object") visitColor((mark as { color?: unknown }).color, [...path, "marks", index, "color"]);
+      });
+    }
+    if (node.type === "instance" && node.overrides && typeof node.overrides === "object") {
+      for (const [key, override] of Object.entries(node.overrides as Record<string, unknown>)) {
+        visitStyle(override, [...path, "overrides", key]);
+      }
+    }
+    if (node.type === "frame" && Array.isArray(node.children)) {
+      node.children.forEach((child, index) => visitNode(child, [...path, "children", index]));
+    }
+  };
+  document.children.forEach((node, index) => visitNode(node, ["children", index]));
+  (document.components ?? []).forEach((component, index) => visitNode(component.node, ["components", index, "node"]));
+}
+
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
@@ -282,7 +342,7 @@ const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminated
 
 const internalComponentDefinition = z.strictObject({ id, name, node: internalNodeSchema });
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkSpacingReferences);
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {
