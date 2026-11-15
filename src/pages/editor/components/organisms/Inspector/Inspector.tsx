@@ -8,11 +8,17 @@ import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { ShadowEditor } from "@/pages/editor/components/molecules/ShadowEditor";
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
+import { SpacingTokenEditor } from "@/pages/editor/components/molecules/SpacingTokenEditor";
 
 interface InspectorProps {
   selected?: DocumentNode;
   selectedCount?: number;
   spacingTokens?: SpacingToken[];
+  spacingUsages?: Record<string, number>;
+  onCreateSpacingToken?(name: string, value: number): void;
+  onRenameSpacingToken?(id: string, name: string): void;
+  onSetSpacingToken?(id: string, value: number): void;
+  onRemoveSpacingToken?(id: string): void;
   onRename(name: string): void;
   onGeometry(geometry: Geometry): void;
   onRotation(rotation: number): void;
@@ -39,10 +45,12 @@ interface InspectorProps {
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spacingUsages = {}, onCreateSpacingToken, onRenameSpacingToken, onSetSpacingToken, onRemoveSpacingToken, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
+      {onCreateSpacingToken && onRenameSpacingToken && onSetSpacingToken && onRemoveSpacingToken && <SpacingTokenEditor tokens={spacingTokens} usages={spacingUsages}
+        onCreate={onCreateSpacingToken} onRename={onRenameSpacingToken} onValue={onSetSpacingToken} onRemove={onRemoveSpacingToken} />}
       {selected ? (
         <div className="properties">
           <div className="selection-type">
@@ -105,7 +113,7 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], onR
               }}
               onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
           </label>
-          <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
+          <ElementAppearance node={selected} spacingTokens={spacingTokens} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onFrameLayout={onFrameLayout} onImageStyle={onImageStyle} onPath={onPath} />
           <ShadowEditor key={`${selected.id}:${JSON.stringify(selected.shadow)}`} shadow={selected.shadow} onChange={onShadow} />
           <label className="geometry-field">

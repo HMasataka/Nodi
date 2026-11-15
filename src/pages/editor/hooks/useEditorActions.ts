@@ -8,8 +8,8 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, deleteNode, deleteNodes, distributeNodes, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
-  removeAnimation, removeKeyframe, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
+  addAnimation, addKeyframe, addSpacingToken, type Alignment, alignNodes, type AnimationTimingPatch, deleteNode, deleteNodes, distributeNodes, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
+  removeAnimation, removeKeyframe, removeSpacingToken, renameSpacingToken, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
@@ -75,6 +75,16 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
     ...creation,
     selectLayer,
     reorderLayer,
+    spacingTokens: {
+      onCreate: (name: string, value: number) => {
+        const result = addSpacingToken(designRef.current, name, value);
+        if (Result.isFailure(result)) { setError(result.error.message); return; }
+        recordDocument(result.value.document);
+      },
+      onRename: (id: string, name: string) => applyDocument(renameSpacingToken(designRef.current, id, name)),
+      onValue: (id: string, value: number) => applyDocument(setSpacingToken(designRef.current, id, value)),
+      onRemove: (id: string) => applyDocument(removeSpacingToken(designRef.current, id)),
+    },
     inspector: {
       onRename: renameSelected,
       onGeometry: (value: Geometry) => changeSelected(value, setNodeGeometry),

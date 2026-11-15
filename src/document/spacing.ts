@@ -15,3 +15,12 @@ export function resolveDocumentSpacing(document: Document): Document {
   }
   return { ...document, children: document.children.map(resolve) };
 }
+
+export function spacingTokenUsage(document: Document, id: string): number {
+  function count(node: DocumentNode): number {
+    if (node.type !== "frame") return 0;
+    return Number(node.paddingRef === id) + Number(node.gapRef === id) + node.children.reduce((sum, child) => sum + count(child), 0);
+  }
+  return document.children.reduce((sum, node) => sum + count(node), 0)
+    + document.components.reduce((sum, component) => sum + count(component.node), 0);
+}
