@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type PaletteColor, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
+import { type ComponentDefinition, DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type PaletteColor, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
 
 type NodeOverrides<T extends DocumentNode> = Omit<Partial<T>, "style"> & { style?: Partial<T["style"]> };
 export const corners = (radius: number) => ({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
@@ -21,11 +21,15 @@ export function failure<E>(result: SuccessResult<unknown> | FailureResult<E>): E
 }
 
 export function document(...children: DocumentNode[]): Document {
-  return { version: 1, children, palette: [] };
+  return { version: 1, children, palette: [], components: [] };
 }
 
 export function paletteColor(overrides: Partial<PaletteColor> = {}): PaletteColor {
   return { id: "pc1", name: "アクセント", color: "#ff0000", ...overrides };
+}
+
+export function component(overrides: Partial<ComponentDefinition> = {}): ComponentDefinition {
+  return { id: "cp1", name: "ボタン", node: frame({ id: "component-root" }), ...overrides };
 }
 
 export function frame({ style, ...overrides }: NodeOverrides<FrameNode> = {}): FrameNode {

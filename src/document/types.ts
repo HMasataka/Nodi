@@ -214,8 +214,15 @@ export interface TextNode extends NodeGeometry {
 
 export type DocumentNode = FrameNode | RectangleNode | EllipseNode | PathNode | TextNode | ImageNode;
 
+export interface ComponentDefinition {
+  id: string;
+  name: string;
+  node: DocumentNode;
+}
+
 export interface Document {
   version: 1;
   children: DocumentNode[];
   palette: PaletteColor[];
+  components: ComponentDefinition[];
 }

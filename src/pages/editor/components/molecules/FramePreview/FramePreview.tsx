@@ -24,7 +24,7 @@ export function FramePreview({ frame }: { frame: FrameNode }) {
     return Number.isFinite(value) && value > 0 ? value : frame.width;
   })();
   const resolved = useMemo(() => resolveDocumentLayout(
-    { version: 1, children: [{ ...frame, width }], palette: [] }, { measure: measureNode },
+    { version: 1, children: [{ ...frame, width }], palette: [], components: [] }, { measure: measureNode },
   ).children[0] as FrameNode, [frame, width]);
   const scale = PREVIEW_WIDTH / width;
   const height = frame.height * scale;
