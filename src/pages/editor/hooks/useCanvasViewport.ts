@@ -6,6 +6,7 @@ import { absoluteGeometry } from "@/pages/editor/geometry";
 import { listenForCanvasZoom } from "@/pages/editor/canvasZoomEvents";
 import { measureNode } from "@/rendering/measure.ts";
 import { panScroll } from "@/pages/editor/viewport";
+import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { cameraScreenGeometry, focusCamera, INITIAL_CAMERA, initialCamera, zoomCamera } from "@/pages/editor/camera.ts";
@@ -74,7 +75,7 @@ export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>,
   function focusElement(id: string) {
     const viewport = viewportRef.current;
     if (isInteracting()) return Result.fail(new Error("操作中は表示位置を変更できません"));
-    const absolute = absoluteGeometry(resolveDocumentLayout(designRef.current, { measure: measureNode }), id);
+    const absolute = absoluteGeometry(resolveDocumentLayout(resolveDocumentInstances(designRef.current), { measure: measureNode }), id);
     if (!absolute) return Result.fail(new Error(`要素が見つかりません: ${id}`));
     if (!viewport || viewport.clientWidth === 0 || viewport.clientHeight === 0) return unavailableFocus();
 
@@ -90,7 +91,7 @@ export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>,
     const initialize = () => {
       if (initialized || !viewport.clientWidth || !viewport.clientHeight) return;
       initialized = true;
-      const document = resolveDocumentLayout(designRef.current, { measure: measureNode });
+      const document = resolveDocumentLayout(resolveDocumentInstances(designRef.current), { measure: measureNode });
       updateCamera(initialCamera(document, { width: viewport.clientWidth, height: viewport.clientHeight }));
     };
     initialize();

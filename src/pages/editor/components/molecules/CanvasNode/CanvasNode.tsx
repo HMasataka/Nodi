@@ -176,6 +176,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
     </button>
     {selectedId === node.id && pathControls(node, zoom, interaction)}
   </Fragment>;
+  if (node.type === "instance") return null;
   if (node.isMask && !selectedIds.includes(node.id)) return null;
   return (
     <button type="button"

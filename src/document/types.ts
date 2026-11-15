@@ -212,7 +212,25 @@ export interface TextNode extends NodeGeometry {
   marks?: TextMark[];
 }
 
-export type DocumentNode = FrameNode | RectangleNode | EllipseNode | PathNode | TextNode | ImageNode;
+export interface InstanceOverride {
+  content?: string;
+  fill?: Fill;
+  stroke?: Stroke | null;
+  color?: string;
+  source?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface InstanceNode extends NodeGeometry {
+  id: string;
+  name: string;
+  type: "instance";
+  componentRef: string;
+  overrides: Record<string, InstanceOverride>;
+}
+
+export type DocumentNode = FrameNode | RectangleNode | EllipseNode | PathNode | TextNode | ImageNode | InstanceNode;
 
 export interface ComponentDefinition {
   id: string;
