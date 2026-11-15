@@ -1,3 +1,4 @@
+import { resolveDocumentSpacing } from "@/document/spacing.ts";
 import type { Document, DocumentNode, FrameNode } from "@/document/types.ts";
 
 /**
@@ -113,5 +114,6 @@ function resolveNode(node: DocumentNode, measure?: LayoutMeasure): DocumentNode 
  */
 export function resolveDocumentLayout(document: Document, options: LayoutResolveOptions = {}): Document {
   const measure = options.measure;
-  return { ...document, children: document.children.map((child) => resolveNode(child, measure)) };
+  const concrete = resolveDocumentSpacing(document);
+  return { ...concrete, children: concrete.children.map((child) => resolveNode(child, measure)) };
 }

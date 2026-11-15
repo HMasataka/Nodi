@@ -85,6 +85,8 @@ export interface PaletteColor {
   color: string;
 }
 
+export interface SpacingToken { id: string; name: string; value: number }
+
 export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   fill: "#f3d9c8",
   stroke: { color: "#d9bbaa", width: 1 },
@@ -155,6 +157,8 @@ export interface FrameNode extends NodeGeometry {
   layoutMode: LayoutMode;
   padding: number;
   gap: number;
+  paddingRef?: string;
+  gapRef?: string;
   alignItems: LayoutAlignment;
   justifyContent: LayoutJustify;
   children: DocumentNode[];
@@ -242,5 +246,6 @@ export interface Document {
   version: 1;
   children: DocumentNode[];
   palette: PaletteColor[];
+  spacing: SpacingToken[];
   components: ComponentDefinition[];
 }

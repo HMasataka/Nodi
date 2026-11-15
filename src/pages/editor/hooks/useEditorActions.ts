@@ -40,7 +40,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
     exporting.current = true;
     setIsExporting(true);
     try {
-      const rendered = await renderFramePng(selected, undefined, { timeMs: playback.playhead, scrollProgress: playback.scrollProgress, components: designRef.current.components });
+      const rendered = await renderFramePng(selected, undefined, { timeMs: playback.playhead, scrollProgress: playback.scrollProgress, components: designRef.current.components, spacing: designRef.current.spacing });
       if (Result.isFailure(rendered)) { setError(rendered.error.message); return; }
       const name = selected.name.trim().replace(/[\\/:*?"<>|]/g, "_") || "frame";
       const saved = await savePng(pngFiles, rendered.value, `${name}.png`);

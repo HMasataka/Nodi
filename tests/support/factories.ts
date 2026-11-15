@@ -21,7 +21,7 @@ export function failure<E>(result: SuccessResult<unknown> | FailureResult<E>): E
 }
 
 export function document(...children: DocumentNode[]): Document {
-  return { version: 1, children, palette: [], components: [] };
+  return { version: 1, children, palette: [], spacing: [], components: [] };
 }
 
 export function paletteColor(overrides: Partial<PaletteColor> = {}): PaletteColor {

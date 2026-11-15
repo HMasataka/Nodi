@@ -6,7 +6,7 @@ import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Result } from "@praha/byethrow";
 import { applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
-import type { Border, ComponentDefinition, Document, DocumentNode, FrameNode } from "@/document/types.ts";
+import type { Border, ComponentDefinition, Document, DocumentNode, FrameNode, SpacingToken } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
 import { createLayoutMeasure, layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
@@ -243,6 +243,7 @@ export interface PngRenderOptions {
   timeMs?: number;
   scrollProgress?: number;
   components?: ComponentDefinition[];
+  spacing?: SpacingToken[];
 }
 
 export async function renderFramePng(frame: FrameNode, environment: PngRenderEnvironment = browserEnvironment, options: PngRenderOptions = {}): Promise<Result.Result<Blob, Error>> {
@@ -253,12 +254,12 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
     // 編集画面と同じ解決エンジンを通し、インスタンスと自動レイアウトを解決してから描画する。
-    const document: Document = { version: 1, children: [{ ...frame, x: 0, y: 0 }], palette: [], components: options.components ?? [] };
+    const document: Document = { version: 1, children: [{ ...frame, x: 0, y: 0 }], palette: [], spacing: options.spacing ?? [], components: options.components ?? [] };
     const resolved = resolveDocumentLayout(resolveDocumentInstances(document),
       { measure: createLayoutMeasure(ctx) }).children[0] as FrameNode;
     // 指定した時刻（状態）のアニメーションを適用してから描画する。
     const timeMs = options.timeMs ?? 0;
-    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved], palette: [], components: [] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
+    const animated = applyScrollAnimations(applyAnimations({ version: 1, children: [resolved], palette: [], spacing: [], components: [] }, timeMs, () => new Set(["load"])), options.scrollProgress ?? 0).children[0] as FrameNode;
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.clip();

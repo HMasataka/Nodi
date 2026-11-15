@@ -72,7 +72,7 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} {...actions.inspector} />
+      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} spacingTokens={design.spacing} {...actions.inspector} />
     </div>
 
     <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />

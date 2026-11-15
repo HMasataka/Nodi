@@ -49,6 +49,11 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("set_shape_style", "矩形・楕円・パスの塗りと線、矩形の角丸を変更", agentInputs.set_shape_style, true);
   tool("set_path", "パスの命令列と塗り規則を変更", agentInputs.set_path, true);
   tool("set_frame_style", "フレームの塗り・内側線・角丸と子要素のクリップを変更", agentInputs.set_frame_style, true);
+  tool("set_frame_layout", "フレームの余白・間隔を直接値または共通値IDで指定。参照の解除はnull", agentInputs.set_frame_layout, true);
+  tool("add_spacing_token", "文書に名前付きの共通余白値（px）を追加", agentInputs.add_spacing_token, true);
+  tool("rename_spacing_token", "共通余白値の表示名を変更", agentInputs.rename_spacing_token, true);
+  tool("set_spacing_token", "共通余白値のpx値を更新し参照先に反映", agentInputs.set_spacing_token, true);
+  tool("remove_spacing_token", "共通余白値を削除し参照先を直接値へ変換", agentInputs.remove_spacing_token, true);
   tool("set_border", "矩形・フレームの4辺の内側線を置換（省略した辺は線なし、角丸との併用不可）", agentInputs.set_border, true);
   tool("set_image_style", "画像のフィット・焦点位置・4隅の角丸を変更", agentInputs.set_image_style, true);
   tool("set_image_filters", "画像の明るさ・コントラスト・彩度・グレースケール・セピア・色相を変更", agentInputs.set_image_filters, true);

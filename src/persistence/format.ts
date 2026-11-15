@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
-import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, type PaletteColor, SIZE_MODES, type SizeConstraint, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
+import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, type PaletteColor, SIZE_MODES, type SizeConstraint, type SpacingToken, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
@@ -15,6 +15,7 @@ const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimen
 
 const color = z.string().regex(HEX_COLOR_PATTERN);
 const paletteColor = z.strictObject({ id, name, color });
+const spacingToken = z.strictObject({ id, name, value: z.number().finite().nonnegative() });
 const shadow = z.strictObject({ color, offsetX: coordinate, offsetY: coordinate, blur: z.number().finite().nonnegative() });
 const blur = z.number().finite().nonnegative();
 const sizeMode = z.enum(SIZE_MODES);
@@ -107,6 +108,8 @@ type WireFrameLayout = {
   layoutMode?: z.infer<typeof layoutMode>;
   padding?: number;
   gap?: number;
+  paddingRef?: string;
+  gapRef?: string;
   alignItems?: z.infer<typeof layoutAlignment>;
   justifyContent?: z.infer<typeof layoutJustify>;
 };
@@ -120,7 +123,7 @@ export type WireNode = WireCommonFields & (
   | ({ type: "frame"; style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] } & WireFrameLayout)
 );
 export interface WireComponentDefinition { id: string; name: string; node: WireNode }
-export interface WireDocument { version: 1; children: WireNode[]; palette?: PaletteColor[]; components?: WireComponentDefinition[] }
+export interface WireDocument { version: 1; children: WireNode[]; palette?: PaletteColor[]; spacing?: SpacingToken[]; components?: WireComponentDefinition[] }
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
@@ -129,7 +132,7 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
     z.strictObject({ id, name, type: z.literal("path"), ...wireGeometry, commands: vectorCommands, fillRule: fillRule.optional(), style: shapeStyle }),
     z.strictObject({ id, name, type: z.literal("image"), ...wireGeometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
     z.strictObject({ id, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(),
-      layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
+      layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), paddingRef: id.optional(), gapRef: id.optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
       children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
     z.strictObject({ id, name, type: z.literal("instance"), ...wireGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride).optional() }),
@@ -167,6 +170,28 @@ function checkUniquePaletteIds(
     if (seen.has(color.id)) context.addIssue({ code: "custom", path: ["palette", index, "id"], message: `ID が重複しています: ${color.id}` });
     seen.add(color.id);
   });
+}
+
+function checkSpacingReferences(
+  document: { children: (WireNode | DocumentNode)[]; spacing?: SpacingToken[]; components?: { node: WireNode | DocumentNode }[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const ids = new Set<string>();
+  (document.spacing ?? []).forEach((token, index) => {
+    if (ids.has(token.id)) context.addIssue({ code: "custom", path: ["spacing", index, "id"], message: `ID が重複しています: ${token.id}` });
+    ids.add(token.id);
+  });
+  function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
+    nodes.forEach((node, index) => {
+      if (node.type !== "frame") return;
+      for (const key of ["paddingRef", "gapRef"] as const) {
+        if (node[key] !== undefined && !ids.has(node[key])) context.addIssue({ code: "custom", path: [...path, index, key], message: `余白値が見つかりません: ${node[key]}` });
+      }
+      visit(node.children, [...path, index, "children"]);
+    });
+  }
+  visit(document.children, ["children"]);
+  (document.components ?? []).forEach((component, index) => visit([component.node], ["components", index, "node"]));
 }
 
 function checkUniqueComponentIds(
@@ -242,7 +267,7 @@ function checkComponentReferences(
   }
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences);
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkSpacingReferences);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
@@ -250,14 +275,14 @@ const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminated
   z.strictObject({ id, name, type: z.literal("ellipse"), ...internalGeometry, isMask: z.boolean(), style: normalizedShapeStyle }),
   z.strictObject({ id, name, type: z.literal("path"), ...internalGeometry, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
   z.strictObject({ id, name, type: z.literal("image"), ...internalGeometry, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-  z.strictObject({ id, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
+  z.strictObject({ id, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, paddingRef: id.optional(), gapRef: id.optional(), alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
   z.strictObject({ id, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
   z.strictObject({ id, name, type: z.literal("instance"), ...internalGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride) }),
 ]));
 
 const internalComponentDefinition = z.strictObject({ id, name, node: internalNodeSchema });
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences);
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkSpacingReferences);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {
@@ -426,6 +451,8 @@ function compactNode(node: DocumentNode): WireNode {
       ...(node.layoutMode === DEFAULT_LAYOUT_MODE ? {} : { layoutMode: node.layoutMode }),
       ...(node.padding === DEFAULT_LAYOUT_PADDING ? {} : { padding: node.padding }),
       ...(node.gap === DEFAULT_LAYOUT_GAP ? {} : { gap: node.gap }),
+      ...(node.paddingRef === undefined ? {} : { paddingRef: node.paddingRef }),
+      ...(node.gapRef === undefined ? {} : { gapRef: node.gapRef }),
       ...(node.alignItems === DEFAULT_LAYOUT_ALIGNMENT ? {} : { alignItems: node.alignItems }),
       ...(node.justifyContent === DEFAULT_LAYOUT_JUSTIFY ? {} : { justifyContent: node.justifyContent }),
       children: node.children.map(compactNode),
@@ -450,6 +477,7 @@ export function parseDocument(json: string) {
     version: 1 as const,
     children: validated.value.children.map(normalizeNode),
     palette: validated.value.palette ?? [],
+    spacing: validated.value.spacing ?? [],
     components: (validated.value.components ?? []).map((component) => ({ id: component.id, name: component.name, node: normalizeNode(component.node) })),
   });
 }
@@ -461,6 +489,7 @@ export function serializeDocument(document: Document) {
     version: 1,
     children: parsed.value.children.map(compactNode),
     ...(parsed.value.palette.length === 0 ? {} : { palette: parsed.value.palette }),
+    ...(parsed.value.spacing.length === 0 ? {} : { spacing: parsed.value.spacing }),
     ...(parsed.value.components.length === 0 ? {} : { components: parsed.value.components.map((component) => ({ id: component.id, name: component.name, node: compactNode(component.node) })) }),
   });
   if (Result.isFailure(wire)) return wire;
