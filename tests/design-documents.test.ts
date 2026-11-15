@@ -70,7 +70,7 @@ test("追加パネルはグレースケールと等幅・余白の規則を維�
   assert.equal(nodes.get("am_left_bg")!.width, 240);
   assert.equal(nodes.get("ds_timeline")!.x, 240);
   assert.ok(nodes.has("am_hover") && nodes.has("am_add_animation") && nodes.has("am_layer_title"));
-  for (const id of ["ds_export", "ds_size", "ds_trigger"]) assert.equal(nodes.has(id), false);
+  for (const id of ["ds_export", "ds_size", "ds_trigger", "pv_scroll_label", "pv_scroll_track", "pv_scroll_progress", "pv_scroll_thumb", "pv_scroll_value"]) assert.equal(nodes.has(id), false);
   for (const [leftId, rightId, gap] of [
     ["pv_back", "pv_title", 16], ["pv_preset_bg", "pv_width_label", 16],
     ["pv_width_label", "pv_width_value", 8], ["pv_fit", "pv_fit_value", 8],
@@ -105,7 +105,7 @@ test("エディタのラベルとアイコンの行中央を揃える", async ()
     ["ed_motion_label", "ed_motion_icon"], ["ed_motion_label", "ed_motion_arrow"],
     ["tl_heading", "tl_play"], ["tl_heading", "tl_stop"], ["tl_heading", "tl_collapse"],
     ["tl_trigger", "tl_trigger_arrow"], ["tl_easing", "tl_easing_arrow"],
-    ["pv_title", "pv_close"], ["pv_time", "pv_play"], ["pv_scroll_label", "pv_scroll_thumb"],
+    ["pv_title", "pv_close"], ["pv_time", "pv_play"],
     ["am_layer_desktop", "am_layer_toggle1"], ["am_layer_work", "am_layer_toggle2"], ["am_layer_card", "am_layer_toggle3"],
     ...["root", "header", "intro", "work", "active", "second", "footer", "other"].flatMap((name) =>
       [[`ed_layer_${name}`, `ed_layer_${name}_toggle`], [`ed_layer_${name}`, `ed_layer_${name}_icon`]]),
