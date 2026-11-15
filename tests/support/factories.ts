@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-import { type ComponentDefinition, DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type PaletteColor, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
+import { type ComponentDefinition, DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type InstanceNode, type PaletteColor, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
 
 type NodeOverrides<T extends DocumentNode> = Omit<Partial<T>, "style"> & { style?: Partial<T["style"]> };
 export const corners = (radius: number) => ({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
@@ -80,5 +80,14 @@ export function image({ style, ...overrides }: NodeOverrides<ImageNode> = {}): I
     id: "image", name: "画像", type: "image", x: 0, y: 0, width: 100, height: 100, rotation: 0, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     source: "data:image/png;base64,aGVsbG8=", style: { ...structuredClone(DEFAULT_IMAGE_STYLE), ...style }, ...overrides,
+  };
+}
+
+export function instance(overrides: Partial<InstanceNode> = {}): InstanceNode {
+  return {
+    id: "instance", name: "インスタンス", type: "instance", componentRef: "cp1", overrides: {},
+    x: 0, y: 0, width: 100, height: 50, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
+    ...overrides,
   };
 }

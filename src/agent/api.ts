@@ -3,7 +3,7 @@ import { Result } from "@praha/byethrow";
 import { importSvgIcon } from "@/document/commands/svgImport.ts";
 import type { SvgIcon } from "@/document/svgPath.ts";
 import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBlur, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
-import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
+import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
 
@@ -23,13 +23,15 @@ export interface ElementReference {
   blur: number;
   isMask?: boolean;
   content?: string;
-  style: DocumentNode["style"];
+  style?: Exclude<DocumentNode, InstanceNode>["style"];
   border?: Border;
   marks?: TextMark[];
   commands?: VectorPathCommand[];
   fillRule?: PathFillRule;
   clipContent?: boolean;
   source?: string;
+  componentRef?: string;
+  overrides?: Record<string, InstanceOverride>;
 }
 
 export interface EditorPort {
@@ -62,13 +64,14 @@ export function listElements(document: Document, includeImageSource = false): El
         shadow: node.shadow ? { ...node.shadow } : null,
         blur: node.blur,
         ...(node.type === "rectangle" || node.type === "ellipse" ? { isMask: node.isMask } : {}),
-        style: structuredClone(node.style),
+        ...(node.type === "instance" ? {} : { style: structuredClone(node.style) }),
         ...(node.type === "rectangle" || node.type === "frame" ? { border: structuredClone(node.style.border) } : {}),
         ...(node.type === "text" ? { content: node.content,
           ...(node.marks ? { marks: node.marks.map((mark) => ({ ...mark })) } : {}) } : {}),
         ...(node.type === "path" ? { commands: structuredClone(node.commands), fillRule: node.fillRule } : {}),
         ...(node.type === "frame" ? { clipContent: node.clipContent } : {}),
         ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
+        ...(node.type === "instance" ? { componentRef: node.componentRef, overrides: structuredClone(node.overrides) } : {}),
       });
       if (node.type === "frame") visit(node.children, path, node.id);
     }

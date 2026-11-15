@@ -41,6 +41,7 @@ export function ElementAppearance({ node, onTextContent, onTextStyle, onTextMark
     <ShapeStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onShapeStyle} />
     <PathPointEditor node={node} onChange={onPath} />
   </>;
+  if (node.type === "instance") return null;
   return <>
     <div className="field-label">スタイル</div>
     <ShapeStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onShapeStyle} />
