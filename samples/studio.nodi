@@ -608,7 +608,112 @@
             { "id": "nd_sample_spacing_b2", "name": "右", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#557f78" } }
           ] }
       ]
+    },
+    {
+      "id": "nd_sample_components",
+      "name": "Studio / コンポーネント",
+      "type": "frame",
+      "x": 80,
+      "y": 2100,
+      "width": 960,
+      "height": 400,
+      "style": { "fill": "#fbfaf7" },
+      "children": [
+        { "id": "nd_sample_components_title", "name": "コンポーネントの見出し", "type": "text", "x": 32, "y": 25, "width": 640, "height": 32,
+          "content": "ONE COMPONENT, MANY INSTANCES", "style": { "fontSize": 20, "color": "#24383a", "textAlign": "left", "fontWeight": 700 } },
+        { "id": "nd_sample_btn_instance_a", "name": "保存ボタン", "type": "instance", "componentRef": "cp_sample_button",
+          "x": 40, "y": 96, "width": 178, "height": 52,
+          "overrides": { "nd_cp_button_label": { "content": "保存する" } } },
+        { "id": "nd_sample_btn_instance_b", "name": "キャンセルボタン", "type": "instance", "componentRef": "cp_sample_button",
+          "x": 250, "y": 96, "width": 178, "height": 52,
+          "overrides": { "nd_cp_button_label": { "content": "キャンセル" } } },
+        { "id": "nd_sample_card_instance", "name": "カード", "type": "instance", "componentRef": "cp_sample_card",
+          "x": 40, "y": 180, "width": 300, "height": 140,
+          "overrides": { "nd_cp_card_title": { "content": "再利用するカード" } } }
+      ]
     }
   ],
-  "spacing": [{ "id": "sp_sample_card", "name": "カード内側", "value": 20 }]
+  "spacing": [{ "id": "sp_sample_card", "name": "カード内側", "value": 20 }],
+  "components": [
+    {
+      "id": "cp_sample_button",
+      "name": "共通ボタン",
+      "node": {
+        "id": "nd_cp_button_root",
+        "name": "共通ボタン",
+        "type": "frame",
+        "x": 0,
+        "y": 0,
+        "width": 178,
+        "height": 52,
+        "style": { "fill": null },
+        "clipContent": false,
+        "children": [
+          {
+            "id": "nd_cp_button_bg",
+            "name": "ボタン背景",
+            "type": "rectangle",
+            "x": 0,
+            "y": 0,
+            "width": 178,
+            "height": 52,
+            "style": {
+              "fill": "#f3d9c8",
+              "stroke": { "color": "#c77852", "width": 2 },
+              "cornerRadii": { "topLeft": 10, "topRight": 10, "bottomRight": 10, "bottomLeft": 10 }
+            }
+          },
+          {
+            "id": "nd_cp_button_label",
+            "name": "ボタン文言",
+            "type": "text",
+            "x": 16,
+            "y": 14,
+            "width": 146,
+            "height": 24,
+            "content": "ボタン",
+            "style": { "fontSize": 14, "color": "#5a3323", "textAlign": "center", "fontFamily": "system", "fontWeight": 700 }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cp_sample_card",
+      "name": "共通カード",
+      "node": {
+        "id": "nd_cp_card_root",
+        "name": "共通カード",
+        "type": "frame",
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 140,
+        "style": { "fill": "#ffffff" },
+        "children": [
+          {
+            "id": "nd_cp_card_title",
+            "name": "カード見出し",
+            "type": "text",
+            "x": 20,
+            "y": 18,
+            "width": 260,
+            "height": 30,
+            "content": "カード",
+            "style": { "fontSize": 18, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "fontWeight": 700 }
+          },
+          {
+            "id": "nd_cp_card_body",
+            "name": "カード本文",
+            "type": "text",
+            "x": 20,
+            "y": 58,
+            "width": 260,
+            "height": 60,
+            "content": "定義を変えると参照先も更新されます。",
+            "style": { "fontSize": 13, "color": "#697976", "textAlign": "left" }
+          }
+        ]
+      }
+    }
+  ]
 }
