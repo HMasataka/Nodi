@@ -2,10 +2,11 @@ import { blurPixels } from "@/document/blur.ts";
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
+import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Result } from "@praha/byethrow";
 import { applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
-import type { Border, DocumentNode, FrameNode } from "@/document/types.ts";
+import type { Border, ComponentDefinition, Document, DocumentNode, FrameNode } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
 import { createLayoutMeasure, layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
@@ -206,7 +207,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
           left += fragment.width;
         }
       });
-    } else {
+    } else if (node.type === "image") {
       tracePath(ctx, roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii));
       ctx.clip();
       const image = await environment.loadImage(node.source);
@@ -241,6 +242,7 @@ async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, envi
 export interface PngRenderOptions {
   timeMs?: number;
   scrollProgress?: number;
+  components?: ComponentDefinition[];
 }
 
 export async function renderFramePng(frame: FrameNode, environment: PngRenderEnvironment = browserEnvironment, options: PngRenderOptions = {}): Promise<Result.Result<Blob, Error>> {
@@ -250,8 +252,9 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     canvas.height = Math.round(frame.height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
-    // 編集画面と同じ座標解決エンジンを通し、自動レイアウトを解決してから描画する。
-    const resolved = resolveDocumentLayout({ version: 1, children: [{ ...frame, x: 0, y: 0 }], palette: [], components: [] },
+    // 編集画面と同じ解決エンジンを通し、インスタンスと自動レイアウトを解決してから描画する。
+    const document: Document = { version: 1, children: [{ ...frame, x: 0, y: 0 }], palette: [], components: options.components ?? [] };
+    const resolved = resolveDocumentLayout(resolveDocumentInstances(document),
       { measure: createLayoutMeasure(ctx) }).children[0] as FrameNode;
     // 指定した時刻（状態）のアニメーションを適用してから描画する。
     const timeMs = options.timeMs ?? 0;

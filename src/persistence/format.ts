@@ -91,6 +91,16 @@ const focalPoint = z.strictObject({ x: intensity, y: intensity });
 const imageStyle = z.strictObject({ fit: fit.optional(), focalPoint: focalPoint.optional(), cornerRadii: cornerRadii.optional(), filters: imageFilters.optional() });
 const normalizedImageStyle = z.strictObject({ fit, focalPoint, cornerRadii, filters: normalizedImageFilters });
 
+const instanceOverride = z.strictObject({
+  content: z.string().optional(),
+  fill: fill.optional(),
+  stroke: stroke.optional(),
+  color: color.optional(),
+  source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN).optional(),
+  width: dimension.optional(),
+  height: dimension.optional(),
+});
+
 // 共通項目の省略可否はスキーマを型の情報源にする。
 type WireCommonFields = { id: string; name: string } & z.infer<z.ZodObject<typeof wireGeometry>>;
 type WireFrameLayout = {
@@ -106,6 +116,7 @@ export type WireNode = WireCommonFields & (
   | { type: "path"; style: z.infer<typeof shapeStyle>; commands: z.infer<typeof vectorCommands>; fillRule?: z.infer<typeof fillRule> }
   | { type: "image"; style: z.infer<typeof imageStyle>; source: string }
   | { type: "text"; style: z.infer<typeof textStyle>; content: string; marks?: z.infer<typeof textMark>[] }
+  | { type: "instance"; componentRef: string; overrides?: Record<string, z.infer<typeof instanceOverride>> }
   | ({ type: "frame"; style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] } & WireFrameLayout)
 );
 export interface WireComponentDefinition { id: string; name: string; node: WireNode }
@@ -121,6 +132,7 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
       layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
       children: z.array(nodeSchema) }),
     z.strictObject({ id, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
+    z.strictObject({ id, name, type: z.literal("instance"), ...wireGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride).optional() }),
   ]),
 );
 
@@ -181,7 +193,56 @@ function checkUniqueComponentIds(
   });
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds);
+function collectInstanceRefs(node: WireNode | DocumentNode, refs: Set<string>) {
+  if (node.type === "instance") refs.add(node.componentRef);
+  if (node.type === "frame") node.children.forEach((child) => collectInstanceRefs(child, refs));
+}
+
+function checkComponentReferences(
+  document: { children: (WireNode | DocumentNode)[]; components?: { id: string; node: WireNode | DocumentNode }[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const components = document.components ?? [];
+  const componentIds = new Set(components.map((component) => component.id));
+  function checkDangling(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
+    nodes.forEach((node, index) => {
+      const nodePath = [...path, index];
+      if (node.type === "instance" && !componentIds.has(node.componentRef)) {
+        context.addIssue({ code: "custom", path: [...nodePath, "componentRef"], message: `コンポーネント定義が見つかりません: ${node.componentRef}` });
+      }
+      if (node.type === "frame") checkDangling(node.children, [...nodePath, "children"]);
+    });
+  }
+  checkDangling(document.children, ["children"]);
+  components.forEach((component, index) => checkDangling([component.node], ["components", index, "node"]));
+
+  const graph = new Map<string, Set<string>>();
+  for (const component of components) graph.set(component.id, new Set());
+  for (const component of components) {
+    const refs = new Set<string>();
+    collectInstanceRefs(component.node, refs);
+    for (const ref of refs) if (graph.has(ref)) graph.get(component.id)!.add(ref);
+  }
+  const visiting = new Set<string>();
+  const visited = new Set<string>();
+  function hasCycle(componentId: string): boolean {
+    if (visiting.has(componentId)) return true;
+    if (visited.has(componentId)) return false;
+    visiting.add(componentId);
+    for (const next of graph.get(componentId)!) if (hasCycle(next)) return true;
+    visiting.delete(componentId);
+    visited.add(componentId);
+    return false;
+  }
+  for (const componentId of graph.keys()) {
+    if (hasCycle(componentId)) {
+      context.addIssue({ code: "custom", path: ["components"], message: "コンポーネントの循環参照があります" });
+      return;
+    }
+  }
+}
+
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
@@ -191,11 +252,12 @@ const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminated
   z.strictObject({ id, name, type: z.literal("image"), ...internalGeometry, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
   z.strictObject({ id, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
   z.strictObject({ id, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
+  z.strictObject({ id, name, type: z.literal("instance"), ...internalGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride) }),
 ]));
 
 const internalComponentDefinition = z.strictObject({ id, name, node: internalNodeSchema });
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds);
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {
@@ -260,6 +322,7 @@ function normalizeNode(node: WireNode): DocumentNode {
       justifyContent: node.justifyContent ?? DEFAULT_LAYOUT_JUSTIFY,
       children: node.children.map(normalizeNode),
     };
+    case "instance": return { ...node, ...common, overrides: node.overrides ?? {} };
   }
 }
 
@@ -366,6 +429,10 @@ function compactNode(node: DocumentNode): WireNode {
       ...(node.alignItems === DEFAULT_LAYOUT_ALIGNMENT ? {} : { alignItems: node.alignItems }),
       ...(node.justifyContent === DEFAULT_LAYOUT_JUSTIFY ? {} : { justifyContent: node.justifyContent }),
       children: node.children.map(compactNode),
+    };
+    case "instance": return {
+      ...common, type: "instance", componentRef: node.componentRef,
+      ...(Object.keys(node.overrides).length === 0 ? {} : { overrides: node.overrides }),
     };
   }
 }
