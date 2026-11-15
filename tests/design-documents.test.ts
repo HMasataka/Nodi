@@ -71,6 +71,16 @@ test("追加パネルはグレースケールと等幅・余白の規則を維�
   assert.equal(nodes.get("ds_timeline")!.x, 240);
   assert.ok(nodes.has("am_hover") && nodes.has("am_add_animation") && nodes.has("am_layer_title"));
   for (const id of ["ds_export", "ds_size", "ds_trigger"]) assert.equal(nodes.has(id), false);
+  for (const [leftId, rightId, gap] of [
+    ["pv_back", "pv_title", 16], ["pv_preset_bg", "pv_width_label", 16],
+    ["pv_width_label", "pv_width_value", 8], ["pv_fit", "pv_fit_value", 8],
+    ["pv_actual", "pv_actual_value", 8], ["tl_easing", "tl_easing_arrow", 8],
+    ["am_preview", "am_save_bg", 16],
+  ] as const) {
+    const left = nodes.get(leftId)!;
+    const right = nodes.get(rightId)!;
+    assert.equal(right.x - (left.x + left.width), gap, `${leftId} / ${rightId} の間隔`);
+  }
 });
 
 test("エディタのラベルとアイコンの行中央を揃える", async () => {
