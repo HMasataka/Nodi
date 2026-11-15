@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 
 import type { Color } from "@/document/types.ts";
-import { useColorResolver } from "@/pages/editor/colorContext.ts";
 import { alphaByte, rgbColor, withAlphaByte, withRgbColor } from "@/document/color.ts";
+import { useColorResolver, usePalette } from "@/pages/editor/colorContext.ts";
 
 export function ColorField({ label, value, fallback, disabled = false, onChange }: {
-  label: string; value: Color | null; fallback: Color; disabled?: boolean; onChange(color: string): void;
+  label: string; value: Color | null; fallback: Color; disabled?: boolean; onChange(color: Color): void;
 }) {
   const resolve = useColorResolver();
+  const palette = usePalette();
   const current = resolve(value ?? fallback);
+  const isRef = value !== null && typeof value === "object";
   const [rgb, setRgb] = useState(rgbColor(current));
   const [alpha, setAlpha] = useState(String(alphaByte(current)));
   useEffect(() => {
@@ -34,5 +36,15 @@ export function ColorField({ label, value, fallback, disabled = false, onChange 
         onChange={(event) => setAlpha(event.currentTarget.value)}
         onBlur={commitAlpha} />
     </label>
+    {palette.length > 0 && <label className="color-palette-select">パレット
+      <select value={isRef ? value.id : ""} disabled={disabled}
+        onChange={(event) => {
+          const id = event.currentTarget.value;
+          onChange(id === "" ? current : { type: "palette", id });
+        }}>
+        <option value="">直接指定</option>
+        {palette.map((color) => <option key={color.id} value={color.id}>{color.name}</option>)}
+      </select>
+    </label>}
   </div>;
 }

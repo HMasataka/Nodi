@@ -2,7 +2,6 @@ import { Result } from "@praha/byethrow";
 import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
-import { ColorResolverContext } from "@/pages/editor/colorContext.ts";
 import { countRenderedTextLines } from "@/pages/editor/textIconMeasurement.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
@@ -11,6 +10,7 @@ import { findNode } from "@/document/commands/index.ts";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
+import { PalettePanel } from "@/pages/editor/components/organisms/PalettePanel";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
@@ -23,6 +23,7 @@ import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Color, DocumentNode } from "@/document/types.ts";
+import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContext.ts";
 import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/commands/index.ts";
 import "@/App.css";
 
@@ -40,6 +41,7 @@ function EditorPage() {
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
   const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
+  const selectedComponentNode = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.node : undefined;
   const spacingX = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "x") : null;
   const spacingY = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "y") : null;
   const spacing = spacingX && spacingY ? Result.isFailure(spacingX) ? { error: spacingX.error.message }
@@ -56,6 +58,7 @@ function EditorPage() {
     updateSelection, finishSelection, cancelSelection } = interaction;
 
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
+    <PaletteContext.Provider value={design.palette}>
     <main className="app-shell">
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
       canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
@@ -64,11 +67,14 @@ function EditorPage() {
       drawTool={drawTool} onDrawToolChange={setDrawTool} />
 
     <div className="workspace">
-      <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
-        highlightedComponentId={highlightedComponentId}
-        onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
-        onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
-        onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
+      <div className="left-panels">
+        <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
+          highlightedComponentId={highlightedComponentId}
+          onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
+          onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
+          onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
+        <PalettePanel palette={design.palette} {...actions.palette} />
+      </div>
       <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
@@ -91,9 +97,12 @@ function EditorPage() {
         spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}
         onCreateSpacingToken={actions.spacingTokens.onCreate} onRenameSpacingToken={actions.spacingTokens.onRename}
         onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}
-        componentName={selectedComponentName}
+        componentName={selectedComponentName} componentNode={selectedComponentNode}
         onCreateComponent={actions.components.onCreateFromSelected}
-        onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }} />
+        onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }}
+        onSetOverride={(childId, patch) => { if (selectedId) actions.components.onSetOverride(selectedId, childId, patch); }}
+        onResetOverride={(childId) => { if (selectedId) actions.components.onResetOverride(selectedId, childId); }}
+        onDetach={() => actions.components.onDetach()} />
     </div>
 
     <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
@@ -102,6 +111,7 @@ function EditorPage() {
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
     </main>
+    </PaletteContext.Provider>
   </ColorResolverContext.Provider>;
 }
 

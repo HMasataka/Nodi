@@ -99,6 +99,17 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       selectedId: null, onSelect: noOp,
     }));
     assert.match(instanceLayers, /インスタンス/);
+    const instanceInspector = renderToStaticMarkup(createElement(Inspector, {
+      selected: makeInstance({ id: "inst-1", name: "ボタンインスタンス", componentRef: "cp1" }),
+      componentName: "ボタン",
+      componentNode: makeFrame({ id: "cp-root", children: [makeText({ id: "label", name: "ラベル", content: "元" })] }),
+      onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp, onShapeStyle: noOp,
+      onDuplicate: noOp, onDelete: noOp, onSetOverride: noOp, onResetOverride: noOp, onDetach: noOp,
+    }));
+    assert.match(instanceInspector, /インスタンス/);
+    assert.match(instanceInspector, /オーバーライド/);
+    assert.match(instanceInspector, /切り離す/);
+    assert.match(instanceInspector, /ラベル/);
     const inspector = renderToStaticMarkup(createElement(Inspector, {
       selected: image, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
       onShapeStyle: noOp, onImageStyle: noOp, onDuplicate: noOp, onDelete: noOp,

@@ -63,3 +63,18 @@ export function duplicatePaletteColor(document: Document, id: string): Result.Re
   const color: PaletteColor = { id: uniqueId(new Set(document.palette.map((item) => item.id))), name, color: source.color };
   return Result.succeed({ document: { ...document, palette: [...document.palette, color] }, color });
 }
+
+/** 別文書のパレットを取り込む。すべての色へ新しい ID を割り当て、同名の色はそのまま許可する。 */
+export function importPalette(document: Document, entries: { name: string; color: string }[]): Result.Result<{ document: Document; colors: PaletteColor[] }, Error> {
+  for (const entry of entries) {
+    if (Result.isFailure(validateName(entry.name))) return Result.fail(new Error("名前は空にできません"));
+    if (!validColor(entry.color)) return Result.fail(new Error("色は #RRGGBB または #RRGGBBAA 形式で指定してください"));
+  }
+  const ids = new Set(document.palette.map((item) => item.id));
+  const colors: PaletteColor[] = entries.map((entry) => {
+    const id = uniqueId(ids);
+    ids.add(id);
+    return { id, name: entry.name, color: entry.color };
+  });
+  return Result.succeed({ document: { ...document, palette: [...document.palette, ...colors] }, colors });
+}

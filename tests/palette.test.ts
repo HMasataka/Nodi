@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-import { addPaletteColor, createDocument, duplicatePaletteColor, removePaletteColor, renamePaletteColor, setPaletteColor } from "../src/document/commands/index.ts";
+import { addPaletteColor, createDocument, duplicatePaletteColor, importPalette, removePaletteColor, renamePaletteColor, setPaletteColor } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { document, paletteColor, success } from "./support/factories.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
@@ -101,4 +101,20 @@ test("同じ値のパレット編集は文書参照を変えない", () => {
   const base = created.document;
   assert.equal(success(renamePaletteColor(base, created.color.id, "主色")), base);
   assert.equal(success(setPaletteColor(base, created.color.id, "#ff0000")), base);
+});
+
+test("別文書のパレットを取り込むと新しい ID を割り当てる", () => {
+  const base = success(addPaletteColor(document(), { name: "主色", color: "#123456" })).document;
+  const imported = success(importPalette(base, [
+    { name: "主色", color: "#123456" }, { name: "背景", color: "#ffffff" },
+  ]));
+  assert.equal(imported.document.palette.length, 3);
+  const [first, second] = imported.colors;
+  assert.notEqual(first.id, second.id);
+  assert.equal(first.name, "主色");
+  assert.equal(second.name, "背景");
+  assert.match(first.id, /^pc_/);
+  assert.deepEqual(imported.document.palette.slice(1), imported.colors);
+  assert.equal(importPalette(base, [{ name: "  ", color: "#000000" }]).type, "Failure");
+  assert.equal(importPalette(base, [{ name: "色", color: "red" }]).type, "Failure");
 });
