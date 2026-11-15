@@ -85,3 +85,33 @@ test("画像の4隅を MCP 経由で変更し、不正入力は履歴に残さ�
   assert.equal(history.past.length, 2);
   assert.deepEqual(success(api.getElement(image.id)).style.cornerRadii, radii);
 });
+
+test("コンポーネントとインスタンスを MCP 経由で取得・作成・編集できる", () => {
+  let history = createHistory(createDocument(), true);
+  const api = createAgentApi({ getDocument: () => history.present, getHistory: () => history, getSelectedId: () => null, apply: (document) => { history = commit(history, document); } });
+  const frame = success(api.add({ type: "frame", name: "ボタン", x: 0, y: 0, width: 200, height: 100 }));
+  success(api.add({ type: "text", parentId: frame.id, name: "ラベル", content: "元", x: 10, y: 10, width: 100, height: 40 }));
+
+  const created = success(api.createComponent(frame.id, "ボタン"));
+  const componentId = created.id;
+  assert.equal(success(api.listComponents()).components.length, 1);
+  assert.equal(success(api.renameComponent(componentId, "主ボタン")).name, "主ボタン");
+
+  const instance = success(api.addInstance({ componentRef: componentId, x: 100, y: 100 }));
+  assert.equal(instance.type, "instance");
+  assert.equal(instance.componentRef, componentId);
+
+  const textChildId = success(api.listComponents()).components[0].node.children[0].id;
+  const overridden = success(api.setInstanceOverride(instance.id, textChildId, { content: "変更後" }));
+  assert.deepEqual(overridden.overrides, { [textChildId]: { content: "変更後" } });
+  assert.deepEqual(success(api.resetInstanceOverride(instance.id, textChildId)).overrides, {});
+
+  assert.equal(api.removeComponent(componentId).type, "Failure");
+  const detached = success(api.detachInstance(instance.id));
+  assert.equal(detached.type, "frame");
+  assert.equal(success(api.removeComponent(componentId)).deleted, true);
+
+  assert.equal(dispatchAgentRequest(api, "set_instance_override", { id: instance.id, childId: textChildId }).ok, false);
+  assert.equal(dispatchAgentRequest(api, "add_instance", { componentRef: "missing", x: 0, y: 0 }).ok, false);
+  assert.ok(isDirty(history));
+});

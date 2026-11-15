@@ -48,6 +48,15 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_text_marks": return withInput(agentInputs.set_text_marks, args, ({ id, marks }) => api.setTextMarks(id, marks));
       case "delete_element": return withInput(agentInputs.delete_element, args, ({ id }) => api.delete(id));
       case "duplicate_element": return withInput(agentInputs.duplicate_element, args, ({ id }) => api.duplicate(id));
+      case "list_components": return withInput(agentInputs.list_components, args, () => api.listComponents());
+      case "create_component": return withInput(agentInputs.create_component, args, ({ sourceId, name }) => api.createComponent(sourceId, name));
+      case "rename_component": return withInput(agentInputs.rename_component, args, ({ id, name }) => api.renameComponent(id, name));
+      case "remove_component": return withInput(agentInputs.remove_component, args, ({ id }) => api.removeComponent(id));
+      case "duplicate_component": return withInput(agentInputs.duplicate_component, args, ({ id }) => api.duplicateComponent(id));
+      case "add_instance": return withInput(agentInputs.add_instance, args, (input) => api.addInstance(input));
+      case "set_instance_override": return withInput(agentInputs.set_instance_override, args, ({ id, childId, ...patch }) => api.setInstanceOverride(id, childId, patch));
+      case "reset_instance_override": return withInput(agentInputs.reset_instance_override, args, ({ id, childId }) => api.resetInstanceOverride(id, childId));
+      case "detach_instance": return withInput(agentInputs.detach_instance, args, ({ id }) => api.detachInstance(id));
       default: return Result.fail(new Error(`未知の操作です: ${method}`));
     }
   })();

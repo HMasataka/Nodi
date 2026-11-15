@@ -3,7 +3,7 @@ import { Result } from "@praha/byethrow";
 import { importSvgIcon } from "@/document/commands/svgImport.ts";
 import { resolvedSpacing } from "@/document/spacing.ts";
 import type { SvgIcon } from "@/document/svgPath.ts";
-import { addNode, type AddNodeInput, addSpacingToken, deleteNode, duplicateNode, type FrameLayoutPatch, moveNode, removeSpacingToken, renameNode, renameSpacingToken, setBlur, setBorder, setFrameLayout, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, type FrameLayoutPatch, moveNode, removeComponent, removeSpacingToken, renameComponent, renameNode, renameSpacingToken, resetInstanceOverride, setBlur, setBorder, setFrameLayout, setFrameStyle, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -232,6 +232,58 @@ export function createAgentApi(port: EditorPort) {
     },
     setTextContent(id: string, content: string): Result.Result<ElementReference, Error> {
       return applyToElement(id, setTextContent(port.getDocument(), id, content));
+    },
+    listComponents() {
+      return Result.succeed({ components: port.getDocument().components.map((component) => ({ id: component.id, name: component.name, node: structuredClone(component.node) })) });
+    },
+    createComponent(sourceId: string, name: string) {
+      const result = createComponent(port.getDocument(), { sourceId, name });
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      port.apply(result.value.document);
+      return Result.succeed({ id: result.value.component.id, name: result.value.component.name });
+    },
+    renameComponent(id: string, name: string) {
+      const result = renameComponent(port.getDocument(), id, name);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      if (result.value !== port.getDocument()) port.apply(result.value);
+      return Result.succeed({ id, name });
+    },
+    removeComponent(id: string) {
+      const result = removeComponent(port.getDocument(), id);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      port.apply(result.value);
+      return Result.succeed({ id, deleted: true });
+    },
+    duplicateComponent(id: string) {
+      const result = duplicateComponent(port.getDocument(), id);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      port.apply(result.value.document);
+      return Result.succeed({ id: result.value.component.id, name: result.value.component.name });
+    },
+    addInstance(input: CreateInstanceInput) {
+      return applyNewNode(createInstance(port.getDocument(), input));
+    },
+    setInstanceOverride(id: string, childId: string, patch: InstanceOverride) {
+      return applyToElement(id, setInstanceOverride(port.getDocument(), id, childId, patch));
+    },
+    resetInstanceOverride(id: string, childId: string) {
+      return applyToElement(id, resetInstanceOverride(port.getDocument(), id, childId));
+    },
+    detachInstance(id: string) {
+      const result = detachInstance(port.getDocument(), id);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      port.apply(result.value.document);
+      return getElement(result.value.node.id);
     },
   };
 }

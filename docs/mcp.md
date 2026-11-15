@@ -73,6 +73,18 @@ get_state {}
 - `set_text_marks`: テキスト本文の UTF-16 範囲 `start`・`end` と、その範囲の `color`・`fontWeight`・`underline: true`・`code: true` を配列で指定して置換。範囲は昇順・非重複で文字境界に揃える。
 - `delete_element` / `duplicate_element`: ID で削除・複製。フレームの子孫も対象に含み、複製した全要素の ID を再生成。
 
+### コンポーネントとインスタンス
+
+- `list_components`: 文書のコンポーネント定義（`id`・`name`・子要素ツリー）を一覧取得する。
+- `create_component`: `sourceId`（フレームの ID）と `name` でコンポーネント定義を作成する。フレームと子要素から新しい ID の定義ツリーを複製する。
+- `rename_component`: 表示名を変更する。参照は ID で行うため、名前変更でインスタンスの参照は壊れない。
+- `remove_component`: 未使用の定義を削除する。インスタンスが参照している定義は拒否する（先に `detach_instance` または削除が必要）。
+- `duplicate_component`: 定義を複製し、定義と子ツリーに新しい ID を割り当てる。
+- `add_instance`: `componentRef`・`x`・`y`（省略可能な `width`・`height`・`parentId`・`name`）でインスタンスを配置する。幅・高さの省略時は定義の寸法を使う。
+- `set_instance_override`: `id`（インスタンス）・`childId`（定義の子要素 ID）と変更属性（`content`・`fill`・`stroke`・`color`・`source`・`width`・`height`）でオーバーライドする。
+- `reset_instance_override`: 指定した子のオーバーライドを解除し、定義側の値へ戻す。
+- `detach_instance`: インスタンスをその時点の解決済み表示のまま通常要素へ切り離す。切り離したツリーには新しい ID を割り当てる。
+
 `get_state` を呼び、続けて `add_element` で名前付き矩形を追加する。返された名前と ID を使って `rename_element`・`move_element` を呼ぶと、画面にも変更が反映される。画面の「元に戻す」で操作を戻せることを確認する。存在しない ID を指定した場合はエラーとなり、ドキュメントは変わらない。
 
 `select_element` の `scrollLeft` / `scrollTop` は、文書原点に対する画面px単位の仮想表示オフセット。負値も返す。DOMのスクロール位置ではなく、画面座標は `文書座標 × zoom − オフセット` で求める。位置は自動レイアウト解決後の文書から計算する。要素・パスの点のドラッグやパン中は、表示位置の変更を拒否する。

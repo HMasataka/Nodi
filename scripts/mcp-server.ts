@@ -61,6 +61,15 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("set_text_marks", "テキスト本文の装飾範囲を指定・置換（色・太さ・下線・インラインコード）", agentInputs.set_text_marks, true);
   tool("delete_element", "ID で要素とその子孫を削除", agentInputs.delete_element, true);
   tool("duplicate_element", "ID で要素と子孫を複製し、すべてに新しい ID を付ける", agentInputs.duplicate_element, true);
+  tool("list_components", "文書のコンポーネント定義（ID・名前・子要素ツリー）を一覧取得", agentInputs.list_components);
+  tool("create_component", "フレームと子要素からコンポーネント定義を作成", agentInputs.create_component, true);
+  tool("rename_component", "コンポーネント定義の表示名を変更（参照は ID のため壊れない）", agentInputs.rename_component, true);
+  tool("remove_component", "未使用のコンポーネント定義を削除（使用中は拒否）", agentInputs.remove_component, true);
+  tool("duplicate_component", "コンポーネント定義を複製し、新しい ID を割り当てる", agentInputs.duplicate_component, true);
+  tool("add_instance", "コンポーネント定義を参照するインスタンスを配置", agentInputs.add_instance, true);
+  tool("set_instance_override", "インスタンスの子要素にオーバーライド（文言・色・画像・サイズ）を設定", agentInputs.set_instance_override, true);
+  tool("reset_instance_override", "インスタンスのオーバーライドを解除して定義の値へ戻す", agentInputs.reset_instance_override, true);
+  tool("detach_instance", "インスタンスをその時点の表示のまま通常の要素へ切り離す", agentInputs.detach_instance, true);
   return server;
 }
 
