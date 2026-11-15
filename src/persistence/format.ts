@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
-import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, SIZE_MODES, type SizeConstraint, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
+import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, type PaletteColor, SIZE_MODES, type SizeConstraint, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
@@ -14,6 +14,7 @@ const opacity = z.number().finite().min(0).max(1);
 const geometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate.optional(), opacity: opacity.optional() };
 
 const color = z.string().regex(HEX_COLOR_PATTERN);
+const paletteColor = z.strictObject({ id, name, color });
 const shadow = z.strictObject({ color, offsetX: coordinate, offsetY: coordinate, blur: z.number().finite().nonnegative() });
 const blur = z.number().finite().nonnegative();
 const sizeMode = z.enum(SIZE_MODES);
@@ -107,7 +108,7 @@ export type WireNode = WireCommonFields & (
   | { type: "text"; style: z.infer<typeof textStyle>; content: string; marks?: z.infer<typeof textMark>[] }
   | ({ type: "frame"; style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] } & WireFrameLayout)
 );
-export interface WireDocument { version: 1; children: WireNode[] }
+export interface WireDocument { version: 1; children: WireNode[]; palette?: PaletteColor[] }
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
@@ -142,7 +143,18 @@ function checkUniqueIds(
   visit(document.children, ["children"]);
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema) }).superRefine(checkUniqueIds);
+function checkUniquePaletteIds(
+  document: { palette?: PaletteColor[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const seen = new Set<string>();
+  (document.palette ?? []).forEach((color, index) => {
+    if (seen.has(color.id)) context.addIssue({ code: "custom", path: ["palette", index, "id"], message: `ID が重複しています: ${color.id}` });
+    seen.add(color.id);
+  });
+}
+
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
@@ -154,7 +166,7 @@ const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminated
   z.strictObject({ id, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
 ]));
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema) }).superRefine(checkUniqueIds);
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {
@@ -338,13 +350,13 @@ export function parseDocument(json: string) {
   const parsed = parseJson(json);
   if (Result.isFailure(parsed)) return parsed;
   const validated = Result.parse(documentSchema, parsed.value);
-  return Result.isFailure(validated) ? validated : Result.succeed({ version: 1 as const, children: validated.value.children.map(normalizeNode) });
+  return Result.isFailure(validated) ? validated : Result.succeed({ version: 1 as const, children: validated.value.children.map(normalizeNode), palette: validated.value.palette ?? [] });
 }
 
 export function serializeDocument(document: Document) {
   const parsed = Result.parse(internalDocumentSchema, document);
   if (Result.isFailure(parsed)) return parsed;
-  const wire = Result.parse(documentSchema, { version: 1, children: parsed.value.children.map(compactNode) });
+  const wire = Result.parse(documentSchema, { version: 1, children: parsed.value.children.map(compactNode), ...(parsed.value.palette.length === 0 ? {} : { palette: parsed.value.palette }) });
   if (Result.isFailure(wire)) return wire;
   return Result.succeed(JSON.stringify(wire.value, null, 2));
 }

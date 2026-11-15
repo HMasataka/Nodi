@@ -79,6 +79,12 @@ export const ZERO_CORNER_RADII: CornerRadii = { topLeft: 0, topRight: 0, bottomR
 
 export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?$/;
 
+export interface PaletteColor {
+  id: string;
+  name: string;
+  color: string;
+}
+
 export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   fill: "#f3d9c8",
   stroke: { color: "#d9bbaa", width: 1 },
@@ -211,4 +217,5 @@ export type DocumentNode = FrameNode | RectangleNode | EllipseNode | PathNode | 
 export interface Document {
   version: 1;
   children: DocumentNode[];
+  palette: PaletteColor[];
 }
