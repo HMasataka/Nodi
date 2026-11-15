@@ -41,6 +41,12 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "rename_spacing_token": return withInput(agentInputs.rename_spacing_token, args, ({ id, name }) => api.changeSpacingToken(id, { name }));
       case "set_spacing_token": return withInput(agentInputs.set_spacing_token, args, ({ id, value }) => api.changeSpacingToken(id, { value }));
       case "remove_spacing_token": return withInput(agentInputs.remove_spacing_token, args, ({ id }) => api.changeSpacingToken(id, { remove: true }));
+      case "list_palette": return withInput(agentInputs.list_palette, args, () => api.listPalette());
+      case "add_palette_color": return withInput(agentInputs.add_palette_color, args, ({ name, color }) => api.addPaletteColor({ name, color }));
+      case "rename_palette_color": return withInput(agentInputs.rename_palette_color, args, ({ id, name }) => api.changePaletteColor(id, { name }));
+      case "set_palette_color": return withInput(agentInputs.set_palette_color, args, ({ id, color }) => api.changePaletteColor(id, { color }));
+      case "remove_palette_color": return withInput(agentInputs.remove_palette_color, args, ({ id }) => api.changePaletteColor(id, { remove: true }));
+      case "duplicate_palette_color": return withInput(agentInputs.duplicate_palette_color, args, ({ id }) => api.changePaletteColor(id, { duplicate: true }));
       case "set_border": return withInput(agentInputs.set_border, args, ({ id, border }) => api.setBorder(id, border));
       case "set_image_style": return withInput(agentInputs.set_image_style, args, ({ id, ...style }) => api.setImageStyle(id, style));
       case "set_image_filters": return withInput(agentInputs.set_image_filters, args, ({ id, filters }) => api.setImageFilters(id, filters));
