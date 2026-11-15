@@ -1,8 +1,9 @@
 import { Result } from "@praha/byethrow";
 
 import { importSvgIcon } from "@/document/commands/svgImport.ts";
+import { resolvedSpacing } from "@/document/spacing.ts";
 import type { SvgIcon } from "@/document/svgPath.ts";
-import { addNode, type AddNodeInput, deleteNode, duplicateNode, moveNode, renameNode, setBlur, setBorder, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, addSpacingToken, deleteNode, duplicateNode, type FrameLayoutPatch, moveNode, removeSpacingToken, renameNode, renameSpacingToken, setBlur, setBorder, setFrameLayout, setFrameStyle, setImageFilters, setImageStyle, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -29,6 +30,11 @@ export interface ElementReference {
   commands?: VectorPathCommand[];
   fillRule?: PathFillRule;
   clipContent?: boolean;
+  layoutMode?: FrameLayoutPatch["layoutMode"];
+  padding?: number;
+  gap?: number;
+  paddingRef?: string;
+  gapRef?: string;
   source?: string;
   componentRef?: string;
   overrides?: Record<string, InstanceOverride>;
@@ -69,7 +75,9 @@ export function listElements(document: Document, includeImageSource = false): El
         ...(node.type === "text" ? { content: node.content,
           ...(node.marks ? { marks: node.marks.map((mark) => ({ ...mark })) } : {}) } : {}),
         ...(node.type === "path" ? { commands: structuredClone(node.commands), fillRule: node.fillRule } : {}),
-        ...(node.type === "frame" ? { clipContent: node.clipContent } : {}),
+        ...(node.type === "frame" ? { clipContent: node.clipContent, layoutMode: node.layoutMode,
+          padding: resolvedSpacing(document, node, "padding"), gap: resolvedSpacing(document, node, "gap"),
+          ...(node.paddingRef ? { paddingRef: node.paddingRef } : {}), ...(node.gapRef ? { gapRef: node.gapRef } : {}) } : {}),
         ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
         ...(node.type === "instance" ? { componentRef: node.componentRef, overrides: structuredClone(node.overrides) } : {}),
       });
@@ -170,6 +178,29 @@ export function createAgentApi(port: EditorPort) {
     },
     setFrameStyle(id: string, style: Partial<FrameStyle>) {
       return applyToElement(id, setFrameStyle(port.getDocument(), id, style));
+    },
+    setFrameLayout(id: string, patch: FrameLayoutPatch) {
+      return applyToElement(id, setFrameLayout(port.getDocument(), id, patch));
+    },
+    addSpacingToken(name: string, value: number) {
+      const result = addSpacingToken(port.getDocument(), name, value);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      port.apply(result.value.document);
+      return Result.succeed(result.value.token);
+    },
+    changeSpacingToken(id: string, patch: { name?: string; value?: number; remove?: boolean }) {
+      const original = port.getDocument().spacing.find((token) => token.id === id);
+      if (!original) return Result.fail(new Error(`余白値が見つかりません: ${id}`));
+      const result = patch.remove ? removeSpacingToken(port.getDocument(), id)
+        : patch.name !== undefined ? renameSpacingToken(port.getDocument(), id, patch.name)
+          : setSpacingToken(port.getDocument(), id, patch.value!);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      if (result.value !== port.getDocument()) port.apply(result.value);
+      return Result.succeed(patch.remove ? { ...original, deleted: true } : result.value.spacing.find((token) => token.id === id)!);
     },
     setBorder(id: string, border: Border) {
       return applyToElement(id, setBorder(port.getDocument(), id, border));

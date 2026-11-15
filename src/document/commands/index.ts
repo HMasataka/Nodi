@@ -3,6 +3,7 @@ export { distributeNodes, measureSelectionSpacing, type SelectionSpacing, type S
 export { type AnimationTimingPatch, addAnimation, addKeyframe, type KeyframePatch, removeAnimation, removeKeyframe, setAnimationTiming, setKeyframe } from "@/document/commands/animation.ts";
 export { type AddNodeInput, addNode, createDocument } from "@/document/commands/create.ts";
 export { type FrameLayoutPatch, type SizeAxis, type SizeConstraintPatch, setFrameLayout, setNodeSizeConstraint } from "@/document/commands/layout.ts";
+export { addSpacingToken, removeSpacingToken, renameSpacingToken, setSpacingToken } from "@/document/commands/spacing.ts";
 export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNode } from "@/document/commands/structure.ts";
 export { setBorder, setFrameStyle, setImageFilters, setImageStyle, setNodeStyle, setPath, setTextContent, setTextMarkRange, setTextMarks, setTextStyle } from "@/document/commands/style.ts";
 export { addPaletteColor, detachPaletteColor, duplicatePaletteColor, removePaletteColor, renamePaletteColor, setPaletteColor } from "@/document/commands/palette.ts";

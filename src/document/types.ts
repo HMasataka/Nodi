@@ -85,6 +85,8 @@ export interface PaletteColor {
   color: string;
 }
 
+export interface SpacingToken { id: string; name: string; value: number }
+
 /** パレット色への参照。名前ではなく安定した ID で参照する。 */
 export interface PaletteRef {
   type: "palette";
@@ -164,6 +166,8 @@ export interface FrameNode extends NodeGeometry {
   layoutMode: LayoutMode;
   padding: number;
   gap: number;
+  paddingRef?: string;
+  gapRef?: string;
   alignItems: LayoutAlignment;
   justifyContent: LayoutJustify;
   children: DocumentNode[];
@@ -251,5 +255,6 @@ export interface Document {
   version: 1;
   children: DocumentNode[];
   palette: PaletteColor[];
+  spacing: SpacingToken[];
   components: ComponentDefinition[];
 }

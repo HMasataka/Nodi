@@ -1,5 +1,5 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis } from "@/document/commands/index.ts";
-import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
@@ -12,6 +12,7 @@ import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeCo
 interface InspectorProps {
   selected?: DocumentNode;
   selectedCount?: number;
+  spacingTokens?: SpacingToken[];
   onRename(name: string): void;
   onGeometry(geometry: Geometry): void;
   onRotation(rotation: number): void;
@@ -41,7 +42,7 @@ interface InspectorProps {
   componentName?: string;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -148,7 +149,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
             <button type="button" className="file-button" onClick={onCreateComponent}>コンポーネントを作成</button>
             <div className="property-divider" />
             <div className="field-label">プレビュー</div>
-            <FramePreview key={selected.id} frame={selected} />
+            <FramePreview key={selected.id} frame={selected} spacing={spacingTokens} />
             <button type="button" className="file-button export-button" onClick={onExportFrame} disabled={isExporting}>
               {isExporting ? "PNG を生成中…" : "PNG に書き出す"}
             </button>
