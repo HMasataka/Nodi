@@ -61,7 +61,8 @@ function resolveInstance(instance: InstanceNode, document: Document, stack: Set<
   const nextStack = new Set(stack);
   nextStack.add(instance.componentRef);
   const resolved = resolveNode(definition.node, document, nextStack, instance.overrides);
-  return { ...resolved, x: instance.x, y: instance.y, width: instance.width, height: instance.height };
+  // 解決後もインスタンス自身の ID と名前を保持し、キャンバスでの選択・操作をインスタンスに紐付ける。
+  return { ...resolved, id: instance.id, name: instance.name, x: instance.x, y: instance.y, width: instance.width, height: instance.height };
 }
 
 /**
