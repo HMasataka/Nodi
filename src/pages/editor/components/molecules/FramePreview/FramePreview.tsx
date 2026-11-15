@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 
-import type { FrameNode } from "@/document/types.ts";
 import { measureNode } from "@/rendering/measure.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { CanvasNode, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
+import type { FrameNode, SpacingToken } from "@/document/types.ts";
 
 const PRESETS = [320, 390, 768, 1024, 1440];
 const PREVIEW_WIDTH = 232;
@@ -17,15 +17,15 @@ const previewInteraction: NodeInteraction = {
   onImageError: noOp,
 };
 
-export function FramePreview({ frame }: { frame: FrameNode }) {
+export function FramePreview({ frame, spacing = [] }: { frame: FrameNode; spacing?: SpacingToken[] }) {
   const [input, setInput] = useState(String(frame.width));
   const width = (() => {
     const value = Number(input);
     return Number.isFinite(value) && value > 0 ? value : frame.width;
   })();
   const resolved = useMemo(() => resolveDocumentLayout(
-    { version: 1, children: [{ ...frame, width }], palette: [], components: [] }, { measure: measureNode },
-  ).children[0] as FrameNode, [frame, width]);
+    { version: 1, children: [{ ...frame, width }], palette: [], spacing, components: [] }, { measure: measureNode },
+  ).children[0] as FrameNode, [frame, width, spacing]);
   const scale = PREVIEW_WIDTH / width;
   const height = frame.height * scale;
 

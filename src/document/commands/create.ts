@@ -13,7 +13,7 @@ export type AddNodeInput = Geometry & { parentId?: string; name?: string } & (
 );
 
 export function createDocument(): Document {
-  return { version: 1, children: [], palette: [], components: [] };
+  return { version: 1, children: [], palette: [], spacing: [], components: [] };
 }
 
 export function addNode(

@@ -36,6 +36,11 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_shape_style": return withInput(agentInputs.set_shape_style, args, ({ id, ...style }) => api.setShapeStyle(id, style));
       case "set_path": return withInput(agentInputs.set_path, args, ({ id, ...path }) => api.setPath(id, path));
       case "set_frame_style": return withInput(agentInputs.set_frame_style, args, ({ id, ...style }) => api.setFrameStyle(id, style));
+      case "set_frame_layout": return withInput(agentInputs.set_frame_layout, args, ({ id, ...patch }) => api.setFrameLayout(id, patch));
+      case "add_spacing_token": return withInput(agentInputs.add_spacing_token, args, ({ name, value }) => api.addSpacingToken(name, value));
+      case "rename_spacing_token": return withInput(agentInputs.rename_spacing_token, args, ({ id, name }) => api.changeSpacingToken(id, { name }));
+      case "set_spacing_token": return withInput(agentInputs.set_spacing_token, args, ({ id, value }) => api.changeSpacingToken(id, { value }));
+      case "remove_spacing_token": return withInput(agentInputs.remove_spacing_token, args, ({ id }) => api.changeSpacingToken(id, { remove: true }));
       case "set_border": return withInput(agentInputs.set_border, args, ({ id, border }) => api.setBorder(id, border));
       case "set_image_style": return withInput(agentInputs.set_image_style, args, ({ id, ...style }) => api.setImageStyle(id, style));
       case "set_image_filters": return withInput(agentInputs.set_image_filters, args, ({ id, filters }) => api.setImageFilters(id, filters));
