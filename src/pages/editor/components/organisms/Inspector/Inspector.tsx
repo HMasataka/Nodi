@@ -1,4 +1,4 @@
-import type { Alignment, FrameLayoutPatch, LayerDirection, SizeAxis, SizeConstraintPatch } from "@/document/commands/index.ts";
+import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
@@ -32,11 +32,13 @@ interface InspectorProps {
   onDelete(): void;
   onReorder(direction: LayerDirection): void;
   onAlign?(alignment: Alignment): void;
+  spacing?: { x?: SelectionSpacing; y?: SelectionSpacing; error?: string };
+  onDistribute?(axis: SpacingAxis, mode: "equal" | number): void;
   onExportFrame(): void;
   isExporting: boolean;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -50,6 +52,28 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           {selectedCount > 1 && onAlign && <div className="alignment-actions" aria-label="選択要素の整列">
             {([ ["左", "left"], ["横中央", "centerX"], ["右", "right"], ["上", "top"], ["縦中央", "centerY"], ["下", "bottom"] ] as const).map(([label, alignment]) =>
               <button key={alignment} type="button" className="file-button" onClick={() => onAlign(alignment)}>{label}</button>)}
+          </div>}
+          {selectedCount >= 3 && spacing && <div className="spacing-actions" aria-label="選択要素の間隔">
+            <div className="field-label">要素間隔（px）</div>
+            {spacing.error ? <p className="property-help">{spacing.error}</p> : (["x", "y"] as const).map((axis) => {
+              const intervals = spacing[axis]?.intervals ?? [];
+              const uniform = intervals.every(({ distance }) => Math.abs(distance - intervals[0].distance) < 1e-6);
+              return <div key={axis} className="spacing-axis">
+                <span>{axis === "x" ? "横" : "縦"}</span>
+                <span className="spacing-values">{intervals.map(({ distance }) => Number(distance.toFixed(2))).join(" / ")} px</span>
+                <button className="file-button" type="button" onClick={() => onDistribute?.(axis, "equal")}>均等</button>
+                <label>{axis === "x" ? "横間隔を指定" : "縦間隔を指定"}
+                  <input key={`${axis}:${intervals.map(({ distance }) => distance).join(":")}`} type="number" min="0" step="any"
+                    defaultValue={uniform && intervals[0].distance >= 0 ? Number(intervals[0].distance.toFixed(2)) : ""}
+                    placeholder="px" onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+                    onBlur={(event) => {
+                      const raw = event.currentTarget.value.trim();
+                      const value = Number(raw);
+                      if (raw !== "" && Number.isFinite(value) && value >= 0) onDistribute?.(axis, value);
+                    }} />
+                </label>
+              </div>;
+            })}
           </div>}
           <label className="field-label" htmlFor="node-name">名前</label>
           <NameEditor key={`${selected.id}:${selected.name}`} node={selected} onRename={onRename} />

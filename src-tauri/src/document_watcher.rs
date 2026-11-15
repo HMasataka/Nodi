@@ -1,8 +1,8 @@
 use std::{
     path::{Path, PathBuf},
     sync::{
-        mpsc::{self, Receiver, RecvTimeoutError, Sender},
         Mutex,
+        mpsc::{self, Receiver, RecvTimeoutError, Sender},
     },
     thread,
     time::{Duration, Instant},
@@ -39,7 +39,11 @@ impl WatchState {
 }
 
 #[tauri::command]
-pub fn start_watch(app: AppHandle, path: String, state: State<'_, WatchState>) -> Result<(), String> {
+pub fn start_watch(
+    app: AppHandle,
+    path: String,
+    state: State<'_, WatchState>,
+) -> Result<(), String> {
     // 既存の監視があれば止めてから開始する（開き直し・保存先変更に対応）。
     state.stop_watching();
 

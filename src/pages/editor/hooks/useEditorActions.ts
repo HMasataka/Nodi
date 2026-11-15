@@ -8,8 +8,8 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, deleteNode, deleteNodes, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
-  removeAnimation, removeKeyframe, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch,
+  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, deleteNode, deleteNodes, distributeNodes, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
+  removeAnimation, removeKeyframe, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
@@ -98,6 +98,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
       onDelete: deleteSelected,
       onReorder: (direction: LayerDirection) => { if (selectedId) reorderLayer(selectedId, direction); },
       onAlign: (alignment: Alignment) => applyDocument(alignNodes(designRef.current, selectedIds, alignment)),
+      onDistribute: (axis: SpacingAxis, mode: "equal" | number) => applyDocument(distributeNodes(designRef.current, selectedIds, axis, mode)),
       onExportFrame: () => { void exportSelectedFrame(); },
       isExporting,
     },
