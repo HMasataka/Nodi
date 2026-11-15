@@ -9,7 +9,7 @@ import { frameNodeStyle } from "../src/pages/editor/canvasStyles.ts";
 import { renderFramePng } from "../src/export/framePng.ts";
 import { setBlur } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
-import { document, ellipse, frame, image, rectangle, success, text } from "./support/factories.ts";
+import { document, ellipse, frame, image, rectangle, resolveHex, success, text } from "./support/factories.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
 test("全体ぼかしは既定0を省略し、全種別で保存・Undo/Redo・MCP経由の編集を行える", () => {
@@ -34,7 +34,7 @@ test("全体ぼかしは既定0を省略し、全種別で保存・Undo/Redo・M
     apply(next) { current = next; } });
   assert.equal(dispatchAgentRequest(api, "set_blur", { id: "frame", blur: 3 }).ok, true);
   assert.equal(current.children[0].blur, 3);
-  assert.equal(frameNodeStyle(frame({ blur: 2, shadow: { color: "#00000080", offsetX: 1, offsetY: 2, blur: 4 } })).filter,
+  assert.equal(frameNodeStyle(frame({ blur: 2, shadow: { color: "#00000080", offsetX: 1, offsetY: 2, blur: 4 } }), resolveHex).filter,
     "blur(2px) drop-shadow(1px 2px 4px #00000080)");
 });
 

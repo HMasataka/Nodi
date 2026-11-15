@@ -6,7 +6,7 @@ export interface Geometry {
 }
 
 export interface RotatedGeometry extends Geometry { rotation: number }
-export interface Shadow { color: string; offsetX: number; offsetY: number; blur: number }
+export interface Shadow { color: Color; offsetX: number; offsetY: number; blur: number }
 export type LayoutMode = "none" | "horizontal" | "vertical";
 export const LAYOUT_MODES = ["none", "horizontal", "vertical"] as const;
 export type LayoutAlignment = "start" | "center" | "end";
@@ -60,12 +60,12 @@ export interface CornerRadii {
   bottomLeft: number;
 }
 
-export interface Stroke { color: string; width: number }
+export interface Stroke { color: Color; width: number }
 export type Border = Partial<Record<"top" | "right" | "bottom" | "left", Stroke>>;
-export interface FillStop { position: number; color: string }
+export interface FillStop { position: number; color: Color }
 export interface LinearFill { type: "linear"; start: { x: number; y: number }; end: { x: number; y: number }; stops: FillStop[] }
 export interface RadialFill { type: "radial"; center: { x: number; y: number }; radius: number; stops: FillStop[] }
-export type Fill = string | LinearFill | RadialFill | null;
+export type Fill = Color | LinearFill | RadialFill | null;
 export interface ShapeStyle { fill: Fill; stroke: Stroke | null }
 export interface BoxStyle extends ShapeStyle { cornerRadii: CornerRadii; border: Border }
 export type RectangleStyle = BoxStyle;
@@ -84,6 +84,15 @@ export interface PaletteColor {
   name: string;
   color: string;
 }
+
+/** パレット色への参照。名前ではなく安定した ID で参照する。 */
+export interface PaletteRef {
+  type: "palette";
+  id: string;
+}
+
+/** 色の値。直接の 6/8桁 HEX 指定か、パレット色への参照。 */
+export type Color = string | PaletteRef;
 
 export const DEFAULT_RECTANGLE_STYLE: RectangleStyle = {
   fill: "#f3d9c8",
@@ -162,7 +171,7 @@ export interface FrameNode extends NodeGeometry {
 
 export interface TextStyle {
   fontSize: number;
-  color: string;
+  color: Color;
   textAlign: "left" | "center" | "right";
   fontFamily: TextFontFamily;
   fontWeight: number;
@@ -183,14 +192,14 @@ export const DEFAULT_TEXT_STYLE: TextStyle = {
 export interface TextMark {
   start: number;
   end: number;
-  color?: string;
+  color?: Color;
   fontWeight?: number;
   underline?: true;
   code?: true;
 }
 
 export interface TextMarkPatch {
-  color?: string | null;
+  color?: Color | null;
   fontWeight?: number | null;
   underline?: boolean;
   code?: boolean;
@@ -216,7 +225,7 @@ export interface InstanceOverride {
   content?: string;
   fill?: Fill;
   stroke?: Stroke | null;
-  color?: string;
+  color?: Color;
   source?: string;
   width?: number;
   height?: number;

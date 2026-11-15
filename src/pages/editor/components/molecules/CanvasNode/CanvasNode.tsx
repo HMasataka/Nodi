@@ -2,7 +2,8 @@ import { Fragment, type PointerEvent, type ReactNode, useId, useMemo } from "rea
 
 import type { PathPointPart } from "@/document/pathEdit.ts";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
-import type { Border, DocumentNode, PathNode, TextNode } from "@/document/types";
+import { useColorResolver } from "@/pages/editor/colorContext.ts";
+import type { Border, Color, DocumentNode, PathNode, TextNode } from "@/document/types";
 import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths, vectorShape } from "@/document/shapePath.ts";
 import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
@@ -27,8 +28,8 @@ function shapeSvg(shape: ShapePaths, gradientId: string, width: number, height: 
   );
 }
 
-function borderSvg(width: number, height: number, border: Border) {
-  const paths = borderPaths(width, height, border);
+function borderSvg(width: number, height: number, border: Border, resolve: (color: Color) => string) {
+  const paths = borderPaths(width, height, border, resolve);
   return paths.length > 0 && <svg className="canvas-shape canvas-border" aria-hidden="true">
     {paths.map((edge) => <path key={edge.side} d={pathToString(edge.commands)} fill={edge.color} />)}
   </svg>;
@@ -112,6 +113,7 @@ export function CanvasNodes({ nodes, selectedId, selectedIds = selectedId ? [sel
 }
 
 export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction, zoom = 1 }: CanvasNodeProps) {
+  const resolve = useColorResolver();
   const { onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError } = interaction;
   const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
   const clipId = useId();
@@ -128,27 +130,27 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
 
   if (node.type === "frame") return (
     <div className={`canvas-frame${selectedIds.includes(node.id) ? " is-selected" : ""}`}
-      data-frame-id={node.id} role="group" aria-label={node.name} style={frameNodeStyle(node)}
+      data-frame-id={node.id} role="group" aria-label={node.name} style={frameNodeStyle(node, resolve)}
       onPointerDown={(event) => { if (event.target === event.currentTarget) onNodePointerDown(event, node); }}
       {...pointerEvents}>
-       {shapeSvg(boxShape(node.width, node.height, node.style), clipId, node.width, node.height)}
+       {shapeSvg(boxShape(node.width, node.height, node.style, resolve), clipId, node.width, node.height)}
       <div className="frame-contents" style={frameContentsStyle(node)}>
         <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
       </div>
-      {borderSvg(node.width, node.height, node.style.border)}
+      {borderSvg(node.width, node.height, node.style.border, resolve)}
       {handle}
     </div>
   );
   if (node.type === "text") return (
     <button type="button" className={`canvas-text${selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
-      style={textNodeStyle(node)}
+      style={textNodeStyle(node, resolve)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {lines?.map((line, index) => <span key={index} className="canvas-text-line"
         style={textLineStyle(node)}>
         {line.fragments.map((fragment, part) => {
           if (!fragment.mark) return fragment.text;
-          return <span key={part} style={textMarkStyle(node, fragment.mark)}>{fragment.text}</span>;
+          return <span key={part} style={textMarkStyle(node, fragment.mark, resolve)}>{fragment.text}</span>;
         })}
       </span>)}
       {handle}
@@ -156,7 +158,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
   );
   if (node.type === "image") return (
     <button type="button" className={`canvas-image${selectedIds.includes(node.id) ? " is-selected" : ""}`}
-      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={imageNodeStyle(node)}
+      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={imageNodeStyle(node, resolve)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       <svg viewBox={`0 0 ${node.width} ${node.height}`} aria-hidden="true">
         <defs><clipPath id={clipId}><path d={pathToString(roundedRectPath(0, 0, node.width, node.height, node.style.cornerRadii))} /></clipPath></defs>
@@ -169,9 +171,9 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
   );
   if (node.type === "path") return <Fragment>
     <button type="button" className={`canvas-node${selectedIds.includes(node.id) ? " is-selected" : ""}`}
-      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={shapeNodeStyle(node)}
+      aria-label={node.name} aria-pressed={selectedIds.includes(node.id)} style={shapeNodeStyle(node, resolve)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
-      {shapeSvg(vectorShape(node), clipId, node.width, node.height)}
+      {shapeSvg(vectorShape(node, resolve), clipId, node.width, node.height)}
       {handle}
     </button>
     {selectedId === node.id && pathControls(node, zoom, interaction)}
@@ -182,14 +184,14 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
     <button type="button"
       className={`canvas-node${node.isMask ? " canvas-mask is-selected" : selectedIds.includes(node.id) ? " is-selected" : ""}`}
       aria-label={node.name} aria-pressed={selectedIds.includes(node.id)}
-      style={shapeNodeStyle(node)}
+      style={shapeNodeStyle(node, resolve)}
       onPointerDown={(event) => onNodePointerDown(event, node)} {...pointerEvents}>
       {node.isMask
         ? <svg className="canvas-shape" aria-hidden="true"><path d={pathToString(node.type === "rectangle"
-          ? boxShape(node.width, node.height, node.style).fill : ellipseShape(node.width, node.height, node.style).fill)}
+          ? boxShape(node.width, node.height, node.style, resolve).fill : ellipseShape(node.width, node.height, node.style, resolve).fill)}
           fill="none" stroke="currentColor" strokeDasharray="4 3" /></svg>
-        : shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style) : ellipseShape(node.width, node.height, node.style), clipId, node.width, node.height)}
-      {node.type === "rectangle" && !node.isMask && borderSvg(node.width, node.height, node.style.border)}
+        : shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style, resolve) : ellipseShape(node.width, node.height, node.style, resolve), clipId, node.width, node.height)}
+      {node.type === "rectangle" && !node.isMask && borderSvg(node.width, node.height, node.style.border, resolve)}
       {handle}
     </button>
   );

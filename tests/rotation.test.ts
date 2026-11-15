@@ -7,7 +7,7 @@ import { setRotation } from "../src/document/commands/index.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { compareElementRevisions, measureElementAtRevision } from "../src/document/measure.ts";
 import { composeTransform, cornersAabb, IDENTITY_TRANSFORM, nodeTransform, rotatePoint, transformedCorners } from "../src/document/transform.ts";
-import { document, ellipse, failure, frame, image, rectangle, success, text } from "./support/factories.ts";
+import { document, ellipse, failure, frame, image, rectangle, resolveHex, success, text } from "./support/factories.ts";
 import { frameNodeStyle, imageNodeStyle, shapeNodeStyle, textNodeStyle } from "../src/pages/editor/canvasStyles.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
@@ -106,11 +106,11 @@ test("DOM スタイルは全ノード種別で中心回転し、未回転なら 
     [frame({ rotation: 30 }), frameNodeStyle], [rectangle({ rotation: 30 }), shapeNodeStyle],
     [ellipse({ rotation: 30 }), shapeNodeStyle], [text({ rotation: 30 }), textNodeStyle], [image({ rotation: 30 }), imageNodeStyle],
   ] as const) {
-    const computed = style(node);
+    const computed = style(node, resolveHex);
     assert.equal(computed.transform, "rotate(30deg)");
     assert.equal(computed.transformOrigin, "center center");
     assert.equal(computed.width, node.width);
     assert.equal(computed.left, node.x);
   }
-  assert.equal(shapeNodeStyle(rectangle()).transform, undefined);
+  assert.equal(shapeNodeStyle(rectangle(), resolveHex).transform, undefined);
 });

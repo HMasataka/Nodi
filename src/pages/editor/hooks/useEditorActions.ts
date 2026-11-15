@@ -8,8 +8,8 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
-  removeAnimation, removeComponent, removeKeyframe, renameComponent, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch,
+  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, distributeNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
+  removeAnimation, removeComponent, removeKeyframe, renameComponent, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
@@ -73,7 +73,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
     exporting.current = true;
     setIsExporting(true);
     try {
-      const rendered = await renderFramePng(selected, undefined, { timeMs: playback.playhead, scrollProgress: playback.scrollProgress, components: designRef.current.components });
+      const rendered = await renderFramePng(selected, undefined, { timeMs: playback.playhead, scrollProgress: playback.scrollProgress, components: designRef.current.components }, designRef.current.palette);
       if (Result.isFailure(rendered)) { setError(rendered.error.message); return; }
       const name = selected.name.trim().replace(/[\\/:*?"<>|]/g, "_") || "frame";
       const saved = await savePng(pngFiles, rendered.value, `${name}.png`);
@@ -131,6 +131,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
       onDelete: deleteSelected,
       onReorder: (direction: LayerDirection) => { if (selectedId) reorderLayer(selectedId, direction); },
       onAlign: (alignment: Alignment) => applyDocument(alignNodes(designRef.current, selectedIds, alignment)),
+      onDistribute: (axis: SpacingAxis, mode: "equal" | number) => applyDocument(distributeNodes(designRef.current, selectedIds, axis, mode)),
       onExportFrame: () => { void exportSelectedFrame(); },
       isExporting,
     },

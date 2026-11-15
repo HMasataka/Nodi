@@ -1,14 +1,17 @@
+import { Result } from "@praha/byethrow";
 import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
-import type { DocumentNode } from "@/document/types.ts";
+import { ColorResolverContext } from "@/pages/editor/colorContext.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
+import { measureSelectionSpacing } from "@/document/commands/index.ts";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
+import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Timeline } from "@/pages/editor/components/organisms/Timeline";
@@ -17,6 +20,7 @@ import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
+import type { Color, DocumentNode } from "@/document/types.ts";
 import "@/App.css";
 
 function EditorPage() {
@@ -33,13 +37,19 @@ function EditorPage() {
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
   const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
+  const spacingX = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "x") : null;
+  const spacingY = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "y") : null;
+  const spacing = spacingX && spacingY ? Result.isFailure(spacingX) ? { error: spacingX.error.message }
+    : Result.isFailure(spacingY) ? { error: spacingY.error.message }
+      : { x: spacingX.value, y: spacingY.value } : undefined;
   const { drag, pathDrag, camera, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
     updateSelection, finishSelection, cancelSelection } = interaction;
 
-  return <main className="app-shell">
+  return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
+    <main className="app-shell">
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
       canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
       isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
@@ -52,7 +62,7 @@ function EditorPage() {
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
         onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
         onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
-      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onNodeEnter={(id) => setHoveredId(id)}
@@ -70,7 +80,7 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} {...actions.inspector}
+      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} {...actions.inspector}
         componentName={selectedComponentName}
         onCreateComponent={actions.components.onCreateFromSelected}
         onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }} />
@@ -81,7 +91,8 @@ function EditorPage() {
     {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
-  </main>;
+    </main>
+  </ColorResolverContext.Provider>;
 }
 
 export default EditorPage;

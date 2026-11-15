@@ -1,4 +1,5 @@
-import { type Fill, HEX_COLOR_PATTERN, type LinearFill, type RadialFill } from "@/document/types.ts";
+import { validColor } from "@/document/colorRef.ts";
+import { type Fill, type LinearFill, type RadialFill } from "@/document/types.ts";
 
 export const DEFAULT_LINEAR_FILL: LinearFill = {
   type: "linear", start: { x: 0, y: 0 }, end: { x: 1, y: 0 },
@@ -15,7 +16,7 @@ const point = (value: unknown) => value !== null && typeof value === "object" &&
 
 export function validFill(value: unknown): value is Fill {
   if (value === null) return true;
-  if (typeof value === "string") return HEX_COLOR_PATTERN.test(value);
+  if (validColor(value)) return true;
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const fill = value as Record<string, unknown>;
   if (fill.type === "linear") {
@@ -28,6 +29,6 @@ export function validFill(value: unknown): value is Fill {
   if (!Array.isArray(fill.stops) || fill.stops.length < 2) return false;
   const stops = fill.stops as LinearFill["stops"];
   return stops.every((stop, index) => stop && typeof stop === "object" && !Array.isArray(stop) &&
-    Object.keys(stop).sort().join() === "color,position" && unit(stop.position) && typeof stop.color === "string" && HEX_COLOR_PATTERN.test(stop.color) &&
+    Object.keys(stop).sort().join() === "color,position" && unit(stop.position) && validColor(stop.color) &&
     (index === 0 || stops[index - 1].position <= stop.position));
 }
