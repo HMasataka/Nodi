@@ -2,7 +2,7 @@ import { Result } from "@praha/byethrow";
 import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
-import type { DocumentNode } from "@/document/types.ts";
+import { ColorResolverContext } from "@/pages/editor/colorContext.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
@@ -11,6 +11,7 @@ import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
 import { measureSelectionSpacing } from "@/document/commands/index.ts";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
+import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Timeline } from "@/pages/editor/components/organisms/Timeline";
@@ -19,6 +20,7 @@ import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
+import type { Color, DocumentNode } from "@/document/types.ts";
 import "@/App.css";
 
 function EditorPage() {
@@ -44,7 +46,8 @@ function EditorPage() {
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
     updateSelection, finishSelection, cancelSelection } = interaction;
 
-  return <main className="app-shell">
+  return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
+    <main className="app-shell">
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
       canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
       isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
@@ -80,7 +83,8 @@ function EditorPage() {
     {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
-  </main>;
+    </main>
+  </ColorResolverContext.Provider>;
 }
 
 export default EditorPage;

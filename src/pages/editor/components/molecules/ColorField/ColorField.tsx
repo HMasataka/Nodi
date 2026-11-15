@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 
+import type { Color } from "@/document/types.ts";
+import { useColorResolver } from "@/pages/editor/colorContext.ts";
 import { alphaByte, rgbColor, withAlphaByte, withRgbColor } from "@/document/color.ts";
 
 export function ColorField({ label, value, fallback, disabled = false, onChange }: {
-  label: string; value: string | null; fallback: string; disabled?: boolean; onChange(color: string): void;
+  label: string; value: Color | null; fallback: Color; disabled?: boolean; onChange(color: string): void;
 }) {
-  const current = value ?? fallback;
+  const resolve = useColorResolver();
+  const current = resolve(value ?? fallback);
   const [rgb, setRgb] = useState(rgbColor(current));
   const [alpha, setAlpha] = useState(String(alphaByte(current)));
   useEffect(() => {
