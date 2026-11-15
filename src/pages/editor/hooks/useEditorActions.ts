@@ -1,6 +1,8 @@
 import { Result } from "@praha/byethrow";
 import { useRef, useState } from "react";
 
+import { documentFiles } from "@/ipc/documentFiles";
+import { openDocumentFile } from "@/persistence/documentFile.ts";
 import { pngFiles } from "@/ipc/pngFiles";
 import { renderFramePng } from "@/export/framePng";
 import { savePng } from "@/export/savePng";
@@ -8,8 +10,8 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, detachInstance, distributeNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
-  removeAnimation, removeComponent, removeKeyframe, renameComponent, reorderNode, resetInstanceOverride, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setInstanceOverride, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
+  addAnimation, addKeyframe, addPaletteColor, addSpacingToken, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, detachInstance, distributeNodes, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, importPalette, type KeyframePatch, type LayerDirection,
+  removeAnimation, removeComponent, removeKeyframe, removePaletteColor, removeSpacingToken, renameComponent, renamePaletteColor, renameSpacingToken, reorderNode, resetInstanceOverride, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setInstanceOverride, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPaletteColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, InstanceOverride, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
@@ -120,10 +122,66 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
     else setSelectedId(id);
   }
 
+  function createPaletteColor() {
+    const names = new Set(designRef.current.palette.map((item) => item.name));
+    let number = 1;
+    while (names.has(`色 ${number}`)) number++;
+    const result = addPaletteColor(designRef.current, { name: `色 ${number}`, color: "#000000" });
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    recordDocument(result.value.document);
+  }
+
+  function renamePalette(id: string, name: string) {
+    applyDocument(renamePaletteColor(designRef.current, id, name));
+  }
+
+  function recolorPalette(id: string, color: string) {
+    applyDocument(setPaletteColor(designRef.current, id, color));
+  }
+
+  function deletePalette(id: string) {
+    applyDocument(removePaletteColor(designRef.current, id));
+  }
+
+  function duplicatePalette(id: string) {
+    const result = duplicatePaletteColor(designRef.current, id);
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    recordDocument(result.value.document);
+  }
+
+  async function importPaletteFromFile() {
+    const opened = await openDocumentFile(documentFiles);
+    if (Result.isFailure(opened)) { setError(opened.error.message); return; }
+    if (opened.value === null) return;
+    const entries = opened.value.document.palette.map((item) => ({ name: item.name, color: item.color }));
+    if (entries.length === 0) { setError("取り込み元のドキュメントにパレットがありません"); return; }
+    const result = importPalette(designRef.current, entries);
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    recordDocument(result.value.document);
+  }
+
   return {
     ...creation,
     selectLayer,
     reorderLayer,
+    spacingTokens: {
+      onCreate: (name: string, value: number) => {
+        const result = addSpacingToken(designRef.current, name, value);
+        if (Result.isFailure(result)) { setError(result.error.message); return; }
+        recordDocument(result.value.document);
+      },
+      onRename: (id: string, name: string) => applyDocument(renameSpacingToken(designRef.current, id, name)),
+      onValue: (id: string, value: number) => applyDocument(setSpacingToken(designRef.current, id, value)),
+      onRemove: (id: string) => applyDocument(removeSpacingToken(designRef.current, id)),
+    },
+    palette: {
+      onCreate: createPaletteColor,
+      onRename: renamePalette,
+      onRecolor: recolorPalette,
+      onDelete: deletePalette,
+      onDuplicate: duplicatePalette,
+      onImport: () => { void importPaletteFromFile(); },
+    },
     inspector: {
       onRename: renameSelected,
       onGeometry: (value: Geometry) => changeSelected(value, setNodeGeometry),

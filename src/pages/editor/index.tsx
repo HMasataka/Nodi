@@ -2,7 +2,6 @@ import { Result } from "@praha/byethrow";
 import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
-import { ColorResolverContext } from "@/pages/editor/colorContext.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
@@ -10,10 +9,12 @@ import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
 import { measureSelectionSpacing } from "@/document/commands/index.ts";
+import { PalettePanel } from "@/pages/editor/components/organisms/PalettePanel";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
+import { spacingTokenUsage } from "@/document/spacing.ts";
 import { Timeline } from "@/pages/editor/components/organisms/Timeline";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
@@ -21,6 +22,7 @@ import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Color, DocumentNode } from "@/document/types.ts";
+import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContext.ts";
 import "@/App.css";
 
 function EditorPage() {
@@ -50,6 +52,7 @@ function EditorPage() {
     updateSelection, finishSelection, cancelSelection } = interaction;
 
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
+    <PaletteContext.Provider value={design.palette}>
     <main className="app-shell">
     <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
       canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
@@ -58,11 +61,14 @@ function EditorPage() {
       drawTool={drawTool} onDrawToolChange={setDrawTool} />
 
     <div className="workspace">
-      <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
-        highlightedComponentId={highlightedComponentId}
-        onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
-        onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
-        onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
+      <div className="left-panels">
+        <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
+          highlightedComponentId={highlightedComponentId}
+          onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
+          onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
+          onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
+        <PalettePanel palette={design.palette} {...actions.palette} />
+      </div>
       <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
@@ -81,7 +87,10 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} spacingTokens={design.spacing} {...actions.inspector}
+      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} spacingTokens={design.spacing}
+        spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}
+        onCreateSpacingToken={actions.spacingTokens.onCreate} onRenameSpacingToken={actions.spacingTokens.onRename}
+        onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}
         componentName={selectedComponentName} componentNode={selectedComponentNode}
         onCreateComponent={actions.components.onCreateFromSelected}
         onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }}
@@ -96,6 +105,7 @@ function EditorPage() {
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
     </main>
+    </PaletteContext.Provider>
   </ColorResolverContext.Provider>;
 }
 
