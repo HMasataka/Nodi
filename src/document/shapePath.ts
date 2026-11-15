@@ -1,4 +1,4 @@
-import type { Border, BoxStyle, CornerRadii, Fill, PathNode, ShapeStyle } from "@/document/types.ts";
+import type { Border, BoxStyle, Color, CornerRadii, Fill, PathNode, ShapeStyle } from "@/document/types.ts";
 import { type Transform, transformPoint } from "@/document/transform.ts";
 
 export type PathCommand =
@@ -74,27 +74,43 @@ function insetRadii(radii: CornerRadii, inset: number): CornerRadii {
   };
 }
 
+export interface ResolvedFillStop { position: number; color: string }
+export interface ResolvedLinearFill { type: "linear"; start: { x: number; y: number }; end: { x: number; y: number }; stops: ResolvedFillStop[] }
+export interface ResolvedRadialFill { type: "radial"; center: { x: number; y: number }; radius: number; stops: ResolvedFillStop[] }
+export type ResolvedFill = string | ResolvedLinearFill | ResolvedRadialFill | null;
+
+export type ColorResolver = (color: Color) => string;
+
+export function resolveFill(fill: Fill, resolve: ColorResolver): ResolvedFill {
+  if (fill === null) return null;
+  if (typeof fill === "string" || fill.type === "palette") return resolve(fill);
+  if (fill.type === "linear") {
+    return { type: "linear", start: fill.start, end: fill.end, stops: fill.stops.map((stop) => ({ position: stop.position, color: resolve(stop.color) })) };
+  }
+  return { type: "radial", center: fill.center, radius: fill.radius, stops: fill.stops.map((stop) => ({ position: stop.position, color: resolve(stop.color) })) };
+}
+
 export interface ShapePaths {
   fill: PathCommand[];
-  fillColor: Fill;
+  fillColor: ResolvedFill;
   stroke: PathCommand[] | null;
   strokeColor: string;
   strokeWidth: number;
   fillRule?: "nonzero" | "evenodd";
 }
 
-export function vectorShape(node: PathNode): ShapePaths {
+export function vectorShape(node: PathNode, resolve: ColorResolver): ShapePaths {
   const commands: PathCommand[] = node.commands.map((command) => command.kind === "close" ? command : command.kind === "cubic"
     ? { kind: "cubic", x: command.x * node.width, y: command.y * node.height,
       x1: command.x1 * node.width, y1: command.y1 * node.height, x2: command.x2 * node.width, y2: command.y2 * node.height }
     : { kind: command.kind, x: command.x * node.width, y: command.y * node.height });
-  return { fill: commands, fillColor: node.style.fill, stroke: node.style.stroke?.width ? commands : null,
-    strokeColor: node.style.stroke?.color ?? "#000000", strokeWidth: node.style.stroke?.width ?? 0, fillRule: node.fillRule };
+  return { fill: commands, fillColor: resolveFill(node.style.fill, resolve), stroke: node.style.stroke?.width ? commands : null,
+    strokeColor: resolve(node.style.stroke?.color ?? "#000000"), strokeWidth: node.style.stroke?.width ?? 0, fillRule: node.fillRule };
 }
 
 export interface BorderPath { side: keyof Border; color: string; commands: PathCommand[] }
 
-export function borderPaths(width: number, height: number, border: Border): BorderPath[] {
+export function borderPaths(width: number, height: number, border: Border, resolve: ColorResolver): BorderPath[] {
   const top = Math.min(border.top?.width ?? 0, height);
   const right = Math.min(border.right?.width ?? 0, width);
   const bottom = Math.min(border.bottom?.width ?? 0, height);
@@ -115,7 +131,7 @@ export function borderPaths(width: number, height: number, border: Border): Bord
     const edge = border[side];
     if (!edge || edge.width === 0) return [];
     const [first, ...rest] = corners[side];
-    return [{ side, color: edge.color, commands: [
+    return [{ side, color: resolve(edge.color), commands: [
       { kind: "move" as const, x: first[0], y: first[1] },
       ...rest.map(([x, y]) => ({ kind: "line" as const, x, y })),
       { kind: "close" as const },
@@ -123,31 +139,31 @@ export function borderPaths(width: number, height: number, border: Border): Bord
   });
 }
 
-export function boxShape(width: number, height: number, style: BoxStyle): ShapePaths {
+export function boxShape(width: number, height: number, style: BoxStyle, resolve: ColorResolver): ShapePaths {
   const strokeWidth = Math.min(style.stroke?.width ?? 0, width, height);
   const inset = strokeWidth / 2;
   return {
     fill: roundedRectPath(0, 0, width, height, style.cornerRadii),
-    fillColor: style.fill,
+    fillColor: resolveFill(style.fill, resolve),
     stroke: style.stroke && strokeWidth > 0
       ? roundedRectPath(inset, inset, width - strokeWidth, height - strokeWidth, insetRadii(style.cornerRadii, inset))
       : null,
-    strokeColor: style.stroke?.color ?? "#000000",
+    strokeColor: resolve(style.stroke?.color ?? "#000000"),
     strokeWidth,
   };
 }
 
-export function ellipseShape(width: number, height: number, style: ShapeStyle): ShapePaths {
+export function ellipseShape(width: number, height: number, style: ShapeStyle, resolve: ColorResolver): ShapePaths {
   const strokeWidth = Math.min(style.stroke?.width ?? 0, width, height);
   const cx = width / 2;
   const cy = height / 2;
   return {
     fill: ellipsePath(cx, cy, cx, cy),
-    fillColor: style.fill,
+    fillColor: resolveFill(style.fill, resolve),
     stroke: style.stroke && strokeWidth > 0
       ? ellipsePath(cx, cy, Math.max(0, cx - strokeWidth / 2), Math.max(0, cy - strokeWidth / 2))
       : null,
-    strokeColor: style.stroke?.color ?? "#000000",
+    strokeColor: resolve(style.stroke?.color ?? "#000000"),
     strokeWidth,
   };
 }

@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 
-import { type ComponentDefinition, DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type InstanceNode, type PaletteColor, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
+import { type Color, type ComponentDefinition, DEFAULT_FRAME_STYLE, DEFAULT_IMAGE_STYLE, DEFAULT_RECTANGLE_STYLE, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, type EllipseNode, type FrameNode, type ImageNode, type InstanceNode, type PaletteColor, type PathNode, type RectangleNode, type TextNode } from "../../src/document/types.ts";
 
 type NodeOverrides<T extends DocumentNode> = Omit<Partial<T>, "style"> & { style?: Partial<T["style"]> };
 export const corners = (radius: number) => ({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
+
+/** テスト用の色解決。HEX はそのまま、参照は不透明な黒へ解決する。 */
+export const resolveHex = (color: Color): string => (typeof color === "string" ? color : "#000000");
 
 type SuccessResult<T> = { readonly type: "Success"; readonly value: T };
 type FailureResult<E> = { readonly type: "Failure"; readonly error: E };

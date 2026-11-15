@@ -9,7 +9,7 @@ import { renderFramePng } from "../src/export/framePng.ts";
 import { textMarkStyle } from "../src/pages/editor/canvasStyles.ts";
 import { alphaByte, rgbColor, withAlphaByte, withRgbColor } from "../src/document/color.ts";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
-import { document, frame, rectangle, success, text } from "./support/factories.ts";
+import { document, frame, rectangle, resolveHex, success, text } from "./support/factories.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 import { setBorder, setFrameStyle, setNodeStyle, setTextMarkRange, setTextStyle } from "../src/document/commands/index.ts";
 
@@ -61,7 +61,7 @@ test("SVGとPNGは同じ8桁色を塗り・線・文字へ渡す", async () => {
     interaction={{ onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp }} />);
   assert.match(markup, /fill="#11223380"/);
   assert.match(markup, /stroke="#44556640"/);
-  assert.equal(textMarkStyle(label, label.marks![0]).color, "#aabbcc55");
+  assert.equal(textMarkStyle(label, label.marks![0], resolveHex).color, "#aabbcc55");
   assert.match(markup, /canvas-mask-group/);
   const calls: string[] = [];
   const ctx = { save() {}, restore() {}, translate() {}, beginPath() {}, rect() {}, clip() { calls.push("clip"); }, moveTo() {}, lineTo() {}, ellipse() {}, closePath() {},

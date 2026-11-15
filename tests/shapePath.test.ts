@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-import { corners } from "./support/factories.ts";
 import { boxShape, ellipsePath, ellipseShape, normalizeRadii, pathToString, roundedRectPath } from "../src/document/shapePath.ts";
+import { corners, resolveHex } from "./support/factories.ts";
 
 test("4辺の合計から共通倍率で角丸を縮小し、0 は維持する", () => {
   const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
@@ -50,22 +50,22 @@ test("ellipsePath は2つの半円弧で楕円を描く", () => {
 });
 
 test("boxShape は線なしなら stroke を返さない", () => {
-  const shape = boxShape(20, 10, { fill: "#ffffff", stroke: null, cornerRadii: corners(0) });
+  const shape = boxShape(20, 10, { fill: "#ffffff", stroke: null, cornerRadii: corners(0) }, resolveHex);
   assert.equal(shape.fillColor, "#ffffff");
   assert.equal(shape.stroke, null);
 });
 
 test("boxShape の線は内側に寄り、線幅は寸法で抑える", () => {
-  const shape = boxShape(20, 10, { fill: null, stroke: { color: "#000000", width: 2 }, cornerRadii: corners(4) });
+  const shape = boxShape(20, 10, { fill: null, stroke: { color: "#000000", width: 2 }, cornerRadii: corners(4) }, resolveHex);
   assert.equal(shape.strokeWidth, 2);
   assert.deepEqual(shape.stroke, roundedRectPath(1, 1, 18, 8, corners(3)));
-  const oversized = boxShape(20, 10, { fill: null, stroke: { color: "#000000", width: 40 }, cornerRadii: corners(4) });
+  const oversized = boxShape(20, 10, { fill: null, stroke: { color: "#000000", width: 40 }, cornerRadii: corners(4) }, resolveHex);
   assert.equal(oversized.strokeWidth, 10);
   assert.deepEqual(oversized.stroke, roundedRectPath(5, 5, 10, 0, corners(0)));
 });
 
 test("ellipseShape の線は縦横を内側へ縮める", () => {
-  const shape = ellipseShape(20, 10, { fill: "#ffffff", stroke: { color: "#000000", width: 2 } });
+  const shape = ellipseShape(20, 10, { fill: "#ffffff", stroke: { color: "#000000", width: 2 } }, resolveHex);
   assert.deepEqual(shape.fill, ellipsePath(10, 5, 10, 5));
   assert.deepEqual(shape.stroke, ellipsePath(10, 5, 9, 4));
   assert.equal(shape.strokeWidth, 2);

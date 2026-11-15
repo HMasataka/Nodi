@@ -1,4 +1,6 @@
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
+import { resolveFill } from "@/document/shapePath.ts";
+import { useColorResolver } from "@/pages/editor/colorContext.ts";
 import { DEFAULT_LINEAR_FILL, DEFAULT_RADIAL_FILL } from "@/document/fill.ts";
 import type { Fill, LinearFill, RadialFill } from "@/document/types.ts";
 
@@ -19,16 +21,18 @@ function pointEditor(label: string, point: { x: number; y: number }, onChange: (
 }
 
 export function FillEditor({ label, fill, onChange }: { label: string; fill: Fill; onChange(fill: Fill): void }) {
-  const gradient = typeof fill === "object" && fill !== null ? fill : null;
+  const resolve = useColorResolver();
+  const resolved = resolveFill(fill, resolve);
+  const gradient = typeof resolved === "object" && resolved !== null ? resolved : null;
   function update(patch: Partial<LinearFill> | Partial<RadialFill>) {
     if (gradient) onChange({ ...gradient, ...patch } as LinearFill | RadialFill);
   }
   return <div className="fill-editor">
     <label>{label}
-      <select value={gradient?.type ?? (fill === null ? "none" : "solid")} onChange={(event) => {
+      <select value={gradient?.type ?? (resolved === null ? "none" : "solid")} onChange={(event) => {
         const kind = event.currentTarget.value;
         const stops = gradient?.stops.map((stop) => ({ ...stop })) ?? [
-          { position: 0, color: typeof fill === "string" ? fill : "#ffffff" }, { position: 1, color: "#000000" },
+          { position: 0, color: typeof resolved === "string" ? resolved : "#ffffff" }, { position: 1, color: "#000000" },
         ];
         onChange(kind === "none" ? null : kind === "solid" ? stops[0].color
           : kind === "radial" ? { ...DEFAULT_RADIAL_FILL, stops } : { ...DEFAULT_LINEAR_FILL, stops });
@@ -36,7 +40,7 @@ export function FillEditor({ label, fill, onChange }: { label: string; fill: Fil
         <option value="solid">単色</option><option value="linear">線形</option><option value="radial">放射状</option><option value="none">なし</option>
       </select>
     </label>
-    {typeof fill === "string" && <ColorField label="色" value={fill} fallback="#ffffff" onChange={onChange} />}
+    {typeof resolved === "string" && <ColorField label="色" value={resolved} fallback="#ffffff" onChange={onChange} />}
     {gradient && <>
       {gradient.type === "linear" ? <>
         {pointEditor("始点", gradient.start, (start) => update({ start }))}

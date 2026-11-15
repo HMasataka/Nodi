@@ -1,8 +1,9 @@
 import { Result } from "@praha/byethrow";
 
+import { validColor } from "@/document/colorRef.ts";
 import { validFill } from "@/document/fill.ts";
 import { vectorPathIssue } from "@/document/vectorPath.ts";
-import { type Border, type CornerRadii, type Document, type FrameStyle, HEX_COLOR_PATTERN, type ImageFilters, type ImageStylePatch, type PathFillRule, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
+import { type Border, type CornerRadii, type Document, type FrameStyle, type ImageFilters, type ImageStylePatch, type PathFillRule, type RectangleStyle, TEXT_FONT_FAMILIES, type TextMark, type TextMarkRangeEdit, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { patchTextMarks, remapTextMarks, textMarkIssue, textMarkPatchIssue } from "@/document/textMarks.ts";
 
@@ -60,11 +61,11 @@ function boxStyleIssue(patch: Partial<RectangleStyle>): string | undefined {
   if (Object.keys(patch).some((key) => !["fill", "stroke", "cornerRadii", "border"].includes(key))) return "未知のスタイル項目です";
   if (patch.fill !== undefined && !validFill(patch.fill)) return "塗りの色またはグラデーションが不正です";
   if (patch.stroke !== undefined && patch.stroke !== null &&
-    (typeof patch.stroke !== "object" || Object.keys(patch.stroke).some((key) => !["color", "width"].includes(key)) || !HEX_COLOR_PATTERN.test(patch.stroke.color) || !Number.isFinite(patch.stroke.width) || patch.stroke.width < 0)) return "線の色と幅が不正です";
+    (typeof patch.stroke !== "object" || Object.keys(patch.stroke).some((key) => !["color", "width"].includes(key)) || !validColor(patch.stroke.color) || !Number.isFinite(patch.stroke.width) || patch.stroke.width < 0)) return "線の色と幅が不正です";
   if (patch.cornerRadii !== undefined && cornerRadiiIssue(patch.cornerRadii)) return "角丸は 0 以上の有限の数値で指定してください";
   if (patch.border !== undefined && (patch.border === null || typeof patch.border !== "object" || Array.isArray(patch.border) ||
     Object.entries(patch.border).some(([side, edge]) => !["top", "right", "bottom", "left"].includes(side) || !edge || typeof edge !== "object" ||
-      Object.keys(edge).some((key) => !["color", "width"].includes(key)) || typeof edge.color !== "string" || !HEX_COLOR_PATTERN.test(edge.color) || !Number.isFinite(edge.width) || edge.width < 0))) return "辺線の色と幅が不正です";
+      Object.keys(edge).some((key) => !["color", "width"].includes(key)) || !validColor(edge.color) || !Number.isFinite(edge.width) || edge.width < 0))) return "辺線の色と幅が不正です";
 }
 
 function cornerRadiiIssue(radii: CornerRadii): boolean {
@@ -172,7 +173,7 @@ export function setTextStyle(document: Document, id: string, patch: Partial<Text
     letterSpacing: patch.letterSpacing ?? node.style.letterSpacing,
   };
   if (!Number.isFinite(style.fontSize) || style.fontSize <= 0) return Result.fail(new Error("文字サイズは正の有限値で指定してください"));
-  if (!HEX_COLOR_PATTERN.test(style.color)) return Result.fail(new Error("文字色は #RRGGBB または #RRGGBBAA 形式で指定してください"));
+  if (!validColor(style.color)) return Result.fail(new Error("文字色は #RRGGBB または #RRGGBBAA 形式、またはパレット参照で指定してください"));
   if (!["left", "center", "right"].includes(style.textAlign)) return Result.fail(new Error("文字揃えが不正です"));
   if (!TEXT_FONT_FAMILIES.includes(style.fontFamily)) return Result.fail(new Error("フォントが不正です"));
   if (!Number.isInteger(style.fontWeight) || style.fontWeight < 100 || style.fontWeight > 900 || style.fontWeight % 100 !== 0) {

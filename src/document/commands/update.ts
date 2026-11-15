@@ -1,7 +1,8 @@
 import { Result } from "@praha/byethrow";
 
 import { locateSelection } from "@/document/geometry.ts";
-import { type Document, type DocumentNode, type Geometry, HEX_COLOR_PATTERN, type Shadow } from "@/document/types.ts";
+import { validColor } from "@/document/colorRef.ts";
+import { type Document, type DocumentNode, type Geometry, type Shadow } from "@/document/types.ts";
 import { findNode, updateNode } from "@/document/commands/tree.ts";
 import { invertTransform, normalizeRotation, transformVector } from "@/document/transform.ts";
 import { validateGeometry, validateName } from "@/document/commands/validation.ts";
@@ -70,7 +71,7 @@ export function setOpacity(document: Document, id: string, opacity: number): Res
 export function setShadow(document: Document, id: string, shadow: Shadow | null): Result.Result<Document, Error> {
   if (shadow !== null && (!shadow || typeof shadow !== "object" || Array.isArray(shadow) ||
     Object.keys(shadow).sort().join() !== "blur,color,offsetX,offsetY" ||
-    typeof shadow.color !== "string" || !HEX_COLOR_PATTERN.test(shadow.color) ||
+    !validColor(shadow.color) ||
     !Number.isFinite(shadow.offsetX) || !Number.isFinite(shadow.offsetY) || !Number.isFinite(shadow.blur) || shadow.blur < 0)) {
     return Result.fail(new Error("影の色・位置・ぼかし量が不正です"));
   }

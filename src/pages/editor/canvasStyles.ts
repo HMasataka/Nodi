@@ -8,7 +8,7 @@ import { RENDER_COLORS } from "@/rendering/colors.ts";
 import { resolvedTextFont } from "@/document/textFonts.ts";
 import type { SnapGuide } from "@/pages/editor/snapping.ts";
 import { textFragmentStyle } from "@/rendering/textLayout.ts";
-import type { CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, NodeGeometry, PathNode, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
+import type { Color, CornerRadii, EllipseNode, FrameNode, Geometry, ImageNode, NodeGeometry, PathNode, RectangleNode, TextMark, TextNode } from "@/document/types.ts";
 import { cssImageFilter, hasImageFilters } from "@/document/imageFilters.ts";
 import { type Transform, transformPoint } from "@/document/transform.ts";
 
@@ -54,29 +54,29 @@ export function guideStyle(guide: SnapGuide): CSSProperties {
     : { top: guide.position, left: guide.from, width: guide.to - guide.from };
 }
 
-function nodeBoxStyle(node: NodeGeometry): CSSProperties {
+function nodeBoxStyle(node: NodeGeometry, resolve: (color: Color) => string): CSSProperties {
   return { left: node.x, top: node.y, width: node.width, height: node.height,
     ...(node.opacity === 1 ? {} : { opacity: node.opacity }),
     ...(node.blur > 0 || node.shadow ? { filter: [
       ...(node.blur > 0 ? [`blur(${node.blur}px)`] : []),
-      ...(node.shadow ? [`drop-shadow(${node.shadow.offsetX}px ${node.shadow.offsetY}px ${node.shadow.blur}px ${node.shadow.color})`] : []),
+      ...(node.shadow ? [`drop-shadow(${node.shadow.offsetX}px ${node.shadow.offsetY}px ${node.shadow.blur}px ${resolve(node.shadow.color)})`] : []),
     ].join(" ") } : {}),
     ...(node.rotation === 0 ? {} : { transform: `rotate(${node.rotation}deg)`, transformOrigin: "center center" }) };
 }
 
-export function frameNodeStyle(node: FrameNode): CSSProperties {
-  return { ...nodeBoxStyle(node), borderRadius: cornerRadiiCss(normalizeRadii(node.style.cornerRadii, node.width, node.height)) };
+export function frameNodeStyle(node: FrameNode, resolve: (color: Color) => string): CSSProperties {
+  return { ...nodeBoxStyle(node, resolve), borderRadius: cornerRadiiCss(normalizeRadii(node.style.cornerRadii, node.width, node.height)) };
 }
 
 export function frameContentsStyle(node: FrameNode): CSSProperties {
   return { overflow: node.clipContent ? "hidden" : "visible", borderRadius: "inherit" };
 }
 
-export function textNodeStyle(node: TextNode): CSSProperties {
+export function textNodeStyle(node: TextNode, resolve: (color: Color) => string): CSSProperties {
   return {
-    ...nodeBoxStyle(node),
+    ...nodeBoxStyle(node, resolve),
     fontSize: node.style.fontSize,
-    color: node.style.color,
+    color: resolve(node.style.color),
     textAlign: node.style.textAlign,
     lineHeight: node.style.lineHeight,
     letterSpacing: `${node.style.letterSpacing}px`,
@@ -88,28 +88,28 @@ export function textLineStyle(node: TextNode): CSSProperties {
   return { height: node.style.fontSize * node.style.lineHeight };
 }
 
-export function textMarkStyle(node: TextNode, mark: TextMark): CSSProperties {
+export function textMarkStyle(node: TextNode, mark: TextMark, resolve: (color: Color) => string): CSSProperties {
   const appearance = textFragmentStyle(node, mark);
   return {
     fontFamily: appearance.fontFamily,
     fontWeight: appearance.fontWeight,
-    color: appearance.color,
+    color: resolve(appearance.color),
     textDecorationLine: appearance.underline ? "underline" : undefined,
     backgroundColor: appearance.code ? RENDER_COLORS.codeBackground : undefined,
     borderRadius: appearance.code ? 3 : undefined,
   };
 }
 
-export function shapeNodeStyle(node: RectangleNode | EllipseNode | PathNode): CSSProperties {
-  return nodeBoxStyle(node);
+export function shapeNodeStyle(node: RectangleNode | EllipseNode | PathNode, resolve: (color: Color) => string): CSSProperties {
+  return nodeBoxStyle(node, resolve);
 }
 
 function cornerRadiiCss(radii: CornerRadii): string {
   return `${radii.topLeft}px ${radii.topRight}px ${radii.bottomRight}px ${radii.bottomLeft}px`;
 }
 
-export function imageNodeStyle(node: ImageNode): CSSProperties {
-  return { ...nodeBoxStyle(node), borderRadius: cornerRadiiCss(normalizeRadii(node.style.cornerRadii, node.width, node.height)) };
+export function imageNodeStyle(node: ImageNode, resolve: (color: Color) => string): CSSProperties {
+  return { ...nodeBoxStyle(node, resolve), borderRadius: cornerRadiiCss(normalizeRadii(node.style.cornerRadii, node.width, node.height)) };
 }
 
 export function imageContentStyle(node: ImageNode): CSSProperties {
