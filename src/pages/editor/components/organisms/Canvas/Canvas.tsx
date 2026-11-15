@@ -1,7 +1,7 @@
 import type { PointerEvent, Ref } from "react";
 
 import type { Document } from "@/document/types";
-import type { SelectionSpacing } from "@/document/commands/index.ts";
+import type { SelectionSpacing, TextIconAlignment } from "@/document/commands/index.ts";
 
 import type { CanvasCamera } from "@/pages/editor/camera.ts";
 import { drawingGeometry } from "@/pages/editor/geometry";
@@ -27,6 +27,7 @@ interface CanvasProps extends NodeInteraction {
   selection?: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
   guides?: SnapGuide[];
   spacing?: { x?: SelectionSpacing; y?: SelectionSpacing; error?: string };
+  textIcon?: { measurement?: TextIconAlignment; error?: string };
   onPanPointerDown(event: PointerEvent<HTMLElement>): void;
   onPanPointerMove(event: PointerEvent<HTMLElement>): void;
   onPanPointerUp(pointerId: number): void;
@@ -39,7 +40,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [], spacing,
+    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [], spacing, textIcon,
     onPanPointerDown, onPanPointerMove, onPanPointerUp, onWorldDoubleClick,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -91,6 +92,14 @@ export function Canvas(props: CanvasProps) {
                   <text x={(x1 + x2) / 2} y={(y1 + y2) / 2 - 5 / zoom} fontSize={11 / zoom} textAnchor="middle">{Number(distance.toFixed(1))} px</text>
                 </g>;
               }) ?? [])}
+            </svg>}
+            {textIcon?.measurement && <svg className="text-icon-guides" aria-hidden="true">
+              <line x1={textIcon.measurement.fromX} x2={textIcon.measurement.toX} y1={textIcon.measurement.textY} y2={textIcon.measurement.textY}
+                strokeWidth={1 / zoom} />
+              <circle cx={textIcon.measurement.toX} cy={textIcon.measurement.iconY} r={3 / zoom} strokeWidth={1 / zoom} />
+              <text x={textIcon.measurement.toX + 6 / zoom} y={textIcon.measurement.textY - 5 / zoom} fontSize={11 / zoom}>
+                {Number(textIcon.measurement.offset.toFixed(1))} px
+              </text>
             </svg>}
             {drawing && preview && <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
                style={drawPreviewStyle(preview, drawing.parentTransform)} />}
