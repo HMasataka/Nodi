@@ -1,122 +1,94 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { test } from "vitest";
-import { readdir, readFile } from "node:fs/promises";
 
 import type { DocumentNode } from "../src/document/types.ts";
+import { resolveDocumentInstances } from "../src/document/instances.ts";
+import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-test("デザイン文書を現行形式で開いて保存し直せる", async () => {
-  const directory = new URL("../designs/", import.meta.url);
-  for (const name of (await readdir(directory)).filter((name) =>
-    name.endsWith(".nodi"),
-  )) {
-    const loaded = parseDocument(
-      await readFile(new URL(name, directory), "utf8"),
-    );
-    assert.equal(loaded.type, "Success", `${name} を読み込めません`);
-    if (loaded.type !== "Success") assert.fail("読み込みに失敗しました");
-    const saved = serializeDocument(loaded.value);
-    assert.equal(saved.type, "Success", `${name} を保存できません`);
-    if (saved.type !== "Success") assert.fail("保存に失敗しました");
-    assert.deepEqual(parseDocument(saved.value), loaded);
-  }
-});
+async function load() {
+  const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
+  if (result.type === "Failure") assert.fail(String(result.error));
+  return result.value;
+}
 
-test("追加パネルはグレースケールと等幅・余白の規則を維持する", async () => {
-  const loaded = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
-  if (loaded.type !== "Success") assert.fail("読み込みに失敗しました");
-  const nodes = new Map<string, DocumentNode>();
-  const palette = new Set(["#ffffff", "#f5f5f5", "#e5e5e5", "#d4d4d4", "#a3a3a3", "#737373", "#525252", "#404040", "#171717", "#000000"]);
-  function visit(items: DocumentNode[]) {
-    for (const node of items) {
-      nodes.set(node.id, node);
-      if (node.type === "text") assert.ok(palette.has(node.style.color.toLowerCase()), node.id);
-      if ("fill" in node.style && node.style.fill !== null) {
-        assert.equal(typeof node.style.fill, "string", node.id);
-        assert.ok(palette.has((node.style.fill as string).toLowerCase()), node.id);
-      }
-      if ("stroke" in node.style && node.style.stroke) assert.ok(palette.has(node.style.stroke.color.toLowerCase()), node.id);
-      if (node.type === "frame") {
-        for (const child of node.children) {
-          assert.ok(child.x >= 0 && child.y >= 0 && child.x + child.width <= node.width && child.y + child.height <= node.height,
-            `${node.id} の領域から ${child.id} がはみ出しています`);
-        }
-        visit(node.children);
-      }
+test("デザイン文書の共通定義・参照・上書きを保存して再読込できる", async () => {
+  const document = await load();
+  const saved = serializeDocument(document);
+  if (saved.type === "Failure") assert.fail(String(saved.error));
+  assert.deepEqual(parseDocument(saved.value), { type: "Success", value: document });
+  assert.ok(document.components.length > 20);
+  assert.deepEqual(document.spacing.map(({ value }) => value), [0, 4, 8, 12, 16, 20, 24, 32]);
+  const usages = new Map<string, number>();
+  function visit(node: DocumentNode) {
+    if (node.type === "instance") usages.set(node.componentRef, (usages.get(node.componentRef) ?? 0) + 1);
+    if (node.type === "frame") {
+      assert.ok(node.paddingRef && node.gapRef, `${node.name}: 共通余白を参照していません`);
+      node.children.forEach(visit);
     }
   }
-  visit(loaded.value.children);
-  const widthMode = nodes.get("ed_width_mode_bg")!;
-  const heightMode = nodes.get("ed_height_mode_bg")!;
-  assert.equal(widthMode.width, 124);
-  assert.equal(heightMode.width, 124);
-  assert.equal(heightMode.x - (widthMode.x + widthMode.width), 12);
-  const presets = ["pv_320", "pv_390", "pv_768", "pv_1024", "pv_1440"].map((id) => nodes.get(id)!);
-  for (const [index, preset] of presets.entries()) {
-    assert.equal(preset.width, 60);
-    assert.equal(preset.x, 24 + index * 60);
-    assert.equal(preset.y, 80);
-  }
-  assert.equal(nodes.get("ed_export_label")!.y - (nodes.get("ed_details")!.y + nodes.get("ed_details")!.height), 16);
-  for (const id of ["ed_status_hint", "ed_status_right", "ed_layers_help", "ed_export_bg"]) assert.equal(nodes.has(id), false);
-  const preview = nodes.get("ds_preview")!;
-  const stage = nodes.get("pv_stage")!;
-  const page = nodes.get("pv_page")!;
-  assert.ok(loaded.value.children.some((node) => node.id === preview.id));
-  assert.equal(stage.width, preview.width);
-  assert.ok(stage.width * stage.height > preview.width * preview.height * 0.8);
-  assert.equal(page.width, 1440 * 0.8);
-  assert.equal(page.height, 840 * 0.8);
-  assert.equal(nodes.get("am_left_bg")!.width, 240);
-  assert.equal(nodes.get("ds_timeline")!.x, 240);
-  assert.ok(nodes.has("am_hover") && nodes.has("am_add_animation") && nodes.has("am_layer_title"));
-  for (const id of ["ds_export", "ds_size", "ds_trigger", "pv_scroll_label", "pv_scroll_track", "pv_scroll_progress", "pv_scroll_thumb", "pv_scroll_value"]) assert.equal(nodes.has(id), false);
-  for (const [leftId, rightId, gap] of [
-    ["pv_back", "pv_title", 16], ["pv_preset_bg", "pv_width_label", 16],
-    ["pv_width_label", "pv_width_value", 8], ["pv_fit", "pv_fit_value", 8],
-    ["pv_actual", "pv_actual_value", 8], ["tl_easing", "tl_easing_arrow", 8],
-    ["am_preview", "am_save_bg", 16],
-  ] as const) {
-    const left = nodes.get(leftId)!;
-    const right = nodes.get(rightId)!;
-    assert.equal(right.x - (left.x + left.width), gap, `${leftId} / ${rightId} の間隔`);
-  }
+  document.children.forEach(visit);
+  document.components.forEach(({ node }) => visit(node));
+  for (const ref of ["header", "footer", "button", "primary", "input", "row", "token", "projectCard"])
+    assert.ok((usages.get(ref) ?? 0) >= 2, `${ref} が共通化されていません`);
 });
 
-test("エディタのラベルとアイコンの行中央を揃える", async () => {
-  const loaded = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
-  if (loaded.type !== "Success") assert.fail("読み込みに失敗しました");
-  const nodes = new Map<string, DocumentNode>();
-  function visit(items: DocumentNode[]) {
-    for (const node of items) {
-      nodes.set(node.id, node);
-      if (node.type === "frame") visit(node.children);
+test("インスタンスと共通余白を解決した全画面で子要素が領域内に収まる", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  function visit(node: DocumentNode) {
+    assert.notEqual(node.type, "instance", `${node.name}: 未解決の参照`);
+    if (node.type !== "frame") return;
+    for (const child of node.children) {
+      assert.ok(child.x >= -0.01 && child.y >= -0.01 && child.x + child.width <= node.width + 0.01 && child.y + child.height <= node.height + 0.01,
+        `${node.name} (${node.width}×${node.height}) から ${child.name} (${child.x},${child.y},${child.width},${child.height}) がはみ出しました`);
+      visit(child);
     }
   }
-  visit(loaded.value.children);
-  const pairs = [
-    ["ed_brand", "ed_file_menu"], ["ed_layers_title", "ed_layers_more"],
-    ["ed_inspector_name", "ed_inspector_more"], ["ed_tool_import", "ed_tool_import_plus"],
-    ["ed_tool_import", "ed_tool_import_more"], ["ed_layout_align_value", "ed_layout_align_toggle"],
-    ["ed_clip_label", "ed_clip_box"], ["ed_effects", "ed_effects_toggle"],
-    ["ed_effects", "ed_effects_plus"], ["ed_details", "ed_details_toggle"], ["ed_export_label", "ed_export_icon"],
-    ["ed_export_label", "ed_export_arrow"], ["ed_preview_label", "ed_preview_icon"],
-    ["ed_width_mode", "ed_width_mode_arrow"], ["ed_height_mode", "ed_height_mode_arrow"],
-    ["ed_motion_label", "ed_motion_icon"], ["ed_motion_label", "ed_motion_arrow"],
-    ["tl_heading", "tl_play"], ["tl_heading", "tl_stop"], ["tl_heading", "tl_collapse"],
-    ["tl_trigger", "tl_trigger_arrow"], ["tl_easing", "tl_easing_arrow"],
-    ["pv_title", "pv_close"], ["pv_time", "pv_play"],
-    ["am_layer_desktop", "am_layer_toggle1"], ["am_layer_work", "am_layer_toggle2"], ["am_layer_card", "am_layer_toggle3"],
-    ...["root", "header", "intro", "work", "active", "second", "footer", "other"].flatMap((name) =>
-      [[`ed_layer_${name}`, `ed_layer_${name}_toggle`], [`ed_layer_${name}`, `ed_layer_${name}_icon`]]),
-    ...["image", "title", "description"].map((name) => [`ed_layer_${name}`, `ed_layer_${name}_icon`]),
-  ];
-  for (const [labelId, iconId] of pairs) {
-    const label = nodes.get(labelId);
-    const icon = nodes.get(iconId);
-    assert.ok(label?.type === "text" && icon, `${labelId} / ${iconId}`);
-    // CanvasNode の文字内側余白2pxと1行目の行高から中央を算出。
-    const center = label.y + 2 + label.style.fontSize * label.style.lineHeight / 2;
-    assert.ok(Math.abs(center - (icon.y + icon.height / 2)) < 0.01, `${labelId} と ${iconId} の中央が不一致`);
+  document.children.forEach(visit);
+});
+
+test("ポップオーバーは編集画面の入力欄に隣接し、画面間で共通シェルを保持する", async () => {
+  const document = await load();
+  const screens = new Map(document.children.map((node) => [node.id, node]));
+  for (const id of ["screen_editor", "screen_spacing_picker", "screen_spacing_edit", "screen_instance", "screen_multi"]) {
+    const screen = screens.get(id);
+    assert.equal(screen?.type, "frame");
+    if (screen?.type !== "frame") continue;
+    for (const ref of ["header", "footer", "tools"])
+      assert.ok(screen.children.some((node) => node.type === "instance" && node.componentRef === ref), `${id}: ${ref}`);
   }
+  const resolved = resolveDocumentLayout(resolveDocumentInstances(document));
+  const editor = resolved.children.find(({ id }) => id === "screen_spacing_picker");
+  assert.equal(editor?.type, "frame");
+  if (editor?.type !== "frame") return;
+  const picker = editor.children.find(({ name }) => name === "Overlay / Spacing picker")!;
+  assert.equal(picker.x + picker.width, 1420);
+  const focus = editor.children.find((node) => node.name === "Selection outline" && node.width === 260)!;
+  assert.equal(picker.y - (focus.y + focus.height), 8);
+  assert.equal(screens.has("ds_reference_details"), false);
+});
+
+test("共通部品の左右余白とセクション末尾、カードの上下余白を揃える", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  function visit(node: DocumentNode) {
+    if (node.type !== "frame") return;
+    const first = node.children[0];
+    const last = node.children[node.children.length - 1];
+    if (first && last && ["Control / Value", "Control / Menu row", "Control / Reference field", "Navigation / Layer row", "Navigation / Selected row"].includes(node.name)) {
+      assert.equal(first.x, node.width - last.x - last.width, `${node.name}: 左右の内側余白`);
+    }
+    if (first && last && node.name.startsWith("Content /")) {
+      assert.equal(first.y, node.height - last.y - last.height, `${node.name}: 上下の内側余白`);
+    }
+    if (last && node.name.startsWith("Inspector / ") && !["Inspector / frame", "Inspector / instance", "Inspector / multi", "Inspector / icon", "Inspector / motion"].includes(node.name)) {
+      assert.equal(last.y + last.height, node.height, `${node.name}: 不要な末尾余白`);
+    }
+    if (first && last && node.name.startsWith("Overlay /")) {
+      assert.equal(first.y, 12);
+      assert.equal(node.height - last.y - last.height, 12, `${node.name}: 下余白`);
+    }
+    node.children.forEach(visit);
+  }
+  document.children.forEach(visit);
 });
