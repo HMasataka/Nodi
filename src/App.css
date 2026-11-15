@@ -322,6 +322,9 @@ button {
 .alignment-guide { position: absolute; z-index: 11; pointer-events: none; background: var(--accent); box-shadow: 0 0 0 1px var(--guide-halo); }
 .alignment-guide.vertical { width: 1px; }
 .alignment-guide.horizontal { height: 1px; }
+.spacing-guides { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 11; color: var(--accent); }
+.spacing-guides line { stroke: currentColor; stroke-dasharray: 4 3; }
+.spacing-guides text { fill: currentColor; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
 .canvas-hint {
   position: absolute;
   top: 35%;
@@ -522,6 +525,11 @@ button {
 .layer-depth-actions { margin-top: 8px; }
 .alignment-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 16px 0; }
 .alignment-actions .file-button { padding: 7px 3px; font-size: 10px; }
+.spacing-actions { display: grid; gap: 9px; margin: 12px 0; }
+.spacing-axis { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 5px; font-size: 11px; }
+.spacing-axis .spacing-values { overflow-wrap: anywhere; color: var(--text-tertiary); }
+.spacing-axis label { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.spacing-axis input { width: 90px; }
 .export-button { width: 100%; margin-top: 12px; }
 .frame-preview { margin: 4px 0 8px; }
 .preview-controls { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }

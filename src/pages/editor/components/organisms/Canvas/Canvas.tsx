@@ -1,6 +1,7 @@
 import type { PointerEvent, Ref } from "react";
 
 import type { Document } from "@/document/types";
+import type { SelectionSpacing } from "@/document/commands/index.ts";
 
 import type { CanvasCamera } from "@/pages/editor/camera.ts";
 import { drawingGeometry } from "@/pages/editor/geometry";
@@ -25,6 +26,7 @@ interface CanvasProps extends NodeInteraction {
   pen: PenState | null;
   selection?: { start: { x: number; y: number }; end: { x: number; y: number } } | null;
   guides?: SnapGuide[];
+  spacing?: { x?: SelectionSpacing; y?: SelectionSpacing; error?: string };
   onPanPointerDown(event: PointerEvent<HTMLElement>): void;
   onPanPointerMove(event: PointerEvent<HTMLElement>): void;
   onPanPointerUp(pointerId: number): void;
@@ -37,7 +39,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [],
+    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [], spacing,
     onPanPointerDown, onPanPointerMove, onPanPointerUp, onWorldDoubleClick,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -77,6 +79,19 @@ export function Canvas(props: CanvasProps) {
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}
+            {spacing && !spacing.error && <svg className="spacing-guides" aria-hidden="true">
+              {([spacing.x, spacing.y] as const).flatMap((measurement) => measurement?.intervals.map(({ from, to, distance }, index) => {
+                const horizontal = measurement.axis === "x";
+                const x1 = horizontal ? from.x + from.width : from.x + from.width / 2;
+                const x2 = horizontal ? to.x : to.x + to.width / 2;
+                const y1 = horizontal ? from.y + from.height / 2 : from.y + from.height;
+                const y2 = horizontal ? to.y + to.height / 2 : to.y;
+                return <g key={`${measurement.axis}:${index}`}>
+                  <line x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth={1 / zoom} />
+                  <text x={(x1 + x2) / 2} y={(y1 + y2) / 2 - 5 / zoom} fontSize={11 / zoom} textAnchor="middle">{Number(distance.toFixed(1))} px</text>
+                </g>;
+              }) ?? [])}
+            </svg>}
             {drawing && preview && <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
                style={drawPreviewStyle(preview, drawing.parentTransform)} />}
             {pen && <svg className="pen-preview" aria-hidden="true">

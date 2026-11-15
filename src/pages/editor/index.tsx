@@ -1,3 +1,4 @@
+import { Result } from "@praha/byethrow";
 import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
@@ -8,6 +9,7 @@ import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
+import { measureSelectionSpacing } from "@/document/commands/index.ts";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Timeline } from "@/pages/editor/components/organisms/Timeline";
@@ -30,6 +32,11 @@ function EditorPage() {
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
+  const spacingX = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "x") : null;
+  const spacingY = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "y") : null;
+  const spacing = spacingX && spacingY ? Result.isFailure(spacingX) ? { error: spacingX.error.message }
+    : Result.isFailure(spacingY) ? { error: spacingY.error.message }
+      : { x: spacingX.value, y: spacingY.value } : undefined;
   const { drag, pathDrag, camera, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
@@ -46,7 +53,7 @@ function EditorPage() {
     <div className="workspace">
       <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
         onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
-      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(design, { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onNodeEnter={(id) => setHoveredId(id)}
@@ -64,7 +71,7 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} {...actions.inspector} />
+      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} {...actions.inspector} />
     </div>
 
     <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
