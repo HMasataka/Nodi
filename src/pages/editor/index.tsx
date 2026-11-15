@@ -26,11 +26,13 @@ function EditorPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [highlightedComponentId, setHighlightedComponentId] = useState<string | null>(null);
   const actions = useEditorActions(session, { playhead: playback.playhead, scrollProgress });
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
+  const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
   const { drag, pathDrag, camera, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
@@ -45,8 +47,11 @@ function EditorPage() {
       drawTool={drawTool} onDrawToolChange={setDrawTool} />
 
     <div className="workspace">
-      <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
-        onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
+      <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
+        highlightedComponentId={highlightedComponentId}
+        onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
+        onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
+        onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
       <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
@@ -65,7 +70,10 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} {...actions.inspector} />
+      <Inspector selected={selected} selectedCount={selectedIds.length} {...actions.inspector}
+        componentName={selectedComponentName}
+        onCreateComponent={actions.components.onCreateFromSelected}
+        onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }} />
     </div>
 
     <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />

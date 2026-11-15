@@ -34,9 +34,12 @@ interface InspectorProps {
   onAlign?(alignment: Alignment): void;
   onExportFrame(): void;
   isExporting: boolean;
+  onCreateComponent(): void;
+  onGoToDefinition(): void;
+  componentName?: string;
 }
 
-export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -44,7 +47,7 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
         <div className="properties">
           <div className="selection-type">
             <LayerIcon type={selected.type} />{" "}
-            {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "path" ? "パス" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : "フレーム"}
+            {selected.type === "rectangle" ? "矩形" : selected.type === "ellipse" ? "楕円" : selected.type === "path" ? "パス" : selected.type === "text" ? "テキスト" : selected.type === "image" ? "画像" : selected.type === "instance" ? "インスタンス" : "フレーム"}
           </div>
           {selectedCount > 1 && <p className="property-help">{selectedCount} 個の要素を選択中。ドラッグで一括移動できます。</p>}
           {selectedCount > 1 && onAlign && <div className="alignment-actions" aria-label="選択要素の整列">
@@ -82,6 +85,12 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
           </label>
           <ElementAppearance node={selected} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onFrameLayout={onFrameLayout} onImageStyle={onImageStyle} onPath={onPath} />
+          {selected.type === "instance" && <>
+            <div className="property-divider" />
+            <div className="field-label">コンポーネント</div>
+            <p className="property-help">定義「{componentName ?? "不明"}」を参照しています。見た目は定義側で変更されます。</p>
+            <button type="button" className="file-button" onClick={onGoToDefinition}>定義へ移動</button>
+          </>}
           <ShadowEditor key={`${selected.id}:${JSON.stringify(selected.shadow)}`} shadow={selected.shadow} onChange={onShadow} />
           <label className="geometry-field">
             <span>全体ぼかし px</span>
@@ -110,6 +119,9 @@ export function Inspector({ selected, selectedCount = 1, onRename, onGeometry, o
             <button type="button" className="file-button" onClick={() => onReorder("back")}>最背面へ</button>
           </div>
           {selected.type === "frame" && <>
+            <div className="property-divider" />
+            <div className="field-label">コンポーネント</div>
+            <button type="button" className="file-button" onClick={onCreateComponent}>コンポーネントを作成</button>
             <div className="property-divider" />
             <div className="field-label">プレビュー</div>
             <FramePreview key={selected.id} frame={selected} />
