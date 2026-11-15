@@ -72,6 +72,14 @@ get_state {}
 - `set_text_style`: テキストの `fontSize`・`color`・`textAlign`・`fontFamily`（`default`・`system`・`serif`・`monospace`）・`fontWeight`（100〜900 の 100 刻み）・`lineHeight`（倍率）・`letterSpacing`（px、負値も可）を変更。
 - `set_text_marks`: テキスト本文の UTF-16 範囲 `start`・`end` と、その範囲の `color`・`fontWeight`・`underline: true`・`code: true` を配列で指定して置換。範囲は昇順・非重複で文字境界に揃える。
 - `delete_element` / `duplicate_element`: ID で削除・複製。フレームの子孫も対象に含み、複製した全要素の ID を再生成。
+- `list_palette`: 文書のカラーパレット一覧（`id`・`name`・6/8桁HEX の `color`）を取得。
+- `add_palette_color`: `name` と6/8桁HEXの `color` でパレット色を追加。同名の色も許可する。
+- `rename_palette_color`: ID と新しい `name` で改名。参照は ID なので、名前を変えても壊れない。
+- `set_palette_color`: ID と6/8桁HEXの `color` で色を変更し、参照する要素へ一括反映。
+- `remove_palette_color`: ID で削除。参照している要素は解決済みの直接 HEX に変換してから削除する。
+- `duplicate_palette_color`: ID で複製し、新しい ID を割り当てる（名前は「◯ のコピー」）。
+
+色は直接の6/8桁HEXか、`{ "type": "palette", "id": "pc_..." }` のパレット参照で指定できる。参照の ID は `list_palette` で得る。名前を変えても参照は ID で解決されるため壊れない。`get_state` / `get_element` は色参照とパレット一覧（解決後の HEX）を返し、編集画面・PNG と同じ色に解決する。参照を直接指定へ戻すには、その色に直接 HEX を指定し直す。存在しない ID への参照は保存・読み込みで拒否する。
 
 ### コンポーネントとインスタンス
 
