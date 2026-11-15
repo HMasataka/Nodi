@@ -386,12 +386,7 @@
                 { "id": "pv_second_title", "name": "2件目の作品名", "type": "text", "x": 592, "y": 568, "width": 512, "height": 28, "content": "Still — Space for the everyday", "style": { "fontSize": 16, "color": "#171717", "textAlign": "left", "fontFamily": "system", "fontWeight": 600 } },
                 { "id": "pv_second_description", "name": "2件目の説明", "type": "text", "x": 592, "y": 608, "width": 512, "height": 24, "content": "Digital experience / Web design", "style": { "fontSize": 12, "color": "#737373", "textAlign": "left", "fontFamily": "system" } }
               ]
-            },
-            { "id": "pv_scroll_label", "name": "スクロール進行度", "type": "text", "x": 964, "y": 924, "width": 100, "height": 20, "content": "スクロール", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#737373", "textAlign": "left", "fontFamily": "system" } },
-            { "id": "pv_scroll_track", "name": "スクロール進行度トラック", "type": "rectangle", "x": 1080, "y": 932, "width": 224, "height": 4, "style": { "fill": "#e5e5e5" } },
-            { "id": "pv_scroll_progress", "name": "進行度50%", "type": "rectangle", "x": 1080, "y": 932, "width": 112, "height": 4, "style": { "fill": "#737373" } },
-            { "id": "pv_scroll_thumb", "name": "スクロール進行度ハンドル", "type": "ellipse", "x": 1186, "y": 928, "width": 12, "height": 12, "style": { "fill": "#404040" } },
-            { "id": "pv_scroll_value", "name": "進行度の値", "type": "text", "x": 1320, "y": 924, "width": 100, "height": 20, "content": "50%", "style": { "fontSize": 12, "lineHeight": 1.3333333333333333, "color": "#404040", "textAlign": "right", "fontFamily": "monospace" } }
+            }
           ]
     },
     {
