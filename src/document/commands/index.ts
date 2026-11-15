@@ -8,7 +8,7 @@ export { deleteNode, deleteNodes, duplicateNode, type LayerDirection, reorderNod
 export { setBorder, setFrameStyle, setImageFilters, setImageStyle, setNodeStyle, setPath, setTextContent, setTextMarkRange, setTextMarks, setTextStyle } from "@/document/commands/style.ts";
 export { addPaletteColor, detachPaletteColor, duplicatePaletteColor, importPalette, removePaletteColor, renamePaletteColor, setPaletteColor } from "@/document/commands/palette.ts";
 export { createComponent, duplicateComponent, removeComponent, renameComponent } from "@/document/commands/component.ts";
-export { createInstance, type CreateInstanceInput } from "@/document/commands/instance.ts";
+export { createInstance, type CreateInstanceInput, detachInstance, resetInstanceOverride, setInstanceOverride } from "@/document/commands/instance.ts";
 export { importSvgIcon } from "@/document/commands/svgImport.ts";
 export { findNode } from "@/document/commands/tree.ts";
 export { moveNode, moveNodes, renameNode, setBlur, setMask, setNodeGeometry, setOpacity, setRotation, setShadow } from "@/document/commands/update.ts";

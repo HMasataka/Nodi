@@ -66,6 +66,13 @@ function resolveInstance(instance: InstanceNode, document: Document, stack: Set<
 }
 
 /**
+ * 単一のインスタンスを定義ツリーへ解決したノードを返す。切り離しなどに使う。
+ */
+export function resolveInstanceNode(instance: InstanceNode, document: Document): DocumentNode {
+  return resolveInstance(instance, document, new Set());
+}
+
+/**
  * 文書内のインスタンスを定義ツリーへ解決した文書を返す。入力の文書は変更しない。
  * 解決は編集画面（SVG）と PNG 書き出し（Canvas）が共用する。
  */

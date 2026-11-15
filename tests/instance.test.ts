@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import { applyOverride, resolveDocumentInstances } from "../src/document/instances.ts";
-import { createComponent, createInstance, renameComponent } from "../src/document/commands/index.ts";
+import { createComponent, createInstance, detachInstance, duplicateNode, removeComponent, renameComponent, resetInstanceOverride, setInstanceOverride } from "../src/document/commands/index.ts";
 import { document, frame, image, instance, rectangle, success, text } from "./support/factories.ts";
-import type { FrameNode, RectangleNode, TextNode } from "../src/document/types.ts";
+import type { DocumentNode, FrameNode, RectangleNode, TextNode } from "../src/document/types.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
 test("定義を参照するインスタンスを作成できる", () => {
@@ -168,4 +168,86 @@ test("空のオーバーライドは保存時に省略する", () => {
   const instanceWire = wire.children[1];
   assert.equal(instanceWire.type, "instance");
   assert.equal(Object.hasOwn(instanceWire, "overrides"), false);
+});
+
+test("オーバーライドを設定・解除できる", () => {
+  const source = frame({ id: "frame1", width: 200, height: 100, children: [text({ id: "t1", content: "元" })] });
+  const base = success(createComponent(document(source), { sourceId: "frame1", name: "ボタン" })).document;
+  const definition = base.components[0];
+  const textId = definition.node.children[0].id;
+  const withInstance = success(createInstance(base, { componentRef: definition.id, x: 0, y: 0 })).document;
+  const instanceId = withInstance.children[1].id;
+
+  const overridden = success(setInstanceOverride(withInstance, instanceId, textId, { content: "変更後" }));
+  const root = resolveDocumentInstances(overridden).children[1] as FrameNode;
+  assert.equal((root.children[0] as TextNode).content, "変更後");
+
+  const reset = success(resetInstanceOverride(overridden, instanceId, textId));
+  const resetRoot = resolveDocumentInstances(reset).children[1] as FrameNode;
+  assert.equal((resetRoot.children[0] as TextNode).content, "元");
+});
+
+test("オーバーライド設定は不正な対象を拒否する", () => {
+  const base = success(createComponent(document(frame({ id: "frame1", width: 200, height: 100 })), { sourceId: "frame1", name: "ボタン" })).document;
+  const definitionId = base.components[0].id;
+  const rootId = base.components[0].node.id;
+  const withInstance = success(createInstance(base, { componentRef: definitionId, x: 0, y: 0 })).document;
+  const instanceId = withInstance.children[1].id;
+  assert.equal(setInstanceOverride(withInstance, instanceId, "missing", { content: "x" }).type, "Failure");
+  assert.equal(setInstanceOverride(withInstance, instanceId, rootId, {}).type, "Failure");
+  assert.equal(setInstanceOverride(withInstance, instanceId, rootId, { width: 0 }).type, "Failure");
+  assert.equal(setInstanceOverride(withInstance, "missing", rootId, { content: "x" }).type, "Failure");
+  assert.equal(resetInstanceOverride(withInstance, instanceId, "missing").type, "Failure");
+});
+
+test("インスタンスを切り離して通常の要素にする", () => {
+  const source = frame({ id: "frame1", width: 200, height: 100, children: [text({ id: "t1", content: "ラベル" })] });
+  const base = success(createComponent(document(source), { sourceId: "frame1", name: "ボタン" })).document;
+  const definition = base.components[0];
+  const textId = definition.node.children[0].id;
+  const withInstance = success(createInstance(base, { componentRef: definition.id, x: 10, y: 20 })).document;
+  const instanceId = withInstance.children[1].id;
+  const overridden = success(setInstanceOverride(withInstance, instanceId, textId, { content: "変更後" }));
+
+  const detached = success(detachInstance(overridden, instanceId));
+  assert.equal(detached.node.type, "frame");
+  assert.notEqual(detached.node.id, instanceId);
+  const frameNode = detached.node as FrameNode;
+  assert.equal(frameNode.x, 10);
+  assert.equal(frameNode.y, 20);
+  assert.equal((frameNode.children[0] as TextNode).content, "変更後");
+  assert.equal(detached.document.children[1].type, "frame");
+  assert.equal(detached.document.components.length, 1);
+
+  const ids = new Set<string>();
+  function collect(nodes: DocumentNode[]): void {
+    for (const node of nodes) {
+      assert.ok(!ids.has(node.id), `ID が重複しています: ${node.id}`);
+      ids.add(node.id);
+      if (node.type === "frame") collect(node.children);
+    }
+  }
+  collect(detached.document.children);
+  collect([detached.document.components[0].node]);
+});
+
+test("使用中のコンポーネントは削除を拒否し、未使用なら削除できる", () => {
+  const base = success(createComponent(document(frame({ id: "frame1", width: 200, height: 100 })), { sourceId: "frame1", name: "ボタン" })).document;
+  const definitionId = base.components[0].id;
+  const withInstance = success(createInstance(base, { componentRef: definitionId, x: 0, y: 0 })).document;
+  assert.equal(removeComponent(withInstance, definitionId).type, "Failure");
+
+  const detached = success(detachInstance(withInstance, withInstance.children[1].id)).document;
+  const removed = success(removeComponent(detached, definitionId));
+  assert.equal(removed.components.length, 0);
+});
+
+test("インスタンスの複製は同じ定義を参照する別インスタンスになる", () => {
+  const base = success(createComponent(document(frame({ id: "frame1", width: 200, height: 100 })), { sourceId: "frame1", name: "ボタン" })).document;
+  const definitionId = base.components[0].id;
+  const withInstance = success(createInstance(base, { componentRef: definitionId, x: 0, y: 0 })).document;
+  const duplicated = success(duplicateNode(withInstance, withInstance.children[1].id));
+  assert.notEqual(duplicated.node.id, withInstance.children[1].id);
+  assert.equal(duplicated.node.type, "instance");
+  assert.equal(duplicated.node.type === "instance" ? duplicated.node.componentRef : "", definitionId);
 });
