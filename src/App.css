@@ -386,6 +386,10 @@ button {
 .spacing-guides { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 11; color: var(--accent); }
 .spacing-guides line { stroke: currentColor; stroke-dasharray: 4 3; }
 .spacing-guides text { fill: currentColor; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+.text-icon-guides { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 12; color: var(--accent); }
+.text-icon-guides line { stroke: currentColor; stroke-dasharray: 5 3; }
+.text-icon-guides circle { stroke: currentColor; fill: var(--surface); }
+.text-icon-guides text { fill: currentColor; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
 .canvas-hint {
   position: absolute;
   top: 35%;
@@ -591,6 +595,9 @@ button {
 .spacing-axis .spacing-values { overflow-wrap: anywhere; color: var(--text-tertiary); }
 .spacing-axis label { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .spacing-axis input { width: 90px; }
+.text-icon-actions { display: grid; gap: 5px; padding: 10px; margin: 12px 0; border: 1px solid var(--field-border); border-radius: 5px; }
+.text-icon-actions .property-help { margin: 0; }
+.text-icon-actions .file-button { margin-top: 5px; }
 .spacing-token-panel { padding: 17px 20px 15px; border-bottom: 1px solid var(--line); }
 .spacing-token-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .spacing-token-heading .field-label { margin: 0; }

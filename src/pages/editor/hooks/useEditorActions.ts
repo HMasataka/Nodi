@@ -1,6 +1,7 @@
 import { Result } from "@praha/byethrow";
 import { useRef, useState } from "react";
 
+import { countRenderedTextLines } from "@/pages/editor/textIconMeasurement.ts";
 import { pngFiles } from "@/ipc/pngFiles";
 import { renderFramePng } from "@/export/framePng";
 import { savePng } from "@/export/savePng";
@@ -8,7 +9,7 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, addSpacingToken, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, distributeNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
+  addAnimation, addKeyframe, addSpacingToken, type Alignment, alignNodes, alignTextIcon, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, distributeNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
   removeAnimation, removeComponent, removeKeyframe, removeSpacingToken, renameComponent, renameSpacingToken, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
@@ -141,6 +142,7 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
       onDelete: deleteSelected,
       onReorder: (direction: LayerDirection) => { if (selectedId) reorderLayer(selectedId, direction); },
       onAlign: (alignment: Alignment) => applyDocument(alignNodes(designRef.current, selectedIds, alignment)),
+      onAlignTextIcon: () => applyDocument(alignTextIcon(designRef.current, selectedIds, countRenderedTextLines)),
       onDistribute: (axis: SpacingAxis, mode: "equal" | number) => applyDocument(distributeNodes(designRef.current, selectedIds, axis, mode)),
       onExportFrame: () => { void exportSelectedFrame(); },
       isExporting,
