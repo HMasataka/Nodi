@@ -14,6 +14,7 @@ import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDial
 import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
+import { spacingTokenUsage } from "@/document/spacing.ts";
 import { Timeline } from "@/pages/editor/components/organisms/Timeline";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
@@ -80,7 +81,10 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} spacingTokens={design.spacing} {...actions.inspector}
+      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} spacingTokens={design.spacing}
+        spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}
+        onCreateSpacingToken={actions.spacingTokens.onCreate} onRenameSpacingToken={actions.spacingTokens.onRename}
+        onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}
         componentName={selectedComponentName}
         onCreateComponent={actions.components.onCreateFromSelected}
         onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }} />

@@ -587,6 +587,28 @@
           ]
         }
       ]
+    },
+    {
+      "id": "nd_sample_spacing", "name": "Studio / 共通の余白", "type": "frame",
+      "x": 80, "y": 1720, "width": 960, "height": 300,
+      "style": { "fill": "#fbfaf7" },
+      "children": [
+        { "id": "nd_sample_spacing_title", "name": "共通余白の見出し", "type": "text", "x": 32, "y": 25, "width": 600, "height": 32,
+          "content": "ONE VALUE, TWO FRAMES", "style": { "fontSize": 20, "color": "#24383a", "textAlign": "left", "fontWeight": 700 } },
+        { "id": "nd_sample_spacing_a", "name": "共通値を参照するフレーム A", "type": "frame", "x": 32, "y": 90, "width": 410, "height": 160,
+          "layoutMode": "horizontal", "paddingRef": "sp_sample_card", "gapRef": "sp_sample_card", "style": { "fill": "#e9f2ed" },
+          "children": [
+            { "id": "nd_sample_spacing_a1", "name": "左", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#80aa97" } },
+            { "id": "nd_sample_spacing_a2", "name": "右", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#80aa97" } }
+          ] },
+        { "id": "nd_sample_spacing_b", "name": "共通値を参照するフレーム B", "type": "frame", "x": 482, "y": 90, "width": 410, "height": 160,
+          "layoutMode": "horizontal", "paddingRef": "sp_sample_card", "gapRef": "sp_sample_card", "style": { "fill": "#e9f2ed" },
+          "children": [
+            { "id": "nd_sample_spacing_b1", "name": "左", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#557f78" } },
+            { "id": "nd_sample_spacing_b2", "name": "右", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#557f78" } }
+          ] }
+      ]
     }
-  ]
+  ],
+  "spacing": [{ "id": "sp_sample_card", "name": "カード内側", "value": 20 }]
 }
