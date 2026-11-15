@@ -1,4 +1,5 @@
 export { type Alignment, alignNodes } from "@/document/commands/align.ts";
+export { alignTextIcon, measureTextIconAlignment, type TextIconAlignment, type TextLineCounter } from "@/document/commands/alignTextIcon.ts";
 export { distributeNodes, measureSelectionSpacing, type SelectionSpacing, type SpacingAxis } from "@/document/commands/distribute.ts";
 export { type AnimationTimingPatch, addAnimation, addKeyframe, type KeyframePatch, removeAnimation, removeKeyframe, setAnimationTiming, setKeyframe } from "@/document/commands/animation.ts";
 export { type AddNodeInput, addNode, createDocument } from "@/document/commands/create.ts";

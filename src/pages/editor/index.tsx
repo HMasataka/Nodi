@@ -2,13 +2,14 @@ import { Result } from "@praha/byethrow";
 import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
+import { countRenderedTextLines } from "@/pages/editor/textIconMeasurement.ts";
 import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
 import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
+import { findNode } from "@/document/commands/index.ts";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
-import { measureSelectionSpacing } from "@/document/commands/index.ts";
 import { PalettePanel } from "@/pages/editor/components/organisms/PalettePanel";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveColor } from "@/document/colorRef.ts";
@@ -23,6 +24,7 @@ import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Color, DocumentNode } from "@/document/types.ts";
 import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContext.ts";
+import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/commands/index.ts";
 import "@/App.css";
 
 function EditorPage() {
@@ -45,6 +47,10 @@ function EditorPage() {
   const spacing = spacingX && spacingY ? Result.isFailure(spacingX) ? { error: spacingX.error.message }
     : Result.isFailure(spacingY) ? { error: spacingY.error.message }
       : { x: spacingX.value, y: spacingY.value } : undefined;
+  const textIconResult = selectedIds.length === 2 && selectedIds.some((id) => findNode(design, id)?.type === "text")
+    ? measureTextIconAlignment(design, selectedIds, countRenderedTextLines) : null;
+  const textIcon = textIconResult ? Result.isFailure(textIconResult) ? { error: textIconResult.error.message }
+    : { measurement: textIconResult.value } : undefined;
   const { drag, pathDrag, camera, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
@@ -69,7 +75,7 @@ function EditorPage() {
           onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
         <PalettePanel palette={design.palette} {...actions.palette} />
       </div>
-      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
         drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
         onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
         onNodeEnter={(id) => setHoveredId(id)}
@@ -87,7 +93,7 @@ function EditorPage() {
         onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
         onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
         onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} spacingTokens={design.spacing}
+      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
         spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}
         onCreateSpacingToken={actions.spacingTokens.onCreate} onRenameSpacingToken={actions.spacingTokens.onRename}
         onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}

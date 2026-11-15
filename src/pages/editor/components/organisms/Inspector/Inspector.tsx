@@ -1,4 +1,4 @@
-import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis } from "@/document/commands/index.ts";
+import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis, TextIconAlignment } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
@@ -40,6 +40,8 @@ interface InspectorProps {
   onDelete(): void;
   onReorder(direction: LayerDirection): void;
   onAlign?(alignment: Alignment): void;
+  textIcon?: { measurement?: TextIconAlignment; error?: string };
+  onAlignTextIcon?(): void;
   spacing?: { x?: SelectionSpacing; y?: SelectionSpacing; error?: string };
   onDistribute?(axis: SpacingAxis, mode: "equal" | number): void;
   onExportFrame(): void;
@@ -53,7 +55,7 @@ interface InspectorProps {
   onDetach(): void;
 }
 
-export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spacingUsages = {}, onCreateSpacingToken, onRenameSpacingToken, onSetSpacingToken, onRemoveSpacingToken, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spacingUsages = {}, onCreateSpacingToken, onRenameSpacingToken, onSetSpacingToken, onRemoveSpacingToken, onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, textIcon, onAlignTextIcon, spacing, onDistribute, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -69,6 +71,14 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spa
           {selectedCount > 1 && onAlign && <div className="alignment-actions" aria-label="選択要素の整列">
             {([ ["左", "left"], ["横中央", "centerX"], ["右", "right"], ["上", "top"], ["縦中央", "centerY"], ["下", "bottom"] ] as const).map(([label, alignment]) =>
               <button key={alignment} type="button" className="file-button" onClick={() => onAlign(alignment)}>{label}</button>)}
+          </div>}
+          {selectedCount === 2 && textIcon && <div className="text-icon-actions" aria-label="文字とアイコンの整列">
+            <div className="field-label">文字行とアイコン</div>
+            {textIcon.error ? <p className="property-help">{textIcon.error}</p> : <>
+              <p className="property-help">行ボックス中心 {Number(textIcon.measurement!.textY.toFixed(2))} px / アイコン中心 {Number(textIcon.measurement!.iconY.toFixed(2))} px</p>
+              <p className="property-help">中心差 {Number(textIcon.measurement!.offset.toFixed(2))} px · アイコンを移動します</p>
+              <button type="button" className="file-button" onClick={onAlignTextIcon}>行の中心にアイコンを揃える</button>
+            </>}
           </div>}
           {selectedCount >= 3 && spacing && <div className="spacing-actions" aria-label="選択要素の間隔">
             <div className="field-label">要素間隔（px）</div>
