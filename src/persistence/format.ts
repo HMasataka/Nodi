@@ -108,7 +108,8 @@ export type WireNode = WireCommonFields & (
   | { type: "text"; style: z.infer<typeof textStyle>; content: string; marks?: z.infer<typeof textMark>[] }
   | ({ type: "frame"; style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] } & WireFrameLayout)
 );
-export interface WireDocument { version: 1; children: WireNode[]; palette?: PaletteColor[] }
+export interface WireComponentDefinition { id: string; name: string; node: WireNode }
+export interface WireDocument { version: 1; children: WireNode[]; palette?: PaletteColor[]; components?: WireComponentDefinition[] }
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
@@ -122,6 +123,8 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
     z.strictObject({ id, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
   ]),
 );
+
+const componentDefinition = z.strictObject({ id, name, node: nodeSchema });
 
 function checkUniqueIds(
   document: { children: (WireNode | DocumentNode)[] },
@@ -154,7 +157,31 @@ function checkUniquePaletteIds(
   });
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds);
+function checkUniqueComponentIds(
+  document: { components?: { id: string; node: WireNode | DocumentNode }[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const seen = new Set<string>();
+  function visitNodes(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
+    nodes.forEach((node, index) => {
+      const nodePath = [...path, index];
+      if (seen.has(node.id)) context.addIssue({ code: "custom", path: [...nodePath, "id"], message: `ID が重複しています: ${node.id}` });
+      seen.add(node.id);
+      if (node.type === "text" && node.marks) {
+        const issue = textMarkIssue(node.content, node.marks);
+        if (issue) context.addIssue({ code: "custom", path: [...nodePath, "marks"], message: issue });
+      }
+      if (node.type === "frame") visitNodes(node.children, [...nodePath, "children"]);
+    });
+  }
+  (document.components ?? []).forEach((component, index) => {
+    if (seen.has(component.id)) context.addIssue({ code: "custom", path: ["components", index, "id"], message: `ID が重複しています: ${component.id}` });
+    seen.add(component.id);
+    visitNodes([component.node], ["components", index, "node"]);
+  });
+}
+
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
@@ -166,7 +193,9 @@ const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminated
   z.strictObject({ id, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
 ]));
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds);
+const internalComponentDefinition = z.strictObject({ id, name, node: internalNodeSchema });
+
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), components: z.array(internalComponentDefinition) }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {
@@ -350,13 +379,23 @@ export function parseDocument(json: string) {
   const parsed = parseJson(json);
   if (Result.isFailure(parsed)) return parsed;
   const validated = Result.parse(documentSchema, parsed.value);
-  return Result.isFailure(validated) ? validated : Result.succeed({ version: 1 as const, children: validated.value.children.map(normalizeNode), palette: validated.value.palette ?? [] });
+  return Result.isFailure(validated) ? validated : Result.succeed({
+    version: 1 as const,
+    children: validated.value.children.map(normalizeNode),
+    palette: validated.value.palette ?? [],
+    components: (validated.value.components ?? []).map((component) => ({ id: component.id, name: component.name, node: normalizeNode(component.node) })),
+  });
 }
 
 export function serializeDocument(document: Document) {
   const parsed = Result.parse(internalDocumentSchema, document);
   if (Result.isFailure(parsed)) return parsed;
-  const wire = Result.parse(documentSchema, { version: 1, children: parsed.value.children.map(compactNode), ...(parsed.value.palette.length === 0 ? {} : { palette: parsed.value.palette }) });
+  const wire = Result.parse(documentSchema, {
+    version: 1,
+    children: parsed.value.children.map(compactNode),
+    ...(parsed.value.palette.length === 0 ? {} : { palette: parsed.value.palette }),
+    ...(parsed.value.components.length === 0 ? {} : { components: parsed.value.components.map((component) => ({ id: component.id, name: component.name, node: compactNode(component.node) })) }),
+  });
   if (Result.isFailure(wire)) return wire;
   return Result.succeed(JSON.stringify(wire.value, null, 2));
 }
