@@ -3,8 +3,8 @@ import { Result } from "@praha/byethrow";
 import { importSvgIcon } from "@/document/commands/svgImport.ts";
 import { resolvedSpacing } from "@/document/spacing.ts";
 import type { SvgIcon } from "@/document/svgPath.ts";
-import { addNode, type AddNodeInput, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, type FrameLayoutPatch, moveNode, removeComponent, removeSpacingToken, renameComponent, renameNode, renameSpacingToken, resetInstanceOverride, setBlur, setBorder, setFrameLayout, setFrameStyle, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
-import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
+import { addNode, type AddNodeInput, addPaletteColor, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, moveNode, removeComponent, removePaletteColor, removeSpacingToken, renameComponent, renameNode, renamePaletteColor, renameSpacingToken, resetInstanceOverride, setBlur, setBorder, setFrameLayout, setFrameStyle, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPaletteColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle } from "@/document/commands/index.ts";
+import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PaletteColor, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
 
@@ -59,6 +59,10 @@ export interface FocusedViewport {
 
 const coordinates = { unit: "px", localOrigin: "parent", absoluteOrigin: "document" } as const;
 
+function paletteSnapshot(document: Document): PaletteColor[] {
+  return (document.palette ?? []).map((color) => ({ ...color }));
+}
+
 export function listElements(document: Document, includeImageSource = false): ElementReference[] {
   const elements: ElementReference[] = [];
   function visit(nodes: DocumentNode[], names: string[], parentId: string | null) {
@@ -89,9 +93,9 @@ export function listElements(document: Document, includeImageSource = false): El
 }
 
 export function createAgentApi(port: EditorPort) {
-  function getElement(id: string): Result.Result<ElementReference, Error> {
+  function getElement(id: string): Result.Result<ElementReference & { palette: PaletteColor[] }, Error> {
     const element = listElements(port.getDocument(), true).find((item) => item.id === id);
-    return element ? Result.succeed(element) : Result.fail(new Error(`要素が見つかりません: ${id}`));
+    return element ? Result.succeed({ ...element, palette: paletteSnapshot(port.getDocument()) }) : Result.fail(new Error(`要素が見つかりません: ${id}`));
   }
 
   function applyToElement(id: string, result: Result.Result<Document, Error>): Result.Result<ElementReference, Error> {
@@ -115,7 +119,7 @@ export function createAgentApi(port: EditorPort) {
       const document = port.getDocument();
       const elements = listElements(document);
       const selected = elements.find((item) => item.id === port.getSelectedId()) ?? null;
-      return Result.succeed({ document: structuredClone(document), selected, elements });
+      return Result.succeed({ document: structuredClone(document), palette: paletteSnapshot(document), selected, elements });
     },
     getElement,
     select(id: string) {
@@ -201,6 +205,37 @@ export function createAgentApi(port: EditorPort) {
       if (editable && Result.isFailure(editable)) return editable;
       if (result.value !== port.getDocument()) port.apply(result.value);
       return Result.succeed(patch.remove ? { ...original, deleted: true } : result.value.spacing.find((token) => token.id === id)!);
+    },
+    listPalette() {
+      return Result.succeed(paletteSnapshot(port.getDocument()));
+    },
+    addPaletteColor(input: { name: string; color: string }) {
+      const result = addPaletteColor(port.getDocument(), input);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      port.apply(result.value.document);
+      return Result.succeed(result.value.color);
+    },
+    changePaletteColor(id: string, patch: { name?: string; color?: string; remove?: boolean; duplicate?: boolean }) {
+      const original = port.getDocument().palette.find((color) => color.id === id);
+      if (!original) return Result.fail(new Error(`パレットの色が見つかりません: ${id}`));
+      if (patch.duplicate) {
+        const result = duplicatePaletteColor(port.getDocument(), id);
+        if (Result.isFailure(result)) return result;
+        const editable = port.canEdit?.();
+        if (editable && Result.isFailure(editable)) return editable;
+        port.apply(result.value.document);
+        return Result.succeed(result.value.color);
+      }
+      const result = patch.remove ? removePaletteColor(port.getDocument(), id)
+        : patch.name !== undefined ? renamePaletteColor(port.getDocument(), id, patch.name)
+          : setPaletteColor(port.getDocument(), id, patch.color!);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      if (result.value !== port.getDocument()) port.apply(result.value);
+      return Result.succeed(patch.remove ? { ...original, deleted: true } : result.value.palette.find((color) => color.id === id)!);
     },
     setBorder(id: string, border: Border) {
       return applyToElement(id, setBorder(port.getDocument(), id, border));

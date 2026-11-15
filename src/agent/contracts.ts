@@ -2,20 +2,23 @@ import { z } from "zod";
 
 const id = z.string().min(1);
 const idInput = z.strictObject({ id });
+const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?$/);
+const paletteRef = z.strictObject({ type: z.literal("palette"), id });
+const color = z.union([hexColor, paletteRef]);
 const geometry = { x: z.number(), y: z.number(), width: z.number(), height: z.number() };
 const cornerRadii = z.strictObject({ topLeft: z.number(), topRight: z.number(), bottomRight: z.number(), bottomLeft: z.number() });
-const stroke = z.strictObject({ color: z.string(), width: z.number() });
+const stroke = z.strictObject({ color, width: z.number() });
 const unit = z.number().finite().min(0).max(1);
 const gradient = z.strictObject({ type: z.literal("linear"), start: z.strictObject({ x: unit, y: unit }), end: z.strictObject({ x: unit, y: unit }),
-  stops: z.array(z.strictObject({ position: unit, color: z.string() })).min(2) });
+  stops: z.array(z.strictObject({ position: unit, color })).min(2) });
 const radialGradient = z.strictObject({ type: z.literal("radial"), center: z.strictObject({ x: unit, y: unit }), radius: unit.positive(),
-  stops: z.array(z.strictObject({ position: unit, color: z.string() })).min(2) });
+  stops: z.array(z.strictObject({ position: unit, color })).min(2) });
 const border = z.strictObject({ top: stroke.optional(), right: stroke.optional(), bottom: stroke.optional(), left: stroke.optional() });
 const focalPoint = z.strictObject({ x: z.number().finite().min(0).max(1), y: z.number().finite().min(0).max(1) });
 const filters = z.strictObject({ brightness: z.number().finite().nonnegative().optional(), contrast: z.number().finite().nonnegative().optional(),
   saturate: z.number().finite().nonnegative().optional(), grayscale: z.number().finite().min(0).max(1).optional(),
   sepia: z.number().finite().min(0).max(1).optional(), hueRotate: z.number().finite().optional() });
-const boxStyle = { fill: z.union([z.string(), gradient, radialGradient]).nullable().optional(), stroke: stroke.nullable().optional(), cornerRadii: cornerRadii.optional() };
+const boxStyle = { fill: z.union([color, gradient, radialGradient]).nullable().optional(), stroke: stroke.nullable().optional(), cornerRadii: cornerRadii.optional() };
 const pathCommands = z.array(z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("move"), x: z.number(), y: z.number() }),
   z.strictObject({ kind: z.literal("line"), x: z.number(), y: z.number() }),
@@ -47,7 +50,7 @@ export const agentInputs = {
   set_element_geometry: z.strictObject({ id, ...geometry }),
   set_rotation: z.strictObject({ id, rotation: z.number().finite() }),
   set_opacity: z.strictObject({ id, opacity: z.number().finite().min(0).max(1) }),
-  set_shadow: z.strictObject({ id, shadow: z.strictObject({ color: z.string(), offsetX: z.number().finite(), offsetY: z.number().finite(), blur: z.number().finite().nonnegative() }).nullable() }),
+  set_shadow: z.strictObject({ id, shadow: z.strictObject({ color, offsetX: z.number().finite(), offsetY: z.number().finite(), blur: z.number().finite().nonnegative() }).nullable() }),
   set_blur: z.strictObject({ id, blur: z.number().finite().nonnegative() }),
   set_mask: z.strictObject({ id, isMask: z.boolean() }),
   set_shape_style: z.strictObject({ id, ...boxStyle }).refine(hasChange, "変更するスタイルを指定してください"),
@@ -60,14 +63,20 @@ export const agentInputs = {
   rename_spacing_token: z.strictObject({ id, name: z.string().min(1) }),
   set_spacing_token: z.strictObject({ id, value: z.number().finite().nonnegative() }),
   remove_spacing_token: idInput,
+  list_palette: z.strictObject({}),
+  add_palette_color: z.strictObject({ name: z.string().min(1), color: hexColor }),
+  rename_palette_color: z.strictObject({ id, name: z.string().min(1) }),
+  set_palette_color: z.strictObject({ id, color: hexColor }),
+  remove_palette_color: idInput,
+  duplicate_palette_color: idInput,
   set_border: z.strictObject({ id, border }),
   set_image_style: z.strictObject({ id, fit: z.enum(["cover", "contain", "fill"]).optional(), focalPoint: focalPoint.optional(),
     cornerRadii: cornerRadii.optional() }).refine(hasChange, "変更するスタイルを指定してください"),
   set_image_filters: z.strictObject({ id, filters: filters.refine((value) => Object.keys(value).length > 0, "変更するフィルターを指定してください") }),
-  set_text_style: z.strictObject({ id, fontSize: z.number().optional(), color: z.string().optional(),
+  set_text_style: z.strictObject({ id, fontSize: z.number().optional(), color: color.optional(),
     textAlign: z.enum(["left", "center", "right"]).optional(), fontFamily: z.enum(["default", "system", "serif", "monospace"]).optional(),
     fontWeight: z.number().optional(), lineHeight: z.number().optional(), letterSpacing: z.number().optional() }).refine(hasChange, "変更するスタイルを指定してください"),
-  set_text_marks: z.strictObject({ id, marks: z.array(z.strictObject({ start: z.number(), end: z.number(), color: z.string().optional(),
+  set_text_marks: z.strictObject({ id, marks: z.array(z.strictObject({ start: z.number(), end: z.number(), color: color.optional(),
     fontWeight: z.number().optional(), underline: z.literal(true).optional(), code: z.literal(true).optional() })) }),
   delete_element: idInput,
   duplicate_element: idInput,
