@@ -1,9 +1,10 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis } from "@/document/commands/index.ts";
-import type { DocumentNode, FrameStyle, Geometry, ImageStyle, PathFillRule, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { DocumentNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
+import { InstanceOverrides } from "@/pages/editor/components/molecules/InstanceOverrides";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { ShadowEditor } from "@/pages/editor/components/molecules/ShadowEditor";
@@ -40,9 +41,13 @@ interface InspectorProps {
   onCreateComponent(): void;
   onGoToDefinition(): void;
   componentName?: string;
+  componentNode?: DocumentNode;
+  onSetOverride(childId: string, patch: InstanceOverride): void;
+  onResetOverride(childId: string): void;
+  onDetach(): void;
 }
 
-export function Inspector({ selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName }: InspectorProps) {
+export function Inspector({ selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle, onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder, onAlign, spacing, onDistribute, onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach }: InspectorProps) {
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="panel-heading"><h2>プロパティ</h2><span>01</span></div>
@@ -115,6 +120,14 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], onR
             <div className="field-label">コンポーネント</div>
             <p className="property-help">定義「{componentName ?? "不明"}」を参照しています。見た目は定義側で変更されます。</p>
             <button type="button" className="file-button" onClick={onGoToDefinition}>定義へ移動</button>
+            {componentNode && <>
+              <div className="property-divider" />
+              <div className="field-label">オーバーライド</div>
+              <InstanceOverrides node={componentNode} overrides={selected.overrides}
+                onSetOverride={onSetOverride} onResetOverride={onResetOverride} />
+            </>}
+            <div className="property-divider" />
+            <button type="button" className="file-button" onClick={onDetach}>切り離す</button>
           </>}
           <ShadowEditor key={`${selected.id}:${JSON.stringify(selected.shadow)}`} shadow={selected.shadow} onChange={onShadow} />
           <label className="geometry-field">

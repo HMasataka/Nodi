@@ -333,6 +333,24 @@ button {
   padding: 5px 4px;
   font-size: 10px;
 }
+.instance-override {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  margin: 8px 0;
+}
+.instance-override-label {
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+.instance-override-input {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 8px;
+  background: var(--panel);
+  color: var(--text-layer);
+  font-size: 12px;
+}
 
 .canvas-container {
   position: relative;

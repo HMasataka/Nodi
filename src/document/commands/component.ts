@@ -47,7 +47,19 @@ export function renameComponent(document: Document, id: string, name: string): R
 
 export function removeComponent(document: Document, id: string): Result.Result<Document, Error> {
   if (!document.components.some((component) => component.id === id)) return Result.fail(new Error(`コンポーネントが見つかりません: ${id}`));
+  if (componentInUse(document, id)) return Result.fail(new Error("使用中のコンポーネントは削除できません。インスタンスを切り離すか削除してください"));
   return Result.succeed({ ...document, components: document.components.filter((component) => component.id !== id) });
+}
+
+function componentInUse(document: Document, componentId: string): boolean {
+  function visit(nodes: DocumentNode[]): boolean {
+    return nodes.some((node) => {
+      if (node.type === "instance" && node.componentRef === componentId) return true;
+      return node.type === "frame" && visit(node.children);
+    });
+  }
+  if (visit(document.children)) return true;
+  return document.components.some((component) => visit([component.node]));
 }
 
 export function duplicateComponent(document: Document, id: string): Result.Result<{ document: Document; component: ComponentDefinition }, Error> {

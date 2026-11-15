@@ -8,10 +8,10 @@ import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, distributeNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
-  removeAnimation, removeComponent, removeKeyframe, renameComponent, reorderNode, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
+  addAnimation, addKeyframe, type Alignment, alignNodes, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, detachInstance, distributeNodes, duplicateComponent, duplicateNode, type FrameLayoutPatch, type KeyframePatch, type LayerDirection,
+  removeAnimation, removeComponent, removeKeyframe, renameComponent, reorderNode, resetInstanceOverride, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setInstanceOverride, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPath, setRotation, setShadow, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
-import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, InstanceOverride, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 export function useEditorActions(session: ReturnType<typeof useEditorDocument>, playback: { playhead: number; scrollProgress: number }) {
   const { designRef, selected, selectedId, selectedIds, setSelectedId, setSelectedIds, setError, applyDocument, recordDocument, agentApi } = session;
@@ -66,6 +66,22 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
     const result = duplicateComponent(designRef.current, componentId);
     if (Result.isFailure(result)) { setError(result.error.message); return; }
     recordDocument(result.value.document);
+  }
+
+  function setOverride(instanceId: string, childId: string, patch: InstanceOverride) {
+    applyDocument(setInstanceOverride(designRef.current, instanceId, childId, patch));
+  }
+
+  function resetOverride(instanceId: string, childId: string) {
+    applyDocument(resetInstanceOverride(designRef.current, instanceId, childId));
+  }
+
+  function detachSelectedInstance() {
+    if (!selectedId) return;
+    const result = detachInstance(designRef.current, selectedId);
+    if (Result.isFailure(result)) { setError(result.error.message); return; }
+    recordDocument(result.value.document);
+    setSelectedId(result.value.node.id);
   }
 
   async function exportSelectedFrame() {
@@ -141,6 +157,9 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
       onRename: renameDefinition,
       onDuplicate: duplicateDefinition,
       onRemove: removeDefinition,
+      onSetOverride: setOverride,
+      onResetOverride: resetOverride,
+      onDetach: detachSelectedInstance,
     },
     timeline: {
       onAddAnimation: () => {
