@@ -10,6 +10,7 @@ use tiny_http::{Method, Response, Server, StatusCode};
 #[derive(Clone)]
 pub struct BridgeState {
     pending: Arc<Mutex<HashMap<String, mpsc::Sender<serde_json::Value>>>>,
+    registration: Arc<crate::mcp_registry::Registration>,
 }
 
 impl BridgeState {
@@ -25,19 +26,11 @@ impl BridgeState {
             .path()
             .app_config_dir()
             .map_err(|error| error.to_string())?;
-        std::fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
-        let discovery = directory.join("mcp-bridge.json");
-        let details = serde_json::json!({ "port": port, "token": token });
-        std::fs::write(&discovery, details.to_string()).map_err(|error| error.to_string())?;
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&discovery, std::fs::Permissions::from_mode(0o600))
-                .map_err(|error| error.to_string())?;
-        }
+        let registration = crate::mcp_registry::Registration::create(&directory, port, &token)?;
 
         let state = Self {
             pending: Arc::new(Mutex::new(HashMap::new())),
+            registration: Arc::new(registration),
         };
         let bridge = state.clone();
         std::thread::spawn(move || {
@@ -49,6 +42,10 @@ impl BridgeState {
             }
         });
         Ok(state)
+    }
+
+    pub fn cleanup(&self) -> Result<(), String> {
+        self.registration.remove()
     }
 
     fn handle(
@@ -87,6 +84,12 @@ impl BridgeState {
                 serde_json::json!({ "ok": false, "error": "JSON を読み取れません" }),
             );
         };
+        if payload["instanceId"].as_str() != Some(self.registration.instance_id.as_str()) {
+            return (
+                409,
+                serde_json::json!({ "ok": false, "error": "対象のアプリが一致しません" }),
+            );
+        }
         let id = uuid::Uuid::new_v4().to_string();
         let (sender, receiver) = mpsc::channel();
         let Ok(mut pending) = self.pending.lock() else {
@@ -97,12 +100,19 @@ impl BridgeState {
         };
         pending.insert(id.clone(), sender);
         drop(pending);
-        if app.emit("nodi:mcp-request", serde_json::json!({ "id": id, "method": payload["method"], "args": payload["args"] })).is_err() {
+        if app.emit("nodi:mcp-request", serde_json::json!({ "id": id, "method": payload["method"], "args": payload["args"], "documentSessionId": payload["documentSessionId"] })).is_err() {
             self.pending.lock().ok().map(|mut pending| pending.remove(&id));
             return (503, serde_json::json!({ "ok": false, "error": "エディタに接続できません" }));
         }
         match receiver.recv_timeout(Duration::from_secs(15)) {
-            Ok(response) => (200, response),
+            Ok(mut response) => {
+                if payload["method"] == "get_instance_info" && response["ok"] == true {
+                    response["data"]["instanceId"] =
+                        serde_json::json!(self.registration.instance_id);
+                    response["data"]["pid"] = serde_json::json!(std::process::id());
+                }
+                (200, response)
+            }
             Err(_) => {
                 self.pending
                     .lock()

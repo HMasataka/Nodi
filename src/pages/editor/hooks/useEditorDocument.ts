@@ -2,6 +2,7 @@ import { isTauri } from "@tauri-apps/api/core";
 import { Result } from "@praha/byethrow";
 import { useEffect, useRef, useState } from "react";
 
+import { createDocumentSession } from "@/agent/sessionBridge.ts";
 import type { Document } from "@/document/types";
 import { documentFiles } from "@/ipc/documentFiles";
 import { recoveryFiles } from "@/ipc/recoveryFiles";
@@ -14,6 +15,7 @@ import { createDocument, findNode } from "@/document/commands/index.ts";
 import { openDocumentFile, saveDocumentFile } from "@/persistence/documentFile";
 
 export function useEditorDocument() {
+  const [mcpSession] = useState(createDocumentSession);
   const [history, setHistory] = useState(() => createHistory(createDocument(), true));
   const historyRef = useRef(history);
   const [design, setDesign] = useState<Document>(history.present);
@@ -75,6 +77,7 @@ export function useEditorDocument() {
     designRef.current = next.present;
     setDesign(next.present);
     setFilePath(null);
+    mcpSession.replace(null);
     setDocumentSession((value) => value + 1);
     setSelectedIds([]);
     revision.current += 1;
@@ -110,7 +113,7 @@ export function useEditorDocument() {
     canEdit: ensureEditable,
     focus: (id) => focusElementRef.current(id),
   });
-  useMcpBridge(agentApi, setError, recoveryStatus.kind === "none");
+  useMcpBridge(agentApi, setError, () => mcpSession.info(recoveryStatus.kind === "none"));
 
   function applyDocument(result: Result.Result<Document, Error>) {
     if (Result.isFailure(result)) { setError(result.error.message); return; }
@@ -168,6 +171,7 @@ export function useEditorDocument() {
     designRef.current = result.value.document;
     setDesign(result.value.document);
     setFilePath(result.value.path);
+    mcpSession.replace(result.value.path);
     setDocumentSession((value) => value + 1);
     setSelectedIds([]);
     revision.current += 1;
@@ -188,6 +192,7 @@ export function useEditorDocument() {
     if (Result.isFailure(result)) { setError(result.error.message); return; }
     if (result.value === null) return;
     setFilePath(result.value);
+    mcpSession.saved(result.value);
     const next = markSaved(historyRef.current, snapshot);
     historyRef.current = next;
     setHistory(next);

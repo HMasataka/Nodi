@@ -1,26 +1,9 @@
 import { agentInputs } from "../src/agent/contracts.ts";
-import { homedir } from "node:os";
-import { join } from "node:path";
 import { McpServer } from "@modelcontextprotocol/server";
-import { readFile } from "node:fs/promises";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
+import { createNodiRequest, instanceInputs, type NodiBridgeResponse, type NodiRequest } from "./nodi-instances.ts";
 
-const configDir = process.platform === "darwin"
-  ? join(homedir(), "Library", "Application Support")
-  : process.platform === "win32"
-    ? process.env.APPDATA ?? join(homedir(), "AppData", "Roaming")
-    : process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config");
-const discoveryPath = process.env.NODI_BRIDGE_FILE ?? join(configDir, "com.hmasataka.nodi", "mcp-bridge.json");
-
-export interface NodiBridgeResponse {
-  ok: boolean;
-  data?: unknown;
-  error?: string;
-}
-
-export type NodiRequest = (method: string, args?: Record<string, unknown>) => Promise<NodiBridgeResponse>;
-
-type ToolSchema = (typeof agentInputs)[keyof typeof agentInputs];
+type ToolSchema = (typeof agentInputs)[keyof typeof agentInputs] | (typeof instanceInputs)[keyof typeof instanceInputs];
 
 export const PR_EVIDENCE_INSTRUCTIONS = [
   "Nodi を使って画面デザインや実装を変更し PR を作る場合、変更前と変更後の実画面スクリーンショットを同じ画面・ビューポート・データで撮影し、PR 本文に ![Before](URL) と ![After](URL) で添付する。",
@@ -28,23 +11,11 @@ export const PR_EVIDENCE_INSTRUCTIONS = [
   "画像を撮影・添付できない場合は捏造せず、PR 作成前に利用者へ知らせる。画面に変化がない PR ではその理由を本文に明記する。",
 ].join("\n");
 
-export async function callNodi(
-  method: string,
-  args: Record<string, unknown> = {},
-  path = discoveryPath,
-): Promise<NodiBridgeResponse> {
-  const { port, token } = JSON.parse(await readFile(path, "utf8")) as { port: number; token: string };
-  const response = await fetch(`http://127.0.0.1:${port}/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Nodi-Token": token },
-    body: JSON.stringify({ method, args }),
-    signal: AbortSignal.timeout(16_000),
-  });
-  return await response.json() as NodiBridgeResponse;
-}
-
-export function createNodiMcpServer(request: NodiRequest = callNodi) {
-  const server = new McpServer({ name: "nodi", version: "0.1.0" }, { instructions: PR_EVIDENCE_INSTRUCTIONS });
+export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) {
+  const server = new McpServer({ name: "nodi", version: "0.1.0" }, { instructions: [
+    "最初にlist_instancesで起動中のNodiと文書を確認し、instanceIdとdocumentSessionIdをselect_instanceへ渡してください。文書が切り替わった場合は一覧から選び直してください。",
+    PR_EVIDENCE_INSTRUCTIONS,
+  ].join("\n") });
   function tool(name: string, description: string, inputSchema: ToolSchema, modifiesDesign = false) {
     const evidenceNote = modifiesDesign ? " PR 作成時は実画面の Before/After 画像を本文に添付し、正しさは数値とテストでも確認する。" : "";
     server.registerTool(name, { description: description + evidenceNote, inputSchema }, async (args: unknown) => {
@@ -56,6 +27,8 @@ export function createNodiMcpServer(request: NodiRequest = callNodi) {
       };
     });
   }
+  tool("list_instances", "起動中のNodiと現在の文書を一覧取得。接続情報のトークンは返さない", instanceInputs.list_instances);
+  tool("select_instance", "一覧で確認したアプリと文書を、このMCPサーバーの操作対象として選択", instanceInputs.select_instance);
   tool("get_state", "開いている Nodi ドキュメントと選択要素、名前と ID の一覧を取得", agentInputs.get_state);
   tool("get_element", "ID で要素を取得", agentInputs.get_element);
   tool("select_element", "ID で要素を画面上で選択し、境界が見えるようにパン・ズーム。名前・親階層・表示後の座標を返す（ドキュメントは変更しない）", agentInputs.select_element);
