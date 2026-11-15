@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 
 import { applyOverride, resolveDocumentInstances } from "../src/document/instances.ts";
-import { createComponent, createInstance } from "../src/document/commands/index.ts";
+import { createComponent, createInstance, renameComponent } from "../src/document/commands/index.ts";
 import { document, frame, image, instance, rectangle, success, text } from "./support/factories.ts";
 import type { FrameNode, RectangleNode, TextNode } from "../src/document/types.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
@@ -37,7 +37,8 @@ test("インスタンスを定義ツリーへ解決し、位置とサイズを�
   assert.equal(resolved.children[0].id, "frame1");
   const root = resolved.children[1] as FrameNode;
   assert.equal(root.type, "frame");
-  assert.equal(root.id, definition.node.id);
+  assert.equal(root.id, withInstance.children[1].id);
+  assert.equal(root.name, "ボタン");
   assert.equal(root.x, 50);
   assert.equal(root.y, 60);
   assert.equal(root.width, 200);
@@ -97,9 +98,9 @@ test("ネストしたコンポーネントのインスタンスを再帰的に�
 
   const root = resolveDocumentInstances(doc).children[0] as FrameNode;
   assert.equal(root.type, "frame");
-  assert.equal(root.id, "outer-root");
+  assert.equal(root.id, "instance");
   const nested = root.children[0] as FrameNode;
-  assert.equal(nested.id, "inner-root");
+  assert.equal(nested.id, "nested");
   assert.equal((nested.children[0] as TextNode).content, "内部");
 });
 
@@ -144,6 +145,20 @@ test("インスタンスとオーバーライドを保存・再読込して roun
   assert.deepEqual(success(parseDocument(json)), original);
   assert.deepEqual(original, before);
   assert.equal(success(serializeDocument(success(parseDocument(json)))), json);
+});
+
+test("定義の名前変更は参照を壊さない", () => {
+  const base = success(createComponent(document(frame({ id: "frame1", width: 200, height: 100 })), { sourceId: "frame1", name: "ボタン" })).document;
+  const definitionId = base.components[0].id;
+  const withInstance = success(createInstance(base, { componentRef: definitionId, x: 0, y: 0 })).document;
+  const renamed = success(renameComponent(withInstance, definitionId, "新しい名前"));
+  assert.equal(renamed.components[0].name, "新しい名前");
+  assert.equal(renamed.components[0].id, definitionId);
+  const instanceNode = renamed.children[1];
+  assert.equal(instanceNode.type, "instance");
+  assert.equal(instanceNode.type === "instance" ? instanceNode.componentRef : "", definitionId);
+  const resolved = resolveDocumentInstances(renamed);
+  assert.equal(resolved.children[1].type, "frame");
 });
 
 test("空のオーバーライドは保存時に省略する", () => {

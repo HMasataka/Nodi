@@ -6,7 +6,7 @@ import { createServer } from "vite";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { reorderNode } from "../src/document/commands/index.ts";
-import { document, frame as makeFrame, image as makeImage, rectangle as makeRectangle, text as makeText } from "./support/factories.ts";
+import { document, frame as makeFrame, image as makeImage, instance as makeInstance, rectangle as makeRectangle, text as makeText } from "./support/factories.ts";
 import { pathToString, roundedRectPath } from "../src/document/shapePath.ts";
 
 test("分割後のキャンバス・レイヤー・プロパティが同じ要素を表示する", async () => {
@@ -86,6 +86,19 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const layers = renderToStaticMarkup(createElement(LayersPanel, { nodes: [frame], selectedId: image.id, onSelect: noOp }));
     assert.match(layers, /画面/);
     assert.match(layers, /風景/);
+    assert.match(layers, /コンポーネント/);
+    const withComponent = renderToStaticMarkup(createElement(LayersPanel, {
+      nodes: [frame], components: [{ id: "cp1", name: "ボタン", node: makeFrame({ id: "cp-root" }) }],
+      selectedId: null, onSelect: noOp, highlightedComponentId: "cp1",
+    }));
+    assert.match(withComponent, /ボタン/);
+    assert.match(withComponent, /配置/);
+    assert.match(withComponent, /is-highlighted/);
+    const instanceLayers = renderToStaticMarkup(createElement(LayersPanel, {
+      nodes: [makeInstance({ id: "inst-1", name: "ボタンインスタンス", componentRef: "cp1" })],
+      selectedId: null, onSelect: noOp,
+    }));
+    assert.match(instanceLayers, /インスタンス/);
     const inspector = renderToStaticMarkup(createElement(Inspector, {
       selected: image, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
       onShapeStyle: noOp, onImageStyle: noOp, onDuplicate: noOp, onDelete: noOp,

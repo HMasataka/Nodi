@@ -1,16 +1,30 @@
-import type { DocumentNode } from "@/document/types";
+import { useEffect, useRef } from "react";
+
 import type { LayerDirection } from "@/document/commands/index.ts";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
+import type { ComponentDefinition, DocumentNode } from "@/document/types";
 
 interface LayersPanelProps {
   nodes: DocumentNode[];
+  components?: ComponentDefinition[];
   selectedId: string | null;
   selectedIds?: string[];
+  highlightedComponentId?: string | null;
   onSelect(id: string, additive?: boolean): void;
   onReorder(id: string, direction: LayerDirection): void;
+  onPlaceInstance?(componentId: string): void;
+  onRenameComponent?(componentId: string, name: string): void;
+  onDuplicateComponent?(componentId: string): void;
+  onRemoveComponent?(componentId: string): void;
 }
 
-export function LayersPanel({ nodes, selectedId, selectedIds = selectedId ? [selectedId] : [], onSelect, onReorder }: LayersPanelProps) {
+export function LayersPanel({ nodes, components = [], selectedId, selectedIds = selectedId ? [selectedId] : [], highlightedComponentId, onSelect, onReorder, onPlaceInstance = () => {}, onRenameComponent = () => {}, onDuplicateComponent = () => {}, onRemoveComponent = () => {} }: LayersPanelProps) {
+  const highlightedRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (highlightedComponentId) highlightedRef.current?.scrollIntoView({ block: "nearest" });
+  }, [highlightedComponentId]);
+
   function count(items: DocumentNode[]): number {
     return items.reduce((total, node) => total + 1 + (node.type === "frame" ? count(node.children) : 0), 0);
   }
@@ -25,6 +39,7 @@ export function LayersPanel({ nodes, selectedId, selectedIds = selectedId ? [sel
             onClick={(event) => onSelect(node.id, event.shiftKey)}>
             <LayerIcon type={node.type} />
             <span className="layer-name">{node.name}</span>
+            {node.type === "instance" && <span className="layer-mask-label">インスタンス</span>}
             {("isMask" in node && node.isMask) && <span className="layer-mask-label">マスク</span>}
           </button>
           <button type="button" className="layer-order" aria-label={`${node.name}を前へ`} title="前へ" disabled={index === siblings.length - 1} onClick={() => onReorder(node.id, "forward")}>↑</button>
@@ -41,6 +56,28 @@ export function LayersPanel({ nodes, selectedId, selectedIds = selectedId ? [sel
       {nodes.length === 0
         ? <p className="panel-empty">まだ要素がありません。<br />矩形を追加して始めましょう。</p>
         : <div className="layer-list">{[...nodes].reverse().map((node) => renderLayer(node, nodes))}</div>}
+      <div className="components-heading"><h2>コンポーネント</h2><span>{components.length.toString().padStart(2, "0")}</span></div>
+      {components.length === 0
+        ? <p className="panel-empty">フレームを選んで「コンポーネントを作成」すると、ここに定義が並びます。</p>
+        : <div className="component-list">
+            {components.map((component) => (
+              <div key={component.id} ref={highlightedComponentId === component.id ? highlightedRef : undefined}
+                className={`component-item${highlightedComponentId === component.id ? " is-highlighted" : ""}`}>
+                <div className="component-row">
+                  <LayerIcon type="frame" />
+                  <input className="component-name" defaultValue={component.name} spellCheck={false}
+                    aria-label="コンポーネント名"
+                    onBlur={(event) => { const value = event.currentTarget.value; if (value.trim() && value !== component.name) onRenameComponent(component.id, value); }}
+                    onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+                </div>
+                <div className="component-actions">
+                  <button type="button" className="file-button" onClick={() => onPlaceInstance(component.id)}>配置</button>
+                  <button type="button" className="file-button" onClick={() => onDuplicateComponent(component.id)}>複製</button>
+                  <button type="button" className="file-button" onClick={() => onRemoveComponent(component.id)}>削除</button>
+                </div>
+              </div>
+            ))}
+          </div>}
     </aside>
   );
 }
