@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { Color } from "@/document/types.ts";
+import type { Color, PaletteColor } from "@/document/types.ts";
 
 export type ColorResolver = (color: Color) => string;
 
@@ -9,4 +9,11 @@ export const ColorResolverContext = createContext<ColorResolver>((color) => (typ
 
 export function useColorResolver(): ColorResolver {
   return useContext(ColorResolverContext);
+}
+
+/** 現在の文書のパレット一覧を提供する。既定は空。 */
+export const PaletteContext = createContext<readonly PaletteColor[]>([]);
+
+export function usePalette(): readonly PaletteColor[] {
+  return useContext(PaletteContext);
 }
