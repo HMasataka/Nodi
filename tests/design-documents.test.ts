@@ -37,8 +37,8 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
 
 test("メイン画面の案だけを並べ、すべて同じ選択状態を示す", async () => {
   const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
-  assert.deepEqual(document.children.map(({ id }) => id), screenIds);
-  for (const screen of document.children) {
+  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector"]);
+  for (const screen of document.children.filter(({ id }) => screenIds.includes(id))) {
     assert.equal(screen.type, "frame");
     if (screen.type !== "frame") continue;
     assert.equal(screen.width, 1440);
@@ -70,6 +70,20 @@ test("タイムラインはパネルの間のキャンバス下端を占め、�
   const tools = screen.children.find(({ name }) => name === "Canvas overlay / Tools")!;
   assert.deepEqual([timeline.x, timeline.x + timeline.width, timeline.y + timeline.height], [240, 1160, 960]);
   assert.equal(timeline.y - (tools.y + tools.height), 12);
+});
+
+test("プロパティは要素の種類によらず共通の節を同じ順で並べる", async () => {
+  const document = await load();
+  const kinds = ["frame", "text", "image", "rectangle", "path", "instance"];
+  for (const kind of kinds) {
+    const definition = document.components.find(({ id }) => id === `inspector_${kind}`);
+    if (definition?.node.type !== "frame") assert.fail(`inspector_${kind} がありません`);
+    const sections = definition.node.children.filter(({ name }) => name !== "Divider").map(({ name }) => name);
+    assert.deepEqual([sections[0], sections[1]], ["Selection", "位置とサイズ"], kind);
+    assert.deepEqual(sections.slice(-2), ["効果", "アニメーション"], kind);
+  }
+  const panel = document.components.find(({ id }) => id === "inspectorPanel")?.node;
+  assert.ok(panel?.type === "frame" && panel.children.some((node) => node.type === "instance" && node.componentRef === "inspector_frame"));
 });
 
 test("インスタンスと共通余白を解決した全画面で子要素が領域内に収まる", async () => {

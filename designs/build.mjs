@@ -80,7 +80,17 @@ const iconPaths = {
   play: [[0.3, 0.2], [0.8, 0.5], [0.3, 0.8], "close"],
   trash: [[0.2, 0.28], [0.8, 0.28], null, [0.4, 0.28], [0.4, 0.15], [0.6, 0.15], [0.6, 0.28], null, [0.28, 0.28], [0.32, 0.85], [0.68, 0.85], [0.72, 0.28]],
   keyframeAdd: [[0.35, 0.15], [0.6, 0.4], [0.35, 0.65], [0.1, 0.4], "close", null, [0.78, 0.55], [0.78, 0.95], null, [0.58, 0.75], [0.98, 0.75]],
+  more: [[0.18, 0.5], [0.26, 0.5], null, [0.46, 0.5], [0.54, 0.5], null, [0.74, 0.5], [0.82, 0.5]],
+  chevronRight: [[0.4, 0.28], [0.62, 0.5], [0.4, 0.72]],
+  arrowRight: [[0.15, 0.5], [0.85, 0.5], null, [0.55, 0.22], [0.85, 0.5], [0.55, 0.78]],
+  reset: [[0.3, 0.22], [0.12, 0.4], [0.3, 0.58], null, [0.12, 0.4], [0.62, 0.4], [0.85, 0.62], [0.62, 0.84], [0.35, 0.84]],
+  corners: [[0.15, 0.4], [0.15, 0.15], [0.4, 0.15], null, [0.6, 0.15], [0.85, 0.15], [0.85, 0.4], null, [0.85, 0.6], [0.85, 0.85], [0.6, 0.85], null, [0.4, 0.85], [0.15, 0.85], [0.15, 0.6]],
+  check: [[0.22, 0.52], [0.42, 0.72], [0.78, 0.3]],
+  bold: [[0.3, 0.15], [0.3, 0.85], [0.6, 0.85], [0.74, 0.72], [0.74, 0.62], [0.6, 0.5], [0.3, 0.5], null, [0.3, 0.15], [0.56, 0.15], [0.68, 0.25], [0.68, 0.4], [0.56, 0.5]],
+  underline: [[0.28, 0.15], [0.28, 0.5], [0.4, 0.66], [0.6, 0.66], [0.72, 0.5], [0.72, 0.15], null, [0.2, 0.86], [0.8, 0.86]],
+  code: [[0.35, 0.25], [0.12, 0.5], [0.35, 0.75], null, [0.65, 0.25], [0.88, 0.5], [0.65, 0.75]],
   close: [[0.25, 0.25], [0.75, 0.75], null, [0.75, 0.25], [0.25, 0.75]],
+  minus: [[0.2, 0.5], [0.8, 0.5]],
   plus: [[0.5, 0.2], [0.5, 0.8], null, [0.2, 0.5], [0.8, 0.5]],
   chevronDown: [[0.28, 0.4], [0.5, 0.62], [0.72, 0.4]],
 };
@@ -126,9 +136,11 @@ function segmented(labels, active, width) {
   }));
 }
 
-function sectionHeader(title, width = 248) {
-  const ref = define(`sectionHeader_${width}`, "Inspector / Section header", () =>
-    row("Section header", width, [text("見出し", width - 24, { size: 11, tone: 8, weight: 600 }), icon("plus", 5)], { height: 24, justify: "space-between" }));
+function sectionHeader(title, action = "add", width = 248) {
+  const ref = define(`sectionHeader_${action}_${width}`, "Inspector / Section header", () => {
+    const label = text("見出し", action === "none" ? width : width - 24, { size: 11, tone: 8, weight: 600 });
+    return row("Section header", width, action === "none" ? [label] : [label, icon(action === "add" ? "plus" : "minus", 5)], { height: 24, justify: "space-between" });
+  });
   return use(ref, { [slot(ref, 0)]: { content: title } });
 }
 
@@ -159,24 +171,105 @@ function animationRow(name, trigger) {
   return use(ref, { [slot(ref, 0)]: { content: name }, [slot(ref, 1)]: { content: trigger } });
 }
 
-define("inspector", "Inspector / Frame", () => {
-  const pair = (first, second) => row("Pair", 248, [first, second], { gap: 8 });
-  const section = (title, controls) => column(title, 248, [sectionHeader(title), ...controls], { gap: 8 });
-  return column("Inspector", 248, [
-    column("Selection", 248, [text("フレーム", 248, { size: 11, tone: 5 }), text("Project card", 248, { size: 14, tone: 8, weight: 600 })], { gap: 0 }),
-    divider(248),
-    section("位置とサイズ", [pair(field("X", "364"), field("Y", "104")), pair(field("W", "300"), field("H", "308"))]),
-    divider(248),
-    section("自動レイアウト", [segmented(["なし", "縦", "横"], 1, 248), pair(field("間隔", "16", { labelWidth: 28 }), field("余白", "24", { labelWidth: 28 })),
-      segmented(["始点", "中央", "終点"], 0, 248)]),
-    divider(248),
-    section("塗り", [colorField("Canvas", "100%")]),
-    divider(248), sectionHeader("線"),
-    divider(248), sectionHeader("効果"),
-    divider(248),
-    section("アニメーション", [animationRow("Fade in", "読み込み"), animationRow("Hover lift", "ホバー")]),
-  ], { gap: 12 });
-});
+const pair = (first, second) => row("Pair", 248, [first, second], { gap: 8 });
+const sectionWith = (action) => (title, controls = []) => column(title, 248, [sectionHeader(title, action), ...controls], { gap: 8 });
+// 常にある節は記号なし、一つだけ持てる節は未設定で「＋」・設定済みで「−」、複数持てる節は常に「＋」。
+const fixed = sectionWith("none");
+const optional = (title, controls = []) => sectionWith(controls.length ? "remove" : "add")(title, controls);
+const multiple = sectionWith("add");
+const caption = (content, width = 248) => text(content, width, { size: 11, tone: 5 });
+
+function selectField(label, value, { width = 120, labelWidth = 16 } = {}) {
+  const ref = define(`selectField_${width}_${labelWidth}`, "Control / Select field", () =>
+    row("Select field", width, [text("X", labelWidth, { size: 11, tone: 5 }), text("0", width - 16 - labelWidth - 16 - 8, { tone: 8 }), icon("chevronDown", 5)],
+      { height: 28, pad: 8, gap: 4, fill: 1, radius: 4 }));
+  return use(ref, { [slot(ref, 0)]: { content: label }, [slot(ref, 1)]: { content: value } });
+}
+
+function linkRow(label, kind) {
+  const ref = define(`linkRow_${kind}`, "Control / Link row", () =>
+    row("Link row", 248, [text("Link", 208, { tone: 8 }), icon(kind, 6)], { height: 28, pad: 8, gap: 8, fill: 1, radius: 4 }));
+  return use(ref, { [slot(ref, 0)]: { content: label } });
+}
+
+function overrideRow(name, value) {
+  const ref = define("overrideRow", "Inspector / Override row", () =>
+    row("Override row", 248, [text("Name", 64, { size: 11, tone: 5 }), text("Value", 136, { tone: 8 }), icon("reset", 5)], { height: 28, pad: 8, gap: 8, fill: 1, radius: 4 }));
+  return use(ref, { [slot(ref, 0)]: { content: name }, [slot(ref, 1)]: { content: value } });
+}
+
+function checkboxRow(label, checked) {
+  const ref = define(`checkboxRow_${checked}`, "Control / Checkbox", () => {
+    const box = checked ? row("Box", 16, [icon("check", 0)], { height: 16, fill: 8, radius: 4 }) : frame("Box", 16, 16, [], { fill: 0, stroke: 4, radius: 4 });
+    return row("Checkbox", 248, [box, text("Label", 224, { tone: 7 })], { height: 28, gap: 8 });
+  });
+  return use(ref, { [slot(ref, 1)]: { content: label } });
+}
+
+function cornerField(value) {
+  return row("Corner radius", 248, [field("角丸", value, { width: 208, labelWidth: 28 }), iconButton("corners")], { gap: 8 });
+}
+
+function inspectorHeading(kind, name) {
+  return row("Selection", 248, [column("Name", 208, [caption(kind, 208), text(name, 208, { size: 14, tone: 8, weight: 600 })]), iconButton("more")], { justify: "space-between" });
+}
+
+function geometry([x, y, width, height], [widthMode, heightMode]) {
+  return fixed("位置とサイズ", [
+    pair(field("X", x), field("Y", y)), pair(field("W", width), field("H", height)),
+    pair(selectField("幅", widthMode, { labelWidth: 28 }), selectField("高さ", heightMode, { labelWidth: 28 })),
+    pair(field("回転", "0°", { labelWidth: 28 }), field("不透明度", "100%", { labelWidth: 48 })),
+  ]);
+}
+
+// 全種類で見出し、位置とサイズ、種類ごとの節、見た目の節、効果、アニメーションの順を守る。
+function inspector(kind, name, box, sizeModes, specific, appearance, effects = [], animations = []) {
+  const blocks = [inspectorHeading(kind, name), geometry(box, sizeModes), ...specific, ...appearance, multiple("効果", effects), multiple("アニメーション", animations)];
+  return column("Inspector", 248, blocks.flatMap((block, index) => index === 0 ? [block] : [divider(248), block]), { gap: 12 });
+}
+
+const inspectorKinds = {
+  frame: () => inspector("フレーム", "Project card", ["364", "104", "300", "308"], ["固定", "内容"], [
+    fixed("自動レイアウト", [segmented(["なし", "縦", "横"], 1, 248), pair(field("間隔", "16", { labelWidth: 28 }), field("余白", "24", { labelWidth: 28 })),
+      segmented(["始点", "中央", "終点"], 0, 248), checkboxRow("はみ出しを隠す", true)]),
+  ], [optional("塗り", [colorField("Canvas", "100%")]), optional("線"), fixed("角丸", [cornerField("0")])], [],
+  [animationRow("Fade in", "読み込み"), animationRow("Hover lift", "ホバー")]),
+  text: () => inspector("テキスト", "Title", ["24", "232", "252", "32"], ["伸縮", "内容"], [
+    fixed("テキスト", [selectField("書体", "System", { width: 248, labelWidth: 28 }), pair(field("サイズ", "22", { labelWidth: 40 }), selectField("太さ", "600", { labelWidth: 28 })),
+      pair(field("行高", "1.3", { labelWidth: 28 }), field("字間", "0", { labelWidth: 28 })), segmented(["左", "中央", "右"], 0, 248),
+      row("Marks", 248, [text("選択範囲", 136, { size: 11, tone: 5 }), iconButton("bold"), iconButton("underline"), iconButton("code")], { gap: 4 })]),
+  ], [optional("文字色", [colorField("Ink", "100%")])]),
+  image: () => inspector("画像", "Cover photo", ["24", "24", "252", "176"], ["伸縮", "固定"], [
+    fixed("画像", [segmented(["切り抜き", "収める", "伸ばす"], 0, 248), pair(field("焦点 X", "50%", { labelWidth: 40 }), field("焦点 Y", "50%", { labelWidth: 40 })),
+      linkRow("色調整", "chevronRight")]),
+  ], [fixed("角丸", [cornerField("8")])], [caption("影"), colorField("Black", "16%"), pair(field("X", "0"), field("Y", "8")), field("ぼかし", "24", { width: 248, labelWidth: 40 }),
+    caption("全体ぼかし"), field("ぼかし", "0 px", { width: 248, labelWidth: 40 })]),
+  rectangle: () => inspector("矩形", "Cover", ["24", "24", "252", "176"], ["伸縮", "固定"], [
+    fixed("マスク", [checkboxRow("マスクとして使う", false)]),
+  ], [optional("塗り", [colorField("Border", "100%")]),
+    optional("線", [colorField("Ink", "100%"), field("太さ", "1", { width: 248, labelWidth: 28 }), segmented(["全辺", "上", "右", "下", "左"], 0, 248)]),
+    fixed("角丸", [cornerField("0")])]),
+  path: () => inspector("パス", "Arrow", ["228", "12", "16", "16"], ["固定", "固定"], [
+    fixed("パス", [linkRow("点を編集", "pen"), segmented(["非ゼロ", "偶奇"], 0, 248)]),
+  ], [optional("塗り"), optional("線", [colorField("Ink", "100%"), field("太さ", "1.5", { width: 248, labelWidth: 28 })])]),
+  instance: () => inspector("インスタンス", "Project card", ["364", "104", "300", "308"], ["固定", "内容"], [
+    fixed("コンポーネント", [linkRow("Project card", "arrowRight")]),
+    fixed("上書き", [overrideRow("Title", "Everyday forms"), overrideRow("Meta", "Art direction / 2026")]),
+  ], []),
+};
+const inspectorTitles = { frame: "フレーム", text: "テキスト", image: "画像", rectangle: "矩形と楕円", path: "パス", instance: "インスタンス" };
+for (const [kind, build] of Object.entries(inspectorKinds)) define(`inspector_${kind}`, `Inspector / ${inspectorTitles[kind]}`, build);
+
+function menuRow(label, tone = 7) {
+  const ref = define(`menuRow_${tone}`, "Control / Menu row", () => row("Menu row", 184, [text("Item", 168, { tone })], { height: 28, pad: 8, radius: 6 }));
+  return use(ref, { [slot(ref, 0)]: { content: label } });
+}
+define("moreMenu", "Inspector / More menu", () => column("More menu", 200, [
+  menuRow("名前を変更"), menuRow("複製"), menuRow("削除"), divider(184),
+  menuRow("最前面へ"), menuRow("最背面へ"), divider(184),
+  menuRow("コンポーネントを作成"), menuRow("PNG に書き出す"), divider(184),
+  menuRow("ID をコピー"), row("Node ID", 184, [text("node_8f3a2c", 168, { size: 11, tone: 5 })], { height: 24, pad: 8 }),
+], { pad: 8, gap: 4, fill: 0, stroke: 2, radius: 12 }));
 
 define("projectCard", "Content / Project card", () => column("Project card", 300, [
   rect("Cover", 252, 176, { fill: 3 }), text("Quiet objects", 252, { size: 22, tone: 8, weight: 600 }), text("Art direction / 2026", 252, { tone: 5 }),
@@ -207,7 +300,7 @@ function canvasArea(x, y) {
 define("layersPanel", "Shell / Layers panel", () => column("Layers panel", 240, [
   segmented(["レイヤー", "アセット"], 0, 224), layerList(224),
 ], { pad: 8, gap: 8, fill: 0, border: ["right"] }));
-define("inspectorPanel", "Shell / Inspector panel", () => column("Inspector panel", 280, [use("inspector")], { pad: 16, fill: 0, border: ["left"] }));
+define("inspectorPanel", "Shell / Inspector panel", () => column("Inspector panel", 280, [use("inspector_frame")], { pad: 16, fill: 0, border: ["left"] }));
 
 const floating = { pad: 4, gap: 4, fill: 0, stroke: 2, radius: 12 };
 define("fileChip", "Canvas overlay / File", () =>
@@ -287,6 +380,17 @@ const screens = [
   editor("screen_panels_closed", "A / パネルを閉じた状態", 1, { panelsOpen: false }),
   editor("screen_timeline_open", "A / タイムラインを開いた状態", 2, { panelsOpen: true, timelineOpen: true }),
 ];
+const sheetColumns = [...Object.keys(inspectorKinds).map((kind) => ({ title: inspectorTitles[kind], node: column("Inspector panel", 280, [use(`inspector_${kind}`)], { pad: 16, fill: 0, radius: 12 }) })),
+  { title: "⋯ メニュー", node: use("moreMenu") }];
+const sheetHeight = 76 + Math.max(...sheetColumns.map(({ node }) => node.height)) + 40;
+let sheetX = 40;
+const sheetChildren = sheetColumns.flatMap(({ title, node }) => {
+  const placed = [at(text(title, 200, { size: 13, tone: 8, weight: 600 }), sheetX, 40), at(node, sheetX, 76)];
+  sheetX += node.width + 40;
+  return placed;
+});
+screens.push({ ...frame("Inspector / 種類ごとの構成", sheetX, sheetHeight, sheetChildren, { fill: 2 }), id: "sheet_inspector", x: 80, y: 2160 });
+
 for (const ref of ["layersPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
 
 export const designDocument = { version: 1, children: screens, palette, spacing, components };
