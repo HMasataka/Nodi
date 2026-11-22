@@ -74,7 +74,13 @@ const iconPaths = {
   image: [[0.12, 0.18], [0.88, 0.18], [0.88, 0.82], [0.12, 0.82], "close", null, [0.12, 0.72], [0.4, 0.46], [0.6, 0.66], [0.72, 0.54], [0.88, 0.7]],
   panelLeft: [[0.12, 0.2], [0.88, 0.2], [0.88, 0.8], [0.12, 0.8], "close", null, [0.4, 0.2], [0.4, 0.8]],
   panelRight: [[0.12, 0.2], [0.88, 0.2], [0.88, 0.8], [0.12, 0.8], "close", null, [0.6, 0.2], [0.6, 0.8]],
-  preview: [[0.32, 0.22], [0.78, 0.5], [0.32, 0.78], "close"],
+  preview: [[0.08, 0.5], [0.3, 0.28], [0.5, 0.22], [0.7, 0.28], [0.92, 0.5], [0.7, 0.72], [0.5, 0.78], [0.3, 0.72], "close", null,
+    ...octagon.map(([x, y]) => [0.5 + (x - 0.5) / 3, 0.5 + (y - 0.5) / 3]), "close"],
+  timeline: [[0.12, 0.25], [0.6, 0.25], null, [0.3, 0.5], [0.88, 0.5], null, [0.2, 0.75], [0.72, 0.75]],
+  play: [[0.3, 0.2], [0.8, 0.5], [0.3, 0.8], "close"],
+  trash: [[0.2, 0.28], [0.8, 0.28], null, [0.4, 0.28], [0.4, 0.15], [0.6, 0.15], [0.6, 0.28], null, [0.28, 0.28], [0.32, 0.85], [0.68, 0.85], [0.72, 0.28]],
+  keyframeAdd: [[0.35, 0.15], [0.6, 0.4], [0.35, 0.65], [0.1, 0.4], "close", null, [0.78, 0.55], [0.78, 0.95], null, [0.58, 0.75], [0.98, 0.75]],
+  close: [[0.25, 0.25], [0.75, 0.75], null, [0.75, 0.25], [0.25, 0.75]],
   plus: [[0.5, 0.2], [0.5, 0.8], null, [0.2, 0.5], [0.8, 0.5]],
   chevronDown: [[0.28, 0.4], [0.5, 0.62], [0.72, 0.4]],
 };
@@ -147,6 +153,12 @@ const layerList = (width, count = layerTree.length) =>
 const toolKinds = ["select", "frame", "rectangle", "ellipse", "pen", "text", "image"];
 define("tools", "Shell / Tools", () => row("Tools", 248, toolKinds.map((kind, index) => iconButton(kind, index === 0)), { gap: 4 }));
 
+function animationRow(name, trigger) {
+  const ref = define("animationRow", "Inspector / Animation row", () =>
+    row("Animation row", 248, [text("Animation", 160, { tone: 8 }), text("トリガー", 64, { size: 11, tone: 5, align: "right" })], { height: 28, pad: 8, gap: 8, fill: 1, radius: 4 }));
+  return use(ref, { [slot(ref, 0)]: { content: name }, [slot(ref, 1)]: { content: trigger } });
+}
+
 define("inspector", "Inspector / Frame", () => {
   const pair = (first, second) => row("Pair", 248, [first, second], { gap: 8 });
   const section = (title, controls) => column(title, 248, [sectionHeader(title), ...controls], { gap: 8 });
@@ -161,7 +173,8 @@ define("inspector", "Inspector / Frame", () => {
     section("塗り", [colorField("Canvas", "100%")]),
     divider(248), sectionHeader("線"),
     divider(248), sectionHeader("効果"),
-    divider(248), sectionHeader("アニメーション"),
+    divider(248),
+    section("アニメーション", [animationRow("Fade in", "読み込み"), animationRow("Hover lift", "ホバー")]),
   ], { gap: 12 });
 });
 
@@ -201,22 +214,70 @@ define("fileChip", "Canvas overlay / File", () =>
   row("File", 152, [iconButton("panelLeft"), text("Website.nodi", 108, { size: 13, tone: 8, weight: 600 })], floating));
 define("actionChip", "Canvas overlay / Actions", () =>
   row("Actions", 128, [text("100%", 48, { tone: 6, align: "center" }), iconButton("preview"), iconButton("panelRight")], floating));
-define("floatingTools", "Canvas overlay / Tools", () => row("Tools", 256, [use("tools")], floating));
+for (const timelineOpen of [false, true]) {
+  define(`floatingTools_${timelineOpen}`, "Canvas overlay / Tools", () =>
+    row("Tools", 297, [use("tools"), divider(1, 20), iconButton("timeline", timelineOpen)], floating));
+}
+
+const timelineSize = { width: 920, height: 228 };
+const track = { left: 192, width: 712, duration: 800 };
+const timeX = (time) => track.left + (track.width * time) / track.duration;
+function keyframe(centerX, centerY, selected = false) {
+  const size = selected ? 14 : 10;
+  return at({ id: uid(), name: selected ? "Keyframe / Selected" : "Keyframe", x: 0, y: 0, width: size, height: size, type: "path",
+    commands: [{ kind: "move", x: 0.5, y: 0 }, { kind: "line", x: 1, y: 0.5 }, { kind: "line", x: 0.5, y: 1 }, { kind: "line", x: 0, y: 0.5 }, { kind: "close" }],
+    style: { fill: gray(selected ? 0 : 8), stroke: { color: gray(8), width: selected ? 2 : 1 } } }, centerX - size / 2, centerY - size / 2);
+}
+define("timeline", "Timeline / Fade in", () => {
+  const header = row("Timeline header", timelineSize.width, [
+    row("Animation settings", 721, [
+      segmented(["Fade in", "Hover lift"], 0, 160), iconButton("plus"), iconButton("trash"), divider(1, 20),
+      field("トリガー", "読み込み", { width: 132, labelWidth: 48 }), field("長さ", "800 ms", { width: 104, labelWidth: 28 }),
+      field("遅延", "0 ms", { width: 96, labelWidth: 28 }), field("繰り返し", "1 回", { width: 108, labelWidth: 48 }),
+    ], { gap: 8 }),
+    row("Playback", 176, [iconButton("play"), text("320 / 800 ms", 96, { tone: 6, align: "center" }), iconButton("close")], { gap: 8 }),
+  ], { height: 48, pad: 8, justify: "space-between", border: ["bottom"] });
+  const tracks = [["不透明度", [[0], [400, true]]], ["Y 位置", [[0], [800]]]];
+  const children = [at(header, 0, 0)];
+  for (const time of [0, 200, 400, 600, 800]) {
+    const label = time === 800 ? "800 ms" : String(time);
+    const tick = text(label, 48, { size: 11, tone: 5, align: time === 0 ? "left" : time === 800 ? "right" : "center" });
+    children.push(at(tick, time === 0 ? timeX(0) : time === 800 ? timeX(800) - 48 : timeX(time) - 24, 52));
+  }
+  tracks.forEach(([label, keyframes], index) => {
+    const top = 76 + index * 32;
+    children.push(at(text(label, 144, { tone: 7 }), 16, top + 6), at(rect("Track", track.width, 1, { fill: 2 }), track.left, top + 16));
+    for (const [time, selected = false] of keyframes) children.push(keyframe(timeX(time), top + 16, selected));
+  });
+  children.push(
+    at(row("Add track", 160, [icon("plus", 5), text("トラックを追加", 128, { tone: 5 })], { height: 32, pad: 8, gap: 8 }), 8, 140),
+    at(rect("Track label divider", 1, 136, { fill: 2 }), 176, 48),
+    at(rect("Playhead", 1, 128, { fill: 8 }), timeX(320), 56),
+    at(rect("Playhead handle", 9, 8, { fill: 8, radius: 2 }), timeX(320) - 4, 48),
+    at(row("Keyframe settings", timelineSize.width, [
+      text("キーフレーム", 80, { size: 11, tone: 8, weight: 600 }), field("時刻", "400 ms", { width: 112, labelWidth: 28 }), field("値", "100%", { width: 96 }),
+      segmented(["linear", "ease-in", "ease-out", "ease-in-out"], 2, 344), iconButton("keyframeAdd"), iconButton("trash"),
+    ], { height: 44, pad: 8, gap: 8, border: ["top"] }), 0, 184),
+  );
+  return frame("Timeline", timelineSize.width, timelineSize.height, children, { fill: 0, border: ["top"] });
+});
 
 const overlayInset = 12;
-function editor(id, name, index, { panelsOpen }) {
+function editor(id, name, index, { panelsOpen, timelineOpen = false }) {
   const canvasLeft = panelsOpen ? 240 : 0;
   const canvasRight = panelsOpen ? 1160 : 1440;
   const centerOf = (width) => canvasLeft + (canvasRight - canvasLeft - width) / 2;
   const fileChip = use("fileChip");
   const actionChip = use("actionChip");
-  const tools = use("floatingTools");
+  const tools = use(`floatingTools_${timelineOpen}`);
+  const canvasBottom = timelineOpen ? 960 - timelineSize.height : 960;
   const children = [
-    ...canvasArea(centerOf(780), 250),
+    ...canvasArea(centerOf(780), (canvasBottom - 460) / 2),
     at(fileChip, canvasLeft + overlayInset, overlayInset),
     at(actionChip, canvasRight - overlayInset - actionChip.width, overlayInset),
-    at(tools, centerOf(tools.width), 960 - overlayInset - tools.height),
+    at(tools, centerOf(tools.width), canvasBottom - overlayInset - tools.height),
   ];
+  if (timelineOpen) children.push(at(use("timeline"), canvasLeft, canvasBottom));
   if (panelsOpen) children.push(at({ ...use("layersPanel"), height: 960 }, 0, 0), at({ ...use("inspectorPanel"), height: 960 }, 1160, 0));
   return { ...frame(name, 1440, 960, children, { fill: 2 }), id, x: (index % 2) * 1520 + 80, y: Math.floor(index / 2) * 1040 + 80 };
 }
@@ -224,6 +285,7 @@ function editor(id, name, index, { panelsOpen }) {
 const screens = [
   editor("screen_panels_open", "A / パネルを開いた状態", 0, { panelsOpen: true }),
   editor("screen_panels_closed", "A / パネルを閉じた状態", 1, { panelsOpen: false }),
+  editor("screen_timeline_open", "A / タイムラインを開いた状態", 2, { panelsOpen: true, timelineOpen: true }),
 ];
 for (const ref of ["layersPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
 
