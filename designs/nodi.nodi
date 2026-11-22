@@ -22,7 +22,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_166",
+          "id": "ui_272",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -43,7 +43,7 @@
           }
         },
         {
-          "id": "ui_167",
+          "id": "ui_273",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -54,7 +54,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_168",
+          "id": "ui_274",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -73,7 +73,7 @@
           }
         },
         {
-          "id": "ui_169",
+          "id": "ui_275",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -95,7 +95,7 @@
           }
         },
         {
-          "id": "ui_170",
+          "id": "ui_276",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -117,7 +117,7 @@
           }
         },
         {
-          "id": "ui_171",
+          "id": "ui_277",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -139,7 +139,7 @@
           }
         },
         {
-          "id": "ui_172",
+          "id": "ui_278",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -161,7 +161,7 @@
           }
         },
         {
-          "id": "ui_165",
+          "id": "ui_271",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -187,7 +187,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_164",
+              "id": "ui_270",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -210,7 +210,7 @@
           ]
         },
         {
-          "id": "ui_161",
+          "id": "ui_267",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -221,7 +221,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_162",
+          "id": "ui_268",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -232,18 +232,18 @@
           "overrides": {}
         },
         {
-          "id": "ui_163",
+          "id": "ui_269",
           "name": "Canvas overlay / Tools",
-          "x": 572,
+          "x": 551.5,
           "y": 908,
-          "width": 256,
+          "width": 297,
           "height": 40,
           "type": "instance",
-          "componentRef": "floatingTools",
+          "componentRef": "floatingTools_false",
           "overrides": {}
         },
         {
-          "id": "ui_173",
+          "id": "ui_279",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -254,7 +254,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_174",
+          "id": "ui_280",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -287,7 +287,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_181",
+          "id": "ui_287",
           "name": "Desktop / Selected work",
           "x": 330,
           "y": 226,
@@ -308,7 +308,7 @@
           }
         },
         {
-          "id": "ui_182",
+          "id": "ui_288",
           "name": "Canvas / Selected work",
           "x": 330,
           "y": 250,
@@ -319,7 +319,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_183",
+          "id": "ui_289",
           "name": "Selection outline",
           "x": 362,
           "y": 354,
@@ -338,7 +338,7 @@
           }
         },
         {
-          "id": "ui_184",
+          "id": "ui_290",
           "name": "Handle",
           "x": 358,
           "y": 350,
@@ -360,7 +360,7 @@
           }
         },
         {
-          "id": "ui_185",
+          "id": "ui_291",
           "name": "Handle",
           "x": 658,
           "y": 350,
@@ -382,7 +382,7 @@
           }
         },
         {
-          "id": "ui_186",
+          "id": "ui_292",
           "name": "Handle",
           "x": 358,
           "y": 658,
@@ -404,7 +404,7 @@
           }
         },
         {
-          "id": "ui_187",
+          "id": "ui_293",
           "name": "Handle",
           "x": 658,
           "y": 658,
@@ -426,7 +426,7 @@
           }
         },
         {
-          "id": "ui_180",
+          "id": "ui_286",
           "name": "Size label",
           "x": 476,
           "y": 670,
@@ -452,7 +452,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_179",
+              "id": "ui_285",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -475,7 +475,7 @@
           ]
         },
         {
-          "id": "ui_176",
+          "id": "ui_282",
           "name": "Canvas overlay / File",
           "x": 12,
           "y": 12,
@@ -486,7 +486,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_177",
+          "id": "ui_283",
           "name": "Canvas overlay / Actions",
           "x": 1300,
           "y": 12,
@@ -497,14 +497,290 @@
           "overrides": {}
         },
         {
-          "id": "ui_178",
+          "id": "ui_284",
           "name": "Canvas overlay / Tools",
-          "x": 592,
+          "x": 571.5,
           "y": 908,
-          "width": 256,
+          "width": 297,
           "height": 40,
           "type": "instance",
-          "componentRef": "floatingTools",
+          "componentRef": "floatingTools_false",
+          "overrides": {}
+        }
+      ]
+    },
+    {
+      "id": "screen_timeline_open",
+      "name": "A / タイムラインを開いた状態",
+      "x": 80,
+      "y": 1120,
+      "width": 1440,
+      "height": 960,
+      "type": "frame",
+      "style": {
+        "fill": {
+          "type": "palette",
+          "id": "gray_2"
+        }
+      },
+      "layoutMode": "none",
+      "paddingRef": "space_0",
+      "gapRef": "space_0",
+      "alignItems": "start",
+      "justifyContent": "start",
+      "children": [
+        {
+          "id": "ui_300",
+          "name": "Desktop / Selected work",
+          "x": 310,
+          "y": 112,
+          "width": 240,
+          "height": 20,
+          "type": "text",
+          "content": "Desktop / Selected work",
+          "style": {
+            "fontSize": 11,
+            "lineHeight": 1.4545454545454546,
+            "fontFamily": "system",
+            "fontWeight": 400,
+            "color": {
+              "type": "palette",
+              "id": "gray_5"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_301",
+          "name": "Canvas / Selected work",
+          "x": 310,
+          "y": 136,
+          "width": 780,
+          "height": 460,
+          "type": "instance",
+          "componentRef": "artboard",
+          "overrides": {}
+        },
+        {
+          "id": "ui_302",
+          "name": "Selection outline",
+          "x": 342,
+          "y": 240,
+          "width": 300,
+          "height": 308,
+          "type": "rectangle",
+          "style": {
+            "fill": null,
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_303",
+          "name": "Handle",
+          "x": 338,
+          "y": 236,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_304",
+          "name": "Handle",
+          "x": 638,
+          "y": 236,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_305",
+          "name": "Handle",
+          "x": 338,
+          "y": 544,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_306",
+          "name": "Handle",
+          "x": 638,
+          "y": 544,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_299",
+          "name": "Size label",
+          "x": 456,
+          "y": 556,
+          "width": 72,
+          "height": 20,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "cornerRadii": {
+              "topLeft": 4,
+              "topRight": 4,
+              "bottomRight": 4,
+              "bottomLeft": 4
+            }
+          },
+          "layoutMode": "horizontal",
+          "paddingRef": "space_4",
+          "gapRef": "space_0",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "children": [
+            {
+              "id": "ui_298",
+              "name": "300 × 308",
+              "x": 0,
+              "y": 0,
+              "width": 64,
+              "height": 20,
+              "type": "text",
+              "content": "300 × 308",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "textAlign": "center"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_295",
+          "name": "Canvas overlay / File",
+          "x": 252,
+          "y": 12,
+          "width": 152,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "fileChip",
+          "overrides": {}
+        },
+        {
+          "id": "ui_296",
+          "name": "Canvas overlay / Actions",
+          "x": 1020,
+          "y": 12,
+          "width": 128,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "actionChip",
+          "overrides": {}
+        },
+        {
+          "id": "ui_297",
+          "name": "Canvas overlay / Tools",
+          "x": 551.5,
+          "y": 680,
+          "width": 297,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "floatingTools_true",
+          "overrides": {}
+        },
+        {
+          "id": "ui_307",
+          "name": "Timeline / Fade in",
+          "x": 240,
+          "y": 732,
+          "width": 920,
+          "height": 228,
+          "type": "instance",
+          "componentRef": "timeline",
+          "overrides": {}
+        },
+        {
+          "id": "ui_308",
+          "name": "Shell / Layers panel",
+          "x": 0,
+          "y": 0,
+          "width": 240,
+          "height": 960,
+          "type": "instance",
+          "componentRef": "layersPanel",
+          "overrides": {}
+        },
+        {
+          "id": "ui_309",
+          "name": "Shell / Inspector panel",
+          "x": 1160,
+          "y": 0,
+          "width": 280,
+          "height": 960,
+          "type": "instance",
+          "componentRef": "inspectorPanel",
           "overrides": {}
         }
       ]
@@ -2110,15 +2386,89 @@
       }
     },
     {
+      "id": "animationRow",
+      "name": "Inspector / Animation row",
+      "node": {
+        "id": "ui_89",
+        "name": "Animation row",
+        "x": 0,
+        "y": 0,
+        "width": 248,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_8",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_87",
+            "name": "Animation",
+            "x": 0,
+            "y": 0,
+            "width": 160,
+            "height": 20,
+            "type": "text",
+            "content": "Animation",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_88",
+            "name": "トリガー",
+            "x": 0,
+            "y": 0,
+            "width": 64,
+            "height": 20,
+            "type": "text",
+            "content": "トリガー",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "right"
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "inspector",
       "name": "Inspector / Frame",
       "node": {
-        "id": "ui_88",
+        "id": "ui_94",
         "name": "Inspector",
         "x": 0,
         "y": 0,
         "width": 248,
-        "height": 562,
+        "height": 634,
         "type": "frame",
         "style": {
           "fill": null
@@ -2618,19 +2968,74 @@
             }
           },
           {
-            "id": "ui_87",
-            "name": "Inspector / Section header",
+            "id": "ui_93",
+            "name": "アニメーション",
             "x": 0,
             "y": 0,
             "width": 248,
-            "height": 24,
-            "type": "instance",
-            "componentRef": "sectionHeader_248",
-            "overrides": {
-              "ui_43": {
-                "content": "アニメーション"
+            "height": 96,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "vertical",
+            "paddingRef": "space_0",
+            "gapRef": "space_8",
+            "alignItems": "start",
+            "justifyContent": "start",
+            "children": [
+              {
+                "id": "ui_92",
+                "name": "Inspector / Section header",
+                "x": 0,
+                "y": 0,
+                "width": 248,
+                "height": 24,
+                "type": "instance",
+                "componentRef": "sectionHeader_248",
+                "overrides": {
+                  "ui_43": {
+                    "content": "アニメーション"
+                  }
+                }
+              },
+              {
+                "id": "ui_90",
+                "name": "Inspector / Animation row",
+                "x": 0,
+                "y": 0,
+                "width": 248,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "animationRow",
+                "overrides": {
+                  "ui_87": {
+                    "content": "Fade in"
+                  },
+                  "ui_88": {
+                    "content": "読み込み"
+                  }
+                }
+              },
+              {
+                "id": "ui_91",
+                "name": "Inspector / Animation row",
+                "x": 0,
+                "y": 0,
+                "width": 248,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "animationRow",
+                "overrides": {
+                  "ui_87": {
+                    "content": "Hover lift"
+                  },
+                  "ui_88": {
+                    "content": "ホバー"
+                  }
+                }
               }
-            }
+            ]
           }
         ]
       }
@@ -2639,7 +3044,7 @@
       "id": "projectCard",
       "name": "Content / Project card",
       "node": {
-        "id": "ui_92",
+        "id": "ui_98",
         "name": "Project card",
         "x": 0,
         "y": 0,
@@ -2659,7 +3064,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_89",
+            "id": "ui_95",
             "name": "Cover",
             "x": 0,
             "y": 0,
@@ -2674,7 +3079,7 @@
             }
           },
           {
-            "id": "ui_90",
+            "id": "ui_96",
             "name": "Quiet objects",
             "x": 0,
             "y": 0,
@@ -2695,7 +3100,7 @@
             }
           },
           {
-            "id": "ui_91",
+            "id": "ui_97",
             "name": "Art direction / 2026",
             "x": 0,
             "y": 0,
@@ -2722,7 +3127,7 @@
       "id": "artboard",
       "name": "Canvas / Selected work",
       "node": {
-        "id": "ui_96",
+        "id": "ui_102",
         "name": "Desktop / Selected work",
         "x": 0,
         "y": 0,
@@ -2742,7 +3147,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_93",
+            "id": "ui_99",
             "name": "Selected work",
             "x": 32,
             "y": 24,
@@ -2763,7 +3168,7 @@
             }
           },
           {
-            "id": "ui_94",
+            "id": "ui_100",
             "name": "Content / Project card",
             "x": 32,
             "y": 104,
@@ -2774,7 +3179,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_95",
+            "id": "ui_101",
             "name": "Content / Project card",
             "x": 364,
             "y": 104,
@@ -2783,7 +3188,7 @@
             "type": "instance",
             "componentRef": "projectCard",
             "overrides": {
-              "ui_90": {
+              "ui_96": {
                 "content": "Everyday forms"
               }
             }
@@ -2795,7 +3200,7 @@
       "id": "segmented_レイヤー_アセット_0_224",
       "name": "Control / Segmented / レイヤー アセット",
       "node": {
-        "id": "ui_101",
+        "id": "ui_107",
         "name": "Segmented",
         "x": 0,
         "y": 0,
@@ -2821,7 +3226,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_98",
+            "id": "ui_104",
             "name": "レイヤー",
             "x": 0,
             "y": 0,
@@ -2847,7 +3252,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_97",
+                "id": "ui_103",
                 "name": "レイヤー",
                 "x": 0,
                 "y": 0,
@@ -2870,7 +3275,7 @@
             ]
           },
           {
-            "id": "ui_100",
+            "id": "ui_106",
             "name": "アセット",
             "x": 0,
             "y": 0,
@@ -2893,7 +3298,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_99",
+                "id": "ui_105",
                 "name": "アセット",
                 "x": 0,
                 "y": 0,
@@ -2922,7 +3327,7 @@
       "id": "icon_frame_5",
       "name": "Icon / frame",
       "node": {
-        "id": "ui_103",
+        "id": "ui_109",
         "name": "frame",
         "x": 0,
         "y": 0,
@@ -2987,7 +3392,7 @@
       "id": "layer_224_frame_0_false",
       "name": "Navigation / Layer row",
       "node": {
-        "id": "ui_106",
+        "id": "ui_112",
         "name": "Layer row",
         "x": 0,
         "y": 0,
@@ -3010,7 +3415,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_104",
+            "id": "ui_110",
             "name": "Icon / frame",
             "x": 0,
             "y": 0,
@@ -3021,7 +3426,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_105",
+            "id": "ui_111",
             "name": "Layer",
             "x": 0,
             "y": 0,
@@ -3048,7 +3453,7 @@
       "id": "icon_text_5",
       "name": "Icon / text",
       "node": {
-        "id": "ui_108",
+        "id": "ui_114",
         "name": "text",
         "x": 0,
         "y": 0,
@@ -3093,7 +3498,7 @@
       "id": "layer_224_text_1_false",
       "name": "Navigation / Layer row",
       "node": {
-        "id": "ui_112",
+        "id": "ui_118",
         "name": "Layer row",
         "x": 0,
         "y": 0,
@@ -3116,7 +3521,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_111",
+            "id": "ui_117",
             "name": "Indent",
             "x": 0,
             "y": 0,
@@ -3134,7 +3539,7 @@
             "children": []
           },
           {
-            "id": "ui_109",
+            "id": "ui_115",
             "name": "Icon / text",
             "x": 0,
             "y": 0,
@@ -3145,7 +3550,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_110",
+            "id": "ui_116",
             "name": "Layer",
             "x": 0,
             "y": 0,
@@ -3172,7 +3577,7 @@
       "id": "icon_frame_8",
       "name": "Icon / frame",
       "node": {
-        "id": "ui_114",
+        "id": "ui_120",
         "name": "frame",
         "x": 0,
         "y": 0,
@@ -3237,7 +3642,7 @@
       "id": "layer_224_frame_1_true",
       "name": "Navigation / Layer row / Selected",
       "node": {
-        "id": "ui_118",
+        "id": "ui_124",
         "name": "Layer row",
         "x": 0,
         "y": 0,
@@ -3263,7 +3668,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_117",
+            "id": "ui_123",
             "name": "Indent",
             "x": 0,
             "y": 0,
@@ -3281,7 +3686,7 @@
             "children": []
           },
           {
-            "id": "ui_115",
+            "id": "ui_121",
             "name": "Icon / frame",
             "x": 0,
             "y": 0,
@@ -3292,7 +3697,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_116",
+            "id": "ui_122",
             "name": "Layer",
             "x": 0,
             "y": 0,
@@ -3319,7 +3724,7 @@
       "id": "icon_rectangle_5",
       "name": "Icon / rectangle",
       "node": {
-        "id": "ui_120",
+        "id": "ui_126",
         "name": "rectangle",
         "x": 0,
         "y": 0,
@@ -3367,7 +3772,7 @@
       "id": "layer_224_rectangle_2_false",
       "name": "Navigation / Layer row",
       "node": {
-        "id": "ui_124",
+        "id": "ui_130",
         "name": "Layer row",
         "x": 0,
         "y": 0,
@@ -3390,7 +3795,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_123",
+            "id": "ui_129",
             "name": "Indent",
             "x": 0,
             "y": 0,
@@ -3408,7 +3813,7 @@
             "children": []
           },
           {
-            "id": "ui_121",
+            "id": "ui_127",
             "name": "Icon / rectangle",
             "x": 0,
             "y": 0,
@@ -3419,7 +3824,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_122",
+            "id": "ui_128",
             "name": "Layer",
             "x": 0,
             "y": 0,
@@ -3444,85 +3849,6 @@
     },
     {
       "id": "layer_224_text_2_false",
-      "name": "Navigation / Layer row",
-      "node": {
-        "id": "ui_129",
-        "name": "Layer row",
-        "x": 0,
-        "y": 0,
-        "width": 224,
-        "height": 28,
-        "type": "frame",
-        "style": {
-          "fill": null,
-          "cornerRadii": {
-            "topLeft": 6,
-            "topRight": 6,
-            "bottomRight": 6,
-            "bottomLeft": 6
-          }
-        },
-        "layoutMode": "horizontal",
-        "paddingRef": "space_8",
-        "gapRef": "space_8",
-        "alignItems": "center",
-        "justifyContent": "start",
-        "children": [
-          {
-            "id": "ui_128",
-            "name": "Indent",
-            "x": 0,
-            "y": 0,
-            "width": 32,
-            "height": 1,
-            "type": "frame",
-            "style": {
-              "fill": null
-            },
-            "layoutMode": "none",
-            "paddingRef": "space_0",
-            "gapRef": "space_0",
-            "alignItems": "start",
-            "justifyContent": "start",
-            "children": []
-          },
-          {
-            "id": "ui_126",
-            "name": "Icon / text",
-            "x": 0,
-            "y": 0,
-            "width": 16,
-            "height": 16,
-            "type": "instance",
-            "componentRef": "icon_text_5",
-            "overrides": {}
-          },
-          {
-            "id": "ui_127",
-            "name": "Layer",
-            "x": 0,
-            "y": 0,
-            "width": 144,
-            "height": 20,
-            "type": "text",
-            "content": "Layer",
-            "style": {
-              "fontSize": 12,
-              "lineHeight": 1.3333333333333333,
-              "fontFamily": "system",
-              "fontWeight": 400,
-              "color": {
-                "type": "palette",
-                "id": "gray_7"
-              },
-              "textAlign": "left"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "layer_224_frame_1_false",
       "name": "Navigation / Layer row",
       "node": {
         "id": "ui_135",
@@ -3552,7 +3878,7 @@
             "name": "Indent",
             "x": 0,
             "y": 0,
-            "width": 16,
+            "width": 32,
             "height": 1,
             "type": "frame",
             "style": {
@@ -3567,6 +3893,85 @@
           },
           {
             "id": "ui_132",
+            "name": "Icon / text",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_text_5",
+            "overrides": {}
+          },
+          {
+            "id": "ui_133",
+            "name": "Layer",
+            "x": 0,
+            "y": 0,
+            "width": 144,
+            "height": 20,
+            "type": "text",
+            "content": "Layer",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_7"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "layer_224_frame_1_false",
+      "name": "Navigation / Layer row",
+      "node": {
+        "id": "ui_141",
+        "name": "Layer row",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_8",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_140",
+            "name": "Indent",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 1,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "none",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "start",
+            "justifyContent": "start",
+            "children": []
+          },
+          {
+            "id": "ui_138",
             "name": "Icon / frame",
             "x": 0,
             "y": 0,
@@ -3577,7 +3982,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_133",
+            "id": "ui_139",
             "name": "Layer",
             "x": 0,
             "y": 0,
@@ -3604,7 +4009,7 @@
       "id": "layersPanel",
       "name": "Shell / Layers panel",
       "node": {
-        "id": "ui_140",
+        "id": "ui_146",
         "name": "Layers panel",
         "x": 0,
         "y": 0,
@@ -3633,7 +4038,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_102",
+            "id": "ui_108",
             "name": "Control / Segmented / レイヤー アセット",
             "x": 0,
             "y": 0,
@@ -3644,7 +4049,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_139",
+            "id": "ui_145",
             "name": "Layers",
             "x": 0,
             "y": 0,
@@ -3661,7 +4066,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_107",
+                "id": "ui_113",
                 "name": "Navigation / Layer row",
                 "x": 0,
                 "y": 0,
@@ -3670,13 +4075,13 @@
                 "type": "instance",
                 "componentRef": "layer_224_frame_0_false",
                 "overrides": {
-                  "ui_105": {
+                  "ui_111": {
                     "content": "Desktop / Selected work"
                   }
                 }
               },
               {
-                "id": "ui_113",
+                "id": "ui_119",
                 "name": "Navigation / Layer row",
                 "x": 0,
                 "y": 0,
@@ -3685,13 +4090,13 @@
                 "type": "instance",
                 "componentRef": "layer_224_text_1_false",
                 "overrides": {
-                  "ui_110": {
+                  "ui_116": {
                     "content": "Title"
                   }
                 }
               },
               {
-                "id": "ui_119",
+                "id": "ui_125",
                 "name": "Navigation / Layer row / Selected",
                 "x": 0,
                 "y": 0,
@@ -3700,38 +4105,8 @@
                 "type": "instance",
                 "componentRef": "layer_224_frame_1_true",
                 "overrides": {
-                  "ui_116": {
-                    "content": "Project card"
-                  }
-                }
-              },
-              {
-                "id": "ui_125",
-                "name": "Navigation / Layer row",
-                "x": 0,
-                "y": 0,
-                "width": 224,
-                "height": 28,
-                "type": "instance",
-                "componentRef": "layer_224_rectangle_2_false",
-                "overrides": {
                   "ui_122": {
-                    "content": "Cover"
-                  }
-                }
-              },
-              {
-                "id": "ui_130",
-                "name": "Navigation / Layer row",
-                "x": 0,
-                "y": 0,
-                "width": 224,
-                "height": 28,
-                "type": "instance",
-                "componentRef": "layer_224_text_2_false",
-                "overrides": {
-                  "ui_127": {
-                    "content": "Title"
+                    "content": "Project card"
                   }
                 }
               },
@@ -3743,10 +4118,10 @@
                 "width": 224,
                 "height": 28,
                 "type": "instance",
-                "componentRef": "layer_224_text_2_false",
+                "componentRef": "layer_224_rectangle_2_false",
                 "overrides": {
-                  "ui_127": {
-                    "content": "Meta"
+                  "ui_128": {
+                    "content": "Cover"
                   }
                 }
               },
@@ -3758,10 +4133,10 @@
                 "width": 224,
                 "height": 28,
                 "type": "instance",
-                "componentRef": "layer_224_frame_1_false",
+                "componentRef": "layer_224_text_2_false",
                 "overrides": {
                   "ui_133": {
-                    "content": "Project card"
+                    "content": "Title"
                   }
                 }
               },
@@ -3773,15 +4148,30 @@
                 "width": 224,
                 "height": 28,
                 "type": "instance",
-                "componentRef": "layer_224_frame_0_false",
+                "componentRef": "layer_224_text_2_false",
                 "overrides": {
-                  "ui_105": {
-                    "content": "About"
+                  "ui_133": {
+                    "content": "Meta"
                   }
                 }
               },
               {
-                "id": "ui_138",
+                "id": "ui_142",
+                "name": "Navigation / Layer row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "layer_224_frame_1_false",
+                "overrides": {
+                  "ui_139": {
+                    "content": "Project card"
+                  }
+                }
+              },
+              {
+                "id": "ui_143",
                 "name": "Navigation / Layer row",
                 "x": 0,
                 "y": 0,
@@ -3790,7 +4180,22 @@
                 "type": "instance",
                 "componentRef": "layer_224_frame_0_false",
                 "overrides": {
-                  "ui_105": {
+                  "ui_111": {
+                    "content": "About"
+                  }
+                }
+              },
+              {
+                "id": "ui_144",
+                "name": "Navigation / Layer row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "layer_224_frame_0_false",
+                "overrides": {
+                  "ui_111": {
                     "content": "Contact"
                   }
                 }
@@ -3804,7 +4209,7 @@
       "id": "inspectorPanel",
       "name": "Shell / Inspector panel",
       "node": {
-        "id": "ui_142",
+        "id": "ui_148",
         "name": "Inspector panel",
         "x": 0,
         "y": 0,
@@ -3833,12 +4238,12 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_141",
+            "id": "ui_147",
             "name": "Inspector / Frame",
             "x": 0,
             "y": 0,
             "width": 248,
-            "height": 562,
+            "height": 634,
             "type": "instance",
             "componentRef": "inspector",
             "overrides": {}
@@ -3850,7 +4255,7 @@
       "id": "icon_panelLeft_6",
       "name": "Icon / panelLeft",
       "node": {
-        "id": "ui_143",
+        "id": "ui_149",
         "name": "panelLeft",
         "x": 0,
         "y": 0,
@@ -3908,7 +4313,7 @@
       "id": "iconButton_panelLeft_false",
       "name": "Control / Icon button / panelLeft",
       "node": {
-        "id": "ui_145",
+        "id": "ui_151",
         "name": "panelLeft",
         "x": 0,
         "y": 0,
@@ -3931,7 +4336,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_144",
+            "id": "ui_150",
             "name": "Icon / panelLeft",
             "x": 0,
             "y": 0,
@@ -3948,7 +4353,7 @@
       "id": "fileChip",
       "name": "Canvas overlay / File",
       "node": {
-        "id": "ui_148",
+        "id": "ui_154",
         "name": "File",
         "x": 0,
         "y": 0,
@@ -3981,7 +4386,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_146",
+            "id": "ui_152",
             "name": "Control / Icon button / panelLeft",
             "x": 0,
             "y": 0,
@@ -3992,7 +4397,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_147",
+            "id": "ui_153",
             "name": "Website.nodi",
             "x": 0,
             "y": 0,
@@ -4019,7 +4424,7 @@
       "id": "icon_preview_6",
       "name": "Icon / preview",
       "node": {
-        "id": "ui_150",
+        "id": "ui_156",
         "name": "preview",
         "x": 0,
         "y": 0,
@@ -4029,18 +4434,86 @@
         "commands": [
           {
             "kind": "move",
-            "x": 0.32,
-            "y": 0.22
-          },
-          {
-            "kind": "line",
-            "x": 0.78,
+            "x": 0.08,
             "y": 0.5
           },
           {
             "kind": "line",
-            "x": 0.32,
+            "x": 0.3,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.22
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.92,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.72
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
             "y": 0.78
+          },
+          {
+            "kind": "line",
+            "x": 0.3,
+            "y": 0.72
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.6108655439013544,
+            "y": 0.5459220118838107
+          },
+          {
+            "kind": "line",
+            "x": 0.5459220118838107,
+            "y": 0.6108655439013544
+          },
+          {
+            "kind": "line",
+            "x": 0.4540779881161892,
+            "y": 0.6108655439013544
+          },
+          {
+            "kind": "line",
+            "x": 0.3891344560986456,
+            "y": 0.5459220118838107
+          },
+          {
+            "kind": "line",
+            "x": 0.3891344560986456,
+            "y": 0.45407798811618927
+          },
+          {
+            "kind": "line",
+            "x": 0.45407798811618916,
+            "y": 0.3891344560986456
+          },
+          {
+            "kind": "line",
+            "x": 0.5459220118838108,
+            "y": 0.3891344560986456
+          },
+          {
+            "kind": "line",
+            "x": 0.6108655439013544,
+            "y": 0.45407798811618916
           },
           {
             "kind": "close"
@@ -4062,7 +4535,7 @@
       "id": "iconButton_preview_false",
       "name": "Control / Icon button / preview",
       "node": {
-        "id": "ui_152",
+        "id": "ui_158",
         "name": "preview",
         "x": 0,
         "y": 0,
@@ -4085,7 +4558,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_151",
+            "id": "ui_157",
             "name": "Icon / preview",
             "x": 0,
             "y": 0,
@@ -4102,7 +4575,7 @@
       "id": "icon_panelRight_6",
       "name": "Icon / panelRight",
       "node": {
-        "id": "ui_154",
+        "id": "ui_160",
         "name": "panelRight",
         "x": 0,
         "y": 0,
@@ -4160,7 +4633,7 @@
       "id": "iconButton_panelRight_false",
       "name": "Control / Icon button / panelRight",
       "node": {
-        "id": "ui_156",
+        "id": "ui_162",
         "name": "panelRight",
         "x": 0,
         "y": 0,
@@ -4183,7 +4656,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_155",
+            "id": "ui_161",
             "name": "Icon / panelRight",
             "x": 0,
             "y": 0,
@@ -4200,7 +4673,7 @@
       "id": "actionChip",
       "name": "Canvas overlay / Actions",
       "node": {
-        "id": "ui_158",
+        "id": "ui_164",
         "name": "Actions",
         "x": 0,
         "y": 0,
@@ -4233,7 +4706,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_149",
+            "id": "ui_155",
             "name": "100%",
             "x": 0,
             "y": 0,
@@ -4254,7 +4727,7 @@
             }
           },
           {
-            "id": "ui_153",
+            "id": "ui_159",
             "name": "Control / Icon button / preview",
             "x": 0,
             "y": 0,
@@ -4265,7 +4738,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_157",
+            "id": "ui_163",
             "name": "Control / Icon button / panelRight",
             "x": 0,
             "y": 0,
@@ -4279,14 +4752,109 @@
       }
     },
     {
-      "id": "floatingTools",
+      "id": "icon_timeline_6",
+      "name": "Icon / timeline",
+      "node": {
+        "id": "ui_167",
+        "name": "timeline",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.12,
+            "y": 0.25
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.25
+          },
+          {
+            "kind": "move",
+            "x": 0.3,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.5
+          },
+          {
+            "kind": "move",
+            "x": 0.2,
+            "y": 0.75
+          },
+          {
+            "kind": "line",
+            "x": 0.72,
+            "y": 0.75
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_timeline_false",
+      "name": "Control / Icon button / timeline",
+      "node": {
+        "id": "ui_169",
+        "name": "timeline",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_168",
+            "name": "Icon / timeline",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_timeline_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "floatingTools_false",
       "name": "Canvas overlay / Tools",
       "node": {
-        "id": "ui_160",
+        "id": "ui_171",
         "name": "Tools",
         "x": 0,
         "y": 0,
-        "width": 256,
+        "width": 297,
         "height": 40,
         "type": "frame",
         "style": {
@@ -4315,7 +4883,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_159",
+            "id": "ui_165",
             "name": "Shell / Tools",
             "x": 0,
             "y": 0,
@@ -4324,6 +4892,2321 @@
             "type": "instance",
             "componentRef": "tools",
             "overrides": {}
+          },
+          {
+            "id": "ui_166",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 20,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_170",
+            "name": "Control / Icon button / timeline",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_timeline_false",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_timeline_8",
+      "name": "Icon / timeline",
+      "node": {
+        "id": "ui_174",
+        "name": "timeline",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.12,
+            "y": 0.25
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.25
+          },
+          {
+            "kind": "move",
+            "x": 0.3,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.5
+          },
+          {
+            "kind": "move",
+            "x": 0.2,
+            "y": 0.75
+          },
+          {
+            "kind": "line",
+            "x": 0.72,
+            "y": 0.75
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_timeline_true",
+      "name": "Control / Icon button / timeline",
+      "node": {
+        "id": "ui_176",
+        "name": "timeline",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_2"
+          },
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_175",
+            "name": "Icon / timeline",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_timeline_8",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "floatingTools_true",
+      "name": "Canvas overlay / Tools",
+      "node": {
+        "id": "ui_178",
+        "name": "Tools",
+        "x": 0,
+        "y": 0,
+        "width": 297,
+        "height": 40,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "width": 1
+          },
+          "cornerRadii": {
+            "topLeft": 12,
+            "topRight": 12,
+            "bottomRight": 12,
+            "bottomLeft": 12
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_172",
+            "name": "Shell / Tools",
+            "x": 0,
+            "y": 0,
+            "width": 248,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "tools",
+            "overrides": {}
+          },
+          {
+            "id": "ui_173",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 20,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_177",
+            "name": "Control / Icon button / timeline",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_timeline_true",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "segmented_Fade in_Hover lift_0_160",
+      "name": "Control / Segmented / Fade in Hover lift",
+      "node": {
+        "id": "ui_183",
+        "name": "Segmented",
+        "x": 0,
+        "y": 0,
+        "width": 160,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 8,
+            "topRight": 8,
+            "bottomRight": 8,
+            "bottomLeft": 8
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_180",
+            "name": "Fade in",
+            "x": 0,
+            "y": 0,
+            "width": 74,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_179",
+                "name": "Fade in",
+                "x": 0,
+                "y": 0,
+                "width": 66,
+                "height": 20,
+                "type": "text",
+                "content": "Fade in",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 600,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_182",
+            "name": "Hover lift",
+            "x": 0,
+            "y": 0,
+            "width": 74,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_181",
+                "name": "Hover lift",
+                "x": 0,
+                "y": 0,
+                "width": 66,
+                "height": 20,
+                "type": "text",
+                "content": "Hover lift",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_plus_6",
+      "name": "Icon / plus",
+      "node": {
+        "id": "ui_185",
+        "name": "plus",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.2
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.8
+          },
+          {
+            "kind": "move",
+            "x": 0.2,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.8,
+            "y": 0.5
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_plus_false",
+      "name": "Control / Icon button / plus",
+      "node": {
+        "id": "ui_187",
+        "name": "plus",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_186",
+            "name": "Icon / plus",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_plus_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_trash_6",
+      "name": "Icon / trash",
+      "node": {
+        "id": "ui_189",
+        "name": "trash",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.2,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.8,
+            "y": 0.28
+          },
+          {
+            "kind": "move",
+            "x": 0.4,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.4,
+            "y": 0.15
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.15
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.28
+          },
+          {
+            "kind": "move",
+            "x": 0.28,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.32,
+            "y": 0.85
+          },
+          {
+            "kind": "line",
+            "x": 0.68,
+            "y": 0.85
+          },
+          {
+            "kind": "line",
+            "x": 0.72,
+            "y": 0.28
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_trash_false",
+      "name": "Control / Icon button / trash",
+      "node": {
+        "id": "ui_191",
+        "name": "trash",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_190",
+            "name": "Icon / trash",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_trash_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_132_48",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_196",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 132,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_194",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_195",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 64,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_104_28",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_200",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 104,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_198",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 28,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_199",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 56,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_96_28",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_204",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 96,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_202",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 28,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_203",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_108_48",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_208",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 108,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_206",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_207",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 40,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_play_6",
+      "name": "Icon / play",
+      "node": {
+        "id": "ui_211",
+        "name": "play",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.3,
+            "y": 0.2
+          },
+          {
+            "kind": "line",
+            "x": 0.8,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.3,
+            "y": 0.8
+          },
+          {
+            "kind": "close"
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_play_false",
+      "name": "Control / Icon button / play",
+      "node": {
+        "id": "ui_213",
+        "name": "play",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_212",
+            "name": "Icon / play",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_play_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_close_6",
+      "name": "Icon / close",
+      "node": {
+        "id": "ui_216",
+        "name": "close",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.25,
+            "y": 0.25
+          },
+          {
+            "kind": "line",
+            "x": 0.75,
+            "y": 0.75
+          },
+          {
+            "kind": "move",
+            "x": 0.75,
+            "y": 0.25
+          },
+          {
+            "kind": "line",
+            "x": 0.25,
+            "y": 0.75
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_close_false",
+      "name": "Control / Icon button / close",
+      "node": {
+        "id": "ui_218",
+        "name": "close",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_217",
+            "name": "Icon / close",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_close_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_112_28",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_244",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 112,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_242",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 28,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_243",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 64,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_96_16",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_248",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 96,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_246",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_247",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 60,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "segmented_linear_ease-in_ease-out_ease-in-out_2_344",
+      "name": "Control / Segmented / linear ease-in ease-out ease-in-out",
+      "node": {
+        "id": "ui_258",
+        "name": "Segmented",
+        "x": 0,
+        "y": 0,
+        "width": 344,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 8,
+            "topRight": 8,
+            "bottomRight": 8,
+            "bottomLeft": 8
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_251",
+            "name": "linear",
+            "x": 0,
+            "y": 0,
+            "width": 81,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_250",
+                "name": "linear",
+                "x": 0,
+                "y": 0,
+                "width": 73,
+                "height": 20,
+                "type": "text",
+                "content": "linear",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_253",
+            "name": "ease-in",
+            "x": 0,
+            "y": 0,
+            "width": 81,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_252",
+                "name": "ease-in",
+                "x": 0,
+                "y": 0,
+                "width": 73,
+                "height": 20,
+                "type": "text",
+                "content": "ease-in",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_255",
+            "name": "ease-out",
+            "x": 0,
+            "y": 0,
+            "width": 81,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_254",
+                "name": "ease-out",
+                "x": 0,
+                "y": 0,
+                "width": 73,
+                "height": 20,
+                "type": "text",
+                "content": "ease-out",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 600,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_257",
+            "name": "ease-in-out",
+            "x": 0,
+            "y": 0,
+            "width": 81,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_256",
+                "name": "ease-in-out",
+                "x": 0,
+                "y": 0,
+                "width": 73,
+                "height": 20,
+                "type": "text",
+                "content": "ease-in-out",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_keyframeAdd_6",
+      "name": "Icon / keyframeAdd",
+      "node": {
+        "id": "ui_260",
+        "name": "keyframeAdd",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.35,
+            "y": 0.15
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.4
+          },
+          {
+            "kind": "line",
+            "x": 0.35,
+            "y": 0.65
+          },
+          {
+            "kind": "line",
+            "x": 0.1,
+            "y": 0.4
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.78,
+            "y": 0.55
+          },
+          {
+            "kind": "line",
+            "x": 0.78,
+            "y": 0.95
+          },
+          {
+            "kind": "move",
+            "x": 0.58,
+            "y": 0.75
+          },
+          {
+            "kind": "line",
+            "x": 0.98,
+            "y": 0.75
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_keyframeAdd_false",
+      "name": "Control / Icon button / keyframeAdd",
+      "node": {
+        "id": "ui_262",
+        "name": "keyframeAdd",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_261",
+            "name": "Icon / keyframeAdd",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_keyframeAdd_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "timeline",
+      "name": "Timeline / Fade in",
+      "node": {
+        "id": "ui_266",
+        "name": "Timeline",
+        "x": 0,
+        "y": 0,
+        "width": 920,
+        "height": 228,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "border": {
+            "top": {
+              "color": {
+                "type": "palette",
+                "id": "gray_2"
+              },
+              "width": 1
+            }
+          }
+        },
+        "layoutMode": "none",
+        "paddingRef": "space_0",
+        "gapRef": "space_0",
+        "alignItems": "start",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_221",
+            "name": "Timeline header",
+            "x": 0,
+            "y": 0,
+            "width": 920,
+            "height": 48,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "border": {
+                "bottom": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_2"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_8",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "space-between",
+            "children": [
+              {
+                "id": "ui_210",
+                "name": "Animation settings",
+                "x": 0,
+                "y": 0,
+                "width": 721,
+                "height": 32,
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_8",
+                "alignItems": "center",
+                "justifyContent": "start",
+                "children": [
+                  {
+                    "id": "ui_184",
+                    "name": "Control / Segmented / Fade in Hover lift",
+                    "x": 0,
+                    "y": 0,
+                    "width": 160,
+                    "height": 32,
+                    "type": "instance",
+                    "componentRef": "segmented_Fade in_Hover lift_0_160",
+                    "overrides": {}
+                  },
+                  {
+                    "id": "ui_188",
+                    "name": "Control / Icon button / plus",
+                    "x": 0,
+                    "y": 0,
+                    "width": 32,
+                    "height": 32,
+                    "type": "instance",
+                    "componentRef": "iconButton_plus_false",
+                    "overrides": {}
+                  },
+                  {
+                    "id": "ui_192",
+                    "name": "Control / Icon button / trash",
+                    "x": 0,
+                    "y": 0,
+                    "width": 32,
+                    "height": 32,
+                    "type": "instance",
+                    "componentRef": "iconButton_trash_false",
+                    "overrides": {}
+                  },
+                  {
+                    "id": "ui_193",
+                    "name": "Divider",
+                    "x": 0,
+                    "y": 0,
+                    "width": 1,
+                    "height": 20,
+                    "type": "rectangle",
+                    "style": {
+                      "fill": {
+                        "type": "palette",
+                        "id": "gray_2"
+                      }
+                    }
+                  },
+                  {
+                    "id": "ui_197",
+                    "name": "Control / Field",
+                    "x": 0,
+                    "y": 0,
+                    "width": 132,
+                    "height": 28,
+                    "type": "instance",
+                    "componentRef": "field_132_48",
+                    "overrides": {
+                      "ui_194": {
+                        "content": "トリガー"
+                      },
+                      "ui_195": {
+                        "content": "読み込み"
+                      }
+                    }
+                  },
+                  {
+                    "id": "ui_201",
+                    "name": "Control / Field",
+                    "x": 0,
+                    "y": 0,
+                    "width": 104,
+                    "height": 28,
+                    "type": "instance",
+                    "componentRef": "field_104_28",
+                    "overrides": {
+                      "ui_198": {
+                        "content": "長さ"
+                      },
+                      "ui_199": {
+                        "content": "800 ms"
+                      }
+                    }
+                  },
+                  {
+                    "id": "ui_205",
+                    "name": "Control / Field",
+                    "x": 0,
+                    "y": 0,
+                    "width": 96,
+                    "height": 28,
+                    "type": "instance",
+                    "componentRef": "field_96_28",
+                    "overrides": {
+                      "ui_202": {
+                        "content": "遅延"
+                      },
+                      "ui_203": {
+                        "content": "0 ms"
+                      }
+                    }
+                  },
+                  {
+                    "id": "ui_209",
+                    "name": "Control / Field",
+                    "x": 0,
+                    "y": 0,
+                    "width": 108,
+                    "height": 28,
+                    "type": "instance",
+                    "componentRef": "field_108_48",
+                    "overrides": {
+                      "ui_206": {
+                        "content": "繰り返し"
+                      },
+                      "ui_207": {
+                        "content": "1 回"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "ui_220",
+                "name": "Playback",
+                "x": 0,
+                "y": 0,
+                "width": 176,
+                "height": 32,
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_8",
+                "alignItems": "center",
+                "justifyContent": "start",
+                "children": [
+                  {
+                    "id": "ui_214",
+                    "name": "Control / Icon button / play",
+                    "x": 0,
+                    "y": 0,
+                    "width": 32,
+                    "height": 32,
+                    "type": "instance",
+                    "componentRef": "iconButton_play_false",
+                    "overrides": {}
+                  },
+                  {
+                    "id": "ui_215",
+                    "name": "320 / 800 ms",
+                    "x": 0,
+                    "y": 0,
+                    "width": 96,
+                    "height": 20,
+                    "type": "text",
+                    "content": "320 / 800 ms",
+                    "style": {
+                      "fontSize": 12,
+                      "lineHeight": 1.3333333333333333,
+                      "fontFamily": "system",
+                      "fontWeight": 400,
+                      "color": {
+                        "type": "palette",
+                        "id": "gray_6"
+                      },
+                      "textAlign": "center"
+                    }
+                  },
+                  {
+                    "id": "ui_219",
+                    "name": "Control / Icon button / close",
+                    "x": 0,
+                    "y": 0,
+                    "width": 32,
+                    "height": 32,
+                    "type": "instance",
+                    "componentRef": "iconButton_close_false",
+                    "overrides": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "ui_222",
+            "name": "0",
+            "x": 192,
+            "y": 52,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_223",
+            "name": "200",
+            "x": 346,
+            "y": 52,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "200",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "ui_224",
+            "name": "400",
+            "x": 524,
+            "y": 52,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "400",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "ui_225",
+            "name": "600",
+            "x": 702,
+            "y": 52,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "600",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "ui_226",
+            "name": "800 ms",
+            "x": 856,
+            "y": 52,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "800 ms",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "right"
+            }
+          },
+          {
+            "id": "ui_227",
+            "name": "不透明度",
+            "x": 16,
+            "y": 82,
+            "width": 144,
+            "height": 20,
+            "type": "text",
+            "content": "不透明度",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_7"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_228",
+            "name": "Track",
+            "x": 192,
+            "y": 92,
+            "width": 712,
+            "height": 1,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_229",
+            "name": "Keyframe",
+            "x": 187,
+            "y": 87,
+            "width": 10,
+            "height": 10,
+            "type": "path",
+            "commands": [
+              {
+                "kind": "move",
+                "x": 0.5,
+                "y": 0
+              },
+              {
+                "kind": "line",
+                "x": 1,
+                "y": 0.5
+              },
+              {
+                "kind": "line",
+                "x": 0.5,
+                "y": 1
+              },
+              {
+                "kind": "line",
+                "x": 0,
+                "y": 0.5
+              },
+              {
+                "kind": "close"
+              }
+            ],
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "stroke": {
+                "color": {
+                  "type": "palette",
+                  "id": "gray_8"
+                },
+                "width": 1
+              }
+            }
+          },
+          {
+            "id": "ui_230",
+            "name": "Keyframe / Selected",
+            "x": 541,
+            "y": 85,
+            "width": 14,
+            "height": 14,
+            "type": "path",
+            "commands": [
+              {
+                "kind": "move",
+                "x": 0.5,
+                "y": 0
+              },
+              {
+                "kind": "line",
+                "x": 1,
+                "y": 0.5
+              },
+              {
+                "kind": "line",
+                "x": 0.5,
+                "y": 1
+              },
+              {
+                "kind": "line",
+                "x": 0,
+                "y": 0.5
+              },
+              {
+                "kind": "close"
+              }
+            ],
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "stroke": {
+                "color": {
+                  "type": "palette",
+                  "id": "gray_8"
+                },
+                "width": 2
+              }
+            }
+          },
+          {
+            "id": "ui_231",
+            "name": "Y 位置",
+            "x": 16,
+            "y": 114,
+            "width": 144,
+            "height": 20,
+            "type": "text",
+            "content": "Y 位置",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_7"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_232",
+            "name": "Track",
+            "x": 192,
+            "y": 124,
+            "width": 712,
+            "height": 1,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_233",
+            "name": "Keyframe",
+            "x": 187,
+            "y": 119,
+            "width": 10,
+            "height": 10,
+            "type": "path",
+            "commands": [
+              {
+                "kind": "move",
+                "x": 0.5,
+                "y": 0
+              },
+              {
+                "kind": "line",
+                "x": 1,
+                "y": 0.5
+              },
+              {
+                "kind": "line",
+                "x": 0.5,
+                "y": 1
+              },
+              {
+                "kind": "line",
+                "x": 0,
+                "y": 0.5
+              },
+              {
+                "kind": "close"
+              }
+            ],
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "stroke": {
+                "color": {
+                  "type": "palette",
+                  "id": "gray_8"
+                },
+                "width": 1
+              }
+            }
+          },
+          {
+            "id": "ui_234",
+            "name": "Keyframe",
+            "x": 899,
+            "y": 119,
+            "width": 10,
+            "height": 10,
+            "type": "path",
+            "commands": [
+              {
+                "kind": "move",
+                "x": 0.5,
+                "y": 0
+              },
+              {
+                "kind": "line",
+                "x": 1,
+                "y": 0.5
+              },
+              {
+                "kind": "line",
+                "x": 0.5,
+                "y": 1
+              },
+              {
+                "kind": "line",
+                "x": 0,
+                "y": 0.5
+              },
+              {
+                "kind": "close"
+              }
+            ],
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "stroke": {
+                "color": {
+                  "type": "palette",
+                  "id": "gray_8"
+                },
+                "width": 1
+              }
+            }
+          },
+          {
+            "id": "ui_237",
+            "name": "Add track",
+            "x": 8,
+            "y": 140,
+            "width": 160,
+            "height": 32,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_8",
+            "gapRef": "space_8",
+            "alignItems": "center",
+            "justifyContent": "start",
+            "children": [
+              {
+                "id": "ui_235",
+                "name": "Icon / plus",
+                "x": 0,
+                "y": 0,
+                "width": 16,
+                "height": 16,
+                "type": "instance",
+                "componentRef": "icon_plus_5",
+                "overrides": {}
+              },
+              {
+                "id": "ui_236",
+                "name": "トラックを追加",
+                "x": 0,
+                "y": 0,
+                "width": 128,
+                "height": 20,
+                "type": "text",
+                "content": "トラックを追加",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "left"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_238",
+            "name": "Track label divider",
+            "x": 176,
+            "y": 48,
+            "width": 1,
+            "height": 136,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_239",
+            "name": "Playhead",
+            "x": 476.8,
+            "y": 56,
+            "width": 1,
+            "height": 128,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_8"
+              }
+            }
+          },
+          {
+            "id": "ui_240",
+            "name": "Playhead handle",
+            "x": 472.8,
+            "y": 48,
+            "width": 9,
+            "height": 8,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "cornerRadii": {
+                "topLeft": 2,
+                "topRight": 2,
+                "bottomRight": 2,
+                "bottomLeft": 2
+              }
+            }
+          },
+          {
+            "id": "ui_265",
+            "name": "Keyframe settings",
+            "x": 0,
+            "y": 184,
+            "width": 920,
+            "height": 44,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "border": {
+                "top": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_2"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_8",
+            "gapRef": "space_8",
+            "alignItems": "center",
+            "justifyContent": "start",
+            "children": [
+              {
+                "id": "ui_241",
+                "name": "キーフレーム",
+                "x": 0,
+                "y": 0,
+                "width": 80,
+                "height": 20,
+                "type": "text",
+                "content": "キーフレーム",
+                "style": {
+                  "fontSize": 11,
+                  "lineHeight": 1.4545454545454546,
+                  "fontFamily": "system",
+                  "fontWeight": 600,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "textAlign": "left"
+                }
+              },
+              {
+                "id": "ui_245",
+                "name": "Control / Field",
+                "x": 0,
+                "y": 0,
+                "width": 112,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "field_112_28",
+                "overrides": {
+                  "ui_242": {
+                    "content": "時刻"
+                  },
+                  "ui_243": {
+                    "content": "400 ms"
+                  }
+                }
+              },
+              {
+                "id": "ui_249",
+                "name": "Control / Field",
+                "x": 0,
+                "y": 0,
+                "width": 96,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "field_96_16",
+                "overrides": {
+                  "ui_246": {
+                    "content": "値"
+                  },
+                  "ui_247": {
+                    "content": "100%"
+                  }
+                }
+              },
+              {
+                "id": "ui_259",
+                "name": "Control / Segmented / linear ease-in ease-out ease-in-out",
+                "x": 0,
+                "y": 0,
+                "width": 344,
+                "height": 32,
+                "type": "instance",
+                "componentRef": "segmented_linear_ease-in_ease-out_ease-in-out_2_344",
+                "overrides": {}
+              },
+              {
+                "id": "ui_263",
+                "name": "Control / Icon button / keyframeAdd",
+                "x": 0,
+                "y": 0,
+                "width": 32,
+                "height": 32,
+                "type": "instance",
+                "componentRef": "iconButton_keyframeAdd_false",
+                "overrides": {}
+              },
+              {
+                "id": "ui_264",
+                "name": "Control / Icon button / trash",
+                "x": 0,
+                "y": 0,
+                "width": 32,
+                "height": 32,
+                "type": "instance",
+                "componentRef": "iconButton_trash_false",
+                "overrides": {}
+              }
+            ]
           }
         ]
       }

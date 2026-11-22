@@ -7,7 +7,7 @@ import { resolveDocumentInstances } from "../src/document/instances.ts";
 import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-const screenIds = ["screen_panels_open", "screen_panels_closed"];
+const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open"];
 
 async function load() {
   const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
@@ -31,7 +31,7 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
   }
   document.children.forEach(visit);
   document.components.forEach(({ node }) => visit(node));
-  for (const ref of ["fileChip", "actionChip", "floatingTools", "artboard", "projectCard"])
+  for (const ref of ["fileChip", "actionChip", "floatingTools_false", "animationRow", "artboard", "projectCard"])
     assert.ok((usages.get(ref) ?? 0) >= 2, `${ref} が共通化されていません`);
 });
 
@@ -60,6 +60,16 @@ test("ファイルと操作のチップは、パネルの開閉に合わせて�
     assert.deepEqual([file.x - canvasLeft, file.y], [12, 12], `${id}: ファイルのチップ`);
     assert.deepEqual([canvasRight - actions.x - actions.width, actions.y], [12, 12], `${id}: 操作のチップ`);
   }
+});
+
+test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const screen = document.children.find((child) => child.id === "screen_timeline_open");
+  if (screen?.type !== "frame") assert.fail("screen_timeline_open がありません");
+  const timeline = screen.children.find(({ name }) => name === "Timeline / Fade in")!;
+  const tools = screen.children.find(({ name }) => name === "Canvas overlay / Tools")!;
+  assert.deepEqual([timeline.x, timeline.x + timeline.width, timeline.y + timeline.height], [240, 1160, 960]);
+  assert.equal(timeline.y - (tools.y + tools.height), 12);
 });
 
 test("インスタンスと共通余白を解決した全画面で子要素が領域内に収まる", async () => {
