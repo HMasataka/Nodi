@@ -7,6 +7,8 @@ import { resolveDocumentInstances } from "../src/document/instances.ts";
 import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
+const screenIds = ["screen_panels_open", "screen_panels_closed"];
+
 async function load() {
   const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
   if (result.type === "Failure") assert.fail(String(result.error));
@@ -18,7 +20,6 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
   const saved = serializeDocument(document);
   if (saved.type === "Failure") assert.fail(String(saved.error));
   assert.deepEqual(parseDocument(saved.value), { type: "Success", value: document });
-  assert.ok(document.components.length > 20);
   assert.deepEqual(document.spacing.map(({ value }) => value), [0, 4, 8, 12, 16, 20, 24, 32]);
   const usages = new Map<string, number>();
   function visit(node: DocumentNode) {
@@ -30,8 +31,35 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
   }
   document.children.forEach(visit);
   document.components.forEach(({ node }) => visit(node));
-  for (const ref of ["header", "footer", "button", "primary", "input", "row", "token", "projectCard"])
+  for (const ref of ["fileChip", "actionChip", "floatingTools", "artboard", "projectCard"])
     assert.ok((usages.get(ref) ?? 0) >= 2, `${ref} が共通化されていません`);
+});
+
+test("メイン画面の案だけを並べ、すべて同じ選択状態を示す", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  assert.deepEqual(document.children.map(({ id }) => id), screenIds);
+  for (const screen of document.children) {
+    assert.equal(screen.type, "frame");
+    if (screen.type !== "frame") continue;
+    assert.equal(screen.width, 1440);
+    assert.equal(screen.height, 960);
+    const artboard = screen.children.find((child) => child.type === "frame" && child.name === "Canvas / Selected work");
+    const outline = screen.children.find(({ name }) => name === "Selection outline");
+    assert.ok(artboard && outline, `${screen.name}: アートボードか選択枠がありません`);
+    assert.deepEqual([outline.x - artboard.x, outline.y - artboard.y, outline.width, outline.height], [32, 104, 300, 308], `${screen.name}: 選択枠がカードと一致しません`);
+  }
+});
+
+test("ファイルと操作のチップは、パネルの開閉に合わせてキャンバスの上端の角に付く", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  for (const [id, canvasLeft, canvasRight] of [["screen_panels_open", 240, 1160], ["screen_panels_closed", 0, 1440]] as const) {
+    const screen = document.children.find((child) => child.id === id);
+    if (screen?.type !== "frame") assert.fail(`${id} がありません`);
+    const file = screen.children.find(({ name }) => name === "Canvas overlay / File")!;
+    const actions = screen.children.find(({ name }) => name === "Canvas overlay / Actions")!;
+    assert.deepEqual([file.x - canvasLeft, file.y], [12, 12], `${id}: ファイルのチップ`);
+    assert.deepEqual([canvasRight - actions.x - actions.width, actions.y], [12, 12], `${id}: 操作のチップ`);
+  }
 });
 
 test("インスタンスと共通余白を解決した全画面で子要素が領域内に収まる", async () => {
@@ -44,51 +72,6 @@ test("インスタンスと共通余白を解決した全画面で子要素が�
         `${node.name} (${node.width}×${node.height}) から ${child.name} (${child.x},${child.y},${child.width},${child.height}) がはみ出しました`);
       visit(child);
     }
-  }
-  document.children.forEach(visit);
-});
-
-test("ポップオーバーは編集画面の入力欄に隣接し、画面間で共通シェルを保持する", async () => {
-  const document = await load();
-  const screens = new Map(document.children.map((node) => [node.id, node]));
-  for (const id of ["screen_editor", "screen_spacing_picker", "screen_spacing_edit", "screen_instance", "screen_multi"]) {
-    const screen = screens.get(id);
-    assert.equal(screen?.type, "frame");
-    if (screen?.type !== "frame") continue;
-    for (const ref of ["header", "footer", "tools"])
-      assert.ok(screen.children.some((node) => node.type === "instance" && node.componentRef === ref), `${id}: ${ref}`);
-  }
-  const resolved = resolveDocumentLayout(resolveDocumentInstances(document));
-  const editor = resolved.children.find(({ id }) => id === "screen_spacing_picker");
-  assert.equal(editor?.type, "frame");
-  if (editor?.type !== "frame") return;
-  const picker = editor.children.find(({ name }) => name === "Overlay / Spacing picker")!;
-  assert.equal(picker.x + picker.width, 1420);
-  const focus = editor.children.find((node) => node.name === "Selection outline" && node.width === 260)!;
-  assert.equal(picker.y - (focus.y + focus.height), 8);
-  assert.equal(screens.has("ds_reference_details"), false);
-});
-
-test("共通部品の左右余白とセクション末尾、カードの上下余白を揃える", async () => {
-  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
-  function visit(node: DocumentNode) {
-    if (node.type !== "frame") return;
-    const first = node.children[0];
-    const last = node.children[node.children.length - 1];
-    if (first && last && ["Control / Value", "Control / Menu row", "Control / Reference field", "Navigation / Layer row", "Navigation / Selected row"].includes(node.name)) {
-      assert.equal(first.x, node.width - last.x - last.width, `${node.name}: 左右の内側余白`);
-    }
-    if (first && last && node.name.startsWith("Content /")) {
-      assert.equal(first.y, node.height - last.y - last.height, `${node.name}: 上下の内側余白`);
-    }
-    if (last && node.name.startsWith("Inspector / ") && !["Inspector / frame", "Inspector / instance", "Inspector / multi", "Inspector / icon", "Inspector / motion"].includes(node.name)) {
-      assert.equal(last.y + last.height, node.height, `${node.name}: 不要な末尾余白`);
-    }
-    if (first && last && node.name.startsWith("Overlay /")) {
-      assert.equal(first.y, 12);
-      assert.equal(node.height - last.y - last.height, 12, `${node.name}: 下余白`);
-    }
-    node.children.forEach(visit);
   }
   document.children.forEach(visit);
 });
