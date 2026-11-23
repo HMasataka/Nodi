@@ -30,7 +30,11 @@ import "@/App.css";
 import { ActionChip } from "@/pages/editor/components/molecules/ActionChip";
 import { FileChip } from "@/pages/editor/components/molecules/FileChip";
 import { FloatingTools } from "@/pages/editor/components/molecules/FloatingTools";
+import { Segmented } from "@/pages/editor/components/atoms/Segmented";
 import { workspaceColumns } from "@/pages/editor/panelLayout.ts";
+
+type LeftPanelTab = "layers" | "assets";
+const LEFT_PANEL_TABS: { value: LeftPanelTab; label: string }[] = [{ value: "layers", label: "レイヤー" }, { value: "assets", label: "アセット" }];
 
 // 拡大・縮小のショートカット1回分の倍率。
 const ZOOM_STEP = 1.25;
@@ -40,6 +44,7 @@ function EditorPage() {
   const interaction = useCanvasInteraction(session);
   const playback = usePlayback();
   const panels = usePanelLayout();
+  const [leftTab, setLeftTab] = useState<LeftPanelTab>("layers");
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -96,12 +101,16 @@ function EditorPage() {
     <main className="app-shell">
     <div className="workspace" style={{ gridTemplateColumns: workspaceColumns(panels.layout) }}>
       {panels.layout.left && <div className="left-panels">
-        <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
-          highlightedComponentId={highlightedComponentId}
-          onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
-          onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
-          onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
-        <PalettePanel palette={design.palette} {...actions.palette} />
+        <div className="left-panel-tabs">
+          <Segmented<LeftPanelTab> label="左パネル" value={leftTab} onChange={setLeftTab} options={LEFT_PANEL_TABS} />
+        </div>
+        {leftTab === "layers"
+          ? <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
+            highlightedComponentId={highlightedComponentId}
+            onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
+            onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
+            onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
+          : <PalettePanel palette={design.palette} {...actions.palette} />}
       </div>}
       <div className="editor-center">
         <div className="canvas-stage">
