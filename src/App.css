@@ -258,7 +258,55 @@ button {
   min-width: 0;
   min-height: 0;
 }
-.editor-center .canvas-container { flex: 1; }
+.canvas-stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.canvas-stage .canvas-container { flex: 1; }
+/* キャンバスに浮かせるチップ。パネルを開閉してもキャンバスの端から 12px を保つ。 */
+.canvas-chip {
+  position: absolute;
+  top: var(--space-12);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-12);
+  padding: var(--space-4);
+  background: var(--surface);
+}
+.file-chip { left: var(--space-12); }
+.file-chip-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  max-width: 240px;
+  height: 32px;
+  box-sizing: border-box;
+  border-radius: var(--radius-8);
+  padding: 0 var(--space-8);
+}
+.file-chip-name {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: var(--font-size-13);
+  line-height: var(--line-height-13);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-chip-unsaved {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.file-chip-arrow { color: var(--text-label); }
 .panel-toggles {
   display: flex;
   gap: var(--space-4);

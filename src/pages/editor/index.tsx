@@ -29,6 +29,7 @@ import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContex
 import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/commands/index.ts";
 import "@/App.css";
 
+import { FileChip } from "@/pages/editor/components/molecules/FileChip";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { workspaceColumns } from "@/pages/editor/panelLayout.ts";
 
@@ -46,6 +47,7 @@ function EditorPage() {
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
+  const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
   const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
   const selectedComponentNode = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.node : undefined;
   const spacingX = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "x") : null;
@@ -82,34 +84,37 @@ function EditorPage() {
         <PalettePanel palette={design.palette} {...actions.palette} />
       </div>}
       <div className="editor-center">
-        <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
+        <EditorToolbar fileName={fileName} filePath={filePath}
           canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
           isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
           onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
           drawTool={drawTool} onDrawToolChange={setDrawTool}>
           <div className="panel-toggles">
-            <IconButton icon="panelLeft" label="左パネル" pressed={panels.layout.left} onClick={() => panels.toggle("left")} />
-            <IconButton icon="panelRight" label="右パネル" pressed={panels.layout.right} onClick={() => panels.toggle("right")} />
+              <IconButton icon="panelRight" label="右パネル" pressed={panels.layout.right} onClick={() => panels.toggle("right")} />
           </div>
         </EditorToolbar>
-        <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
-          drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
-          onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
-          onNodeEnter={(id) => setHoveredId(id)}
-          onNodeLeave={(id) => setHoveredId((current) => current === id ? null : current)}
-          onNodeClick={(id) => setClickedIds((current) => {
-            const next = new Set(current);
-            if (next.has(id)) next.delete(id); else next.add(id);
-            return next;
-          })}
-          onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
-          onPathPointPointerUp={finishPathPointDrag} onPathPointPointerCancel={cancelPathPointDrag}
-          onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
-          onWorldPointerDown={onWorldPointerDown} onWorldDoubleClick={() => finishPen(false)}
-          onWorldPointerMove={(event) => { updateDrawing(event); updatePenCursor(event); updateSelection(event); }}
-          onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
-          onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
-          onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
+        <div className="canvas-stage">
+          <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+            drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
+            onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
+            onNodeEnter={(id) => setHoveredId(id)}
+            onNodeLeave={(id) => setHoveredId((current) => current === id ? null : current)}
+            onNodeClick={(id) => setClickedIds((current) => {
+              const next = new Set(current);
+              if (next.has(id)) next.delete(id); else next.add(id);
+              return next;
+            })}
+            onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
+            onPathPointPointerUp={finishPathPointDrag} onPathPointPointerCancel={cancelPathPointDrag}
+            onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
+            onWorldPointerDown={onWorldPointerDown} onWorldDoubleClick={() => finishPen(false)}
+            onWorldPointerMove={(event) => { updateDrawing(event); updatePenCursor(event); updateSelection(event); }}
+            onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
+            onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
+            onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
+          <FileChip fileName={fileName} filePath={filePath} isDirty={isDirty}
+            leftPanelOpen={panels.layout.left} onToggleLeftPanel={() => panels.toggle("left")} />
+        </div>
         <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
         <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
       </div>
