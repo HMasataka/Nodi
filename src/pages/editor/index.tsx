@@ -34,6 +34,9 @@ import { FileChip } from "@/pages/editor/components/molecules/FileChip";
 import { FloatingTools } from "@/pages/editor/components/molecules/FloatingTools";
 import { workspaceColumns } from "@/pages/editor/panelLayout.ts";
 
+// 拡大・縮小のショートカット1回分の倍率。
+const ZOOM_STEP = 1.25;
+
 function EditorPage() {
   const session = useEditorDocument();
   const interaction = useCanvasInteraction(session);
@@ -60,7 +63,7 @@ function EditorPage() {
     ? measureTextIconAlignment(design, selectedIds, countRenderedTextLines) : null;
   const textIcon = textIconResult ? Result.isFailure(textIconResult) ? { error: textIconResult.error.message }
     : { measurement: textIconResult.value } : undefined;
-  const { drag, pathDrag, camera, zoom, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+  const { drag, pathDrag, camera, zoom, zoomBy, zoomTo, fitAll, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
@@ -82,6 +85,12 @@ function EditorPage() {
       return actions.edit.clearSelection();
     },
     nudge: ({ dx, dy }) => drag.current || pathDrag.current ? true : actions.edit.nudgeSelected(dx, dy),
+    reorder: ({ direction }) => { if (selectedId) actions.reorderLayer(selectedId, direction); },
+    zoomIn: () => zoomBy(ZOOM_STEP),
+    zoomOut: () => zoomBy(1 / ZOOM_STEP),
+    zoomReset: () => zoomTo(1),
+    zoomFit: fitAll,
+    togglePanel: ({ panel }) => panels.toggle(panel),
   });
 
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>

@@ -5,7 +5,10 @@ import type { DrawTool } from "@/pages/editor/types";
 export type Shortcut =
   | { id: "save" | "open" | "undo" | "redo" | "delete" | "duplicate" | "selectAll" | "deselect" }
   | { id: "tool"; tool: DrawTool }
-  | { id: "nudge"; dx: number; dy: number };
+  | { id: "nudge"; dx: number; dy: number }
+  | { id: "reorder"; direction: "front" | "back" | "forward" | "backward" }
+  | { id: "zoomIn" | "zoomOut" | "zoomReset" | "zoomFit" }
+  | { id: "togglePanel"; panel: "left" | "right" | "timeline" };
 export type ShortcutId = Shortcut["id"];
 
 // 修飾キーなしの1文字で切り換える作成ツール。
@@ -14,7 +17,8 @@ const NUDGE: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight
 // Shift と一緒に押したときの移動量。
 export const LARGE_NUDGE = 10;
 
-export type ShortcutKey = Pick<KeyboardEvent, "key" | "metaKey" | "ctrlKey" | "shiftKey" | "altKey">;
+// code は配列に依らない物理キー。Alt や Shift で key の文字が変わるキー（数字・角括弧）の判定に使う。
+export type ShortcutKey = Pick<KeyboardEvent, "key" | "metaKey" | "ctrlKey" | "shiftKey" | "altKey"> & { code?: string };
 
 // macOS では ⌘、Windows・Linux では Ctrl を主の修飾キーにする。
 export function isMacPlatform(platform: string = typeof navigator === "undefined" ? "" : navigator.platform): boolean {
@@ -42,9 +46,15 @@ export function matchShortcut(event: ShortcutKey, mac: boolean = isMacPlatform()
   const primary = mac ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
   const none = !event.metaKey && !event.ctrlKey && !event.altKey;
   if (none) return matchPlainKey(event);
-  if (!primary || event.altKey) return null;
+  if (!primary) return null;
+  if (event.altKey) return matchPrimaryAltKey(event);
   const key = event.key.toLowerCase();
   if (key === "z") return { id: event.shiftKey ? "redo" : "undo" };
+  if (key === "]") return event.shiftKey ? null : { id: "reorder", direction: "forward" };
+  if (key === "[") return event.shiftKey ? null : { id: "reorder", direction: "backward" };
+  // ⌘+ は配列によって Shift を伴うため、Shift の有無を問わない。
+  if (key === "=" || key === "+") return { id: "zoomIn" };
+  if (key === "-") return event.shiftKey ? null : { id: "zoomOut" };
   if (event.shiftKey) return null;
   if (key === "s") return { id: "save" };
   if (key === "o") return { id: "open" };
@@ -54,7 +64,19 @@ export function matchShortcut(event: ShortcutKey, mac: boolean = isMacPlatform()
   return null;
 }
 
+// 主の修飾キーと Alt の組み合わせ。Alt で key の文字が変わるため code で判定する。
+function matchPrimaryAltKey(event: ShortcutKey): Shortcut | null {
+  if (event.shiftKey) return null;
+  const panels: Record<string, "left" | "right" | "timeline"> = { Digit1: "left", Digit2: "right", Digit3: "timeline" };
+  if (event.code && panels[event.code]) return { id: "togglePanel", panel: panels[event.code] };
+  if (event.code === "BracketRight") return { id: "reorder", direction: "front" };
+  if (event.code === "BracketLeft") return { id: "reorder", direction: "back" };
+  return null;
+}
+
 function matchPlainKey(event: ShortcutKey): Shortcut | null {
+  if (event.shiftKey && (event.code === "Digit0" || event.key === ")")) return { id: "zoomReset" };
+  if (event.shiftKey && (event.code === "Digit1" || event.key === "!")) return { id: "zoomFit" };
   const nudge = NUDGE[event.key];
   if (nudge) {
     const step = event.shiftKey ? LARGE_NUDGE : 1;

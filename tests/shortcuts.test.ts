@@ -93,3 +93,47 @@ test("すべて選択は選択中の要素と同じ親の子を選び、何も�
   assert.deepEqual(selectAllIds(design, ["c"]), ["page", "c"]);
   assert.deepEqual(selectAllIds(design, ["missing"]), ["page", "c"]);
 });
+
+test("重ね順は ⌘] ⌘[ で1つずつ、⌥ を足して端まで動かす", () => {
+  const reorder = (event: ShortcutKey, mac = true) => { const shortcut = matchShortcut(event, mac); return shortcut?.id === "reorder" ? shortcut.direction : null; };
+  assert.equal(reorder(key("]", { metaKey: true, code: "BracketRight" })), "forward");
+  assert.equal(reorder(key("[", { metaKey: true, code: "BracketLeft" })), "backward");
+  assert.equal(reorder(key("‘", { metaKey: true, altKey: true, code: "BracketRight" })), "front");
+  assert.equal(reorder(key("“", { metaKey: true, altKey: true, code: "BracketLeft" })), "back");
+  assert.equal(reorder(key("]", { ctrlKey: true, code: "BracketRight" }), false), "forward");
+  assert.equal(reorder(key("}", { metaKey: true, shiftKey: true, code: "BracketRight" })), null);
+});
+
+test("⌘+ ⌘- で拡大・縮小、⇧0 で 100%、⇧1 で全体を表示する", () => {
+  assert.equal(id(key("=", { metaKey: true }), true), "zoomIn");
+  assert.equal(id(key("+", { metaKey: true, shiftKey: true }), true), "zoomIn");
+  assert.equal(id(key("-", { ctrlKey: true }), false), "zoomOut");
+  assert.equal(id(key(")", { shiftKey: true, code: "Digit0" }), true), "zoomReset");
+  assert.equal(id(key("!", { shiftKey: true, code: "Digit1" }), true), "zoomFit");
+  assert.equal(id(key("0"), true), null);
+  assert.equal(id(key("1"), true), null);
+});
+
+test("⌥⌘1・2・3 で左パネル・右パネル・タイムラインを開閉する", () => {
+  const panel = (code: string, mac = true) => {
+    const shortcut = matchShortcut(key("¡", mac ? { metaKey: true, altKey: true, code } : { ctrlKey: true, altKey: true, code }), mac);
+    return shortcut?.id === "togglePanel" ? shortcut.panel : null;
+  };
+  assert.deepEqual(["Digit1", "Digit2", "Digit3"].map((code) => panel(code)), ["left", "right", "timeline"]);
+  assert.equal(panel("Digit2", false), "right");
+  assert.equal(panel("Digit4"), null);
+  assert.equal(matchShortcut(key("1", { altKey: true, code: "Digit1" }), true), null);
+});
+
+test("全体を表示は最上位の要素をすべて余白付きで画面に収める", async () => {
+  const { documentBounds, fitCamera } = await import("../src/pages/editor/camera.ts");
+  const design = document(rectangle({ id: "a", x: 0, y: 0, width: 100, height: 100 }), rectangle({ id: "b", x: 300, y: 100, width: 100, height: 100 }));
+  const bounds = documentBounds(design);
+  assert.deepEqual(bounds, { x: 0, y: 0, width: 400, height: 200 });
+  const camera = fitCamera(bounds!, { width: 464, height: 664 });
+  assert.equal(camera.zoom, 1);
+  assert.equal(camera.scrollLeft, 200 - 232);
+  assert.equal(camera.scrollTop, 100 - 332);
+  assert.equal(fitCamera(bounds!, { width: 864, height: 864 }).zoom, 2);
+  assert.equal(documentBounds(document()), null);
+});
