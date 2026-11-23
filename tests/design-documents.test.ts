@@ -153,9 +153,9 @@ test("キャンバスの上の表示は、つまみ・点・ガイドの大き�
   for (const node of nodes) {
     if (node.name === "Handle" || node.name.startsWith("Anchor")) {
       assert.deepEqual([node.width, node.height], [8, 8], node.name);
-      assert.deepEqual(strokeTone(node), { type: "palette", id: "gray_8" }, node.name);
+      assert.deepEqual(strokeTone(node), { type: "palette", id: "primary_500" }, node.name);
     }
-    if (node.name === "Selection outline" || node.name === "Guide") assert.deepEqual(strokeTone(node), { type: "palette", id: "gray_8" }, node.name);
+    if (node.name === "Selection outline" || node.name === "Guide") assert.deepEqual(strokeTone(node), { type: "palette", id: "primary_500" }, node.name);
   }
   assert.ok(nodes.some(({ name }) => name === "Guide") && nodes.some(({ name }) => name === "Anchor / Selected"));
 });
@@ -183,6 +183,21 @@ test("値を動かす入力は、スライダーとグラデーションの色�
     assert.equal(bar.children.filter(({ name }) => name === "Stop / Selected").length, 1);
   }
   assert.ok(nodes.some(({ name }) => name === "Scroll progress"), "スクロールの進み具合がありません");
+});
+
+test("配色は白・灰色・紫の段だけを使い、紫を選択と主となる操作に載せる", async () => {
+  const document = await load();
+  assert.deepEqual(document.palette.map(({ id }) => id.replace(/_\d+$/, "")), ["white", ...Array(10).fill("neutral"), ...Array(10).fill("primary")]);
+  const refs = new Set<string>();
+  JSON.stringify(document, (_, value) => { if (value && typeof value === "object" && value.type === "palette") refs.add(value.id); return value; });
+  const ids = new Set(document.palette.map(({ id }) => id));
+  assert.deepEqual([...refs].filter((ref) => !ids.has(ref)), [], "パレットにない色を参照しています");
+  const resolved = resolveDocumentLayout(resolveDocumentInstances(document));
+  const screen = resolved.children.find((child) => child.id === "screen_panels_open");
+  if (screen?.type !== "frame") assert.fail("screen_panels_open がありません");
+  const outline = screen.children.find(({ name }) => name === "Selection outline");
+  assert.ok(outline && "style" in outline && outline.style && "stroke" in outline.style);
+  assert.deepEqual(outline.style.stroke?.color, { type: "palette", id: "primary_500" });
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {
