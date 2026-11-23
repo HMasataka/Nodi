@@ -6,6 +6,9 @@
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 
+  /* キャンバスの倍率。キャンバスの中で、倍率に依らず画面上で同じ太さ・大きさに描く表示に使う。キャンバスが値を上書きする。 */
+  --canvas-zoom: 1;
+
   /* 寸法の段。designs/README.md の「共通の約束」に合わせる。行高は文字サイズ+4px を4の倍数に切り上げた値 */
   --space-0: 0;
   --space-4: 4px;
@@ -948,9 +951,13 @@ button {
   user-select: none;
   cursor: grab;
 }
-.canvas-node.is-selected {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+/* 選択枠は、倍率に依らず画面上で 1px の紫の線にする。 */
+.canvas-node.is-selected,
+.canvas-frame.is-selected,
+.canvas-text.is-selected,
+.canvas-image.is-selected {
+  outline: calc(1px / var(--canvas-zoom)) solid var(--accent);
+  outline-offset: 0;
 }
 .canvas-mask { background: transparent; color: var(--accent); outline-style: dashed; }
 .canvas-mask-group { position: absolute; inset: 0; pointer-events: none; }
@@ -963,12 +970,9 @@ button {
 .canvas-frame { position: absolute; cursor: grab; }
 .frame-contents { position: absolute; inset: 0; pointer-events: none; }
 .frame-contents > * { pointer-events: auto; }
-.canvas-frame.is-selected { outline: 2px solid var(--accent); outline-offset: 3px; }
 .canvas-text { position: absolute; border: 0; padding: 2px; background: transparent; color: var(--ink); text-align: left; overflow: hidden; font: 16px/1.4 "Avenir Next", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; cursor: grab; touch-action: none; user-select: none; }
 .canvas-text-line { display: block; white-space: pre; }
-.canvas-text.is-selected { outline: 2px solid var(--accent); outline-offset: 2px; }
 .canvas-image { position: absolute; border: 0; padding: 0; background: var(--image-placeholder); cursor: grab; touch-action: none; user-select: none; }
-.canvas-image.is-selected { outline: 2px solid var(--accent); outline-offset: 2px; }
 .canvas-image img { width: 100%; height: 100%; pointer-events: none; user-select: none; }
 .image-filter-fields { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 8px 0; border: 0; }
 .image-filter-fields legend { padding-bottom: 8px; color: var(--text-tertiary); font-size: 11px; }
@@ -992,7 +996,48 @@ button {
 .text-style-fields .font-family-select { width: min(145px, 65%); }
 .text-style-fields input[type="color"] { width: 42px; height: 28px; border: 1px solid var(--field-border); border-radius: 4px; padding: 2px; background: var(--surface); }
 .text-style-fields p { margin: 0; color: var(--text-subtle); font-size: 11px; line-height: 1.5; }
-.resize-handle { position: absolute; right: -7px; bottom: -7px; width: 12px; height: 12px; border: 2px solid var(--surface); border-radius: 2px; background: var(--accent); cursor: nwse-resize; touch-action: none; }
+/* つまみは白地に紫の枠の 8px 角。角の中心に置く。 */
+.resize-handle {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  width: calc(8px / var(--canvas-zoom));
+  height: calc(8px / var(--canvas-zoom));
+  margin: calc(-4px / var(--canvas-zoom));
+  border: calc(1px / var(--canvas-zoom)) solid var(--accent);
+  background: var(--surface);
+  touch-action: none;
+}
+.resize-handle.is-top-left { top: 0; left: 0; cursor: nwse-resize; }
+.resize-handle.is-top-right { top: 0; right: 0; cursor: nesw-resize; }
+.resize-handle.is-bottom-left { bottom: 0; left: 0; cursor: nesw-resize; }
+.resize-handle.is-bottom-right { right: 0; bottom: 0; cursor: nwse-resize; }
+/* 寸法の札は、選択枠の 8px 下の中央に、紫の地に白い文字で出す。 */
+.canvas-size-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 20px;
+  border-radius: var(--radius-4);
+  padding: 0 var(--space-4);
+  color: var(--on-accent);
+  background: var(--accent-fill);
+  font: 400 var(--font-size-11) / var(--line-height-11) "Avenir Next", "Hiragino Kaku Gothic ProN", sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, calc(8px / var(--canvas-zoom))) scale(calc(1 / var(--canvas-zoom)));
+  transform-origin: 50% 0;
+}
+/* 複数を選んだときの、まとめた範囲の枠。つまみと寸法は表示だけにする。 */
+.selection-bounds {
+  position: absolute;
+  outline: calc(1px / var(--canvas-zoom)) solid var(--accent);
+  pointer-events: none;
+}
 
 .properties {
   padding: 20px;

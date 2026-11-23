@@ -3,12 +3,13 @@ import type { PointerEvent, Ref } from "react";
 import type { Document } from "@/document/types";
 import type { SelectionSpacing, TextIconAlignment } from "@/document/commands/index.ts";
 
-import type { CanvasCamera } from "@/pages/editor/camera.ts";
-import { drawingGeometry } from "@/pages/editor/geometry";
+import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
 import type { SnapGuide } from "@/pages/editor/snapping";
 import { transformPoint } from "@/document/transform.ts";
-import { CanvasNodes, type NodeInteraction } from "@/pages/editor/components/molecules/CanvasNode";
+import { type CanvasCamera, selectionBounds } from "@/pages/editor/camera.ts";
+import { CanvasNodes, type NodeInteraction, sizeLabel } from "@/pages/editor/components/molecules/CanvasNode";
 import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, guideStyle, selectionPreviewStyle } from "@/pages/editor/canvasStyles";
+import { drawingGeometry, RESIZE_CORNERS } from "@/pages/editor/geometry";
 import type { DrawingState, DrawTool, PenState } from "@/pages/editor/types";
 
 
@@ -56,6 +57,8 @@ export function Canvas(props: CanvasProps) {
     onPathPointPointerUp: props.onPathPointPointerUp,
     onPathPointPointerCancel: props.onPathPointPointerCancel,
   };
+  // 複数を選んでいるときは、まとめた範囲を枠・つまみ・寸法で示す。
+  const groupBounds = selectedIds && selectedIds.length > 1 ? selectionBounds(design, selectedIds) : null;
   const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentTransform) : null;
   const penPoints = pen?.points.map((point) => transformPoint(pen.parentTransform, point)) ?? [];
   const penCursor = pen ? transformPoint(pen.parentTransform, pen.cursor) : null;
@@ -75,6 +78,10 @@ export function Canvas(props: CanvasProps) {
           <div className="canvas-world" style={canvasWorldStyle(camera)}>
             {design.children.length === 0 && <div className="canvas-hint" aria-hidden="true"><span className="hint-symbol">＋</span><span>ここから、かたちをつくる。</span></div>}
             <CanvasNodes nodes={design.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
+            {groupBounds && <div className="selection-bounds" style={{ left: groupBounds.x, top: groupBounds.y, width: groupBounds.width, height: groupBounds.height }}>
+              {RESIZE_CORNERS.map((corner) => <ResizeHandle key={`${corner.x}${corner.y}`} corner={corner} onPointerDown={() => {}} />)}
+              <span className="canvas-size-label" aria-hidden="true">{sizeLabel(groupBounds.width, groupBounds.height)}</span>
+            </div>}
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}

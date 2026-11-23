@@ -48,7 +48,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(canvas, /fill="#aabbcc"/);
     assert.match(canvas, /class="frame-contents" style="overflow:hidden;border-radius:inherit"/);
     assert.match(canvas, /aria-label="風景"/);
-    assert.match(canvas, /class="resize-handle"/);
+    assert.match(canvas, /class="resize-handle is-bottom-right"/);
     const multiCanvas = renderToStaticMarkup(createElement(Canvas, {
       design: document(frame), selectedId: image.id, selectedIds: [frame.id, image.id],
       zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
@@ -77,7 +77,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       onImageError: noOp,
     }));
     assert.match(overflowing, /class="frame-contents" style="overflow:visible;border-radius:inherit"/);
-    assert.match(overflowing, /class="frame-contents"[^]*<span class="resize-handle"/);
+    assert.match(overflowing, /class="frame-contents"[^]*<span class="resize-handle is-/);
 
     const layers = renderToStaticMarkup(createElement(LayersPanel, { nodes: [frame], selectedId: image.id, onSelect: noOp }));
     assert.match(layers, /画面/);

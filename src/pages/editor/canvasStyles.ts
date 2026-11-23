@@ -22,7 +22,7 @@ export function canvasSurfaceStyle(camera: CanvasCamera): CSSProperties {
 }
 
 export function canvasWorldStyle(camera: CanvasCamera): CSSProperties {
-  return { transform: `translate(${-camera.scrollLeft}px, ${-camera.scrollTop}px) scale(${camera.zoom})` };
+  return { transform: `translate(${-camera.scrollLeft}px, ${-camera.scrollTop}px) scale(${camera.zoom})`, "--canvas-zoom": camera.zoom } as CSSProperties;
 }
 
 export function selectionPreviewStyle(selection: { start: Point; end: Point }): CSSProperties {

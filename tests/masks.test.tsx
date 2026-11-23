@@ -53,7 +53,7 @@ test("未選択のマスクは描かず、選択時だけ輪郭とレイヤー�
   const selected = renderToStaticMarkup(<CanvasNodes nodes={nodes} selectedId="mask" interaction={interaction} />);
   assert.match(selected, /class="canvas-node canvas-mask is-selected"/);
   assert.match(selected, /stroke-dasharray="4 3"/);
-  assert.match(selected, /class="resize-handle"/);
+  assert.match(selected, /class="resize-handle is-bottom-right"/);
   const layers = renderToStaticMarkup(<LayersPanel nodes={nodes} selectedId={null} onSelect={() => {}} onReorder={() => {}} />);
   assert.equal((layers.match(/layer-badge/g) ?? []).length, 2);
 });
