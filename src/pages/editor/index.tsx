@@ -28,6 +28,7 @@ import "@/App.css";
 
 import { ActionChip } from "@/pages/editor/components/molecules/ActionChip";
 import { AssetsPanel } from "@/pages/editor/components/organisms/AssetsPanel";
+import { Dialog } from "@/pages/editor/components/molecules/Dialog";
 import { FileChip } from "@/pages/editor/components/molecules/FileChip";
 import { FloatingTools } from "@/pages/editor/components/molecules/FloatingTools";
 import { Segmented } from "@/pages/editor/components/atoms/Segmented";
@@ -52,7 +53,7 @@ function EditorPage() {
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
-    recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
+    confirmation, recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
   const spacingUsages = Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]));
   const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
   const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
@@ -157,6 +158,11 @@ function EditorPage() {
         onResetOverride={(childId) => { if (selectedId) actions.components.onResetOverride(selectedId, childId); }}
         onDetach={() => actions.components.onDetach()} />}
     </div>
+    {confirmation && <Dialog title={confirmation.title} path={confirmation.path}
+      cancel={{ label: confirmation.cancelLabel, onSelect: () => confirmation.resolve(false) }}
+      primary={{ label: confirmation.confirmLabel, onSelect: () => confirmation.resolve(true) }}>
+      <p>{confirmation.body}</p>
+    </Dialog>}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
     </main>
