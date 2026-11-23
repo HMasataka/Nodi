@@ -1,8 +1,10 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
-import type { ComponentDefinition } from "@/document/types";
+import { Field } from "@/pages/editor/components/atoms/Field";
 import { Icon } from "@/pages/editor/components/atoms/Icon";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
+import { alphaByte, rgbColor, withAlphaByte, withRgbColor } from "@/document/color.ts";
+import type { ComponentDefinition, PaletteColor } from "@/document/types";
 import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 
 export type AssetsPanelProps = {
@@ -13,7 +15,13 @@ export type AssetsPanelProps = {
   onRenameComponent(componentId: string, name: string): void;
   onDuplicateComponent(componentId: string): void;
   onRemoveComponent(componentId: string): void;
-  children?: ReactNode;
+  palette: readonly PaletteColor[];
+  onCreatePalette(): void;
+  onImportPalette(): void;
+  onRenamePalette(id: string, name: string): void;
+  onRecolorPalette(id: string, color: string): void;
+  onDuplicatePalette(id: string): void;
+  onDeletePalette(id: string): void;
 };
 
 // 節の見出し。名前の直後に件数を置き、追加などの操作を右端にそろえる。
@@ -45,7 +53,7 @@ export function componentMenuEntries(actions: { place(): void; rename(): void; d
 export function AssetsPanel(props: AssetsPanelProps) {
   return <aside className="sidebar assets" aria-label="アセット">
     <ComponentsSection {...props} />
-    {props.children}
+    <ColorsSection {...props} />
   </aside>;
 }
 
@@ -98,4 +106,66 @@ export function RenameInput({ value, label, onDone }: { value: string; label: st
       if (event.key === "Enter") finish(draft);
       if (event.key === "Escape") { event.preventDefault(); finish(null); }
     }} />;
+}
+
+// 色の行の「⋯」メニュー。
+export function colorMenuEntries(actions: { rename(): void; duplicate(): void; remove(): void }): MenuEntry[] {
+  return [
+    { type: "item", label: "名前を変更", onSelect: actions.rename },
+    { type: "item", label: "複製", onSelect: actions.duplicate },
+    { type: "separator" },
+    { type: "item", label: "削除", onSelect: actions.remove },
+  ];
+}
+
+// HEX 欄の入力を色に当てる。# の有無を問わず6桁の16進数だけを受け付け、アルファは元の色のまま残す。
+export function parseHexInput(color: string, input: string): string | null {
+  const hex = input.trim().replace(/^#/, "");
+  return /^[0-9a-f]{6}$/i.test(hex) ? withRgbColor(color, `#${hex.toLowerCase()}`) : null;
+}
+
+// アルファ欄の入力を色に当てる。0〜255 の整数だけを受け付ける。
+export function parseAlphaInput(color: string, input: string): string | null {
+  const raw = input.trim();
+  const value = Number(raw);
+  return /^\d+$/.test(raw) && value <= 255 ? withAlphaByte(color, value) : null;
+}
+
+function ColorsSection({ palette, onCreatePalette, onImportPalette, onRenamePalette, onRecolorPalette, onDuplicatePalette, onDeletePalette }: AssetsPanelProps) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  return <section className="asset-section" aria-label="色">
+    <AssetHeader title="色" count={palette.length} actions={<>
+      <IconButton icon="import" label="色を取り込む" onClick={onImportPalette} />
+      <IconButton icon="plus" label="色を追加" onClick={onCreatePalette} />
+    </>} />
+    {palette.length === 0
+      ? <p className="asset-empty">名前付きの色を登録すると、塗り・線・文字などの色入力から再利用できます。</p>
+      : palette.map((color) => {
+        const active = color.id === selectedId;
+        const recolor = (next: string | null) => { if (next && next !== color.color) onRecolorPalette(color.id, next); };
+        return <div key={color.id} className="asset-color">
+          <div className={`asset-row color-row${active ? " is-active" : ""}`}>
+            <span className="asset-swatch" style={{ background: color.color }} aria-hidden="true" />
+            {renamingId === color.id
+              ? <RenameInput value={color.name} label="色の名前"
+                onDone={(name) => { setRenamingId(null); if (name !== null && name.trim() && name !== color.name) onRenamePalette(color.id, name.trim()); }} />
+              : <button type="button" className="asset-row-name" aria-pressed={active}
+                onClick={() => setSelectedId(active ? null : color.id)} onDoubleClick={() => setRenamingId(color.id)}>{color.name}</button>}
+            <span className="asset-row-value">{rgbColor(color.color).toUpperCase()}</span>
+            {active ? <div className="asset-row-actions">
+              <Menu label={`${color.name}の操作`} fixedTo={besidePanel} entries={colorMenuEntries({
+                rename: () => setRenamingId(color.id), duplicate: () => onDuplicatePalette(color.id), remove: () => onDeletePalette(color.id),
+              })} trigger={(trigger) => <IconButton {...trigger} icon="more" label={`${color.name}の操作`} />} />
+            </div> : null}
+          </div>
+          {active ? <div className="asset-color-editor">
+            <Field label="HEX" className="asset-color-hex" value={rgbColor(color.color).slice(1).toUpperCase()}
+              onCommit={(value) => recolor(parseHexInput(color.color, value))} />
+            <Field label="A" className="asset-color-alpha" inputMode="numeric" value={String(alphaByte(color.color))}
+              onCommit={(value) => recolor(parseAlphaInput(color.color, value))} />
+          </div> : null}
+        </div>;
+      })}
+  </section>;
 }

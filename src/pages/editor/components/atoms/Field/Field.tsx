@@ -24,7 +24,11 @@ export function Field({ label, value, onCommit, className, ...props }: FieldProp
     <label className="field-label-text" htmlFor={id}>{label}</label>
     <input {...props} id={id} value={draft} spellCheck={props.spellCheck ?? false}
       onChange={(event) => setDraft(event.currentTarget.value)}
-      onBlur={() => { if (draft !== value) onCommit(draft); }}
+      onBlur={() => {
+        if (draft !== value) onCommit(draft);
+        // 確定しなかった（親が値を変えなかった）ときは元の値に戻す。変えたときは次の描画で新しい値に置き換わる。
+        setDraft(value);
+      }}
       onKeyDown={blurOnEnter} />
   </div>;
 }
