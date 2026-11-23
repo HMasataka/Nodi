@@ -13,7 +13,7 @@ try {
   const color = (value) => typeof value === "string" ? value : value?.type === "palette" ? colors.get(value.id) : "transparent";
   const escape = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;");
   function render(node) {
-    const box = `position:absolute;box-sizing:border-box;left:${node.x}px;top:${node.y}px;width:${node.width}px;height:${node.height}px;`;
+    const box = `position:absolute;box-sizing:border-box;left:${node.x}px;top:${node.y}px;width:${node.width}px;height:${node.height}px;opacity:${node.opacity ?? 1};`;
     if (node.type === "text") return `<div style="${box}padding:2px;white-space:pre-wrap;font-size:${node.style.fontSize}px;line-height:${node.style.lineHeight};font-weight:${node.style.fontWeight};color:${color(node.style.color)};text-align:${node.style.textAlign}">${escape(node.content)}</div>`;
     if (node.type === "path") {
       const path = node.commands.map((c) => c.kind === "close" ? "Z" : `${c.kind === "move" ? "M" : "L"}${c.x * node.width} ${c.y * node.height}`).join(" ");
