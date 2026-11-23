@@ -46,6 +46,7 @@ function row(name, width, children, options = {}) {
 }
 
 const at = (node, x, y) => ({ ...node, x, y });
+const box = (name, x, y, width, height, options) => at(rect(name, width, height, options), x, y);
 const divider = (width, height = 1) => rect("Divider", width, height, { fill: 2 });
 
 const components = [];
@@ -82,6 +83,7 @@ const iconPaths = {
   keyframeAdd: [[0.35, 0.15], [0.6, 0.4], [0.35, 0.65], [0.1, 0.4], "close", null, [0.78, 0.55], [0.78, 0.95], null, [0.58, 0.75], [0.98, 0.75]],
   more: [[0.18, 0.5], [0.26, 0.5], null, [0.46, 0.5], [0.54, 0.5], null, [0.74, 0.5], [0.82, 0.5]],
   chevronRight: [[0.4, 0.28], [0.62, 0.5], [0.4, 0.72]],
+  chevronLeft: [[0.6, 0.28], [0.38, 0.5], [0.6, 0.72]],
   arrowRight: [[0.15, 0.5], [0.85, 0.5], null, [0.55, 0.22], [0.85, 0.5], [0.55, 0.78]],
   reset: [[0.3, 0.22], [0.12, 0.4], [0.3, 0.58], null, [0.12, 0.4], [0.62, 0.4], [0.85, 0.62], [0.62, 0.84], [0.35, 0.84]],
   corners: [[0.15, 0.4], [0.15, 0.15], [0.4, 0.15], null, [0.6, 0.15], [0.85, 0.15], [0.85, 0.4], null, [0.85, 0.6], [0.85, 0.85], [0.6, 0.85], null, [0.4, 0.85], [0.15, 0.85], [0.15, 0.6]],
@@ -452,14 +454,29 @@ function keyframe(centerX, centerY, selected = false) {
     commands: [{ kind: "move", x: 0.5, y: 0 }, { kind: "line", x: 1, y: 0.5 }, { kind: "line", x: 0.5, y: 1 }, { kind: "line", x: 0, y: 0.5 }, { kind: "close" }],
     style: { fill: gray(selected ? 0 : 8), stroke: { color: gray(8), width: selected ? 2 : 1 } } }, centerX - size / 2, centerY - size / 2);
 }
-define("timeline", "Timeline / Fade in", () => {
+// スライダーは、つまみの位置で値の割合を示し、右端に値を出す。
+function slider(label, value, ratio, { width = 248, labelWidth = 72, changed = true } = {}) {
+  const trackWidth = width - labelWidth - 40 - 16;
+  const knob = Math.round(trackWidth * ratio);
+  const track = frame("Track", trackWidth, 16, [
+    box("Rail", 0, 6, trackWidth, 4, { fill: 2, radius: 2 }), box("Rail filled", 0, 6, Math.max(knob, 1), 4, { fill: 8, radius: 2 }),
+    { id: uid(), name: "Knob", x: Math.min(Math.max(knob - 6, 0), trackWidth - 12), y: 2, width: 12, height: 12, type: "ellipse", style: { fill: gray(0), stroke: { color: gray(8), width: 1 } } },
+  ]);
+  return row("Slider", width, [text(label, labelWidth, { size: 11, tone: 6 }), track, text(value, 40, { tone: changed ? 8 : 5, weight: changed ? 600 : 400, align: "right" })], { height: 28, gap: 8 });
+}
+function timelineFor(trigger) {
+  const scroll = trigger === "スクロール";
+  // スクロールで動くアニメーションは再生しないので、再生位置の線をスクロールの進み具合のつまみとして動かし、見出しには割合を出す。
+  const playback = scroll
+    ? row("Scroll progress", 176, [text("スクロール", 88, { size: 11, tone: 6, align: "right" }), text("40%", 40, { tone: 8, align: "center" }), iconButton("close")], { gap: 8 })
+    : row("Playback", 176, [iconButton("play"), text("320 / 800 ms", 96, { tone: 6, align: "center" }), iconButton("close")], { gap: 8 });
   const header = row("Timeline header", timelineSize.width, [
     row("Animation settings", 721, [
       segmented(["Fade in", "Hover lift"], 0, 160), iconButton("plus"), iconButton("trash"), divider(1, 20),
-      field("トリガー", "読み込み", { width: 132, labelWidth: 48 }), field("長さ", "800 ms", { width: 104, labelWidth: 28 }),
+      field("トリガー", trigger, { width: 132, labelWidth: 48 }), field("長さ", "800 ms", { width: 104, labelWidth: 28 }),
       field("遅延", "0 ms", { width: 96, labelWidth: 28 }), field("繰り返し", "1 回", { width: 108, labelWidth: 48 }),
     ], { gap: 8 }),
-    row("Playback", 176, [iconButton("play"), text("320 / 800 ms", 96, { tone: 6, align: "center" }), iconButton("close")], { gap: 8 }),
+    playback,
   ], { height: 48, pad: 8, justify: "space-between", border: ["bottom"] });
   const tracks = [["不透明度", [[0], [400, true]]], ["Y 位置", [[0], [800]]]];
   const children = [at(header, 0, 0)];
@@ -484,7 +501,9 @@ define("timeline", "Timeline / Fade in", () => {
     ], { height: 44, pad: 8, gap: 8, border: ["top"] }), 0, 184),
   );
   return frame("Timeline", timelineSize.width, timelineSize.height, children, { fill: 0, border: ["top"] });
-});
+}
+define("timeline", "Timeline / Fade in", () => timelineFor("読み込み"));
+define("timeline_scroll", "Timeline / Scroll", () => timelineFor("スクロール"));
 
 const overlayInset = 12;
 // パネルの中に開くと下の節を隠すため、パネルの右隣に行の上端をそろえて開く。縦はパネル余白8 + タブ32 + 間隔8 + 見出し32。
@@ -578,7 +597,6 @@ const M = (x, y) => ({ kind: "move", x, y });
 const L = (x, y) => ({ kind: "line", x, y });
 const C = (x1, y1, x2, y2, x, y) => ({ kind: "cubic", x1, y1, x2, y2, x, y });
 const line = (name, x1, y1, x2, y2, tone = 8) => vectorPath(name, [M(x1, y1), L(x2, y2)], { fill: null, stroke: { color: gray(tone), width: 1 } });
-const box = (name, x, y, width, height, options) => at(rect(name, width, height, options), x, y);
 const outline = (x, y, width, height) => box("Selection outline", x, y, width, height, { fill: null, stroke: 8 });
 const handlesOf = (x, y, width, height) => [selectionHandle(x, y), selectionHandle(x + width, y), selectionHandle(x, y + height), selectionHandle(x + width, y + height)];
 const chipAt = (label, centerX, top) => at(sizeChip(label), centerX - 36, top);
@@ -666,6 +684,56 @@ const canvasSheetChildren = canvasTiles.flatMap(([title, build], index) => {
 const lastSheet = screens.at(-1);
 screens.push({ ...frame("Canvas / 編集中の表示", 40 + 4 * (tileSize.width + 40), 40 + 2 * (tileSize.height + 76), canvasSheetChildren, { fill: 2 }),
   id: "sheet_canvas", x: 80, y: lastSheet.y + lastSheet.height + 80 });
+
+// グラデーションの帯は、色の位置を帯の下の札で示し、選んだ札を黒く塗る。
+function gradientBar(kind, stops, selected) {
+  const width = 248;
+  const fillOf = kind === "線形"
+    ? { type: "linear", start: { x: 0, y: 0.5 }, end: { x: 1, y: 0.5 }, stops: stops.map(([position, tone]) => ({ position, color: gray(tone) })) }
+    : { type: "radial", center: { x: 0.5, y: 0.5 }, radius: 1, stops: stops.map(([position, tone]) => ({ position, color: gray(tone) })) };
+  const bar = { ...rect("Gradient", width, 24, { stroke: 3, radius: 4 }), style: { fill: fillOf, stroke: { color: gray(3), width: 1 }, cornerRadii: corners(4) } };
+  const markers = stops.map(([position, tone], index) => {
+    const x = Math.min(Math.max(position * width - 6, 0), width - 12);
+    return box(index === selected ? "Stop / Selected" : "Stop", x, 28, 12, 12, { fill: index === selected ? 8 : tone, stroke: 8, radius: 3 });
+  });
+  return frame("Gradient stops", width, 40, [at(bar, 0, 0), ...markers]);
+}
+function gradientPanel(kind, stops, selected, geometry) {
+  const [position, tone] = stops[selected];
+  return column(`塗り / ${kind}`, 248, [
+    sectionHeader("塗り", "remove"), segmented(["単色", "線形", "放射状"], kind === "線形" ? 1 : 2, 248), gradientBar(kind, stops, selected),
+    row("Stop", 248, [field("位置", `${Math.round(position * 100)}%`, { width: 80, labelWidth: 28 }), colorField(grayNames[tone], "100%", 128), iconButton("trash")], { gap: 4 }),
+    ...geometry,
+  ], { gap: 8 });
+}
+const filterRows = [["明るさ", "100%", 0.5, false], ["コントラスト", "120%", 0.6, true], ["彩度", "100%", 0.5, false], ["グレースケール", "0%", 0, false], ["セピア", "0%", 0, false], ["色相", "0°", 0.5, false]];
+const controlColumns = [
+  { title: "塗り（線形）", node: gradientPanel("線形", [[0, 1], [0.6, 4], [1, 8]], 1, [
+    pair(field("始点 X", "0%", { labelWidth: 40 }), field("始点 Y", "50%", { labelWidth: 40 })),
+    pair(field("終点 X", "100%", { labelWidth: 40 }), field("終点 Y", "50%", { labelWidth: 40 })), caption("帯をクリックすると色の位置を足す"),
+  ]) },
+  { title: "塗り（放射状）", node: gradientPanel("放射状", [[0, 0], [1, 6]], 0, [
+    pair(field("中心 X", "50%", { labelWidth: 40 }), field("中心 Y", "50%", { labelWidth: 40 })), field("半径", "100%", { width: 248, labelWidth: 28 }),
+  ]) },
+  { title: "画像の色調整", node: column("色調整", 248, [
+    row("Heading", 248, [row("Back", 200, [icon("chevronLeft", 6), text("色調整", 176, { size: 11, tone: 8, weight: 600 })], { height: 24, gap: 4 }), icon("reset", 5)],
+      { height: 24, justify: "space-between" }),
+    ...filterRows.map(([label, value, ratio, changed]) => slider(label, value, ratio, { labelWidth: 84, changed })), caption("既定値から変えた行だけ、値を濃く出す"),
+  ], { gap: 8 }) },
+];
+let controlX = 40;
+const controlChildren = controlColumns.flatMap(({ title, node }) => {
+  const panel = column("Inspector panel", 280, [node], { pad: 16, fill: 0, radius: 12 });
+  const placed = [at(text(title, 280, { size: 13, tone: 8, weight: 600 }), controlX, 40), at(panel, controlX, 76)];
+  controlX += 280 + 40;
+  return placed;
+});
+const timelineScroll = use("timeline_scroll");
+controlChildren.push(at(text("スクロールで動くアニメーション", 400, { size: 13, tone: 8, weight: 600 }), controlX, 40), at(timelineScroll, controlX, 76));
+const controlHeight = 76 + Math.max(timelineSize.height, ...controlColumns.map(({ node }) => node.height + 32)) + 40;
+const previousSheet = screens.at(-1);
+screens.push({ ...frame("Controls / 値を動かす入力", controlX + timelineSize.width + 40, controlHeight, controlChildren, { fill: 2 }),
+  id: "sheet_controls", x: 80, y: previousSheet.y + previousSheet.height + 80 });
 
 for (const ref of ["layersPanel", "assetsPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
 
