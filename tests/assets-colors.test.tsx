@@ -12,6 +12,7 @@ const props: AssetsPanelProps = {
   components: [], onPlaceInstance: noop, onRenameComponent: noop, onDuplicateComponent: noop, onRemoveComponent: noop,
   palette: [paletteColor({ id: "ink", name: "Ink", color: "#171717" }), paletteColor({ id: "veil", name: "Veil", color: "#ffffff80" })],
   onCreatePalette: noop, onImportPalette: noop, onRenamePalette: noop, onRecolorPalette: noop, onDuplicatePalette: noop, onDeletePalette: noop,
+  spacing: [], spacingUsages: {}, onCreateSpacing: noop, onRenameSpacing: noop, onSetSpacing: noop, onRemoveSpacing: noop,
 };
 
 test("見出しに名前・件数・取り込み・追加を置き、行に見本・名前・HEX を並べる", () => {

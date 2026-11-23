@@ -53,6 +53,7 @@ function EditorPage() {
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
+  const spacingUsages = Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]));
   const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
   const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
   const selectedComponentNode = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.node : undefined;
@@ -111,7 +112,10 @@ function EditorPage() {
             onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove}
             palette={design.palette} onCreatePalette={actions.palette.onCreate} onImportPalette={actions.palette.onImport}
             onRenamePalette={actions.palette.onRename} onRecolorPalette={actions.palette.onRecolor}
-            onDuplicatePalette={actions.palette.onDuplicate} onDeletePalette={actions.palette.onDelete} />}
+            onDuplicatePalette={actions.palette.onDuplicate} onDeletePalette={actions.palette.onDelete}
+            spacing={design.spacing} spacingUsages={spacingUsages}
+            onCreateSpacing={actions.spacingTokens.onCreate} onRenameSpacing={actions.spacingTokens.onRename}
+            onSetSpacing={actions.spacingTokens.onValue} onRemoveSpacing={actions.spacingTokens.onRemove} />}
       </div>}
       <div className="editor-center">
         <div className="canvas-stage">
@@ -144,9 +148,7 @@ function EditorPage() {
         {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />}
       </div>
       {panels.layout.right && <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
-        spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}
-        onCreateSpacingToken={actions.spacingTokens.onCreate} onRenameSpacingToken={actions.spacingTokens.onRename}
-        onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}
+        {...actions.inspector}
         componentName={selectedComponentName} componentNode={selectedComponentNode}
         onCreateComponent={actions.components.onCreateFromSelected}
         onGoToDefinition={() => { setLeftTab("assets"); if (!panels.layout.left) panels.toggle("left"); }}
