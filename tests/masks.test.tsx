@@ -55,7 +55,7 @@ test("未選択のマスクは描かず、選択時だけ輪郭とレイヤー�
   assert.match(selected, /stroke-dasharray="4 3"/);
   assert.match(selected, /class="resize-handle"/);
   const layers = renderToStaticMarkup(<LayersPanel nodes={nodes} selectedId={null} onSelect={() => {}} onReorder={() => {}} />);
-  assert.equal((layers.match(/layer-mask-label/g) ?? []).length, 2);
+  assert.equal((layers.match(/layer-badge/g) ?? []).length, 2);
 });
 
 test("PNGはマスクを塗らず、兄弟ごとにクリップを解除して次のマスクへ進む", async () => {
