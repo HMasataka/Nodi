@@ -11,6 +11,7 @@ import type { RecoveryStatus } from "@/pages/editor/types";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
 import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft } from "@/persistence/recovery";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
+import { type ConfirmationRequest, UNSAVED_OPEN_CONFIRMATION } from "@/pages/editor/confirmation.ts";
 import { createAgentApi, type FocusedViewport } from "@/agent/api";
 import { createDocument, findNode } from "@/document/commands/index.ts";
 import { openDocumentFile, parseDocumentContents, readDocumentContents, saveDocumentFile } from "@/persistence/documentFile";
@@ -34,6 +35,8 @@ export function useEditorDocument() {
   const filePathRef = useRef<string | null>(null);
   const onDiskContentRef = useRef<string | null>(null);
   const onExternalChangeRef = useRef<() => void>(() => {});
+  const [confirmation, setConfirmation] = useState<(ConfirmationRequest & { resolve(answer: boolean): void }) | null>(null);
+  const confirming = useRef(false);
   const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus>(() => isTauri() ? { kind: "checking" } : { kind: "none" });
   const recoveryQueue = useRef(Promise.resolve());
   const focusElementRef = useRef<(id: string) => Result.Result<FocusedViewport, Error>>(() => Result.fail(new Error("キャンバスを表示できません")));
@@ -221,11 +224,23 @@ export function useEditorDocument() {
     setError(null);
   }
 
+  // 確認のダイアログを開き、選んだ操作を返す。ダイアログを開いている間に重ねて開いたときは取り消し扱いにする。
+  function confirm(request: ConfirmationRequest): Promise<boolean> {
+    if (confirming.current) return Promise.resolve(false);
+    confirming.current = true;
+    return new Promise((resolve) => setConfirmation({ ...request, resolve: (answer) => {
+      confirming.current = false;
+      setConfirmation(null);
+      resolve(answer);
+    } }));
+  }
+
   async function openFile() {
     const editable = ensureEditable();
     if (Result.isFailure(editable)) { setError(editable.error.message); return; }
     if (fileOperation.current) return;
-    if (isDocumentDirty(historyRef.current, designRef.current) && designRef.current.children.length > 0 && !window.confirm("未保存の変更があります。別のドキュメントを開きますか？")) return;
+    if (isDocumentDirty(historyRef.current, designRef.current) && designRef.current.children.length > 0 && !await confirm(UNSAVED_OPEN_CONFIRMATION)) return;
+    if (fileOperation.current) return;
     fileOperation.current = true;
     setIsBusy(true);
     const startedAt = revision.current;
@@ -277,7 +292,7 @@ export function useEditorDocument() {
 
   return {
     history, design, designRef, documentSession, selectedId, selectedIds, setSelectedId, setSelectedIds, selected,
-    error, setError, filePath, isBusy, isDirty, agentApi, recoveryStatus, restoreRecovery, discardRecovery, focusElementRef,
+    error, setError, filePath, isBusy, isDirty, agentApi, confirmation, recoveryStatus, restoreRecovery, discardRecovery, focusElementRef,
     recordDocument, applyDocument, beginPreview, previewDocument, finishPreview, stepHistory, openFile, saveFile,
   };
 }
