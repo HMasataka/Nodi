@@ -319,9 +319,10 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       if (event.key === "Escape" && selectionRef.current) { cancelSelection(); event.preventDefault(); return; }
       if (event.key === "Enter" && penRef.current && !isTextEditingTarget(event.target)) { finishPen(false); event.preventDefault(); }
     }
-    window.addEventListener("keydown", onKeyDown);
+    // ショートカット（window で受ける）より先に、描画中の Esc や Enter を処理する。
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
   });
 
