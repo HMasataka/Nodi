@@ -344,49 +344,6 @@ button {
   min-height: 0;
   border: none;
 }
-.palette-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px;
-}
-.palette-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.palette-swatch input {
-  width: 28px;
-  height: 24px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: transparent;
-}
-.palette-alpha {
-  width: 42px;
-}
-.palette-name {
-  flex: 1;
-  min-width: 0;
-}
-.palette-action {
-  flex: none;
-  border: 0;
-  border-radius: 4px;
-  padding: 2px 4px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 11px;
-  cursor: pointer;
-}
-.palette-action:hover { color: var(--accent-strong); background: var(--accent-soft); }
-.palette-actions {
-  display: flex;
-  gap: 6px;
-  padding: 10px;
-  border-top: 1px solid var(--line);
-}
 .color-palette-select {
   display: flex;
   flex-direction: column;
@@ -776,8 +733,7 @@ button {
   display: flex;
   flex-direction: column;
 }
-.asset-section + .asset-section,
-.asset-section + .palette {
+.asset-section + .asset-section {
   border-top: 1px solid var(--line);
   padding-top: var(--space-8);
 }
@@ -841,6 +797,30 @@ button {
 .asset-row-actions { display: flex; gap: var(--space-4); }
 .asset-row-actions .icon-button { width: 24px; height: 24px; padding: var(--space-4); }
 .asset-row-actions .icon-button[aria-expanded="true"] { background: var(--surface); }
+.asset-swatch {
+  flex: none;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  margin-right: var(--space-4);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-4);
+}
+.asset-row-value {
+  flex: none;
+  color: var(--text-label);
+  font-size: var(--font-size-11);
+  line-height: var(--line-height-11);
+  font-variant-numeric: tabular-nums;
+}
+.color-row { height: 28px; }
+.asset-color-editor {
+  display: grid;
+  grid-template-columns: 128px 80px;
+  gap: var(--space-8);
+  padding: var(--space-4);
+}
+.asset-color-editor .field-label-text { min-width: 28px; }
 .asset-rename {
   flex: 1;
   min-width: 0;

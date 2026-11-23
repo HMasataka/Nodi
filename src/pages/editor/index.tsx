@@ -8,7 +8,6 @@ import { findNode } from "@/document/commands/index.ts";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
-import { PalettePanel } from "@/pages/editor/components/organisms/PalettePanel";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
@@ -109,9 +108,10 @@ function EditorPage() {
             onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
           : <AssetsPanel components={design.components} highlightedComponentId={selected?.type === "instance" ? selected.componentRef : null}
             onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
-            onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove}>
-            <PalettePanel palette={design.palette} {...actions.palette} />
-          </AssetsPanel>}
+            onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove}
+            palette={design.palette} onCreatePalette={actions.palette.onCreate} onImportPalette={actions.palette.onImport}
+            onRenamePalette={actions.palette.onRename} onRecolorPalette={actions.palette.onRecolor}
+            onDuplicatePalette={actions.palette.onDuplicate} onDeletePalette={actions.palette.onDelete} />}
       </div>}
       <div className="editor-center">
         <div className="canvas-stage">

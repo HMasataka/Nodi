@@ -12,7 +12,8 @@ const components = [
   { id: "card", name: "Project card", node: frame({ id: "card-root" }) },
   { id: "nav", name: "Nav link", node: frame({ id: "nav-root" }) },
 ];
-const props: AssetsPanelProps = { components, onPlaceInstance: noop, onRenameComponent: noop, onDuplicateComponent: noop, onRemoveComponent: noop };
+const props: AssetsPanelProps = { components, onPlaceInstance: noop, onRenameComponent: noop, onDuplicateComponent: noop, onRemoveComponent: noop,
+  palette: [], onCreatePalette: noop, onImportPalette: noop, onRenamePalette: noop, onRecolorPalette: noop, onDuplicatePalette: noop, onDeletePalette: noop };
 const render = (overrides: Partial<AssetsPanelProps> = {}) => renderToStaticMarkup(createElement(AssetsPanel, { ...props, ...overrides }));
 
 test("見出しに名前と件数を置き、コンポーネントを行に並べる", () => {
