@@ -31,6 +31,18 @@ export function nodesInBounds(document: Document, bounds: Geometry): string[] {
   return ids;
 }
 
+// 範囲選択で選ばれる最小の大きさ。これより小さいドラッグはクリックとみなす。
+export const MIN_MARQUEE_SIZE = 3;
+
+// 範囲選択の途中で、離したときに選ばれる要素と、その表示上の外接枠。
+export function marqueeTargets(document: Document, selection: { start: Point; end: Point }): { id: string; bounds: Geometry }[] {
+  const bounds = drawingGeometry(selection.start, selection.end);
+  if (bounds.width < MIN_MARQUEE_SIZE || bounds.height < MIN_MARQUEE_SIZE) return [];
+  const hits: { id: string; bounds: Geometry }[] = [];
+  walkVisibleNodes(document, ({ node, visible }) => { if (overlaps(visible, bounds)) hits.push({ id: node.id, bounds: visible }); });
+  return hits;
+}
+
 export function drawingGeometry(start: Point, end: Point, parent: Point | Transform = IDENTITY_TRANSFORM): Geometry {
   const localStart = "a" in parent ? transformPoint(invertTransform(parent), start) : { x: start.x - parent.x, y: start.y - parent.y };
   const localEnd = "a" in parent ? transformPoint(invertTransform(parent), end) : { x: end.x - parent.x, y: end.y - parent.y };

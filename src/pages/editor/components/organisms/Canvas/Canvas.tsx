@@ -9,7 +9,7 @@ import { transformPoint } from "@/document/transform.ts";
 import { type CanvasCamera, selectionBounds } from "@/pages/editor/camera.ts";
 import { CanvasNodes, type NodeInteraction, sizeLabel } from "@/pages/editor/components/molecules/CanvasNode";
 import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, guideStyle, selectionPreviewStyle } from "@/pages/editor/canvasStyles";
-import { drawingGeometry, RESIZE_CORNERS } from "@/pages/editor/geometry";
+import { drawingGeometry, marqueeTargets, RESIZE_CORNERS } from "@/pages/editor/geometry";
 import type { DrawingState, DrawTool, PenState } from "@/pages/editor/types";
 
 
@@ -57,6 +57,7 @@ export function Canvas(props: CanvasProps) {
     onPathPointPointerUp: props.onPathPointPointerUp,
     onPathPointPointerCancel: props.onPathPointPointerCancel,
   };
+  const marqueeHits = selection ? marqueeTargets(design, selection) : [];
   // 複数を選んでいるときは、まとめた範囲を枠・つまみ・寸法で示す。
   const groupBounds = selectedIds && selectedIds.length > 1 ? selectionBounds(design, selectedIds) : null;
   const preview = drawing ? drawingGeometry(drawing.start, drawing.end, drawing.parentTransform) : null;
@@ -82,6 +83,8 @@ export function Canvas(props: CanvasProps) {
               {RESIZE_CORNERS.map((corner) => <ResizeHandle key={`${corner.x}${corner.y}`} corner={corner} onPointerDown={() => {}} />)}
               <span className="canvas-size-label" aria-hidden="true">{sizeLabel(groupBounds.width, groupBounds.height)}</span>
             </div>}
+            {marqueeHits.map((hit) => <div key={hit.id} className="marquee-hit"
+              style={{ left: hit.bounds.x, top: hit.bounds.y, width: hit.bounds.width, height: hit.bounds.height }} />)}
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}
