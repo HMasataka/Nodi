@@ -144,6 +144,7 @@ function EditorPage() {
           <ActionChip zoom={zoom} rightPanelOpen={panels.layout.right} onToggleRightPanel={() => panels.toggle("right")} />
           <FloatingTools drawTool={drawTool} onDrawToolChange={setDrawTool} onImportImage={actions.importImage}
             timelineOpen={panels.layout.timeline} onToggleTimeline={() => panels.toggle("timeline")} />
+          {error && <ErrorToast message={error} onClose={() => setError(null)} />}
         </div>
         {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />}
       </div>
@@ -156,7 +157,6 @@ function EditorPage() {
         onResetOverride={(childId) => { if (selectedId) actions.components.onResetOverride(selectedId, childId); }}
         onDetach={() => actions.components.onDetach()} />}
     </div>
-    {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
     </main>

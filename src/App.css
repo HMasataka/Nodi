@@ -109,10 +109,9 @@
   --accent-shadow: color-mix(in srgb, var(--purple-500) 13%, transparent);
 
   /* 状態・通知 */
-  --error-border: var(--red-300);
-  --error-surface: var(--red-050);
-  --error-ink: var(--red-800);
-  --error-shadow: color-mix(in srgb, var(--grey-900) 12%, transparent);
+  --toast-surface: var(--grey-900);
+  --toast-ink: var(--white);
+  --toast-muted: var(--grey-200);
   --scrim: color-mix(in srgb, var(--grey-900) 66%, transparent);
   --dialog-border: var(--grey-100);
   --dialog-shadow: color-mix(in srgb, var(--grey-900) 27%, transparent);
@@ -1138,29 +1137,39 @@ button {
 .timeline-keyframe input { width: 64px; }
 .timeline-add { display: flex; }
 
+/* 作成ツールと重ならないよう、キャンバスの右下の角から 12px に付ける。 */
 .error-toast {
-  position: fixed;
-  right: 20px;
-  bottom: 46px;
+  position: absolute;
+  right: var(--space-12);
+  bottom: var(--space-12);
+  z-index: 3;
   display: flex;
-  align-items: center;
-  gap: 20px;
-  max-width: 360px;
-  border: 1px solid var(--error-border);
-  border-radius: 6px;
-  padding: 12px 14px;
-  background: var(--error-surface);
-  color: var(--error-ink);
-  box-shadow: 0 8px 30px var(--error-shadow);
-  font-size: 12px;
-  z-index: 10;
+  align-items: flex-start;
+  gap: var(--space-8);
+  box-sizing: border-box;
+  width: 280px;
+  border-radius: var(--radius-8);
+  padding: var(--space-12);
+  color: var(--toast-ink);
+  background: var(--toast-surface);
+  box-shadow: 0 8px 24px var(--menu-shadow);
 }
-.error-toast button {
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font-size: 18px;
+.error-toast-icon { margin-top: 2px; }
+.error-toast-message {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-12);
+  overflow-wrap: anywhere;
 }
+.icon-button.error-toast-close {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  color: var(--toast-muted);
+}
+.icon-button.error-toast-close:hover { color: var(--toast-ink); background: transparent; }
 .recovery-scrim { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: var(--scrim); }
 .recovery-dialog { width: min(100%, 460px); border: 1px solid var(--dialog-border); border-radius: 9px; padding: 28px; background: var(--panel); box-shadow: 0 28px 70px var(--dialog-shadow); }
 .recovery-eyebrow { color: var(--accent); font: 10px ui-monospace, monospace; letter-spacing: .16em; }
