@@ -281,6 +281,11 @@ button {
 .file-chip { left: var(--space-12); }
 .file-chip-trigger {
   display: flex;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
   align-items: center;
   gap: var(--space-8);
   min-width: 0;
@@ -306,7 +311,33 @@ button {
   border-radius: 50%;
   background: var(--accent);
 }
+.file-chip-trigger:hover,
+.file-chip-trigger[aria-expanded="true"] { background: var(--surface-muted); }
+.file-chip-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .file-chip-arrow { color: var(--text-label); }
+/* メニューはチップの外枠にそろえ、チップの 8px 下に開く。アンカーはチップの余白 4px・枠 1px・開閉ボタン 32px・間隔 4px の内側にある。 */
+.file-chip .menu {
+  top: calc(100% + var(--space-4) + 1px + var(--space-8));
+  left: calc(-1 * (var(--space-4) + 1px + 32px + var(--space-4)));
+  min-width: 240px;
+}
+.file-menu-document {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.file-menu-name {
+  color: var(--ink);
+  font-size: var(--font-size-13);
+  line-height: var(--line-height-13);
+  font-weight: 600;
+}
+.file-menu-path {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-menu-status { color: var(--text-body); }
 .panel-toggles {
   display: flex;
   gap: var(--space-4);

@@ -64,6 +64,8 @@ function EditorPage() {
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
     updateSelection, finishSelection, cancelSelection } = interaction;
+  const canUndo = history.past.length > 0 && !drag.current && !pathDrag.current;
+  const canRedo = history.future.length > 0 && !drag.current && !pathDrag.current;
   useEditorShortcuts({
     save: () => { void saveFile(); },
     open: () => { void openFile(); },
@@ -85,7 +87,7 @@ function EditorPage() {
       </div>}
       <div className="editor-center">
         <EditorToolbar fileName={fileName} filePath={filePath}
-          canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
+          canUndo={canUndo} canRedo={canRedo}
           isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
           onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
           drawTool={drawTool} onDrawToolChange={setDrawTool}>
@@ -112,8 +114,10 @@ function EditorPage() {
             onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
             onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
             onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-          <FileChip fileName={fileName} filePath={filePath} isDirty={isDirty}
-            leftPanelOpen={panels.layout.left} onToggleLeftPanel={() => panels.toggle("left")} />
+          <FileChip fileName={fileName} filePath={filePath} isDirty={isDirty} isBusy={isBusy} canUndo={canUndo} canRedo={canRedo}
+            leftPanelOpen={panels.layout.left} onToggleLeftPanel={() => panels.toggle("left")}
+            onOpen={() => { void openFile(); }} onSave={() => { void saveFile(); }} onImportSvg={actions.importSvg}
+            onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")} />
         </div>
         <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
         <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
