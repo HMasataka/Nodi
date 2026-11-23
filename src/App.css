@@ -105,6 +105,8 @@
   --accent-soft: var(--purple-050);
   --accent-hover: var(--purple-600);
   --accent-border: var(--purple-600);
+  --accent-fill: var(--purple-600);
+  --on-accent: var(--white);
   --accent-translucent: color-mix(in srgb, var(--purple-500) 15%, transparent);
   --accent-shadow: color-mix(in srgb, var(--purple-500) 13%, transparent);
 
@@ -379,6 +381,56 @@ button {
   flex: none;
   width: 16px;
   height: 16px;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--radius-6);
+  padding: var(--space-8);
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+}
+.icon-button:hover { background: var(--surface-muted); }
+.icon-button[aria-pressed="true"] {
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+}
+.icon-button:disabled { cursor: not-allowed; opacity: .45; }
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-8);
+  padding: 0 var(--space-16);
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-12);
+  font-weight: 600;
+  cursor: pointer;
+}
+.button-primary {
+  color: var(--on-accent);
+  background: var(--accent-fill);
+}
+.button-primary:hover { background: var(--accent-strong); }
+.button-secondary {
+  border-color: var(--input-border);
+  color: var(--ink);
+  background: var(--surface);
+}
+.button-secondary:hover { background: var(--surface-muted); }
+.button:disabled { cursor: not-allowed; opacity: .45; }
+.icon-button:focus-visible,
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .layer-name {
   overflow: hidden;
