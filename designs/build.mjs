@@ -303,8 +303,30 @@ define("layersPanel", "Shell / Layers panel", () => column("Layers panel", 240, 
 define("inspectorPanel", "Shell / Inspector panel", () => column("Inspector panel", 280, [use("inspector_frame")], { pad: 16, fill: 0, border: ["left"] }));
 
 const floating = { pad: 4, gap: 4, fill: 0, stroke: 2, radius: 12 };
-define("fileChip", "Canvas overlay / File", () =>
-  row("File", 152, [iconButton("panelLeft"), text("Website.nodi", 108, { size: 13, tone: 8, weight: 600 })], floating));
+// 未保存の印は、名前を読まなくても保存状態が分かるようファイル名の直後に置く。
+for (const unsaved of [false, true]) {
+  for (const menuOpen of [false, true]) {
+    define(`fileChip_${unsaved}_${menuOpen}`, "Canvas overlay / File", () => {
+      const name = text("Website.nodi", unsaved ? 86 : 100, { size: 13, tone: 8, weight: 600 });
+      const dot = { id: uid(), name: "Unsaved", x: 0, y: 0, width: 6, height: 6, type: "ellipse", style: { fill: gray(8) } };
+      const trigger = row("File menu trigger", 140, unsaved ? [name, dot, icon("chevronDown", 5)] : [name, icon("chevronDown", 5)],
+        { height: 32, pad: 8, gap: 8, fill: menuOpen ? 2 : null, radius: 8 });
+      return row("File", 184, [iconButton("panelLeft"), trigger], floating);
+    });
+  }
+}
+function shortcutRow(label, shortcut) {
+  const ref = define("shortcutRow", "Control / Menu row with shortcut", () =>
+    row("Menu row", 224, [text("Item", 152, { tone: 7 }), text("⌘", 56, { size: 11, tone: 5, align: "right" })], { height: 28, pad: 8, radius: 6 }));
+  return use(ref, { [slot(ref, 0)]: { content: label }, [slot(ref, 1)]: { content: shortcut } });
+}
+define("fileMenu", "Canvas overlay / File menu", () => column("File menu", 240, [
+  column("Document", 224, [text("Website.nodi", 208, { size: 13, tone: 8, weight: 600 }), text("~/Documents/Website.nodi", 208, { size: 11, tone: 5 }),
+    text("未保存の変更があります", 208, { size: 11, tone: 7 })], { pad: 8 }),
+  divider(224), shortcutRow("開く…", "⌘O"), shortcutRow("保存", "⌘S"),
+  divider(224), shortcutRow("SVG パスを取り込む…", ""),
+  divider(224), shortcutRow("元に戻す", "⌘Z"), shortcutRow("やり直す", "⇧⌘Z"),
+], { pad: 8, gap: 4, fill: 0, stroke: 2, radius: 12 }));
 define("actionChip", "Canvas overlay / Actions", () =>
   row("Actions", 128, [text("100%", 48, { tone: 6, align: "center" }), iconButton("preview"), iconButton("panelRight")], floating));
 for (const timelineOpen of [false, true]) {
@@ -356,11 +378,11 @@ define("timeline", "Timeline / Fade in", () => {
 });
 
 const overlayInset = 12;
-function editor(id, name, index, { panelsOpen, timelineOpen = false }) {
+function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false }) {
   const canvasLeft = panelsOpen ? 240 : 0;
   const canvasRight = panelsOpen ? 1160 : 1440;
   const centerOf = (width) => canvasLeft + (canvasRight - canvasLeft - width) / 2;
-  const fileChip = use("fileChip");
+  const fileChip = use(`fileChip_${unsaved}_${fileMenuOpen}`);
   const actionChip = use("actionChip");
   const tools = use(`floatingTools_${timelineOpen}`);
   const canvasBottom = timelineOpen ? 960 - timelineSize.height : 960;
@@ -371,6 +393,7 @@ function editor(id, name, index, { panelsOpen, timelineOpen = false }) {
     at(tools, centerOf(tools.width), canvasBottom - overlayInset - tools.height),
   ];
   if (timelineOpen) children.push(at(use("timeline"), canvasLeft, canvasBottom));
+  if (fileMenuOpen) children.push(at(use("fileMenu"), canvasLeft + overlayInset, overlayInset + fileChip.height + 8));
   if (panelsOpen) children.push(at({ ...use("layersPanel"), height: 960 }, 0, 0), at({ ...use("inspectorPanel"), height: 960 }, 1160, 0));
   return { ...frame(name, 1440, 960, children, { fill: 2 }), id, x: (index % 2) * 1520 + 80, y: Math.floor(index / 2) * 1040 + 80 };
 }
@@ -379,6 +402,7 @@ const screens = [
   editor("screen_panels_open", "A / パネルを開いた状態", 0, { panelsOpen: true }),
   editor("screen_panels_closed", "A / パネルを閉じた状態", 1, { panelsOpen: false }),
   editor("screen_timeline_open", "A / タイムラインを開いた状態", 2, { panelsOpen: true, timelineOpen: true }),
+  editor("screen_file_menu", "A / ファイルメニューを開いた状態", 3, { panelsOpen: true, unsaved: true, fileMenuOpen: true }),
 ];
 const sheetColumns = [...Object.keys(inspectorKinds).map((kind) => ({ title: inspectorTitles[kind], node: column("Inspector panel", 280, [use(`inspector_${kind}`)], { pad: 16, fill: 0, radius: 12 }) })),
   { title: "⋯ メニュー", node: use("moreMenu") }];
