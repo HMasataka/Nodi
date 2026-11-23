@@ -7,7 +7,7 @@ import { resolveDocumentInstances } from "../src/document/instances.ts";
 import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu", "screen_assets"];
+const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu", "screen_assets", "screen_dialog", "screen_toast"];
 
 async function load() {
   const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
@@ -37,7 +37,7 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
 
 test("メイン画面の案だけを並べ、すべて同じ選択状態を示す", async () => {
   const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
-  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector"]);
+  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector", "sheet_dialogs"]);
   for (const screen of document.children.filter(({ id }) => screenIds.includes(id))) {
     assert.equal(screen.type, "frame");
     if (screen.type !== "frame") continue;
@@ -94,6 +94,37 @@ test("アセットはコンポーネント・色・余白の順に並べ、行�
   if (highlighted?.node.type !== "frame") assert.fail("強調した行がありません");
   const menu = screen.children.find(({ name }) => name === "Assets / Component menu")!;
   assert.deepEqual([menu.x, menu.y], [panel.x + panel.width + 4, highlighted.y]);
+});
+
+test("ダイアログは幕の上で画面の中央に開き、主となる操作を右端に置く", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const screen = document.children.find((child) => child.id === "screen_dialog");
+  if (screen?.type !== "frame") assert.fail("screen_dialog がありません");
+  const [scrim, dialog] = screen.children.slice(-2);
+  assert.deepEqual([scrim.name, scrim.x, scrim.y, scrim.width, scrim.height], ["Scrim", 0, 0, 1440, 960]);
+  assert.ok(dialog.name.startsWith("Dialog /"));
+  assert.deepEqual([dialog.x, dialog.y], [(1440 - dialog.width) / 2, (960 - dialog.height) / 2]);
+  const sheet = document.children.find((child) => child.id === "sheet_dialogs");
+  if (sheet?.type !== "frame") assert.fail("sheet_dialogs がありません");
+  const dialogs = sheet.children.filter(({ name }) => name.startsWith("Dialog /"));
+  assert.equal(dialogs.length, 4);
+  for (const node of dialogs) {
+    if (node.type !== "frame") assert.fail(node.name);
+    const actions = node.children.at(-1);
+    if (actions?.type !== "frame") assert.fail(`${node.name}: 操作の行がありません`);
+    assert.equal(actions.children.at(-1)?.name, "Control / Button / Primary", node.name);
+    assert.equal(actions.children.filter(({ name }) => name === "Control / Button / Primary").length, 1, node.name);
+  }
+});
+
+test("エラーのトーストはキャンバスの右下の角に付き、作成ツールと重ならない", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const screen = document.children.find((child) => child.id === "screen_toast");
+  if (screen?.type !== "frame") assert.fail("screen_toast がありません");
+  const toast = screen.children.find(({ name }) => name === "Canvas overlay / Toast")!;
+  const tools = screen.children.find(({ name }) => name === "Canvas overlay / Tools")!;
+  assert.deepEqual([1160 - toast.x - toast.width, 960 - toast.y - toast.height], [12, 12]);
+  assert.ok(tools.x + tools.width <= toast.x || toast.y + toast.height <= tools.y, "作成ツールと重なっています");
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {

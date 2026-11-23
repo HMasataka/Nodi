@@ -94,6 +94,7 @@ const iconPaths = {
   plus: [[0.5, 0.2], [0.5, 0.8], null, [0.2, 0.5], [0.8, 0.5]],
   chevronDown: [[0.28, 0.4], [0.5, 0.62], [0.72, 0.4]],
   component: [[0.5, 0.1], [0.9, 0.5], [0.5, 0.9], [0.1, 0.5], "close", null, [0.5, 0.3], [0.7, 0.5], [0.5, 0.7], [0.3, 0.5], "close"],
+  alert: [...octagon, "close", null, [0.5, 0.3], [0.5, 0.56], null, [0.5, 0.68], [0.5, 0.72]],
   import: [[0.5, 0.12], [0.5, 0.62], null, [0.3, 0.42], [0.5, 0.62], [0.7, 0.42], null, [0.15, 0.62], [0.15, 0.85], [0.85, 0.85], [0.85, 0.62]],
 };
 function icon(kind, tone = 6) {
@@ -378,6 +379,38 @@ define("fileMenu", "Canvas overlay / File menu", () => column("File menu", 240, 
   divider(224), shortcutRow("SVG パスを取り込む…", ""),
   divider(224), shortcutRow("元に戻す", "⌘Z"), shortcutRow("やり直す", "⇧⌘Z"),
 ], { pad: 8, gap: 4, fill: 0, stroke: 2, radius: 12 }));
+// ダイアログは確認と復元に共通の形にし、主となる操作を右端に置く。本文は行数を指定して折り返しを固定する。
+function paragraph(content, width, lines, { size = 12, tone = 7 } = {}) {
+  const node = text(content, width, { size, tone });
+  return { ...node, height: Math.ceil((size + 4) / 4) * 4 * lines + 4 };
+}
+function button(label, primary) {
+  const width = Math.ceil((label.length * 12 + 32) / 4) * 4;
+  const ref = define(`button_${primary}_${width}`, `Control / Button / ${primary ? "Primary" : "Secondary"}`, () =>
+    row("Button", width, [text("Label", width - 16, { tone: primary ? 0 : 8, weight: 600, align: "center" })],
+      { height: 32, pad: 8, justify: "center", fill: primary ? 8 : 0, stroke: primary ? null : 3, radius: 8 }));
+  return use(ref, { [slot(ref, 0)]: { content: label } });
+}
+const dialogWidth = 400;
+function dialog(id, title, body, lines, path, [secondary, primary]) {
+  return define(id, `Dialog / ${title}`, () => column("Dialog", dialogWidth, [
+    column("Message", dialogWidth - 48, [text(title, dialogWidth - 48, { size: 15, tone: 8, weight: 600 }), paragraph(body, dialogWidth - 48, lines)], { gap: 8 }),
+    ...(path ? [row("Path", dialogWidth - 48, [text(path, dialogWidth - 64, { size: 11, tone: 6 })], { height: 28, pad: 8, fill: 1, radius: 6 })] : []),
+    row("Actions", dialogWidth - 48, [...(secondary ? [button(secondary, false)] : []), button(primary, true)], { gap: 8, justify: "end" }),
+  ], { pad: 24, gap: 16, fill: 0, stroke: 2, radius: 12 }));
+}
+const dialogs = [
+  dialog("dialog_external", "ファイルが外部で更新されました", "再読み込みすると、保存していない変更は破棄されます。", 1, "~/Documents/Website.nodi", ["今の内容を残す", "再読み込み"]),
+  dialog("dialog_unsaved", "未保存の変更があります", "別のドキュメントを開くと、保存していない変更は失われます。", 1, null, ["キャンセル", "破棄して開く"]),
+  dialog("dialog_recovery", "未保存の編集が見つかりました", "前回の異常終了時に残った編集内容です。復元しても元のファイルは上書きされず、保存するときに保存先を選べます。", 2, "元のファイル: ~/Documents/Website.nodi", ["破棄して開始", "編集を復元"]),
+  dialog("dialog_recovery_error", "復元データを読み取れません", "復元データが壊れています。破棄すると、新しい空のドキュメントから始めます。", 2, null, [null, "破棄して開始"]),
+];
+// トーストは作成ツールと重ならないよう、キャンバスの右下の角に付ける。地を暗くして、グレースケールでもキャンバスと区別する。
+// 幅はパネルを開いたときのキャンバスでも作成ツールとの間に間隔が残る大きさにする。
+define("toast", "Canvas overlay / Toast", () => row("Toast", 280, [
+  icon("alert", 0), paragraph("画像を読み込めませんでした: cover.png", 208, 2, { tone: 0 }), icon("close", 3),
+], { pad: 12, gap: 8, fill: 8, radius: 8, align: "start" }));
+
 define("actionChip", "Canvas overlay / Actions", () =>
   row("Actions", 128, [text("100%", 48, { tone: 6, align: "center" }), iconButton("preview"), iconButton("panelRight")], floating));
 for (const timelineOpen of [false, true]) {
@@ -431,7 +464,7 @@ define("timeline", "Timeline / Fade in", () => {
 const overlayInset = 12;
 // パネルの中に開くと下の節を隠すため、パネルの右隣に行の上端をそろえて開く。縦はパネル余白8 + タブ32 + 間隔8 + 見出し32。
 const componentMenuAnchor = { x: 240 + 4, y: 8 + 32 + 8 + 32 };
-function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false, assetsOpen = false }) {
+function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false, assetsOpen = false, dialogRef = null, toast = false }) {
   const canvasLeft = panelsOpen ? 240 : 0;
   const canvasRight = panelsOpen ? 1160 : 1440;
   const centerOf = (width) => canvasLeft + (canvasRight - canvasLeft - width) / 2;
@@ -449,6 +482,15 @@ function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = f
   if (fileMenuOpen) children.push(at(use("fileMenu"), canvasLeft + overlayInset, overlayInset + fileChip.height + 8));
   if (panelsOpen) children.push(at({ ...use(assetsOpen ? "assetsPanel" : "layersPanel"), height: 960 }, 0, 0), at({ ...use("inspectorPanel"), height: 960 }, 1160, 0));
   if (assetsOpen) children.push(at(use("componentMenu"), componentMenuAnchor.x, componentMenuAnchor.y));
+  if (toast) {
+    const node = use("toast");
+    children.push(at(node, canvasRight - overlayInset - node.width, canvasBottom - overlayInset - node.height));
+  }
+  // ダイアログは画面全体を覆う幕の上で、画面の中央に開く。
+  if (dialogRef) {
+    const node = use(dialogRef);
+    children.push({ ...at(rect("Scrim", 1440, 960, { fill: 9 }), 0, 0), opacity: 0.24 }, at(node, (1440 - node.width) / 2, (960 - node.height) / 2));
+  }
   return { ...frame(name, 1440, 960, children, { fill: 2 }), id, x: (index % 2) * 1520 + 80, y: Math.floor(index / 2) * 1040 + 80 };
 }
 
@@ -458,6 +500,8 @@ const screens = [
   editor("screen_timeline_open", "A / タイムラインを開いた状態", 2, { panelsOpen: true, timelineOpen: true }),
   editor("screen_file_menu", "A / ファイルメニューを開いた状態", 3, { panelsOpen: true, unsaved: true, fileMenuOpen: true }),
   editor("screen_assets", "A / アセットを開いた状態", 4, { panelsOpen: true, assetsOpen: true }),
+  editor("screen_dialog", "A / 外部変更のダイアログを開いた状態", 5, { panelsOpen: true, unsaved: true, dialogRef: "dialog_external" }),
+  editor("screen_toast", "A / エラーを表示した状態", 6, { panelsOpen: true, toast: true }),
 ];
 const sheetColumns = [...Object.keys(inspectorKinds).map((kind) => ({ title: inspectorTitles[kind], node: column("Inspector panel", 280, [use(`inspector_${kind}`)], { pad: 16, fill: 0, radius: 12 }) })),
   { title: "⋯ メニュー", node: use("moreMenu") }, { title: "アセットの色の ⋯ メニュー", node: use("colorMenu") }];
@@ -468,7 +512,19 @@ const sheetChildren = sheetColumns.flatMap(({ title, node }) => {
   sheetX += node.width + 40;
   return placed;
 });
-screens.push({ ...frame("Inspector / 種類ごとの構成", sheetX, sheetHeight, sheetChildren, { fill: 2 }), id: "sheet_inspector", x: 80, y: Math.ceil(screens.length / 2) * 1040 + 80 });
+const inspectorSheet = { ...frame("Inspector / 種類ごとの構成", sheetX, sheetHeight, sheetChildren, { fill: 2 }), id: "sheet_inspector", x: 80, y: Math.ceil(screens.length / 2) * 1040 + 80 };
+screens.push(inspectorSheet);
+
+const dialogColumns = [...dialogs.map((ref) => ({ title: components.find((item) => item.id === ref).name.replace("Dialog / ", ""), node: use(ref) })),
+  { title: "エラーのトースト", node: use("toast") }];
+let dialogX = 40;
+const dialogChildren = dialogColumns.flatMap(({ title, node }) => {
+  const placed = [at(text(title, node.width, { size: 13, tone: 8, weight: 600 }), dialogX, 40), at(node, dialogX, 76)];
+  dialogX += node.width + 40;
+  return placed;
+});
+const dialogSheetHeight = 76 + Math.max(...dialogColumns.map(({ node }) => node.height)) + 40;
+screens.push({ ...frame("Dialog / 種類ごとの文言", dialogX, dialogSheetHeight, dialogChildren, { fill: 2 }), id: "sheet_dialogs", x: 80, y: inspectorSheet.y + inspectorSheet.height + 80 });
 
 for (const ref of ["layersPanel", "assetsPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
 
