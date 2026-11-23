@@ -2,6 +2,8 @@ import { type FormEvent, useState } from "react";
 
 import type { SpacingToken } from "@/document/types.ts";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 interface Props {
   tokens: SpacingToken[];
   usages: Record<string, number>;
@@ -29,7 +31,7 @@ export function SpacingTokenEditor({ tokens, usages, onCreate, onRename, onValue
         <span className="spacing-token-mark" aria-hidden="true" />
         <label>名前
           <input key={`${token.id}:${token.name}`} aria-label={`${token.name}の名前`} defaultValue={token.name}
-            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+            onKeyDown={blurOnEnter}
             onBlur={(event) => {
               const next = event.currentTarget.value.trim();
               if (next && next !== token.name) onRename(token.id, next);
@@ -38,7 +40,7 @@ export function SpacingTokenEditor({ tokens, usages, onCreate, onRename, onValue
         </label>
         <label>px
           <input key={`${token.id}:${token.value}`} aria-label={`${token.name}のpx値`} type="number" min="0" step="any" defaultValue={token.value}
-            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+            onKeyDown={blurOnEnter}
             onBlur={(event) => {
               const raw = event.currentTarget.value.trim();
               const next = Number(raw);

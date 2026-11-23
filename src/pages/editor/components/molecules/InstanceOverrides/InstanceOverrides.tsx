@@ -1,5 +1,7 @@
 import type { DocumentNode, InstanceOverride, TextNode } from "@/document/types";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 interface InstanceOverridesProps {
   node: DocumentNode;
   overrides: Record<string, InstanceOverride>;
@@ -27,7 +29,7 @@ export function InstanceOverrides({ node, overrides, onSetOverride, onResetOverr
           <span className="instance-override-label">{textNode.name}</span>
           <input className="instance-override-input" type="text" key={`${textNode.id}:${value}`} defaultValue={value} spellCheck={false}
             onBlur={(event) => { const content = event.currentTarget.value; if (content !== value) onSetOverride(textNode.id, { content }); }}
-            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+            onKeyDown={blurOnEnter} />
           {override?.content !== undefined && <button type="button" className="file-button" onClick={() => onResetOverride(textNode.id)}>元に戻す</button>}
         </div>
       );

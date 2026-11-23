@@ -4,6 +4,8 @@ import type { LayerDirection } from "@/document/commands/index.ts";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import type { ComponentDefinition, DocumentNode } from "@/document/types";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 interface LayersPanelProps {
   nodes: DocumentNode[];
   components?: ComponentDefinition[];
@@ -68,7 +70,7 @@ export function LayersPanel({ nodes, components = [], selectedId, selectedIds = 
                   <input className="component-name" defaultValue={component.name} spellCheck={false}
                     aria-label="コンポーネント名"
                     onBlur={(event) => { const value = event.currentTarget.value; if (value.trim() && value !== component.name) onRenameComponent(component.id, value); }}
-                    onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+                    onKeyDown={blurOnEnter} />
                 </div>
                 <div className="component-actions">
                   <button type="button" className="file-button" onClick={() => onPlaceInstance(component.id)}>配置</button>

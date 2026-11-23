@@ -1,6 +1,7 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis, TextIconAlignment } from "@/document/commands/index.ts";
 import type { DocumentNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
 import { ElementAppearance } from "@/pages/editor/components/molecules/ElementAppearance";
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
@@ -92,7 +93,7 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spa
                 <label>{axis === "x" ? "横間隔を指定" : "縦間隔を指定"}
                   <input key={`${axis}:${intervals.map(({ distance }) => distance).join(":")}`} type="number" min="0" step="any"
                     defaultValue={uniform && intervals[0].distance >= 0 ? Number(intervals[0].distance.toFixed(2)) : ""}
-                    placeholder="px" onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+                    placeholder="px" onKeyDown={blurOnEnter}
                     onBlur={(event) => {
                       const raw = event.currentTarget.value.trim();
                       const value = Number(raw);
@@ -118,7 +119,7 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spa
                 if (value !== "" && Number(value) !== selected.rotation) onRotation(Number(value));
                 else event.currentTarget.value = String(selected.rotation);
               }}
-              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+              onKeyDown={blurOnEnter} />
           </label>
           <label className="geometry-field">
             <span>不透明度 %</span>
@@ -129,7 +130,7 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spa
                 if (value !== "" && Number.isFinite(percentage) && percentage >= 0 && percentage <= 100 && percentage / 100 !== selected.opacity) onOpacity(percentage / 100);
                 else event.currentTarget.value = String(selected.opacity * 100);
               }}
-              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+              onKeyDown={blurOnEnter} />
           </label>
           <ElementAppearance node={selected} spacingTokens={spacingTokens} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange}
             onShapeStyle={onShapeStyle} onFrameStyle={onFrameStyle} onFrameLayout={onFrameLayout} onImageStyle={onImageStyle} onPath={onPath} />
@@ -157,7 +158,7 @@ export function Inspector({ selected, selectedCount = 1, spacingTokens = [], spa
                 if (raw !== "" && Number.isFinite(value) && value >= 0 && value !== selected.blur) onBlur(value);
                 else event.currentTarget.value = String(selected.blur);
               }}
-              onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+              onKeyDown={blurOnEnter} />
           </label>
           {(selected.type === "rectangle" || selected.type === "ellipse") && <label className="mask-control">
             <input type="checkbox" checked={selected.isMask} onChange={(event) => onMask(event.currentTarget.checked)} />マスクとして使う
