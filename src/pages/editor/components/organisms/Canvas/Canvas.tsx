@@ -11,7 +11,6 @@ import { CanvasNodes, type NodeInteraction } from "@/pages/editor/components/mol
 import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, guideStyle, selectionPreviewStyle } from "@/pages/editor/canvasStyles";
 import type { DrawingState, DrawTool, PenState } from "@/pages/editor/types";
 
-const BUTTON_ZOOM_FACTOR = 1.1;
 
 interface CanvasProps extends NodeInteraction {
   design: Document;
@@ -19,7 +18,6 @@ interface CanvasProps extends NodeInteraction {
   selectedIds?: string[];
   zoom: number;
   camera?: CanvasCamera;
-  onZoom(factor: number): void;
   viewportRef?: Ref<HTMLElement>;
   drawTool: DrawTool;
   drawing: DrawingState | null;
@@ -40,7 +38,7 @@ interface CanvasProps extends NodeInteraction {
 
 export function Canvas(props: CanvasProps) {
   const {
-    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, onZoom, viewportRef, drawTool, drawing, pen, selection, guides = [], spacing, textIcon,
+    design, selectedId, selectedIds, zoom, camera = { zoom, scrollLeft: 0, scrollTop: 0 }, viewportRef, drawTool, drawing, pen, selection, guides = [], spacing, textIcon,
     onPanPointerDown, onPanPointerMove, onPanPointerUp, onWorldDoubleClick,
     onWorldPointerDown, onWorldPointerMove, onWorldPointerUp, onWorldPointerCancel,
   } = props;
@@ -112,11 +110,6 @@ export function Canvas(props: CanvasProps) {
           </div>
         </div>
       </section>
-      <div className="canvas-scale">
-        <button type="button" onClick={() => onZoom(1 / BUTTON_ZOOM_FACTOR)} aria-label="縮小">−</button>
-        <span>{Math.round(zoom * 100)}%</span>
-        <button type="button" onClick={() => onZoom(BUTTON_ZOOM_FACTOR)} aria-label="拡大">＋</button>
-      </div>
     </div>
   );
 }

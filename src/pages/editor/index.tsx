@@ -29,8 +29,8 @@ import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContex
 import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/commands/index.ts";
 import "@/App.css";
 
+import { ActionChip } from "@/pages/editor/components/molecules/ActionChip";
 import { FileChip } from "@/pages/editor/components/molecules/FileChip";
-import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { workspaceColumns } from "@/pages/editor/panelLayout.ts";
 
 function EditorPage() {
@@ -59,7 +59,7 @@ function EditorPage() {
     ? measureTextIconAlignment(design, selectedIds, countRenderedTextLines) : null;
   const textIcon = textIconResult ? Result.isFailure(textIconResult) ? { error: textIconResult.error.message }
     : { measurement: textIconResult.value } : undefined;
-  const { drag, pathDrag, camera, zoom, zoomBy, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+  const { drag, pathDrag, camera, zoom, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
@@ -90,13 +90,9 @@ function EditorPage() {
           canUndo={canUndo} canRedo={canRedo}
           isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
           onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
-          drawTool={drawTool} onDrawToolChange={setDrawTool}>
-          <div className="panel-toggles">
-              <IconButton icon="panelRight" label="右パネル" pressed={panels.layout.right} onClick={() => panels.toggle("right")} />
-          </div>
-        </EditorToolbar>
+          drawTool={drawTool} onDrawToolChange={setDrawTool} />
         <div className="canvas-stage">
-          <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+          <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} viewportRef={viewportRef}
             drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
             onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
             onNodeEnter={(id) => setHoveredId(id)}
@@ -118,6 +114,7 @@ function EditorPage() {
             leftPanelOpen={panels.layout.left} onToggleLeftPanel={() => panels.toggle("left")}
             onOpen={() => { void openFile(); }} onSave={() => { void saveFile(); }} onImportSvg={actions.importSvg}
             onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")} />
+          <ActionChip zoom={zoom} rightPanelOpen={panels.layout.right} onToggleRightPanel={() => panels.toggle("right")} />
         </div>
         <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
         <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />

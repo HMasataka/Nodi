@@ -84,7 +84,6 @@
   --text-id: var(--grey-700);
   --text-layer: var(--grey-800);
   --text-order: var(--grey-500);
-  --text-scale: var(--grey-700);
   --text-dialog: var(--grey-700);
   --text-label: var(--grey-600);
   --text-body: var(--grey-800);
@@ -92,7 +91,6 @@
   /* 面 */
   --surface-muted: var(--grey-050);
   --surface-subtle: var(--grey-050);
-  --panel-translucent: color-mix(in srgb, var(--white) 93%, transparent);
   --image-placeholder: var(--grey-100);
 
   /* 線 */
@@ -100,7 +98,6 @@
   --input-border: var(--grey-200);
   --divider-strong: var(--grey-200);
   --hint-border: var(--grey-300);
-  --scale-border: var(--grey-100);
   --checkbox-border: var(--grey-400);
   --knob-border: var(--grey-900);
 
@@ -124,7 +121,6 @@
   --dialog-border: var(--grey-100);
   --dialog-shadow: color-mix(in srgb, var(--grey-900) 27%, transparent);
   --menu-shadow: color-mix(in srgb, var(--grey-900) 12%, transparent);
-  --scale-shadow: color-mix(in srgb, var(--grey-900) 7%, transparent);
   --guide-halo: color-mix(in srgb, var(--white) 53%, transparent);
 }
 
@@ -279,6 +275,15 @@ button {
   background: var(--surface);
 }
 .file-chip { left: var(--space-12); }
+.action-chip { right: var(--space-12); }
+.action-chip-zoom {
+  width: 48px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-12);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
 .file-chip-trigger {
   display: flex;
   border: 0;
@@ -338,10 +343,6 @@ button {
   white-space: nowrap;
 }
 .file-menu-status { color: var(--text-body); }
-.panel-toggles {
-  display: flex;
-  gap: var(--space-4);
-}
 /* 中央の列は狭くなるため、ツールバーの部品を縮めずに横へスクロールさせる。 */
 .topbar > * { flex: none; }
 .sidebar {
@@ -998,26 +999,6 @@ button {
 .text-style-fields input[type="color"] { width: 42px; height: 28px; border: 1px solid var(--field-border); border-radius: 4px; padding: 2px; background: var(--surface); }
 .text-style-fields p { margin: 0; color: var(--text-subtle); font-size: 11px; line-height: 1.5; }
 .resize-handle { position: absolute; right: -7px; bottom: -7px; width: 12px; height: 12px; border: 2px solid var(--surface); border-radius: 2px; background: var(--accent); cursor: nwse-resize; touch-action: none; }
-.canvas-scale {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--scale-border);
-  border-radius: 5px;
-  padding: 7px 10px;
-  background: var(--panel-translucent);
-  color: var(--text-scale);
-  font:
-    11px ui-monospace,
-    monospace;
-  box-shadow: 0 2px 8px var(--scale-shadow);
-}
-.canvas-scale button { border: 0; background: transparent; color: var(--ink); font: 16px ui-monospace, monospace; }
-.canvas-scale span { min-width: 40px; text-align: center; }
 
 .properties {
   padding: 20px;
