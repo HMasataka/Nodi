@@ -11,7 +11,7 @@ import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import type { Document, DocumentNode, PathNode } from "@/document/types";
 import type { DragState, DrawingState, DrawTool, PenState, SelectionRegion } from "@/pages/editor/types";
-import { drawingGeometry, frameTransform, nodesInBounds, type ResizeCorner, resizeFromWorldDelta } from "@/pages/editor/geometry";
+import { drawingGeometry, frameTransform, MIN_MARQUEE_SIZE, nodesInBounds, type ResizeCorner, resizeFromWorldDelta } from "@/pages/editor/geometry";
 import { extendPen, finishPenInput, penLocalPoint } from "@/pages/editor/pen.ts";
 import { findNode, moveNodes, setNodeGeometry, setPath } from "@/document/commands/index.ts";
 import { IDENTITY_TRANSFORM, invertTransform, transformPoint, transformVector } from "@/document/transform.ts";
@@ -267,7 +267,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     setSelection(null);
     const end = worldPoint(event);
     const bounds = drawingGeometry(active.start, end);
-    if (bounds.width < 3 || bounds.height < 3) {
+    if (bounds.width < MIN_MARQUEE_SIZE || bounds.height < MIN_MARQUEE_SIZE) {
       if (!active.additive) setSelectedIds([]);
       return;
     }

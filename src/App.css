@@ -108,6 +108,7 @@
   --accent-fill: var(--purple-600);
   --on-accent: var(--white);
   --accent-translucent: color-mix(in srgb, var(--purple-500) 15%, transparent);
+  --marquee-fill: color-mix(in srgb, var(--purple-500) 6%, transparent);
   --accent-shadow: color-mix(in srgb, var(--purple-500) 13%, transparent);
 
   /* 状態・通知 */
@@ -908,7 +909,21 @@ button {
 .path-point-editor label, .path-point-row { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-tertiary); }
 .path-point-row span { flex: 1; }
 .path-point-row button, .path-point-editor select { padding: 3px 5px; border: 1px solid var(--field-border); border-radius: 4px; background: var(--surface); color: var(--ink); font-size: 10px; }
-.selection-preview { position: absolute; border: 1px solid var(--accent); background: var(--accent-translucent); pointer-events: none; z-index: 9; }
+/* 範囲選択は、ドラッグした範囲を淡い紫の地と紫の 1px の枠で示し、掛かる要素に選択枠を出す。 */
+.selection-preview {
+  position: absolute;
+  z-index: 9;
+  box-sizing: border-box;
+  border: calc(1px / var(--canvas-zoom)) solid var(--accent);
+  background: var(--marquee-fill);
+  pointer-events: none;
+}
+.marquee-hit {
+  position: absolute;
+  z-index: 9;
+  outline: calc(1px / var(--canvas-zoom)) solid var(--accent);
+  pointer-events: none;
+}
 .alignment-guide { position: absolute; z-index: 11; pointer-events: none; background: var(--accent); box-shadow: 0 0 0 1px var(--guide-halo); }
 .alignment-guide.vertical { width: 1px; }
 .alignment-guide.horizontal { height: 1px; }
