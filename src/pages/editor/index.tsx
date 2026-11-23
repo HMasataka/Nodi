@@ -3,8 +3,6 @@ import { useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
 import { countRenderedTextLines } from "@/pages/editor/textIconMeasurement.ts";
-import { EditorStatus } from "@/pages/editor/components/organisms/EditorStatus";
-import { EditorToolbar } from "@/pages/editor/components/organisms/EditorToolbar";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { findNode } from "@/document/commands/index.ts";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
@@ -106,11 +104,6 @@ function EditorPage() {
         <PalettePanel palette={design.palette} {...actions.palette} />
       </div>}
       <div className="editor-center">
-        <EditorToolbar fileName={fileName} filePath={filePath}
-          canUndo={canUndo} canRedo={canRedo}
-          isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
-          onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
-          drawTool={drawTool} onDrawToolChange={setDrawTool} />
         <div className="canvas-stage">
           <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} viewportRef={viewportRef}
             drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
@@ -139,7 +132,6 @@ function EditorPage() {
             timelineOpen={panels.layout.timeline} onToggleTimeline={() => panels.toggle("timeline")} />
         </div>
         {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />}
-        <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
       </div>
       {panels.layout.right && <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
         spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}

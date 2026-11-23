@@ -56,7 +56,7 @@ export function LayersPanel({ nodes, components = [], selectedId, selectedIds = 
     <aside className="sidebar layers" aria-label="レイヤー">
       <div className="panel-heading"><h2>レイヤー</h2><span>{count(nodes).toString().padStart(2, "0")}</span></div>
       {nodes.length === 0
-        ? <p className="panel-empty">まだ要素がありません。<br />矩形を追加して始めましょう。</p>
+        ? <p className="panel-empty">まだ要素がありません。<br />下の作成ツールで描いて始めましょう。</p>
         : <div className="layer-list">{[...nodes].reverse().map((node) => renderLayer(node, nodes))}</div>}
       <div className="components-heading"><h2>コンポーネント</h2><span>{components.length.toString().padStart(2, "0")}</span></div>
       {components.length === 0

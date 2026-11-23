@@ -16,8 +16,6 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     const { CanvasNode } = await vite.ssrLoadModule("/src/pages/editor/components/molecules/CanvasNode/CanvasNode.tsx");
     const { LayersPanel } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/LayersPanel/LayersPanel.tsx");
     const { Inspector } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/Inspector/Inspector.tsx");
-    const { EditorToolbar } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorToolbar/EditorToolbar.tsx");
-    const { EditorStatus } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/EditorStatus/EditorStatus.tsx");
     const { RecoveryDialog } = await vite.ssrLoadModule("/src/pages/editor/components/organisms/RecoveryDialog/RecoveryDialog.tsx");
     const { TextStyleEditor } = await vite.ssrLoadModule("/src/pages/editor/components/molecules/TextStyleEditor/TextStyleEditor.tsx");
     const image = makeImage({ id: "image-1", name: "風景", x: 10, y: 20, width: 100, height: 80 });
@@ -163,19 +161,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp })), /左上[^]*右上[^]*右下[^]*左下/);
     assert.match(frameInspector, /左上[^]*右上[^]*右下[^]*左下/);
 
-    const toolbar = renderToStaticMarkup(createElement(EditorToolbar, {
-      fileName: "画面.nodi", filePath: "/tmp/画面.nodi", canUndo: true, canRedo: false, isBusy: false,
-      onUndo: noOp, onRedo: noOp, onOpen: noOp, onSave: noOp, onCreate: noOp, onImportImage: noOp,
-      drawTool: "select", onDrawToolChange: noOp,
-    }));
-    assert.match(toolbar, /title="\/tmp\/画面.nodi"/);
-    assert.match(toolbar, /矩形を追加/);
-    assert.match(toolbar, /楕円を描く/);
-    assert.match(toolbar, /フレームを追加/);
-    assert.match(toolbar, /画像ファイル/);
-    assert.match(toolbar, /disabled=""[^>]*>やり直す/);
 
-    assert.match(renderToStaticMarkup(createElement(EditorStatus, { selected: image, isDirty: true, filePath: null })), /未保存の変更/);
     const recovery = renderToStaticMarkup(createElement(RecoveryDialog, {
       status: { kind: "available", draft: { sourcePath: "/tmp/画面.nodi", document: document() } },
       onRestore: noOp, onDiscard: noOp,

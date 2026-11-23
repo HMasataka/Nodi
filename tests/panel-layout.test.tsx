@@ -21,10 +21,11 @@ test("左右のパネルとタイムラインを個別に開閉し、タイム�
   assert.deepEqual(togglePanel(togglePanel(initial, "left"), "left"), initial);
 });
 
-test("パネルは画面の上端から下端まで伸ばし、ツールバー・タイムライン・状態表示はキャンバスの列に置く", async () => {
+test("パネルは画面の上端から下端まで伸ばし、タイムラインはキャンバスの列に置く", async () => {
   const page = await readFile(new URL("../src/pages/editor/index.tsx", import.meta.url), "utf8");
   const center = page.slice(page.indexOf('<div className="editor-center">'), page.indexOf("{panels.layout.right && <Inspector"));
-  for (const part of ["<EditorToolbar", "<Canvas", "<Timeline", "<EditorStatus"]) assert.ok(center.includes(part), part);
+  for (const part of ["<Canvas", "<Timeline"]) assert.ok(center.includes(part), part);
+  for (const removed of ["EditorToolbar", "EditorStatus"]) assert.ok(!page.includes(removed), removed);
   assert.match(center, /\{panels\.layout\.timeline && <Timeline /);
   assert.ok(page.indexOf("{panels.layout.left && <div className=\"left-panels\">") < page.indexOf('<div className="editor-center">'));
   // 開閉しても Canvas の位置が変わらず、選択やズームを持つ状態がアンマウントされない。
