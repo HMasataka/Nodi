@@ -7,14 +7,15 @@ import { openDocumentFile } from "@/persistence/documentFile.ts";
 import { pngFiles } from "@/ipc/pngFiles";
 import { renderFramePng } from "@/export/framePng";
 import { savePng } from "@/export/savePng";
-import { toggleSelection } from "@/pages/editor/selection";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useElementCreation } from "@/pages/editor/hooks/useElementCreation";
 import {
-  addAnimation, addKeyframe, addPaletteColor, addSpacingToken, type Alignment, alignNodes, alignTextIcon, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, detachInstance, distributeNodes, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, importPalette, type KeyframePatch, type LayerDirection,
+  addAnimation, addKeyframe, addPaletteColor, addSpacingToken, type Alignment, alignNodes, alignTextIcon, type AnimationTimingPatch, createComponent, createInstance, deleteNode, deleteNodes, detachInstance, distributeNodes, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, importPalette, type KeyframePatch, type LayerDirection, moveNodes,
   removeAnimation, removeComponent, removeKeyframe, removePaletteColor, removeSpacingToken, renameComponent, renamePaletteColor, renameSpacingToken, reorderNode, resetInstanceOverride, setAnimationTiming, setBlur, setFrameLayout, setFrameStyle, setImageStyle, setInstanceOverride, setKeyframe, setMask, setNodeGeometry, setNodeSizeConstraint, setNodeStyle, setOpacity, setPaletteColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarkRange, setTextStyle, type SizeAxis, type SizeConstraintPatch, type SpacingAxis,
 } from "@/document/commands/index.ts";
 import type { AnimatableProperty, FrameStyle, Geometry, ImageStyle, InstanceOverride, Keyframe, PathFillRule, RectangleStyle, Shadow, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+
+import { selectAllIds, toggleSelection } from "@/pages/editor/selection";
 
 export function useEditorActions(session: ReturnType<typeof useEditorDocument>, playback: { playhead: number; scrollProgress: number }) {
   const { designRef, selected, selectedId, selectedIds, setSelectedId, setSelectedIds, setError, applyDocument, recordDocument, agentApi } = session;
@@ -161,10 +162,26 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
     recordDocument(result.value.document);
   }
 
+  // 選択中の要素を動かす。動かせる要素がないときは false を返し、キーの既定の動作を止めない。
+  function nudgeSelected(dx: number, dy: number): boolean {
+    if (selectedIds.length === 0) return false;
+    const result = moveNodes(designRef.current, selectedIds, dx, dy);
+    if (Result.isFailure(result)) { setError(result.error.message); return true; }
+    recordDocument(result.value);
+    return true;
+  }
+
   return {
     ...creation,
     selectLayer,
     reorderLayer,
+    edit: {
+      deleteSelected: (): boolean => { if (!selectedId) return false; deleteSelected(); return true; },
+      duplicateSelected: (): boolean => { if (!selectedId) return false; duplicateSelected(); return true; },
+      selectAll: () => setSelectedIds(selectAllIds(designRef.current, selectedIds)),
+      clearSelection: (): boolean => { if (selectedIds.length === 0) return false; setSelectedIds([]); return true; },
+      nudgeSelected,
+    },
     spacingTokens: {
       onCreate: (name: string, value: number) => {
         const result = addSpacingToken(designRef.current, name, value);

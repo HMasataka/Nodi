@@ -72,6 +72,16 @@ function EditorPage() {
     open: () => { void openFile(); },
     undo: () => stepHistory("undo"),
     redo: () => stepHistory("redo"),
+    tool: ({ tool }) => setDrawTool(tool),
+    delete: actions.edit.deleteSelected,
+    duplicate: () => { actions.edit.duplicateSelected(); },
+    selectAll: actions.edit.selectAll,
+    // 作成ツールを選んでいるときは選択ツールに戻し、選択ツールのときは選択を外す。
+    deselect: () => {
+      if (drawTool !== "select") { setDrawTool("select"); return true; }
+      return actions.edit.clearSelection();
+    },
+    nudge: ({ dx, dy }) => drag.current || pathDrag.current ? true : actions.edit.nudgeSelected(dx, dy),
   });
 
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
