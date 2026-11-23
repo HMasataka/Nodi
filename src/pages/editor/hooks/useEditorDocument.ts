@@ -11,7 +11,7 @@ import type { RecoveryStatus } from "@/pages/editor/types";
 import { useMcpBridge } from "@/pages/editor/hooks/useMcpBridge";
 import { clearRecoveryDraft, readRecoveryDraft, writeRecoveryDraft } from "@/persistence/recovery";
 import { commit, createHistory, isDirty as isDocumentDirty, markSaved, redo, undo } from "@/document/history";
-import { type ConfirmationRequest, UNSAVED_OPEN_CONFIRMATION } from "@/pages/editor/confirmation.ts";
+import { type ConfirmationRequest, externalChangeConfirmation, UNSAVED_OPEN_CONFIRMATION } from "@/pages/editor/confirmation.ts";
 import { createAgentApi, type FocusedViewport } from "@/agent/api";
 import { createDocument, findNode } from "@/document/commands/index.ts";
 import { openDocumentFile, parseDocumentContents, readDocumentContents, saveDocumentFile } from "@/persistence/documentFile";
@@ -140,9 +140,13 @@ export function useEditorDocument() {
       setError(`外部で更新されたファイルを読み込めませんでした: ${parsed.error.message}`);
       return;
     }
-    if (isDocumentDirty(historyRef.current, designRef.current)
-      && !window.confirm("ファイルが外部で更新されました。未保存の変更を破棄して再読み込みしますか？")) {
-      return;
+    if (isDocumentDirty(historyRef.current, designRef.current)) {
+      if (!await confirm(externalChangeConfirmation(path))) return;
+      // 確認している間に編集されたときは、その編集を残す。
+      if (revision.current !== startedAt) {
+        setError("外部の変更を確認する間に編集されたため、現在のドキュメントを維持しました");
+        return;
+      }
     }
     replaceDocument(parsed.value, path);
   }

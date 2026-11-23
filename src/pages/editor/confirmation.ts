@@ -14,3 +14,14 @@ export const UNSAVED_OPEN_CONFIRMATION: ConfirmationRequest = {
   cancelLabel: "キャンセル",
   confirmLabel: "破棄して開く",
 };
+
+// 未保存の変更があるときに、開いているファイルが外部で書き換わった。
+export function externalChangeConfirmation(path: string): ConfirmationRequest {
+  return {
+    title: "ファイルが外部で更新されました",
+    body: "再読み込みすると、保存していない変更は破棄されます。",
+    path,
+    cancelLabel: "今の内容を残す",
+    confirmLabel: "再読み込み",
+  };
+}
