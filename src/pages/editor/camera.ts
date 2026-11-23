@@ -36,15 +36,20 @@ export function cameraScreenGeometry(bounds: Geometry, camera: CanvasCamera): Ge
 
 const FIT_MARGIN = 64;
 
-// 最上位の要素をすべて囲む外接枠。要素がないときは null。
-export function documentBounds(document: Document): Geometry | null {
-  const boxes = document.children.map((node) => absoluteGeometry(document, node.id)).filter((box): box is Geometry => !!box);
+// 指定した要素をすべて囲む外接枠（文書の座標）。囲む要素がないときは null。
+export function selectionBounds(document: Document, ids: readonly string[]): Geometry | null {
+  const boxes = ids.map((id) => absoluteGeometry(document, id)).filter((box): box is Geometry => !!box);
   if (boxes.length === 0) return null;
   const left = Math.min(...boxes.map((box) => box.x));
   const top = Math.min(...boxes.map((box) => box.y));
   const right = Math.max(...boxes.map((box) => box.x + box.width));
   const bottom = Math.max(...boxes.map((box) => box.y + box.height));
   return { x: left, y: top, width: right - left, height: bottom - top };
+}
+
+// 最上位の要素をすべて囲む外接枠。要素がないときは null。
+export function documentBounds(document: Document): Geometry | null {
+  return selectionBounds(document, document.children.map((node) => node.id));
 }
 
 // 外接枠が余白付きで画面に収まる倍率で、枠の中心を画面の中心に置く。

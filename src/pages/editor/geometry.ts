@@ -48,8 +48,24 @@ export function geometryWithFixedCorner(node: RotatedGeometry, width: number, he
   return { x: node.x + rotated.x - centerChange.x, y: node.y + rotated.y - centerChange.y, width, height };
 }
 
-export function resizeFromWorldDelta(node: RotatedGeometry, parent: Transform, delta: Point): Geometry {
+// つまみの位置。1 は右端・下端、0 は左端・上端。
+export type ResizeCorner = { x: 0 | 1; y: 0 | 1 };
+export const RESIZE_CORNERS: readonly ResizeCorner[] = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }];
+
+// つまみと反対の角を動かさずに大きさを変える。回転していても、反対の角の画面上の位置を保つ。
+export function geometryWithAnchor(node: RotatedGeometry, width: number, height: number, corner: ResizeCorner): Geometry {
+  const anchorBefore = { x: (corner.x ? 0 : node.width) - node.width / 2, y: (corner.y ? 0 : node.height) - node.height / 2 };
+  const anchorAfter = { x: (corner.x ? 0 : width) - width / 2, y: (corner.y ? 0 : height) - height / 2 };
+  const before = rotatePoint(anchorBefore, node.rotation);
+  const after = rotatePoint(anchorAfter, node.rotation);
+  const center = { x: node.x + node.width / 2 + before.x - after.x, y: node.y + node.height / 2 + before.y - after.y };
+  return { x: center.x - width / 2, y: center.y - height / 2, width, height };
+}
+
+export function resizeFromWorldDelta(node: RotatedGeometry, parent: Transform, delta: Point, corner: ResizeCorner = { x: 1, y: 1 }): Geometry {
   const orientation = composeTransform(parent, nodeTransform(node));
   const local = transformVector(invertTransform(orientation), delta);
-  return geometryWithFixedCorner(node, Math.max(1, node.width + local.x), Math.max(1, node.height + local.y));
+  const width = Math.max(1, node.width + (corner.x ? local.x : -local.x));
+  const height = Math.max(1, node.height + (corner.y ? local.y : -local.y));
+  return geometryWithAnchor(node, width, height, corner);
 }

@@ -7,6 +7,8 @@ export type RecoveryStatus = { kind: "checking" } | { kind: "none" } | { kind: "
 
 export interface SingleDragState {
   mode: "move" | "resize";
+  // リサイズで掴んだつまみ。1 は右端・下端。
+  corner?: { x: 0 | 1; y: 0 | 1 };
   original: Document;
   id: string;
   pointerId: number;

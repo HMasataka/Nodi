@@ -11,7 +11,7 @@ import { useCanvasViewport } from "@/pages/editor/hooks/useCanvasViewport";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import type { Document, DocumentNode, PathNode } from "@/document/types";
 import type { DragState, DrawingState, DrawTool, PenState, SelectionRegion } from "@/pages/editor/types";
-import { drawingGeometry, frameTransform, nodesInBounds, resizeFromWorldDelta } from "@/pages/editor/geometry";
+import { drawingGeometry, frameTransform, nodesInBounds, type ResizeCorner, resizeFromWorldDelta } from "@/pages/editor/geometry";
 import { extendPen, finishPenInput, penLocalPoint } from "@/pages/editor/pen.ts";
 import { findNode, moveNodes, setNodeGeometry, setPath } from "@/document/commands/index.ts";
 import { IDENTITY_TRANSFORM, invertTransform, transformPoint, transformVector } from "@/document/transform.ts";
@@ -161,14 +161,14 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     setSelectedId(node.id);
   }
 
-  function startResize(event: PointerEvent<HTMLSpanElement>, node: DocumentNode) {
+  function startResize(event: PointerEvent<HTMLSpanElement>, node: DocumentNode, corner: ResizeCorner = { x: 1, y: 1 }) {
     if (event.button !== 0 || drag.current || spacePressed.current || drawTool !== "select") return;
     event.stopPropagation();
     event.preventDefault();
     event.currentTarget.parentElement?.setPointerCapture(event.pointerId);
     beginPreview();
     drag.current = {
-      mode: "resize", id: node.id, pointerId: event.pointerId,
+      mode: "resize", corner, id: node.id, pointerId: event.pointerId,
       original: designRef.current,
       clientX: event.clientX, clientY: event.clientY,
       x: node.x, y: node.y, width: node.width, height: node.height, rotation: node.rotation,
@@ -191,10 +191,11 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       return;
     }
     const proposed = active.mode === "resize"
-      ? resizeFromWorldDelta(active, active.parentTransform, { x: dx, y: dy })
+      ? resizeFromWorldDelta(active, active.parentTransform, { x: dx, y: dy }, active.corner)
       : { x: active.x, y: active.y, width: active.width, height: active.height };
+    // スナップは右下のつまみの位置で合わせるため、ほかのつまみではスナップしない。
     const snapped = active.mode === "resize"
-      ? snapResize(active.original, active.id, proposed, active.zoom)
+      ? active.corner && (!active.corner.x || !active.corner.y) ? { geometry: proposed, guides: [] as SnapGuide[] } : snapResize(active.original, active.id, proposed, active.zoom)
       : (() => {
         const result = snapMove(active.original, [active.id], dx, dy, active.zoom);
         const local = transformVector(invertTransform(active.parentTransform), { x: result.dx, y: result.dy });

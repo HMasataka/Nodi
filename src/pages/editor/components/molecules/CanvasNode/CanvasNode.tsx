@@ -9,6 +9,13 @@ import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, 
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 import { maskGroups, maskPath } from "@/document/masks.ts";
 
+import { RESIZE_CORNERS, type ResizeCorner } from "@/pages/editor/geometry";
+
+// 寸法の札の文言。小数は四捨五入して整数で出す。
+export function sizeLabel(width: number, height: number): string {
+  return `${Math.round(width)} × ${Math.round(height)}`;
+}
+
 let measurementContext: CanvasRenderingContext2D | null = null;
 
 function shapeSvg(shape: ShapePaths, gradientId: string, width: number, height: number) {
@@ -45,7 +52,7 @@ function visibleTextLines(node: TextNode): TextLine[] {
 
 export interface NodeInteraction {
   onNodePointerDown(event: PointerEvent<HTMLElement>, node: DocumentNode): void;
-  onResizePointerDown(event: PointerEvent<HTMLSpanElement>, node: DocumentNode): void;
+  onResizePointerDown(event: PointerEvent<HTMLSpanElement>, node: DocumentNode, corner: ResizeCorner): void;
   onNodePointerMove(event: PointerEvent<HTMLElement>): void;
   onNodePointerUp(pointerId: number): void;
   onImageError(id: string): void;
@@ -117,7 +124,12 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
   const { onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError } = interaction;
   const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
   const clipId = useId();
-  const handle = selectedId === node.id && <ResizeHandle onPointerDown={(event) => onResizePointerDown(event, node)} />;
+  // 1つだけ選んでいるときに、四隅のつまみと寸法の札を出す。
+  const handle = selectedId === node.id && selectedIds.length === 1 && <>
+    {RESIZE_CORNERS.map((corner) => <ResizeHandle key={`${corner.x}${corner.y}`} corner={corner}
+      onPointerDown={(event) => onResizePointerDown(event, node, corner)} />)}
+    <span className="canvas-size-label" aria-hidden="true">{sizeLabel(node.width, node.height)}</span>
+  </>;
   const pointerEvents = {
     onPointerMove: onNodePointerMove,
     onPointerUp: (event: PointerEvent<HTMLElement>) => onNodePointerUp(event.pointerId),

@@ -10,7 +10,7 @@ test("キャンバスの面とワールドはズームと原点を反映する",
   assert.deepEqual(canvasSurfaceStyle({ zoom: 2, scrollLeft: -112, scrollTop: 40 }), {
     backgroundPosition: "111px -41px", backgroundSize: "48px 48px",
   });
-  assert.deepEqual(canvasWorldStyle({ zoom: 0.5, scrollLeft: -56, scrollTop: 0 }), { transform: "translate(56px, 0px) scale(0.5)" });
+  assert.deepEqual(canvasWorldStyle({ zoom: 0.5, scrollLeft: -56, scrollTop: 0 }), { transform: "translate(56px, 0px) scale(0.5)", "--canvas-zoom": 0.5 });
 });
 
 test("選択範囲と描画プレビューは負の座標や逆方向の範囲でも正の矩形になる", () => {
