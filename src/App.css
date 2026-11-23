@@ -6,64 +6,97 @@
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 
+  /* パレットの段。Palette 18 の紫、Swatches の Grey と Red (Vivid)（../design/color-palettes.md） */
+  --white: #ffffff;
+  --grey-900: #222222;
+  --grey-800: #3b3b3b;
+  --grey-700: #515151;
+  --grey-600: #626262;
+  --grey-500: #7e7e7e;
+  --grey-400: #9e9e9e;
+  --grey-300: #b1b1b1;
+  --grey-200: #cfcfcf;
+  --grey-100: #e1e1e1;
+  --grey-050: #f7f7f7;
+  --purple-900: #240754;
+  --purple-800: #34126f;
+  --purple-700: #421987;
+  --purple-600: #51279b;
+  --purple-500: #653cad;
+  --purple-400: #724bb7;
+  --purple-300: #8662c7;
+  --purple-200: #a081d9;
+  --purple-100: #cfbcf2;
+  --purple-050: #eae2f8;
+  --red-900: #610316;
+  --red-800: #8a041a;
+  --red-700: #ab091e;
+  --red-600: #cf1124;
+  --red-500: #e12d39;
+  --red-400: #ef4e4e;
+  --red-300: #f86a6a;
+  --red-200: #ff9b9b;
+  --red-100: #ffbdbd;
+  --red-050: #ffe3e3;
+
   /* 基本 */
-  --ink: #272b29;
-  --muted: #898b85;
-  --line: #deded7;
-  --accent: #d56d45;
-  --panel: #fbfaf6;
-  --app-bg: #eeeae2;
-  --surface: #ffffff;
-  --canvas-bg: #eae9e3;
-  --canvas-grid: #e0dfd8;
+  --ink: var(--grey-900);
+  --muted: var(--grey-500);
+  --line: var(--grey-100);
+  --accent: var(--purple-500);
+  --panel: var(--white);
+  --app-bg: var(--grey-050);
+  --surface: var(--white);
+  --canvas-bg: var(--grey-100);
+  --canvas-grid: var(--grey-200);
 
   /* 文字 */
-  --text-secondary: #5d615d;
-  --text-tertiary: #858981;
-  --text-subtle: #9a9c96;
-  --text-faint: #aaa9a0;
-  --text-panel-index: #a3a49d;
-  --text-hint: #a1a19a;
-  --text-status: #8b8d87;
-  --text-code: #555a55;
-  --text-id: #585b57;
-  --text-layer: #4b514e;
-  --text-order: #888b84;
-  --text-scale: #5a5f5b;
-  --text-dialog: #626761;
+  --text-secondary: var(--grey-700);
+  --text-tertiary: var(--grey-500);
+  --text-subtle: var(--grey-400);
+  --text-faint: var(--grey-300);
+  --text-panel-index: var(--grey-400);
+  --text-hint: var(--grey-400);
+  --text-status: var(--grey-500);
+  --text-code: var(--grey-700);
+  --text-id: var(--grey-700);
+  --text-layer: var(--grey-800);
+  --text-order: var(--grey-500);
+  --text-scale: var(--grey-700);
+  --text-dialog: var(--grey-700);
 
   /* 面 */
-  --surface-muted: #f0eee8;
-  --surface-subtle: #f9f8f3;
-  --panel-translucent: #fbfaf7ee;
-  --image-placeholder: #eee;
+  --surface-muted: var(--grey-050);
+  --surface-subtle: var(--grey-050);
+  --panel-translucent: color-mix(in srgb, var(--white) 93%, transparent);
+  --image-placeholder: var(--grey-100);
 
   /* 線 */
-  --field-border: #e4e3dc;
-  --input-border: #d7d7d0;
-  --divider-strong: #cfcfc8;
-  --hint-border: #c8c8c0;
-  --scale-border: #deddd5;
+  --field-border: var(--grey-100);
+  --input-border: var(--grey-200);
+  --divider-strong: var(--grey-200);
+  --hint-border: var(--grey-300);
+  --scale-border: var(--grey-100);
 
   /* アクセント */
-  --accent-strong: #a84728;
-  --accent-soft: #f7e9e2;
-  --accent-hover: #ba5532;
-  --accent-border: #b94f2f;
-  --accent-translucent: #d56d4526;
-  --accent-shadow: #d56d4522;
+  --accent-strong: var(--purple-700);
+  --accent-soft: var(--purple-050);
+  --accent-hover: var(--purple-600);
+  --accent-border: var(--purple-600);
+  --accent-translucent: color-mix(in srgb, var(--purple-500) 15%, transparent);
+  --accent-shadow: color-mix(in srgb, var(--purple-500) 13%, transparent);
 
   /* 状態・通知 */
-  --status-ok: #8b9b75;
-  --error-border: #d6a38d;
-  --error-surface: #fff9f5;
-  --error-ink: #973f25;
-  --error-shadow: #29231b20;
-  --scrim: #272b29a8;
-  --dialog-border: #e6d9cc;
-  --dialog-shadow: #1d211f45;
-  --scale-shadow: #3c3c3512;
-  --guide-halo: #fff8;
+  --status-ok: var(--grey-500);
+  --error-border: var(--red-300);
+  --error-surface: var(--red-050);
+  --error-ink: var(--red-800);
+  --error-shadow: color-mix(in srgb, var(--grey-900) 12%, transparent);
+  --scrim: color-mix(in srgb, var(--grey-900) 66%, transparent);
+  --dialog-border: var(--grey-100);
+  --dialog-shadow: color-mix(in srgb, var(--grey-900) 27%, transparent);
+  --scale-shadow: color-mix(in srgb, var(--grey-900) 7%, transparent);
+  --guide-halo: color-mix(in srgb, var(--white) 53%, transparent);
 }
 
 * {
