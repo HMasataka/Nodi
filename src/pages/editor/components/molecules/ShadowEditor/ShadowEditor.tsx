@@ -1,6 +1,8 @@
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import type { Shadow } from "@/document/types.ts";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 const DEFAULT_SHADOW: Shadow = { color: "#00000080", offsetX: 0, offsetY: 4, blur: 8 };
 
 export function ShadowEditor({ shadow, onChange }: { shadow: Shadow | null; onChange(shadow: Shadow | null): void }) {
@@ -18,7 +20,7 @@ export function ShadowEditor({ shadow, onChange }: { shadow: Shadow | null; onCh
             if (raw !== "" && Number.isFinite(value) && (field !== "blur" || value >= 0) && value !== shadow[field]) onChange({ ...shadow, [field]: value });
             else event.currentTarget.value = String(shadow[field]);
           }}
-          onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+          onKeyDown={blurOnEnter} />
       </label>)}
     </>}
   </div>;

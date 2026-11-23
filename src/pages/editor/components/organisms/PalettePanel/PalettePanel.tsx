@@ -1,6 +1,8 @@
 import type { PaletteColor } from "@/document/types.ts";
 import { alphaByte, rgbColor, withAlphaByte, withRgbColor } from "@/document/color.ts";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 interface PalettePanelProps {
   palette: readonly PaletteColor[];
   onCreate(): void;
@@ -39,7 +41,7 @@ function PaletteItem({ color, onRename, onRecolor, onDelete, onDuplicate }: {
         if (name && name !== color.name) onRename(color.id, name);
         else event.currentTarget.value = color.name;
       }}
-      onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+      onKeyDown={blurOnEnter} />
     <button type="button" className="palette-action" title="複製" onClick={() => onDuplicate(color.id)}>複製</button>
     <button type="button" className="palette-action" title="削除" onClick={() => onDelete(color.id)}>削除</button>
   </div>;

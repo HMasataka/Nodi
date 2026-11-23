@@ -3,6 +3,8 @@ import type { Playback } from "@/pages/editor/hooks/usePlayback";
 import type { AnimatableProperty, DocumentNode, Keyframe } from "@/document/types";
 import type { AnimationTimingPatch, KeyframePatch } from "@/document/commands/index.ts";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 interface TimelineProps {
   node?: DocumentNode;
   playback: Playback;
@@ -24,7 +26,7 @@ function numberInput(value: number, onCommit: (value: number) => void, min?: num
       if (raw !== "" && Number.isFinite(parsed) && (min === undefined || parsed >= min) && parsed !== value) onCommit(parsed);
       else event.currentTarget.value = String(value);
     }}
-    onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />;
+    onKeyDown={blurOnEnter} />;
 }
 
 export function Timeline({ node, playback, scrollProgress, onScrollProgress, onAddAnimation, onRemoveAnimation, onSetTiming, onAddKeyframe, onSetKeyframe, onRemoveKeyframe }: TimelineProps) {
@@ -52,7 +54,7 @@ export function Timeline({ node, playback, scrollProgress, onScrollProgress, onA
       <div className="timeline-animation-head">
         <input key={`${animation.id}:${animation.name}`} defaultValue={animation.name}
           onBlur={(event) => { const value = event.currentTarget.value.trim(); if (value && value !== animation.name) onSetTiming(animation.id, { name: value }); }}
-          onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+          onKeyDown={blurOnEnter} />
         <select value={animation.trigger} onChange={(event) => onSetTiming(animation.id, { trigger: event.currentTarget.value as AnimationTimingPatch["trigger"] })}>
           <option value="load">読み込み</option><option value="hover">ホバー</option>
           <option value="click">クリック</option><option value="scroll">スクロール</option>

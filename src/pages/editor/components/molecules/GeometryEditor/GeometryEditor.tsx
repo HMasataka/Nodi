@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { DocumentNode, Geometry } from "@/document/types";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 export function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange(geometry: Geometry): void }) {
   const [draft, setDraft] = useState<Record<keyof Geometry, string>>({
     x: String(node.x), y: String(node.y), width: String(node.width), height: String(node.height),
@@ -18,7 +20,7 @@ export function GeometryEditor({ node, onChange }: { node: DocumentNode; onChang
           onBlur={() => {
             if (draft[key] !== String(node[key])) onChange({ ...node, [key]: draft[key].trim() === "" ? NaN : Number(draft[key]) });
           }}
-          onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+          onKeyDown={blurOnEnter} />
       </label>
     ))}
   </div>;

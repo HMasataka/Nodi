@@ -1,6 +1,8 @@
 import type { DocumentNode, SizeConstraint, SizeMode } from "@/document/types";
 import type { SizeAxis, SizeConstraintPatch } from "@/document/commands/index.ts";
 
+import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+
 function ConstraintControls({ label, constraint, onChange }: { label: string; constraint: SizeConstraint; onChange(patch: SizeConstraintPatch): void }) {
   return <div className="constraint-controls">
     <label className="geometry-field"><span>{label}</span>
@@ -17,7 +19,7 @@ function ConstraintControls({ label, constraint, onChange }: { label: string; co
           if (Number.isFinite(value) && value > 0 && value !== constraint.min) onChange({ min: value });
           else event.currentTarget.value = constraint.min === undefined ? "" : String(constraint.min);
         }}
-        onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+        onKeyDown={blurOnEnter} />
     </label>
     <label className="geometry-field"><span>{label} 最大 px</span>
       <input key={`${label}-max-${constraint.max ?? ""}`} type="number" min="0" step="any" defaultValue={constraint.max ?? ""}
@@ -28,7 +30,7 @@ function ConstraintControls({ label, constraint, onChange }: { label: string; co
           if (Number.isFinite(value) && value > 0 && value !== constraint.max) onChange({ max: value });
           else event.currentTarget.value = constraint.max === undefined ? "" : String(constraint.max);
         }}
-        onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+        onKeyDown={blurOnEnter} />
     </label>
   </div>;
 }
