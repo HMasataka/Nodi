@@ -37,7 +37,7 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
 
 test("メイン画面の案だけを並べ、プレビュー以外はすべて同じ選択状態を示す", async () => {
   const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
-  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector", "sheet_dialogs", "sheet_canvas"]);
+  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector", "sheet_dialogs", "sheet_canvas", "sheet_controls"]);
   for (const screen of document.children.filter(({ id }) => screenIds.includes(id))) {
     assert.equal(screen.type, "frame");
     if (screen.id === "screen_preview") continue;
@@ -158,6 +158,31 @@ test("キャンバスの上の表示は、つまみ・点・ガイドの大き�
     if (node.name === "Selection outline" || node.name === "Guide") assert.deepEqual(strokeTone(node), { type: "palette", id: "gray_8" }, node.name);
   }
   assert.ok(nodes.some(({ name }) => name === "Guide") && nodes.some(({ name }) => name === "Anchor / Selected"));
+});
+
+test("値を動かす入力は、スライダーとグラデーションの色の位置を同じ形で示す", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const sheet = document.children.find((child) => child.id === "sheet_controls");
+  if (sheet?.type !== "frame") assert.fail("sheet_controls がありません");
+  const nodes: DocumentNode[] = [];
+  const visit = (node: DocumentNode) => { nodes.push(node); if (node.type === "frame") node.children.forEach(visit); };
+  visit(sheet);
+  const sliders = nodes.filter(({ name }) => name === "Slider");
+  assert.equal(sliders.length, 6, "色調整の6行");
+  for (const slider of sliders) {
+    if (slider.type !== "frame") assert.fail("Slider");
+    const track = slider.children.find(({ name }) => name === "Track");
+    if (track?.type !== "frame") assert.fail("Track");
+    const knob = track.children.find(({ name }) => name === "Knob")!;
+    assert.deepEqual([knob.width, knob.height], [12, 12]);
+  }
+  const bars = nodes.filter(({ name }) => name === "Gradient stops");
+  assert.equal(bars.length, 2);
+  for (const bar of bars) {
+    if (bar.type !== "frame") assert.fail("Gradient stops");
+    assert.equal(bar.children.filter(({ name }) => name === "Stop / Selected").length, 1);
+  }
+  assert.ok(nodes.some(({ name }) => name === "Scroll progress"), "スクロールの進み具合がありません");
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {
