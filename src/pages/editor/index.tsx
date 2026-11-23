@@ -31,6 +31,7 @@ import "@/App.css";
 
 import { ActionChip } from "@/pages/editor/components/molecules/ActionChip";
 import { FileChip } from "@/pages/editor/components/molecules/FileChip";
+import { FloatingTools } from "@/pages/editor/components/molecules/FloatingTools";
 import { workspaceColumns } from "@/pages/editor/panelLayout.ts";
 
 function EditorPage() {
@@ -115,8 +116,10 @@ function EditorPage() {
             onOpen={() => { void openFile(); }} onSave={() => { void saveFile(); }} onImportSvg={actions.importSvg}
             onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")} />
           <ActionChip zoom={zoom} rightPanelOpen={panels.layout.right} onToggleRightPanel={() => panels.toggle("right")} />
+          <FloatingTools drawTool={drawTool} onDrawToolChange={setDrawTool} onImportImage={actions.importImage}
+            timelineOpen={panels.layout.timeline} onToggleTimeline={() => panels.toggle("timeline")} />
         </div>
-        <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
+        {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />}
         <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
       </div>
       {panels.layout.right && <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
