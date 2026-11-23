@@ -7,7 +7,7 @@ import { resolveDocumentInstances } from "../src/document/instances.ts";
 import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open"];
+const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu"];
 
 async function load() {
   const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
@@ -31,7 +31,7 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
   }
   document.children.forEach(visit);
   document.components.forEach(({ node }) => visit(node));
-  for (const ref of ["fileChip", "actionChip", "floatingTools_false", "animationRow", "artboard", "projectCard"])
+  for (const ref of ["fileChip_false_false", "actionChip", "floatingTools_false", "animationRow", "artboard", "projectCard"])
     assert.ok((usages.get(ref) ?? 0) >= 2, `${ref} が共通化されていません`);
 });
 
@@ -60,6 +60,19 @@ test("ファイルと操作のチップは、パネルの開閉に合わせて�
     assert.deepEqual([file.x - canvasLeft, file.y], [12, 12], `${id}: ファイルのチップ`);
     assert.deepEqual([canvasRight - actions.x - actions.width, actions.y], [12, 12], `${id}: 操作のチップ`);
   }
+});
+
+test("ファイルメニューはファイルのチップの直下に開き、チップは未保存の印を持つ", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const screen = document.children.find((child) => child.id === "screen_file_menu");
+  if (screen?.type !== "frame") assert.fail("screen_file_menu がありません");
+  const chip = screen.children.find(({ name }) => name === "Canvas overlay / File")!;
+  const menu = screen.children.find(({ name }) => name === "Canvas overlay / File menu")!;
+  assert.deepEqual([menu.x, menu.y], [chip.x, chip.y + chip.height + 8]);
+  const unsaved: string[] = [];
+  const visit = (node: DocumentNode) => { if (node.name === "Unsaved") unsaved.push(node.id); if (node.type === "frame") node.children.forEach(visit); };
+  visit(chip);
+  assert.equal(unsaved.length, 1);
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {

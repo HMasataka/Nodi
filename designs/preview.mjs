@@ -19,7 +19,7 @@ try {
       const path = node.commands.map((c) => c.kind === "close" ? "Z" : `${c.kind === "move" ? "M" : "L"}${c.x * node.width} ${c.y * node.height}`).join(" ");
       return `<svg style="${box}overflow:visible" viewBox="0 0 ${node.width} ${node.height}"><path d="${path}" fill="${color(node.style.fill)}" stroke="${color(node.style.stroke?.color)}" stroke-width="${node.style.stroke?.width ?? 0}"/></svg>`;
     }
-    const radius = node.style?.cornerRadii ? `border-radius:${node.style.cornerRadii.topLeft}px ${node.style.cornerRadii.topRight}px ${node.style.cornerRadii.bottomRight}px ${node.style.cornerRadii.bottomLeft}px;` : "";
+    const radius = node.type === "ellipse" ? "border-radius:50%;" : node.style?.cornerRadii ? `border-radius:${node.style.cornerRadii.topLeft}px ${node.style.cornerRadii.topRight}px ${node.style.cornerRadii.bottomRight}px ${node.style.cornerRadii.bottomLeft}px;` : "";
     const sides = Object.entries(node.style?.border ?? {}).map(([side, stroke]) => `border-${side}:${stroke.width}px solid ${color(stroke.color)};`).join("");
     return `<div style="${box}background:${color(node.style?.fill)};${radius}${sides}${node.style?.stroke ? `border:${node.style.stroke.width}px solid ${color(node.style.stroke.color)};` : ""}">${node.type === "frame" ? node.children.map(render).join("") : ""}</div>`;
   }
