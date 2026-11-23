@@ -17,6 +17,8 @@ import { findNode, moveNodes, setNodeGeometry, setPath } from "@/document/comman
 import { IDENTITY_TRANSFORM, invertTransform, transformPoint, transformVector } from "@/document/transform.ts";
 import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 
+import { isTextEditingTarget } from "@/pages/editor/shortcuts.ts";
+
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
   const {
     designRef, selectedIds, setSelectedId, setSelectedIds, setError, agentApi,
@@ -313,13 +315,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
       }
       if (event.key === "Escape" && penRef.current) { cancelPen(); setDrawTool("select"); event.preventDefault(); return; }
       if (event.key === "Escape" && selectionRef.current) { cancelSelection(); event.preventDefault(); return; }
-      const target = event.target instanceof HTMLElement ? event.target : null;
-      const editing = target?.closest("input, textarea, [contenteditable]");
-      if (event.key === "Enter" && penRef.current && !editing) { finishPen(false); event.preventDefault(); return; }
-      if (!(event.metaKey || event.ctrlKey) || event.altKey || event.key.toLowerCase() !== "z") return;
-      if (editing) return;
-      event.preventDefault();
-      stepHistory(event.shiftKey ? "redo" : "undo");
+      if (event.key === "Enter" && penRef.current && !isTextEditingTarget(event.target)) { finishPen(false); event.preventDefault(); }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => {

@@ -20,6 +20,7 @@ import { Timeline } from "@/pages/editor/components/organisms/Timeline";
 import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction";
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
+import { useEditorShortcuts } from "@/pages/editor/hooks/useEditorShortcuts";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Color, DocumentNode } from "@/document/types.ts";
@@ -56,6 +57,12 @@ function EditorPage() {
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
     updateSelection, finishSelection, cancelSelection } = interaction;
+  useEditorShortcuts({
+    save: () => { void saveFile(); },
+    open: () => { void openFile(); },
+    undo: () => stepHistory("undo"),
+    redo: () => stepHistory("redo"),
+  });
 
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
     <PaletteContext.Provider value={design.palette}>
