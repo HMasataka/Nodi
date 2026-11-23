@@ -4,11 +4,21 @@ import { fileURLToPath } from "node:url";
 let serial = 0;
 const uid = () => `ui_${++serial}`;
 
+// 配色は Palette 18 の紫（主役）と、Swatches の Grey（色みのない灰）を組み合わせる。出典は ../design/color-palettes.md。
+// 段は 900→050 の順。部品は灰色の段を 0（白）〜9（最も暗い）の番号で指定し、番号から段へ置き換える。
+const steps = ["900", "800", "700", "600", "500", "400", "300", "200", "100", "050"];
+const greyScale = ["#222222", "#3B3B3B", "#515151", "#626262", "#7E7E7E", "#9E9E9E", "#B1B1B1", "#CFCFCF", "#E1E1E1", "#F7F7F7"];
+const purpleScale = ["#240754", "#34126F", "#421987", "#51279B", "#653CAD", "#724BB7", "#8662C7", "#A081D9", "#CFBCF2", "#EAE2F8"];
 const grayNames = ["White", "Canvas", "Line", "Border", "Muted", "Secondary", "Body", "Strong", "Ink", "Black"];
-const palette = ["ffffff", "f5f5f5", "e5e5e5", "d4d4d4", "a3a3a3", "737373", "525252", "404040", "171717", "000000"]
-  .map((hex, index) => ({ id: `gray_${index}`, name: grayNames[index], color: `#${hex}` }));
+const palette = [
+  { id: "white", name: "White", color: "#ffffff" },
+  ...greyScale.map((color, index) => ({ id: `neutral_${steps[index]}`, name: `Grey / ${steps[index]}`, color: color.toLowerCase() })),
+  ...purpleScale.map((color, index) => ({ id: `primary_${steps[index]}`, name: `Purple / ${steps[index]}`, color: color.toLowerCase() })),
+];
 const spacing = [0, 4, 8, 12, 16, 20, 24, 32].map((value) => ({ id: `space_${value}`, name: `Space / ${value}`, value }));
-const gray = (index) => ({ type: "palette", id: `gray_${index}` });
+const neutralStepOfTone = [null, "050", "100", "200", "400", "600", "700", "800", "900", "900"];
+const primary = (step) => ({ type: "palette", id: `primary_${step}` });
+const gray = (tone) => tone === "primary" ? primary("700") : { type: "palette", id: neutralStepOfTone[tone] ? `neutral_${neutralStepOfTone[tone]}` : "white" };
 const corners = (radius) => ({ topLeft: radius, topRight: radius, bottomRight: radius, bottomLeft: radius });
 
 function text(content, width, { size = 12, tone = 7, weight = 400, align = "left" } = {}) {
@@ -118,7 +128,7 @@ function iconPathNode(kind, tone) {
 
 function iconButton(kind, active = false) {
   return use(define(`iconButton_${kind}_${active}`, `Control / Icon button / ${kind}`, () =>
-    row(kind, 32, [icon(kind, active ? 8 : 6)], { height: 32, pad: 8, justify: "center", fill: active ? 2 : null, radius: 6 })));
+    row(kind, 32, [icon(kind, active ? "primary" : 6)], { height: 32, pad: 8, justify: "center", fill: active ? 2 : null, radius: 6 })));
 }
 
 function field(label, value, { width = 120, labelWidth = 16 } = {}) {
@@ -155,7 +165,7 @@ function sectionHeader(title, action = "add", width = 248) {
 function layerRow(name, kind, depth, selected, width) {
   const ref = define(`layer_${width}_${kind}_${depth}_${selected}`, `Navigation / Layer row${selected ? " / Selected" : ""}`, () => {
     const indent = depth * 16;
-    const children = [icon(kind, selected ? 8 : 5), text("Layer", width - 16 - 16 - 8 - (indent ? indent + 8 : 0), { tone: selected ? 8 : 7, weight: selected ? 600 : 400 })];
+    const children = [icon(kind, selected ? "primary" : 5), text("Layer", width - 16 - 16 - 8 - (indent ? indent + 8 : 0), { tone: selected ? 8 : 7, weight: selected ? 600 : 400 })];
     if (indent) children.unshift(frame("Indent", indent, 1));
     return row("Layer row", width, children, { height: 28, pad: 8, gap: 8, fill: selected ? 2 : null, radius: 6 });
   });
@@ -328,7 +338,7 @@ function assetHeader(title, count, actions) {
 }
 function componentRow(name, highlighted = false) {
   const ref = define(`componentRow_${highlighted}`, `Assets / Component row${highlighted ? " / Highlighted" : ""}`, () =>
-    row("Component row", 224, [icon("component", highlighted ? 8 : 5), text("Component", 104, { tone: 8, weight: highlighted ? 600 : 400 }),
+    row("Component row", 224, [icon("component", highlighted ? "primary" : 5), text("Component", 104, { tone: 8, weight: highlighted ? 600 : 400 }),
       ...(highlighted ? [iconButton("plus"), iconButton("more")] : [frame("Actions", 68, 1)])], { height: 32, pad: 8, gap: 4, fill: highlighted ? 2 : null, radius: 6 }));
   return use(ref, { [slot(ref, 1)]: { content: name } });
 }
@@ -617,7 +627,7 @@ const artboardRect = () => box("Artboard", 24, 24, 352, 240, { fill: 0 });
 const canvasTiles = [
   ["範囲選択", () => [
     artboardRect(), block("Card A", 56, 56, 96, 72), block("Card B", 184, 56, 96, 72), block("Card C", 56, 160, 96, 72), block("Card D", 184, 160, 96, 72),
-    { ...box("Marquee fill", 40, 44, 264, 96, { fill: 8 }), opacity: 0.06 }, box("Marquee", 40, 44, 264, 96, { fill: null, stroke: 6 }),
+    { ...box("Marquee fill", 40, 44, 264, 96, { fill: 8 }), opacity: 0.06 }, box("Marquee", 40, 44, 264, 96, { fill: null, stroke: 8 }),
     outline(56, 56, 96, 72), outline(184, 56, 96, 72), hint("ドラッグした範囲に掛かる要素を選ぶ"),
   ]],
   ["Shift で加算選択", () => [
@@ -647,7 +657,7 @@ const canvasTiles = [
     vectorPath("Path", [M(96, 192), C(80, 120, 144, 64, 200, 72), C(256, 80, 312, 112, 304, 176), C(296, 224, 200, 232, 160, 216), L(96, 192), { kind: "close" }],
       { fill: gray(1), stroke: { color: gray(8), width: 1.5 } }),
     anchor(96, 192), ...bezierHandle(200, 72, 144, 64), ...bezierHandle(200, 72, 256, 80), anchor(200, 72, true), anchor(304, 176), anchor(160, 216),
-    hint("選んだ点を黒で示し、その点のハンドルだけを出す"),
+    hint("選んだ点を紫で塗り、その点のハンドルだけを出す"),
   ]],
   ["マスク", () => {
     const tag = (content) => row("Tag", 48, [text(content, 40, { size: 11, tone: 6, align: "center" })], { height: 20, pad: 4, justify: "center", fill: 2, radius: 4 });
@@ -685,7 +695,7 @@ const lastSheet = screens.at(-1);
 screens.push({ ...frame("Canvas / 編集中の表示", 40 + 4 * (tileSize.width + 40), 40 + 2 * (tileSize.height + 76), canvasSheetChildren, { fill: 2 }),
   id: "sheet_canvas", x: 80, y: lastSheet.y + lastSheet.height + 80 });
 
-// グラデーションの帯は、色の位置を帯の下の札で示し、選んだ札を黒く塗る。
+// グラデーションの帯は、色の位置を帯の下の札で示し、選んだ札を紫で塗る。
 function gradientBar(kind, stops, selected) {
   const width = 248;
   const fillOf = kind === "線形"
@@ -736,6 +746,38 @@ screens.push({ ...frame("Controls / 値を動かす入力", controlX + timelineS
   id: "sheet_controls", x: 80, y: previousSheet.y + previousSheet.height + 80 });
 
 for (const ref of ["layersPanel", "assetsPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
+
+// 主役の紫は、選択、再生位置、主となる操作に絞って載せる。それ以外は灰色のまま残す。
+const accentNames = new Set(["Selection outline", "Handle", "Playhead", "Playhead handle", "Keyframe", "Keyframe / Selected", "Unsaved", "Rail filled", "Anchor", "Anchor / Selected", "Stop / Selected", "Guide", "Distance", "Marquee"]);
+const isRef = (color, id) => color?.type === "palette" && color.id === id;
+function accent(node, name = node.name, tinted = false) {
+  const style = node.style ? { ...node.style } : node.style;
+  const toPrimary = (color, step) => (isRef(color, "neutral_900") ? primary(step) : color);
+  let childTinted = tinted;
+  if (style) {
+    // 選択中の行と押されたボタンは、地を淡い紫にし、中の文字と線を濃い紫にする。
+    const selectedRow = /Selected|Highlighted/.test(name) && /Layer row|Component row|Color row/.test(name);
+    const activeButton = name.startsWith("Control / Icon button") && isRef(style.fill, "neutral_100");
+    if (selectedRow || activeButton) {
+      if (isRef(style.fill, "neutral_100")) style.fill = primary("050");
+      childTinted = true;
+    } else if (tinted) {
+      if (style.color) style.color = toPrimary(style.color, "800");
+      if (style.stroke) style.stroke = { ...style.stroke, color: toPrimary(style.stroke.color, "700") };
+    }
+    if (accentNames.has(name)) {
+      style.fill = toPrimary(style.fill, "500");
+      if (style.stroke) style.stroke = { ...style.stroke, color: toPrimary(style.stroke.color, "500") };
+    } else if (["Canvas / Size label", "Canvas / Distance label", "Box", "Control / Button / Primary"].includes(name)) {
+      style.fill = toPrimary(style.fill, "600");
+    }
+  }
+  const next = { ...node, style };
+  if (node.type === "frame") next.children = node.children.map((child) => accent(child, child.name, childTinted));
+  return next;
+}
+for (const definition of components) definition.node = accent(definition.node, definition.name);
+for (const [index, screen] of screens.entries()) screens[index] = accent(screen);
 
 export const designDocument = { version: 1, children: screens, palette, spacing, components };
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
