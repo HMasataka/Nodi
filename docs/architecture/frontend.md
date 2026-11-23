@@ -19,6 +19,7 @@
 | `src/pages/editor/hooks/useCanvasInteraction.ts` | 要素のドラッグ・範囲選択・描画ツールと Undo / Redo |
 | `src/pages/editor/hooks/useCanvasViewport.ts` | パン・ズーム、Space キー操作、MCP からの表示位置調整 |
 | `src/pages/editor/hooks/useMcpBridge.ts` | 実行中のアプリへの MCP 要求を編集 API に渡す |
+| `src/pages/editor/shortcuts.ts`・`hooks/useEditorShortcuts.ts` | キーボードショートカットの判定と実行。割り当ては `docs/shortcuts.md` |
 | `src/pages/editor/hooks/usePlayback.ts` | アニメーション再生ヘッドの再生・停止・シーク |
 | `src/pages/editor/geometry.ts`・`viewport.ts`・`camera.ts` | 仮想カメラ、画面座標・ズームからドキュメント座標への変換 |
 | `src/document/types.ts` | ドキュメントの型・既定値 |
