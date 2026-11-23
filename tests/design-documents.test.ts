@@ -7,7 +7,7 @@ import { resolveDocumentInstances } from "../src/document/instances.ts";
 import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu"];
+const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu", "screen_assets"];
 
 async function load() {
   const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
@@ -31,7 +31,7 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
   }
   document.children.forEach(visit);
   document.components.forEach(({ node }) => visit(node));
-  for (const ref of ["fileChip_false_false", "actionChip", "floatingTools_false", "animationRow", "artboard", "projectCard"])
+  for (const ref of ["fileChip_false_false", "actionChip", "floatingTools_false", "animationRow", "artboard", "projectCard", "colorRow_false", "spacingRow"])
     assert.ok((usages.get(ref) ?? 0) >= 2, `${ref} が共通化されていません`);
 });
 
@@ -73,6 +73,27 @@ test("ファイルメニューはファイルのチップの直下に開き、�
   const visit = (node: DocumentNode) => { if (node.name === "Unsaved") unsaved.push(node.id); if (node.type === "frame") node.children.forEach(visit); };
   visit(chip);
   assert.equal(unsaved.length, 1);
+});
+
+test("アセットはコンポーネント・色・余白の順に並べ、行の「⋯」メニューはパネルの右隣に行の上端をそろえて開く", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const screen = document.children.find((child) => child.id === "screen_assets");
+  if (screen?.type !== "frame") assert.fail("screen_assets がありません");
+  const panel = screen.children.find(({ name }) => name === "Shell / Assets panel");
+  if (panel?.type !== "frame") assert.fail("アセットのパネルがありません");
+  assert.deepEqual([panel.x, panel.y, panel.width, panel.height], [0, 0, 240, 960]);
+  assert.deepEqual(panel.children.filter(({ name }) => name !== "Divider").slice(1).map(({ name }) => name), ["コンポーネント", "色", "余白"]);
+  const find = (node: DocumentNode, name: string, x = 0, y = 0): { x: number; y: number; node: DocumentNode } | null => {
+    const position = { x: x + node.x, y: y + node.y, node };
+    if (node.name === name) return position;
+    if (node.type !== "frame") return null;
+    for (const child of node.children) { const found = find(child, name, position.x, position.y); if (found) return found; }
+    return null;
+  };
+  const highlighted = find(panel, "Assets / Component row / Highlighted");
+  if (highlighted?.node.type !== "frame") assert.fail("強調した行がありません");
+  const menu = screen.children.find(({ name }) => name === "Assets / Component menu")!;
+  assert.deepEqual([menu.x, menu.y], [panel.x + panel.width + 4, highlighted.y]);
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {

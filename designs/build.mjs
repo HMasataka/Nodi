@@ -93,6 +93,8 @@ const iconPaths = {
   minus: [[0.2, 0.5], [0.8, 0.5]],
   plus: [[0.5, 0.2], [0.5, 0.8], null, [0.2, 0.5], [0.8, 0.5]],
   chevronDown: [[0.28, 0.4], [0.5, 0.62], [0.72, 0.4]],
+  component: [[0.5, 0.1], [0.9, 0.5], [0.5, 0.9], [0.1, 0.5], "close", null, [0.5, 0.3], [0.7, 0.5], [0.5, 0.7], [0.3, 0.5], "close"],
+  import: [[0.5, 0.12], [0.5, 0.62], null, [0.3, 0.42], [0.5, 0.62], [0.7, 0.42], null, [0.15, 0.62], [0.15, 0.85], [0.85, 0.85], [0.85, 0.62]],
 };
 function icon(kind, tone = 6) {
   return use(define(`icon_${kind}_${tone}`, `Icon / ${kind}`, () => {
@@ -300,6 +302,55 @@ function canvasArea(x, y) {
 define("layersPanel", "Shell / Layers panel", () => column("Layers panel", 240, [
   segmented(["レイヤー", "アセット"], 0, 224), layerList(224),
 ], { pad: 8, gap: 8, fill: 0, border: ["right"] }));
+
+// アセットは文書全体で共有する定義（コンポーネント、色、余白）。各節の見出しに件数と追加の操作を置き、行ごとの操作は「⋯」メニューにまとめる。
+// 件数は見出しの直後に置き、名前と一続きに読めるようにする。追加などの操作は右端にそろえる。
+function assetHeader(title, count, actions) {
+  const titleWidth = title.length * 12 + 4;
+  const label = row("Title", titleWidth + 4 + 24, [text(title, titleWidth, { size: 11, tone: 8, weight: 600 }), text(count, 24, { size: 11, tone: 5 })], { height: 32, gap: 4 });
+  return row("Section header", 224, [label, row("Actions", 72, actions.map((kind) => iconButton(kind)), { height: 32, gap: 4, justify: "end" })],
+    { height: 32, justify: "space-between" });
+}
+function componentRow(name, highlighted = false) {
+  const ref = define(`componentRow_${highlighted}`, `Assets / Component row${highlighted ? " / Highlighted" : ""}`, () =>
+    row("Component row", 224, [icon("component", highlighted ? 8 : 5), text("Component", 104, { tone: 8, weight: highlighted ? 600 : 400 }),
+      ...(highlighted ? [iconButton("plus"), iconButton("more")] : [frame("Actions", 68, 1)])], { height: 32, pad: 8, gap: 4, fill: highlighted ? 2 : null, radius: 6 }));
+  return use(ref, { [slot(ref, 1)]: { content: name } });
+}
+function colorRow(name, hex, tone, selected = false) {
+  const ref = define(`colorRow_${selected}`, `Assets / Color row${selected ? " / Selected" : ""}`, () =>
+    row("Color row", 224, [rect("Swatch", 16, 16, { fill: 0, stroke: 3, radius: 4 }), text("Name", selected ? 88 : 112, { tone: 8, weight: selected ? 600 : 400 }),
+      text("#000000", 64, { size: 11, tone: 5, align: "right" }), ...(selected ? [icon("more", 6)] : [])], { height: 28, pad: 8, gap: 8, fill: selected ? 2 : null, radius: 6 }));
+  return use(ref, { [slot(ref, 0)]: { fill: gray(tone) }, [slot(ref, 1)]: { content: name }, [slot(ref, 2)]: { content: hex } });
+}
+function spacingRow(name, value) {
+  const ref = define("spacingRow", "Assets / Spacing row", () =>
+    row("Spacing row", 224, [text("Name", 160, { tone: 8 }), text("0", 40, { size: 11, tone: 5, align: "right" })], { height: 28, pad: 8, gap: 8, radius: 6 }));
+  return use(ref, { [slot(ref, 0)]: { content: name }, [slot(ref, 1)]: { content: value } });
+}
+const assetColors = [["Ink", "#171717", 8], ["Body", "#525252", 6], ["Muted", "#a3a3a3", 4], ["Line", "#e5e5e5", 2], ["Canvas", "#f5f5f5", 1], ["White", "#ffffff", 0]];
+const assetSpacing = [["Card / Inset", "24"], ["Card / Gap", "16"], ["Grid / Gutter", "32"]];
+// 選んだ色はその行の直下で編集する。アルファはアプリと同じく 0〜255 で入力する。
+define("colorEditor", "Assets / Color editor", () => row("Color editor", 216, [
+  field("HEX", "171717", { width: 128, labelWidth: 28 }), field("A", "255", { width: 80 }),
+], { pad: 0, gap: 8 }));
+define("assetsPanel", "Shell / Assets panel", () => column("Assets panel", 240, [
+  segmented(["レイヤー", "アセット"], 1, 224),
+  column("コンポーネント", 224, [assetHeader("コンポーネント", "3", []),
+    componentRow("Project card", true), componentRow("Nav link"), componentRow("Button / Primary")]),
+  divider(224),
+  column("色", 224, [assetHeader("色", "6", ["import", "plus"]),
+    ...assetColors.flatMap(([name, hex, tone], index) => index === 0 ? [colorRow(name, hex, tone, true), column("Selected color", 224, [use("colorEditor")], { pad: 4 })] : [colorRow(name, hex, tone)])]),
+  divider(224),
+  column("余白", 224, [assetHeader("余白", "3", ["plus"]), ...assetSpacing.map(([name, value]) => spacingRow(name, value))]),
+], { pad: 8, gap: 8, fill: 0, border: ["right"] }));
+define("componentMenu", "Assets / Component menu", () => column("Component menu", 200, [
+  menuRow("キャンバスに配置"), menuRow("名前を変更"), menuRow("複製"), divider(184), menuRow("削除"),
+], { pad: 8, gap: 4, fill: 0, stroke: 2, radius: 12 }));
+define("colorMenu", "Assets / Color menu", () => column("Color menu", 200, [
+  menuRow("名前を変更"), menuRow("複製"), divider(184), menuRow("削除"),
+], { pad: 8, gap: 4, fill: 0, stroke: 2, radius: 12 }));
+
 define("inspectorPanel", "Shell / Inspector panel", () => column("Inspector panel", 280, [use("inspector_frame")], { pad: 16, fill: 0, border: ["left"] }));
 
 const floating = { pad: 4, gap: 4, fill: 0, stroke: 2, radius: 12 };
@@ -378,7 +429,9 @@ define("timeline", "Timeline / Fade in", () => {
 });
 
 const overlayInset = 12;
-function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false }) {
+// パネルの中に開くと下の節を隠すため、パネルの右隣に行の上端をそろえて開く。縦はパネル余白8 + タブ32 + 間隔8 + 見出し32。
+const componentMenuAnchor = { x: 240 + 4, y: 8 + 32 + 8 + 32 };
+function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false, assetsOpen = false }) {
   const canvasLeft = panelsOpen ? 240 : 0;
   const canvasRight = panelsOpen ? 1160 : 1440;
   const centerOf = (width) => canvasLeft + (canvasRight - canvasLeft - width) / 2;
@@ -394,7 +447,8 @@ function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = f
   ];
   if (timelineOpen) children.push(at(use("timeline"), canvasLeft, canvasBottom));
   if (fileMenuOpen) children.push(at(use("fileMenu"), canvasLeft + overlayInset, overlayInset + fileChip.height + 8));
-  if (panelsOpen) children.push(at({ ...use("layersPanel"), height: 960 }, 0, 0), at({ ...use("inspectorPanel"), height: 960 }, 1160, 0));
+  if (panelsOpen) children.push(at({ ...use(assetsOpen ? "assetsPanel" : "layersPanel"), height: 960 }, 0, 0), at({ ...use("inspectorPanel"), height: 960 }, 1160, 0));
+  if (assetsOpen) children.push(at(use("componentMenu"), componentMenuAnchor.x, componentMenuAnchor.y));
   return { ...frame(name, 1440, 960, children, { fill: 2 }), id, x: (index % 2) * 1520 + 80, y: Math.floor(index / 2) * 1040 + 80 };
 }
 
@@ -403,9 +457,10 @@ const screens = [
   editor("screen_panels_closed", "A / パネルを閉じた状態", 1, { panelsOpen: false }),
   editor("screen_timeline_open", "A / タイムラインを開いた状態", 2, { panelsOpen: true, timelineOpen: true }),
   editor("screen_file_menu", "A / ファイルメニューを開いた状態", 3, { panelsOpen: true, unsaved: true, fileMenuOpen: true }),
+  editor("screen_assets", "A / アセットを開いた状態", 4, { panelsOpen: true, assetsOpen: true }),
 ];
 const sheetColumns = [...Object.keys(inspectorKinds).map((kind) => ({ title: inspectorTitles[kind], node: column("Inspector panel", 280, [use(`inspector_${kind}`)], { pad: 16, fill: 0, radius: 12 }) })),
-  { title: "⋯ メニュー", node: use("moreMenu") }];
+  { title: "⋯ メニュー", node: use("moreMenu") }, { title: "アセットの色の ⋯ メニュー", node: use("colorMenu") }];
 const sheetHeight = 76 + Math.max(...sheetColumns.map(({ node }) => node.height)) + 40;
 let sheetX = 40;
 const sheetChildren = sheetColumns.flatMap(({ title, node }) => {
@@ -413,9 +468,9 @@ const sheetChildren = sheetColumns.flatMap(({ title, node }) => {
   sheetX += node.width + 40;
   return placed;
 });
-screens.push({ ...frame("Inspector / 種類ごとの構成", sheetX, sheetHeight, sheetChildren, { fill: 2 }), id: "sheet_inspector", x: 80, y: 2160 });
+screens.push({ ...frame("Inspector / 種類ごとの構成", sheetX, sheetHeight, sheetChildren, { fill: 2 }), id: "sheet_inspector", x: 80, y: Math.ceil(screens.length / 2) * 1040 + 80 });
 
-for (const ref of ["layersPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
+for (const ref of ["layersPanel", "assetsPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
 
 export const designDocument = { version: 1, children: screens, palette, spacing, components };
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

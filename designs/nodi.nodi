@@ -22,7 +22,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_660",
+          "id": "ui_750",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -43,7 +43,7 @@
           }
         },
         {
-          "id": "ui_661",
+          "id": "ui_751",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -54,7 +54,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_662",
+          "id": "ui_752",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -73,7 +73,7 @@
           }
         },
         {
-          "id": "ui_663",
+          "id": "ui_753",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -95,7 +95,7 @@
           }
         },
         {
-          "id": "ui_664",
+          "id": "ui_754",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -117,7 +117,7 @@
           }
         },
         {
-          "id": "ui_665",
+          "id": "ui_755",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -139,7 +139,7 @@
           }
         },
         {
-          "id": "ui_666",
+          "id": "ui_756",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -161,7 +161,7 @@
           }
         },
         {
-          "id": "ui_659",
+          "id": "ui_749",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -187,7 +187,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_658",
+              "id": "ui_748",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -210,7 +210,7 @@
           ]
         },
         {
-          "id": "ui_655",
+          "id": "ui_745",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -221,7 +221,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_656",
+          "id": "ui_746",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -232,7 +232,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_657",
+          "id": "ui_747",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -243,7 +243,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_667",
+          "id": "ui_757",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -254,7 +254,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_668",
+          "id": "ui_758",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -287,7 +287,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_675",
+          "id": "ui_765",
           "name": "Desktop / Selected work",
           "x": 330,
           "y": 226,
@@ -308,7 +308,7 @@
           }
         },
         {
-          "id": "ui_676",
+          "id": "ui_766",
           "name": "Canvas / Selected work",
           "x": 330,
           "y": 250,
@@ -319,7 +319,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_677",
+          "id": "ui_767",
           "name": "Selection outline",
           "x": 362,
           "y": 354,
@@ -338,7 +338,7 @@
           }
         },
         {
-          "id": "ui_678",
+          "id": "ui_768",
           "name": "Handle",
           "x": 358,
           "y": 350,
@@ -360,7 +360,7 @@
           }
         },
         {
-          "id": "ui_679",
+          "id": "ui_769",
           "name": "Handle",
           "x": 658,
           "y": 350,
@@ -382,7 +382,7 @@
           }
         },
         {
-          "id": "ui_680",
+          "id": "ui_770",
           "name": "Handle",
           "x": 358,
           "y": 658,
@@ -404,7 +404,7 @@
           }
         },
         {
-          "id": "ui_681",
+          "id": "ui_771",
           "name": "Handle",
           "x": 658,
           "y": 658,
@@ -426,7 +426,7 @@
           }
         },
         {
-          "id": "ui_674",
+          "id": "ui_764",
           "name": "Size label",
           "x": 476,
           "y": 670,
@@ -452,7 +452,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_673",
+              "id": "ui_763",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -475,7 +475,7 @@
           ]
         },
         {
-          "id": "ui_670",
+          "id": "ui_760",
           "name": "Canvas overlay / File",
           "x": 12,
           "y": 12,
@@ -486,7 +486,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_671",
+          "id": "ui_761",
           "name": "Canvas overlay / Actions",
           "x": 1300,
           "y": 12,
@@ -497,7 +497,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_672",
+          "id": "ui_762",
           "name": "Canvas overlay / Tools",
           "x": 571.5,
           "y": 908,
@@ -530,7 +530,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_688",
+          "id": "ui_778",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 112,
@@ -551,7 +551,7 @@
           }
         },
         {
-          "id": "ui_689",
+          "id": "ui_779",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 136,
@@ -562,7 +562,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_690",
+          "id": "ui_780",
           "name": "Selection outline",
           "x": 342,
           "y": 240,
@@ -581,7 +581,7 @@
           }
         },
         {
-          "id": "ui_691",
+          "id": "ui_781",
           "name": "Handle",
           "x": 338,
           "y": 236,
@@ -603,7 +603,7 @@
           }
         },
         {
-          "id": "ui_692",
+          "id": "ui_782",
           "name": "Handle",
           "x": 638,
           "y": 236,
@@ -625,7 +625,7 @@
           }
         },
         {
-          "id": "ui_693",
+          "id": "ui_783",
           "name": "Handle",
           "x": 338,
           "y": 544,
@@ -647,7 +647,7 @@
           }
         },
         {
-          "id": "ui_694",
+          "id": "ui_784",
           "name": "Handle",
           "x": 638,
           "y": 544,
@@ -669,7 +669,7 @@
           }
         },
         {
-          "id": "ui_687",
+          "id": "ui_777",
           "name": "Size label",
           "x": 456,
           "y": 556,
@@ -695,7 +695,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_686",
+              "id": "ui_776",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -718,7 +718,7 @@
           ]
         },
         {
-          "id": "ui_683",
+          "id": "ui_773",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -729,7 +729,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_684",
+          "id": "ui_774",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -740,7 +740,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_685",
+          "id": "ui_775",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 680,
@@ -751,7 +751,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_695",
+          "id": "ui_785",
           "name": "Timeline / Fade in",
           "x": 240,
           "y": 732,
@@ -762,7 +762,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_696",
+          "id": "ui_786",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -773,7 +773,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_697",
+          "id": "ui_787",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -806,7 +806,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_704",
+          "id": "ui_794",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -827,7 +827,7 @@
           }
         },
         {
-          "id": "ui_705",
+          "id": "ui_795",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -838,7 +838,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_706",
+          "id": "ui_796",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -857,7 +857,7 @@
           }
         },
         {
-          "id": "ui_707",
+          "id": "ui_797",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -879,7 +879,7 @@
           }
         },
         {
-          "id": "ui_708",
+          "id": "ui_798",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -901,7 +901,7 @@
           }
         },
         {
-          "id": "ui_709",
+          "id": "ui_799",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -923,7 +923,7 @@
           }
         },
         {
-          "id": "ui_710",
+          "id": "ui_800",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -945,7 +945,7 @@
           }
         },
         {
-          "id": "ui_703",
+          "id": "ui_793",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -971,7 +971,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_702",
+              "id": "ui_792",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -994,7 +994,7 @@
           ]
         },
         {
-          "id": "ui_699",
+          "id": "ui_789",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1005,7 +1005,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_700",
+          "id": "ui_790",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1016,7 +1016,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_701",
+          "id": "ui_791",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1027,7 +1027,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_711",
+          "id": "ui_801",
           "name": "Canvas overlay / File menu",
           "x": 252,
           "y": 60,
@@ -1038,7 +1038,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_712",
+          "id": "ui_802",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1049,7 +1049,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_713",
+          "id": "ui_803",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1062,11 +1062,287 @@
       ]
     },
     {
+      "id": "screen_assets",
+      "name": "A / アセットを開いた状態",
+      "x": 80,
+      "y": 2160,
+      "width": 1440,
+      "height": 960,
+      "type": "frame",
+      "style": {
+        "fill": {
+          "type": "palette",
+          "id": "gray_2"
+        }
+      },
+      "layoutMode": "none",
+      "paddingRef": "space_0",
+      "gapRef": "space_0",
+      "alignItems": "start",
+      "justifyContent": "start",
+      "children": [
+        {
+          "id": "ui_810",
+          "name": "Desktop / Selected work",
+          "x": 310,
+          "y": 226,
+          "width": 240,
+          "height": 20,
+          "type": "text",
+          "content": "Desktop / Selected work",
+          "style": {
+            "fontSize": 11,
+            "lineHeight": 1.4545454545454546,
+            "fontFamily": "system",
+            "fontWeight": 400,
+            "color": {
+              "type": "palette",
+              "id": "gray_5"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_811",
+          "name": "Canvas / Selected work",
+          "x": 310,
+          "y": 250,
+          "width": 780,
+          "height": 460,
+          "type": "instance",
+          "componentRef": "artboard",
+          "overrides": {}
+        },
+        {
+          "id": "ui_812",
+          "name": "Selection outline",
+          "x": 342,
+          "y": 354,
+          "width": 300,
+          "height": 308,
+          "type": "rectangle",
+          "style": {
+            "fill": null,
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_813",
+          "name": "Handle",
+          "x": 338,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_814",
+          "name": "Handle",
+          "x": 638,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_815",
+          "name": "Handle",
+          "x": 338,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_816",
+          "name": "Handle",
+          "x": 638,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_809",
+          "name": "Size label",
+          "x": 456,
+          "y": 670,
+          "width": 72,
+          "height": 20,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "cornerRadii": {
+              "topLeft": 4,
+              "topRight": 4,
+              "bottomRight": 4,
+              "bottomLeft": 4
+            }
+          },
+          "layoutMode": "horizontal",
+          "paddingRef": "space_4",
+          "gapRef": "space_0",
+          "alignItems": "center",
+          "justifyContent": "center",
+          "children": [
+            {
+              "id": "ui_808",
+              "name": "300 × 308",
+              "x": 0,
+              "y": 0,
+              "width": 64,
+              "height": 20,
+              "type": "text",
+              "content": "300 × 308",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "textAlign": "center"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_805",
+          "name": "Canvas overlay / File",
+          "x": 252,
+          "y": 12,
+          "width": 184,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "fileChip_false_false",
+          "overrides": {}
+        },
+        {
+          "id": "ui_806",
+          "name": "Canvas overlay / Actions",
+          "x": 1020,
+          "y": 12,
+          "width": 128,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "actionChip",
+          "overrides": {}
+        },
+        {
+          "id": "ui_807",
+          "name": "Canvas overlay / Tools",
+          "x": 551.5,
+          "y": 908,
+          "width": 297,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "floatingTools_false",
+          "overrides": {}
+        },
+        {
+          "id": "ui_817",
+          "name": "Shell / Assets panel",
+          "x": 0,
+          "y": 0,
+          "width": 240,
+          "height": 960,
+          "type": "instance",
+          "componentRef": "assetsPanel",
+          "overrides": {}
+        },
+        {
+          "id": "ui_818",
+          "name": "Shell / Inspector panel",
+          "x": 1160,
+          "y": 0,
+          "width": 280,
+          "height": 960,
+          "type": "instance",
+          "componentRef": "inspectorPanel",
+          "overrides": {}
+        },
+        {
+          "id": "ui_819",
+          "name": "Assets / Component menu",
+          "x": 244,
+          "y": 80,
+          "width": 200,
+          "height": 145,
+          "type": "instance",
+          "componentRef": "componentMenu",
+          "overrides": {}
+        }
+      ]
+    },
+    {
       "id": "sheet_inspector",
       "name": "Inspector / 種類ごとの構成",
       "x": 80,
-      "y": 2160,
-      "width": 2200,
+      "y": 3200,
+      "width": 2440,
       "height": 979,
       "type": "frame",
       "style": {
@@ -1082,7 +1358,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_728",
+          "id": "ui_835",
           "name": "フレーム",
           "x": 40,
           "y": 40,
@@ -1103,7 +1379,7 @@
           }
         },
         {
-          "id": "ui_716",
+          "id": "ui_822",
           "name": "Inspector panel",
           "x": 40,
           "y": 76,
@@ -1129,7 +1405,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_715",
+              "id": "ui_821",
               "name": "Inspector / フレーム",
               "x": 0,
               "y": 0,
@@ -1142,7 +1418,7 @@
           ]
         },
         {
-          "id": "ui_729",
+          "id": "ui_836",
           "name": "テキスト",
           "x": 360,
           "y": 40,
@@ -1163,7 +1439,7 @@
           }
         },
         {
-          "id": "ui_718",
+          "id": "ui_824",
           "name": "Inspector panel",
           "x": 360,
           "y": 76,
@@ -1189,7 +1465,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_717",
+              "id": "ui_823",
               "name": "Inspector / テキスト",
               "x": 0,
               "y": 0,
@@ -1202,7 +1478,7 @@
           ]
         },
         {
-          "id": "ui_730",
+          "id": "ui_837",
           "name": "画像",
           "x": 680,
           "y": 40,
@@ -1223,7 +1499,7 @@
           }
         },
         {
-          "id": "ui_720",
+          "id": "ui_826",
           "name": "Inspector panel",
           "x": 680,
           "y": 76,
@@ -1249,7 +1525,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_719",
+              "id": "ui_825",
               "name": "Inspector / 画像",
               "x": 0,
               "y": 0,
@@ -1262,7 +1538,7 @@
           ]
         },
         {
-          "id": "ui_731",
+          "id": "ui_838",
           "name": "矩形と楕円",
           "x": 1000,
           "y": 40,
@@ -1283,7 +1559,7 @@
           }
         },
         {
-          "id": "ui_722",
+          "id": "ui_828",
           "name": "Inspector panel",
           "x": 1000,
           "y": 76,
@@ -1309,7 +1585,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_721",
+              "id": "ui_827",
               "name": "Inspector / 矩形と楕円",
               "x": 0,
               "y": 0,
@@ -1322,7 +1598,7 @@
           ]
         },
         {
-          "id": "ui_732",
+          "id": "ui_839",
           "name": "パス",
           "x": 1320,
           "y": 40,
@@ -1343,7 +1619,7 @@
           }
         },
         {
-          "id": "ui_724",
+          "id": "ui_830",
           "name": "Inspector panel",
           "x": 1320,
           "y": 76,
@@ -1369,7 +1645,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_723",
+              "id": "ui_829",
               "name": "Inspector / パス",
               "x": 0,
               "y": 0,
@@ -1382,7 +1658,7 @@
           ]
         },
         {
-          "id": "ui_733",
+          "id": "ui_840",
           "name": "インスタンス",
           "x": 1640,
           "y": 40,
@@ -1403,7 +1679,7 @@
           }
         },
         {
-          "id": "ui_726",
+          "id": "ui_832",
           "name": "Inspector panel",
           "x": 1640,
           "y": 76,
@@ -1429,7 +1705,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_725",
+              "id": "ui_831",
               "name": "Inspector / インスタンス",
               "x": 0,
               "y": 0,
@@ -1442,7 +1718,7 @@
           ]
         },
         {
-          "id": "ui_734",
+          "id": "ui_841",
           "name": "⋯ メニュー",
           "x": 1960,
           "y": 40,
@@ -1463,7 +1739,7 @@
           }
         },
         {
-          "id": "ui_727",
+          "id": "ui_833",
           "name": "Inspector / More menu",
           "x": 1960,
           "y": 76,
@@ -1471,6 +1747,38 @@
           "height": 311,
           "type": "instance",
           "componentRef": "moreMenu",
+          "overrides": {}
+        },
+        {
+          "id": "ui_842",
+          "name": "アセットの色の ⋯ メニュー",
+          "x": 2200,
+          "y": 40,
+          "width": 200,
+          "height": 24,
+          "type": "text",
+          "content": "アセットの色の ⋯ メニュー",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_834",
+          "name": "Assets / Color menu",
+          "x": 2200,
+          "y": 76,
+          "width": 200,
+          "height": 113,
+          "type": "instance",
+          "componentRef": "colorMenu",
           "overrides": {}
         }
       ]
@@ -11903,10 +12211,2077 @@
       }
     },
     {
+      "id": "field_128_28",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_500",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 128,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_498",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 28,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_499",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 80,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_80_16",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_504",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 80,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_502",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_503",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 44,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "colorEditor",
+      "name": "Assets / Color editor",
+      "node": {
+        "id": "ui_506",
+        "name": "Color editor",
+        "x": 0,
+        "y": 0,
+        "width": 216,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": null
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_0",
+        "gapRef": "space_8",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_501",
+            "name": "Control / Field",
+            "x": 0,
+            "y": 0,
+            "width": 128,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "field_128_28",
+            "overrides": {
+              "ui_498": {
+                "content": "HEX"
+              },
+              "ui_499": {
+                "content": "171717"
+              }
+            }
+          },
+          {
+            "id": "ui_505",
+            "name": "Control / Field",
+            "x": 0,
+            "y": 0,
+            "width": 80,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "field_80_16",
+            "overrides": {
+              "ui_502": {
+                "content": "A"
+              },
+              "ui_503": {
+                "content": "255"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "segmented_レイヤー_アセット_1_224",
+      "name": "Control / Segmented / レイヤー アセット",
+      "node": {
+        "id": "ui_511",
+        "name": "Segmented",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 8,
+            "topRight": 8,
+            "bottomRight": 8,
+            "bottomLeft": 8
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_508",
+            "name": "レイヤー",
+            "x": 0,
+            "y": 0,
+            "width": 106,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_507",
+                "name": "レイヤー",
+                "x": 0,
+                "y": 0,
+                "width": 98,
+                "height": 20,
+                "type": "text",
+                "content": "レイヤー",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_510",
+            "name": "アセット",
+            "x": 0,
+            "y": 0,
+            "width": 106,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_509",
+                "name": "アセット",
+                "x": 0,
+                "y": 0,
+                "width": 98,
+                "height": 20,
+                "type": "text",
+                "content": "アセット",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 600,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_component_8",
+      "name": "Icon / component",
+      "node": {
+        "id": "ui_518",
+        "name": "component",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.1
+          },
+          {
+            "kind": "line",
+            "x": 0.9,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.9
+          },
+          {
+            "kind": "line",
+            "x": 0.1,
+            "y": 0.5
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.3
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.7
+          },
+          {
+            "kind": "line",
+            "x": 0.3,
+            "y": 0.5
+          },
+          {
+            "kind": "close"
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "icon_plus_6",
+      "name": "Icon / plus",
+      "node": {
+        "id": "ui_521",
+        "name": "plus",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.2
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.8
+          },
+          {
+            "kind": "move",
+            "x": 0.2,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.8,
+            "y": 0.5
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_plus_false",
+      "name": "Control / Icon button / plus",
+      "node": {
+        "id": "ui_523",
+        "name": "plus",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_522",
+            "name": "Icon / plus",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_plus_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "componentRow_true",
+      "name": "Assets / Component row / Highlighted",
+      "node": {
+        "id": "ui_526",
+        "name": "Component row",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_2"
+          },
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_519",
+            "name": "Icon / component",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_component_8",
+            "overrides": {}
+          },
+          {
+            "id": "ui_520",
+            "name": "Component",
+            "x": 0,
+            "y": 0,
+            "width": 104,
+            "height": 20,
+            "type": "text",
+            "content": "Component",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 600,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_524",
+            "name": "Control / Icon button / plus",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_plus_false",
+            "overrides": {}
+          },
+          {
+            "id": "ui_525",
+            "name": "Control / Icon button / more",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_more_false",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_component_5",
+      "name": "Icon / component",
+      "node": {
+        "id": "ui_528",
+        "name": "component",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.1
+          },
+          {
+            "kind": "line",
+            "x": 0.9,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.9
+          },
+          {
+            "kind": "line",
+            "x": 0.1,
+            "y": 0.5
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.3
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.7
+          },
+          {
+            "kind": "line",
+            "x": 0.3,
+            "y": 0.5
+          },
+          {
+            "kind": "close"
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_5"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "componentRow_false",
+      "name": "Assets / Component row",
+      "node": {
+        "id": "ui_532",
+        "name": "Component row",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_529",
+            "name": "Icon / component",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_component_5",
+            "overrides": {}
+          },
+          {
+            "id": "ui_530",
+            "name": "Component",
+            "x": 0,
+            "y": 0,
+            "width": 104,
+            "height": 20,
+            "type": "text",
+            "content": "Component",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_531",
+            "name": "Actions",
+            "x": 0,
+            "y": 0,
+            "width": 68,
+            "height": 1,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "none",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "start",
+            "justifyContent": "start",
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_import_6",
+      "name": "Icon / import",
+      "node": {
+        "id": "ui_540",
+        "name": "import",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.5,
+            "y": 0.12
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.62
+          },
+          {
+            "kind": "move",
+            "x": 0.3,
+            "y": 0.42
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.62
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.42
+          },
+          {
+            "kind": "move",
+            "x": 0.15,
+            "y": 0.62
+          },
+          {
+            "kind": "line",
+            "x": 0.15,
+            "y": 0.85
+          },
+          {
+            "kind": "line",
+            "x": 0.85,
+            "y": 0.85
+          },
+          {
+            "kind": "line",
+            "x": 0.85,
+            "y": 0.62
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_import_false",
+      "name": "Control / Icon button / import",
+      "node": {
+        "id": "ui_542",
+        "name": "import",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_541",
+            "name": "Icon / import",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_import_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "colorRow_true",
+      "name": "Assets / Color row / Selected",
+      "node": {
+        "id": "ui_551",
+        "name": "Color row",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_2"
+          },
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_8",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_547",
+            "name": "Swatch",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "stroke": {
+                "color": {
+                  "type": "palette",
+                  "id": "gray_3"
+                },
+                "width": 1
+              },
+              "cornerRadii": {
+                "topLeft": 4,
+                "topRight": 4,
+                "bottomRight": 4,
+                "bottomLeft": 4
+              }
+            }
+          },
+          {
+            "id": "ui_548",
+            "name": "Name",
+            "x": 0,
+            "y": 0,
+            "width": 88,
+            "height": 20,
+            "type": "text",
+            "content": "Name",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 600,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_549",
+            "name": "#000000",
+            "x": 0,
+            "y": 0,
+            "width": 64,
+            "height": 20,
+            "type": "text",
+            "content": "#000000",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "right"
+            }
+          },
+          {
+            "id": "ui_550",
+            "name": "Icon / more",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_more_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "colorRow_false",
+      "name": "Assets / Color row",
+      "node": {
+        "id": "ui_558",
+        "name": "Color row",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_8",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_555",
+            "name": "Swatch",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "stroke": {
+                "color": {
+                  "type": "palette",
+                  "id": "gray_3"
+                },
+                "width": 1
+              },
+              "cornerRadii": {
+                "topLeft": 4,
+                "topRight": 4,
+                "bottomRight": 4,
+                "bottomLeft": 4
+              }
+            }
+          },
+          {
+            "id": "ui_556",
+            "name": "Name",
+            "x": 0,
+            "y": 0,
+            "width": 112,
+            "height": 20,
+            "type": "text",
+            "content": "Name",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_557",
+            "name": "#000000",
+            "x": 0,
+            "y": 0,
+            "width": 64,
+            "height": 20,
+            "type": "text",
+            "content": "#000000",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "right"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "spacingRow",
+      "name": "Assets / Spacing row",
+      "node": {
+        "id": "ui_574",
+        "name": "Spacing row",
+        "x": 0,
+        "y": 0,
+        "width": 224,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_8",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_572",
+            "name": "Name",
+            "x": 0,
+            "y": 0,
+            "width": 160,
+            "height": 20,
+            "type": "text",
+            "content": "Name",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_573",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 40,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "right"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "assetsPanel",
+      "name": "Shell / Assets panel",
+      "node": {
+        "id": "ui_579",
+        "name": "Assets panel",
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 960,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "border": {
+            "right": {
+              "color": {
+                "type": "palette",
+                "id": "gray_2"
+              },
+              "width": 1
+            }
+          }
+        },
+        "layoutMode": "vertical",
+        "paddingRef": "space_8",
+        "gapRef": "space_8",
+        "alignItems": "start",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_512",
+            "name": "Control / Segmented / レイヤー アセット",
+            "x": 0,
+            "y": 0,
+            "width": 224,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "segmented_レイヤー_アセット_1_224",
+            "overrides": {}
+          },
+          {
+            "id": "ui_535",
+            "name": "コンポーネント",
+            "x": 0,
+            "y": 0,
+            "width": 224,
+            "height": 128,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "vertical",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "start",
+            "justifyContent": "start",
+            "children": [
+              {
+                "id": "ui_517",
+                "name": "Section header",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 32,
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_0",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "children": [
+                  {
+                    "id": "ui_515",
+                    "name": "Title",
+                    "x": 0,
+                    "y": 0,
+                    "width": 116,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "start",
+                    "children": [
+                      {
+                        "id": "ui_513",
+                        "name": "コンポーネント",
+                        "x": 0,
+                        "y": 0,
+                        "width": 88,
+                        "height": 20,
+                        "type": "text",
+                        "content": "コンポーネント",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 600,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_8"
+                          },
+                          "textAlign": "left"
+                        }
+                      },
+                      {
+                        "id": "ui_514",
+                        "name": "3",
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 20,
+                        "type": "text",
+                        "content": "3",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 400,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_5"
+                          },
+                          "textAlign": "left"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ui_516",
+                    "name": "Actions",
+                    "x": 0,
+                    "y": 0,
+                    "width": 72,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "end",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "ui_527",
+                "name": "Assets / Component row / Highlighted",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 32,
+                "type": "instance",
+                "componentRef": "componentRow_true",
+                "overrides": {
+                  "ui_520": {
+                    "content": "Project card"
+                  }
+                }
+              },
+              {
+                "id": "ui_533",
+                "name": "Assets / Component row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 32,
+                "type": "instance",
+                "componentRef": "componentRow_false",
+                "overrides": {
+                  "ui_530": {
+                    "content": "Nav link"
+                  }
+                }
+              },
+              {
+                "id": "ui_534",
+                "name": "Assets / Component row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 32,
+                "type": "instance",
+                "componentRef": "componentRow_false",
+                "overrides": {
+                  "ui_530": {
+                    "content": "Button / Primary"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_536",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 224,
+            "height": 1,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_564",
+            "name": "色",
+            "x": 0,
+            "y": 0,
+            "width": 224,
+            "height": 236,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "vertical",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "start",
+            "justifyContent": "start",
+            "children": [
+              {
+                "id": "ui_546",
+                "name": "Section header",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 32,
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_0",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "children": [
+                  {
+                    "id": "ui_539",
+                    "name": "Title",
+                    "x": 0,
+                    "y": 0,
+                    "width": 44,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "start",
+                    "children": [
+                      {
+                        "id": "ui_537",
+                        "name": "色",
+                        "x": 0,
+                        "y": 0,
+                        "width": 16,
+                        "height": 20,
+                        "type": "text",
+                        "content": "色",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 600,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_8"
+                          },
+                          "textAlign": "left"
+                        }
+                      },
+                      {
+                        "id": "ui_538",
+                        "name": "6",
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 20,
+                        "type": "text",
+                        "content": "6",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 400,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_5"
+                          },
+                          "textAlign": "left"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ui_545",
+                    "name": "Actions",
+                    "x": 0,
+                    "y": 0,
+                    "width": 72,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "end",
+                    "children": [
+                      {
+                        "id": "ui_543",
+                        "name": "Control / Icon button / import",
+                        "x": 0,
+                        "y": 0,
+                        "width": 32,
+                        "height": 32,
+                        "type": "instance",
+                        "componentRef": "iconButton_import_false",
+                        "overrides": {}
+                      },
+                      {
+                        "id": "ui_544",
+                        "name": "Control / Icon button / plus",
+                        "x": 0,
+                        "y": 0,
+                        "width": 32,
+                        "height": 32,
+                        "type": "instance",
+                        "componentRef": "iconButton_plus_false",
+                        "overrides": {}
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "ui_552",
+                "name": "Assets / Color row / Selected",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "colorRow_true",
+                "overrides": {
+                  "ui_547": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "gray_8"
+                    }
+                  },
+                  "ui_548": {
+                    "content": "Ink"
+                  },
+                  "ui_549": {
+                    "content": "#171717"
+                  }
+                }
+              },
+              {
+                "id": "ui_554",
+                "name": "Selected color",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 36,
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "vertical",
+                "paddingRef": "space_4",
+                "gapRef": "space_0",
+                "alignItems": "start",
+                "justifyContent": "start",
+                "children": [
+                  {
+                    "id": "ui_553",
+                    "name": "Assets / Color editor",
+                    "x": 0,
+                    "y": 0,
+                    "width": 216,
+                    "height": 28,
+                    "type": "instance",
+                    "componentRef": "colorEditor",
+                    "overrides": {}
+                  }
+                ]
+              },
+              {
+                "id": "ui_559",
+                "name": "Assets / Color row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "colorRow_false",
+                "overrides": {
+                  "ui_555": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "gray_6"
+                    }
+                  },
+                  "ui_556": {
+                    "content": "Body"
+                  },
+                  "ui_557": {
+                    "content": "#525252"
+                  }
+                }
+              },
+              {
+                "id": "ui_560",
+                "name": "Assets / Color row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "colorRow_false",
+                "overrides": {
+                  "ui_555": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "gray_4"
+                    }
+                  },
+                  "ui_556": {
+                    "content": "Muted"
+                  },
+                  "ui_557": {
+                    "content": "#a3a3a3"
+                  }
+                }
+              },
+              {
+                "id": "ui_561",
+                "name": "Assets / Color row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "colorRow_false",
+                "overrides": {
+                  "ui_555": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "gray_2"
+                    }
+                  },
+                  "ui_556": {
+                    "content": "Line"
+                  },
+                  "ui_557": {
+                    "content": "#e5e5e5"
+                  }
+                }
+              },
+              {
+                "id": "ui_562",
+                "name": "Assets / Color row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "colorRow_false",
+                "overrides": {
+                  "ui_555": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "gray_1"
+                    }
+                  },
+                  "ui_556": {
+                    "content": "Canvas"
+                  },
+                  "ui_557": {
+                    "content": "#f5f5f5"
+                  }
+                }
+              },
+              {
+                "id": "ui_563",
+                "name": "Assets / Color row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "colorRow_false",
+                "overrides": {
+                  "ui_555": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "gray_0"
+                    }
+                  },
+                  "ui_556": {
+                    "content": "White"
+                  },
+                  "ui_557": {
+                    "content": "#ffffff"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_565",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 224,
+            "height": 1,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_578",
+            "name": "余白",
+            "x": 0,
+            "y": 0,
+            "width": 224,
+            "height": 116,
+            "type": "frame",
+            "style": {
+              "fill": null
+            },
+            "layoutMode": "vertical",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "start",
+            "justifyContent": "start",
+            "children": [
+              {
+                "id": "ui_571",
+                "name": "Section header",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 32,
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_0",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "children": [
+                  {
+                    "id": "ui_568",
+                    "name": "Title",
+                    "x": 0,
+                    "y": 0,
+                    "width": 56,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "start",
+                    "children": [
+                      {
+                        "id": "ui_566",
+                        "name": "余白",
+                        "x": 0,
+                        "y": 0,
+                        "width": 28,
+                        "height": 20,
+                        "type": "text",
+                        "content": "余白",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 600,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_8"
+                          },
+                          "textAlign": "left"
+                        }
+                      },
+                      {
+                        "id": "ui_567",
+                        "name": "3",
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 20,
+                        "type": "text",
+                        "content": "3",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 400,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_5"
+                          },
+                          "textAlign": "left"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "ui_570",
+                    "name": "Actions",
+                    "x": 0,
+                    "y": 0,
+                    "width": 72,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "end",
+                    "children": [
+                      {
+                        "id": "ui_569",
+                        "name": "Control / Icon button / plus",
+                        "x": 0,
+                        "y": 0,
+                        "width": 32,
+                        "height": 32,
+                        "type": "instance",
+                        "componentRef": "iconButton_plus_false",
+                        "overrides": {}
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "ui_575",
+                "name": "Assets / Spacing row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "spacingRow",
+                "overrides": {
+                  "ui_572": {
+                    "content": "Card / Inset"
+                  },
+                  "ui_573": {
+                    "content": "24"
+                  }
+                }
+              },
+              {
+                "id": "ui_576",
+                "name": "Assets / Spacing row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "spacingRow",
+                "overrides": {
+                  "ui_572": {
+                    "content": "Card / Gap"
+                  },
+                  "ui_573": {
+                    "content": "16"
+                  }
+                }
+              },
+              {
+                "id": "ui_577",
+                "name": "Assets / Spacing row",
+                "x": 0,
+                "y": 0,
+                "width": 224,
+                "height": 28,
+                "type": "instance",
+                "componentRef": "spacingRow",
+                "overrides": {
+                  "ui_572": {
+                    "content": "Grid / Gutter"
+                  },
+                  "ui_573": {
+                    "content": "32"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "componentMenu",
+      "name": "Assets / Component menu",
+      "node": {
+        "id": "ui_585",
+        "name": "Component menu",
+        "x": 0,
+        "y": 0,
+        "width": 200,
+        "height": 145,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "width": 1
+          },
+          "cornerRadii": {
+            "topLeft": 12,
+            "topRight": 12,
+            "bottomRight": 12,
+            "bottomLeft": 12
+          }
+        },
+        "layoutMode": "vertical",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "start",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_580",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "キャンバスに配置"
+              }
+            }
+          },
+          {
+            "id": "ui_581",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "名前を変更"
+              }
+            }
+          },
+          {
+            "id": "ui_582",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "複製"
+              }
+            }
+          },
+          {
+            "id": "ui_583",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 1,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_584",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "削除"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "colorMenu",
+      "name": "Assets / Color menu",
+      "node": {
+        "id": "ui_590",
+        "name": "Color menu",
+        "x": 0,
+        "y": 0,
+        "width": 200,
+        "height": 113,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "width": 1
+          },
+          "cornerRadii": {
+            "topLeft": 12,
+            "topRight": 12,
+            "bottomRight": 12,
+            "bottomLeft": 12
+          }
+        },
+        "layoutMode": "vertical",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "start",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_586",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "名前を変更"
+              }
+            }
+          },
+          {
+            "id": "ui_587",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "複製"
+              }
+            }
+          },
+          {
+            "id": "ui_588",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 1,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_589",
+            "name": "Control / Menu row",
+            "x": 0,
+            "y": 0,
+            "width": 184,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "menuRow_7",
+            "overrides": {
+              "ui_430": {
+                "content": "削除"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "inspectorPanel",
       "name": "Shell / Inspector panel",
       "node": {
-        "id": "ui_499",
+        "id": "ui_592",
         "name": "Inspector panel",
         "x": 0,
         "y": 0,
@@ -11935,7 +14310,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_498",
+            "id": "ui_591",
             "name": "Inspector / フレーム",
             "x": 0,
             "y": 0,
@@ -11952,7 +14327,7 @@
       "id": "icon_panelLeft_6",
       "name": "Icon / panelLeft",
       "node": {
-        "id": "ui_504",
+        "id": "ui_597",
         "name": "panelLeft",
         "x": 0,
         "y": 0,
@@ -12010,7 +14385,7 @@
       "id": "iconButton_panelLeft_false",
       "name": "Control / Icon button / panelLeft",
       "node": {
-        "id": "ui_506",
+        "id": "ui_599",
         "name": "panelLeft",
         "x": 0,
         "y": 0,
@@ -12033,7 +14408,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_505",
+            "id": "ui_598",
             "name": "Icon / panelLeft",
             "x": 0,
             "y": 0,
@@ -12050,7 +14425,7 @@
       "id": "fileChip_false_false",
       "name": "Canvas overlay / File",
       "node": {
-        "id": "ui_508",
+        "id": "ui_601",
         "name": "File",
         "x": 0,
         "y": 0,
@@ -12083,7 +14458,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_507",
+            "id": "ui_600",
             "name": "Control / Icon button / panelLeft",
             "x": 0,
             "y": 0,
@@ -12094,7 +14469,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_503",
+            "id": "ui_596",
             "name": "File menu trigger",
             "x": 0,
             "y": 0,
@@ -12117,7 +14492,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_500",
+                "id": "ui_593",
                 "name": "Website.nodi",
                 "x": 0,
                 "y": 0,
@@ -12138,7 +14513,7 @@
                 }
               },
               {
-                "id": "ui_502",
+                "id": "ui_595",
                 "name": "Icon / chevronDown",
                 "x": 0,
                 "y": 0,
@@ -12157,7 +14532,7 @@
       "id": "fileChip_false_true",
       "name": "Canvas overlay / File",
       "node": {
-        "id": "ui_514",
+        "id": "ui_607",
         "name": "File",
         "x": 0,
         "y": 0,
@@ -12190,7 +14565,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_513",
+            "id": "ui_606",
             "name": "Control / Icon button / panelLeft",
             "x": 0,
             "y": 0,
@@ -12201,7 +14576,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_512",
+            "id": "ui_605",
             "name": "File menu trigger",
             "x": 0,
             "y": 0,
@@ -12227,7 +14602,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_509",
+                "id": "ui_602",
                 "name": "Website.nodi",
                 "x": 0,
                 "y": 0,
@@ -12248,7 +14623,7 @@
                 }
               },
               {
-                "id": "ui_511",
+                "id": "ui_604",
                 "name": "Icon / chevronDown",
                 "x": 0,
                 "y": 0,
@@ -12267,7 +14642,7 @@
       "id": "fileChip_true_false",
       "name": "Canvas overlay / File",
       "node": {
-        "id": "ui_520",
+        "id": "ui_613",
         "name": "File",
         "x": 0,
         "y": 0,
@@ -12300,7 +14675,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_519",
+            "id": "ui_612",
             "name": "Control / Icon button / panelLeft",
             "x": 0,
             "y": 0,
@@ -12311,7 +14686,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_518",
+            "id": "ui_611",
             "name": "File menu trigger",
             "x": 0,
             "y": 0,
@@ -12334,7 +14709,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_515",
+                "id": "ui_608",
                 "name": "Website.nodi",
                 "x": 0,
                 "y": 0,
@@ -12355,7 +14730,7 @@
                 }
               },
               {
-                "id": "ui_516",
+                "id": "ui_609",
                 "name": "Unsaved",
                 "x": 0,
                 "y": 0,
@@ -12370,7 +14745,7 @@
                 }
               },
               {
-                "id": "ui_517",
+                "id": "ui_610",
                 "name": "Icon / chevronDown",
                 "x": 0,
                 "y": 0,
@@ -12389,7 +14764,7 @@
       "id": "fileChip_true_true",
       "name": "Canvas overlay / File",
       "node": {
-        "id": "ui_526",
+        "id": "ui_619",
         "name": "File",
         "x": 0,
         "y": 0,
@@ -12422,7 +14797,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_525",
+            "id": "ui_618",
             "name": "Control / Icon button / panelLeft",
             "x": 0,
             "y": 0,
@@ -12433,7 +14808,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_524",
+            "id": "ui_617",
             "name": "File menu trigger",
             "x": 0,
             "y": 0,
@@ -12459,7 +14834,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_521",
+                "id": "ui_614",
                 "name": "Website.nodi",
                 "x": 0,
                 "y": 0,
@@ -12480,7 +14855,7 @@
                 }
               },
               {
-                "id": "ui_522",
+                "id": "ui_615",
                 "name": "Unsaved",
                 "x": 0,
                 "y": 0,
@@ -12495,7 +14870,7 @@
                 }
               },
               {
-                "id": "ui_523",
+                "id": "ui_616",
                 "name": "Icon / chevronDown",
                 "x": 0,
                 "y": 0,
@@ -12514,7 +14889,7 @@
       "id": "shortcutRow",
       "name": "Control / Menu row with shortcut",
       "node": {
-        "id": "ui_534",
+        "id": "ui_627",
         "name": "Menu row",
         "x": 0,
         "y": 0,
@@ -12537,7 +14912,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_532",
+            "id": "ui_625",
             "name": "Item",
             "x": 0,
             "y": 0,
@@ -12558,7 +14933,7 @@
             }
           },
           {
-            "id": "ui_533",
+            "id": "ui_626",
             "name": "⌘",
             "x": 0,
             "y": 0,
@@ -12585,7 +14960,7 @@
       "id": "fileMenu",
       "name": "Canvas overlay / File menu",
       "node": {
-        "id": "ui_542",
+        "id": "ui_635",
         "name": "File menu",
         "x": 0,
         "y": 0,
@@ -12618,7 +14993,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_530",
+            "id": "ui_623",
             "name": "Document",
             "x": 0,
             "y": 0,
@@ -12635,7 +15010,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_527",
+                "id": "ui_620",
                 "name": "Website.nodi",
                 "x": 0,
                 "y": 0,
@@ -12656,7 +15031,7 @@
                 }
               },
               {
-                "id": "ui_528",
+                "id": "ui_621",
                 "name": "~/Documents/Website.nodi",
                 "x": 0,
                 "y": 0,
@@ -12677,7 +15052,7 @@
                 }
               },
               {
-                "id": "ui_529",
+                "id": "ui_622",
                 "name": "未保存の変更があります",
                 "x": 0,
                 "y": 0,
@@ -12700,7 +15075,7 @@
             ]
           },
           {
-            "id": "ui_531",
+            "id": "ui_624",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -12715,7 +15090,7 @@
             }
           },
           {
-            "id": "ui_535",
+            "id": "ui_628",
             "name": "Control / Menu row with shortcut",
             "x": 0,
             "y": 0,
@@ -12724,16 +15099,16 @@
             "type": "instance",
             "componentRef": "shortcutRow",
             "overrides": {
-              "ui_532": {
+              "ui_625": {
                 "content": "開く…"
               },
-              "ui_533": {
+              "ui_626": {
                 "content": "⌘O"
               }
             }
           },
           {
-            "id": "ui_536",
+            "id": "ui_629",
             "name": "Control / Menu row with shortcut",
             "x": 0,
             "y": 0,
@@ -12742,16 +15117,16 @@
             "type": "instance",
             "componentRef": "shortcutRow",
             "overrides": {
-              "ui_532": {
+              "ui_625": {
                 "content": "保存"
               },
-              "ui_533": {
+              "ui_626": {
                 "content": "⌘S"
               }
             }
           },
           {
-            "id": "ui_537",
+            "id": "ui_630",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -12766,7 +15141,7 @@
             }
           },
           {
-            "id": "ui_538",
+            "id": "ui_631",
             "name": "Control / Menu row with shortcut",
             "x": 0,
             "y": 0,
@@ -12775,16 +15150,16 @@
             "type": "instance",
             "componentRef": "shortcutRow",
             "overrides": {
-              "ui_532": {
+              "ui_625": {
                 "content": "SVG パスを取り込む…"
               },
-              "ui_533": {
+              "ui_626": {
                 "content": ""
               }
             }
           },
           {
-            "id": "ui_539",
+            "id": "ui_632",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -12799,7 +15174,7 @@
             }
           },
           {
-            "id": "ui_540",
+            "id": "ui_633",
             "name": "Control / Menu row with shortcut",
             "x": 0,
             "y": 0,
@@ -12808,16 +15183,16 @@
             "type": "instance",
             "componentRef": "shortcutRow",
             "overrides": {
-              "ui_532": {
+              "ui_625": {
                 "content": "元に戻す"
               },
-              "ui_533": {
+              "ui_626": {
                 "content": "⌘Z"
               }
             }
           },
           {
-            "id": "ui_541",
+            "id": "ui_634",
             "name": "Control / Menu row with shortcut",
             "x": 0,
             "y": 0,
@@ -12826,10 +15201,10 @@
             "type": "instance",
             "componentRef": "shortcutRow",
             "overrides": {
-              "ui_532": {
+              "ui_625": {
                 "content": "やり直す"
               },
-              "ui_533": {
+              "ui_626": {
                 "content": "⇧⌘Z"
               }
             }
@@ -12841,7 +15216,7 @@
       "id": "icon_preview_6",
       "name": "Icon / preview",
       "node": {
-        "id": "ui_544",
+        "id": "ui_637",
         "name": "preview",
         "x": 0,
         "y": 0,
@@ -12952,7 +15327,7 @@
       "id": "iconButton_preview_false",
       "name": "Control / Icon button / preview",
       "node": {
-        "id": "ui_546",
+        "id": "ui_639",
         "name": "preview",
         "x": 0,
         "y": 0,
@@ -12975,7 +15350,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_545",
+            "id": "ui_638",
             "name": "Icon / preview",
             "x": 0,
             "y": 0,
@@ -12992,7 +15367,7 @@
       "id": "icon_panelRight_6",
       "name": "Icon / panelRight",
       "node": {
-        "id": "ui_548",
+        "id": "ui_641",
         "name": "panelRight",
         "x": 0,
         "y": 0,
@@ -13050,7 +15425,7 @@
       "id": "iconButton_panelRight_false",
       "name": "Control / Icon button / panelRight",
       "node": {
-        "id": "ui_550",
+        "id": "ui_643",
         "name": "panelRight",
         "x": 0,
         "y": 0,
@@ -13073,7 +15448,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_549",
+            "id": "ui_642",
             "name": "Icon / panelRight",
             "x": 0,
             "y": 0,
@@ -13090,7 +15465,7 @@
       "id": "actionChip",
       "name": "Canvas overlay / Actions",
       "node": {
-        "id": "ui_552",
+        "id": "ui_645",
         "name": "Actions",
         "x": 0,
         "y": 0,
@@ -13123,7 +15498,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_543",
+            "id": "ui_636",
             "name": "100%",
             "x": 0,
             "y": 0,
@@ -13144,7 +15519,7 @@
             }
           },
           {
-            "id": "ui_547",
+            "id": "ui_640",
             "name": "Control / Icon button / preview",
             "x": 0,
             "y": 0,
@@ -13155,7 +15530,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_551",
+            "id": "ui_644",
             "name": "Control / Icon button / panelRight",
             "x": 0,
             "y": 0,
@@ -13172,7 +15547,7 @@
       "id": "icon_timeline_6",
       "name": "Icon / timeline",
       "node": {
-        "id": "ui_555",
+        "id": "ui_648",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -13227,7 +15602,7 @@
       "id": "iconButton_timeline_false",
       "name": "Control / Icon button / timeline",
       "node": {
-        "id": "ui_557",
+        "id": "ui_650",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -13250,7 +15625,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_556",
+            "id": "ui_649",
             "name": "Icon / timeline",
             "x": 0,
             "y": 0,
@@ -13267,7 +15642,7 @@
       "id": "floatingTools_false",
       "name": "Canvas overlay / Tools",
       "node": {
-        "id": "ui_559",
+        "id": "ui_652",
         "name": "Tools",
         "x": 0,
         "y": 0,
@@ -13300,7 +15675,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_553",
+            "id": "ui_646",
             "name": "Shell / Tools",
             "x": 0,
             "y": 0,
@@ -13311,7 +15686,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_554",
+            "id": "ui_647",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -13326,7 +15701,7 @@
             }
           },
           {
-            "id": "ui_558",
+            "id": "ui_651",
             "name": "Control / Icon button / timeline",
             "x": 0,
             "y": 0,
@@ -13343,7 +15718,7 @@
       "id": "icon_timeline_8",
       "name": "Icon / timeline",
       "node": {
-        "id": "ui_562",
+        "id": "ui_655",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -13398,7 +15773,7 @@
       "id": "iconButton_timeline_true",
       "name": "Control / Icon button / timeline",
       "node": {
-        "id": "ui_564",
+        "id": "ui_657",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -13424,7 +15799,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_563",
+            "id": "ui_656",
             "name": "Icon / timeline",
             "x": 0,
             "y": 0,
@@ -13441,7 +15816,7 @@
       "id": "floatingTools_true",
       "name": "Canvas overlay / Tools",
       "node": {
-        "id": "ui_566",
+        "id": "ui_659",
         "name": "Tools",
         "x": 0,
         "y": 0,
@@ -13474,7 +15849,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_560",
+            "id": "ui_653",
             "name": "Shell / Tools",
             "x": 0,
             "y": 0,
@@ -13485,7 +15860,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_561",
+            "id": "ui_654",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -13500,7 +15875,7 @@
             }
           },
           {
-            "id": "ui_565",
+            "id": "ui_658",
             "name": "Control / Icon button / timeline",
             "x": 0,
             "y": 0,
@@ -13517,7 +15892,7 @@
       "id": "segmented_Fade in_Hover lift_0_160",
       "name": "Control / Segmented / Fade in Hover lift",
       "node": {
-        "id": "ui_571",
+        "id": "ui_664",
         "name": "Segmented",
         "x": 0,
         "y": 0,
@@ -13543,7 +15918,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_568",
+            "id": "ui_661",
             "name": "Fade in",
             "x": 0,
             "y": 0,
@@ -13569,7 +15944,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_567",
+                "id": "ui_660",
                 "name": "Fade in",
                 "x": 0,
                 "y": 0,
@@ -13592,7 +15967,7 @@
             ]
           },
           {
-            "id": "ui_570",
+            "id": "ui_663",
             "name": "Hover lift",
             "x": 0,
             "y": 0,
@@ -13615,7 +15990,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_569",
+                "id": "ui_662",
                 "name": "Hover lift",
                 "x": 0,
                 "y": 0,
@@ -13641,95 +16016,10 @@
       }
     },
     {
-      "id": "icon_plus_6",
-      "name": "Icon / plus",
-      "node": {
-        "id": "ui_573",
-        "name": "plus",
-        "x": 0,
-        "y": 0,
-        "width": 16,
-        "height": 16,
-        "type": "path",
-        "commands": [
-          {
-            "kind": "move",
-            "x": 0.5,
-            "y": 0.2
-          },
-          {
-            "kind": "line",
-            "x": 0.5,
-            "y": 0.8
-          },
-          {
-            "kind": "move",
-            "x": 0.2,
-            "y": 0.5
-          },
-          {
-            "kind": "line",
-            "x": 0.8,
-            "y": 0.5
-          }
-        ],
-        "style": {
-          "fill": null,
-          "stroke": {
-            "color": {
-              "type": "palette",
-              "id": "gray_6"
-            },
-            "width": 1.5
-          }
-        }
-      }
-    },
-    {
-      "id": "iconButton_plus_false",
-      "name": "Control / Icon button / plus",
-      "node": {
-        "id": "ui_575",
-        "name": "plus",
-        "x": 0,
-        "y": 0,
-        "width": 32,
-        "height": 32,
-        "type": "frame",
-        "style": {
-          "fill": null,
-          "cornerRadii": {
-            "topLeft": 6,
-            "topRight": 6,
-            "bottomRight": 6,
-            "bottomLeft": 6
-          }
-        },
-        "layoutMode": "horizontal",
-        "paddingRef": "space_8",
-        "gapRef": "space_0",
-        "alignItems": "center",
-        "justifyContent": "center",
-        "children": [
-          {
-            "id": "ui_574",
-            "name": "Icon / plus",
-            "x": 0,
-            "y": 0,
-            "width": 16,
-            "height": 16,
-            "type": "instance",
-            "componentRef": "icon_plus_6",
-            "overrides": {}
-          }
-        ]
-      }
-    },
-    {
       "id": "icon_trash_6",
       "name": "Icon / trash",
       "node": {
-        "id": "ui_577",
+        "id": "ui_667",
         "name": "trash",
         "x": 0,
         "y": 0,
@@ -13804,7 +16094,7 @@
       "id": "iconButton_trash_false",
       "name": "Control / Icon button / trash",
       "node": {
-        "id": "ui_579",
+        "id": "ui_669",
         "name": "trash",
         "x": 0,
         "y": 0,
@@ -13827,7 +16117,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_578",
+            "id": "ui_668",
             "name": "Icon / trash",
             "x": 0,
             "y": 0,
@@ -13844,7 +16134,7 @@
       "id": "field_132_48",
       "name": "Control / Field",
       "node": {
-        "id": "ui_584",
+        "id": "ui_674",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -13870,7 +16160,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_582",
+            "id": "ui_672",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -13891,7 +16181,7 @@
             }
           },
           {
-            "id": "ui_583",
+            "id": "ui_673",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -13918,7 +16208,7 @@
       "id": "field_104_28",
       "name": "Control / Field",
       "node": {
-        "id": "ui_588",
+        "id": "ui_678",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -13944,7 +16234,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_586",
+            "id": "ui_676",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -13965,7 +16255,7 @@
             }
           },
           {
-            "id": "ui_587",
+            "id": "ui_677",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -13992,7 +16282,7 @@
       "id": "field_96_28",
       "name": "Control / Field",
       "node": {
-        "id": "ui_592",
+        "id": "ui_682",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -14018,7 +16308,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_590",
+            "id": "ui_680",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -14039,7 +16329,7 @@
             }
           },
           {
-            "id": "ui_591",
+            "id": "ui_681",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -14066,7 +16356,7 @@
       "id": "field_108_48",
       "name": "Control / Field",
       "node": {
-        "id": "ui_596",
+        "id": "ui_686",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -14092,7 +16382,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_594",
+            "id": "ui_684",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -14113,7 +16403,7 @@
             }
           },
           {
-            "id": "ui_595",
+            "id": "ui_685",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -14140,7 +16430,7 @@
       "id": "icon_play_6",
       "name": "Icon / play",
       "node": {
-        "id": "ui_599",
+        "id": "ui_689",
         "name": "play",
         "x": 0,
         "y": 0,
@@ -14183,7 +16473,7 @@
       "id": "iconButton_play_false",
       "name": "Control / Icon button / play",
       "node": {
-        "id": "ui_601",
+        "id": "ui_691",
         "name": "play",
         "x": 0,
         "y": 0,
@@ -14206,7 +16496,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_600",
+            "id": "ui_690",
             "name": "Icon / play",
             "x": 0,
             "y": 0,
@@ -14223,7 +16513,7 @@
       "id": "icon_close_6",
       "name": "Icon / close",
       "node": {
-        "id": "ui_604",
+        "id": "ui_694",
         "name": "close",
         "x": 0,
         "y": 0,
@@ -14268,7 +16558,7 @@
       "id": "iconButton_close_false",
       "name": "Control / Icon button / close",
       "node": {
-        "id": "ui_606",
+        "id": "ui_696",
         "name": "close",
         "x": 0,
         "y": 0,
@@ -14291,7 +16581,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_605",
+            "id": "ui_695",
             "name": "Icon / close",
             "x": 0,
             "y": 0,
@@ -14308,7 +16598,7 @@
       "id": "field_112_28",
       "name": "Control / Field",
       "node": {
-        "id": "ui_632",
+        "id": "ui_722",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -14334,7 +16624,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_630",
+            "id": "ui_720",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -14355,7 +16645,7 @@
             }
           },
           {
-            "id": "ui_631",
+            "id": "ui_721",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -14382,7 +16672,7 @@
       "id": "field_96_16",
       "name": "Control / Field",
       "node": {
-        "id": "ui_636",
+        "id": "ui_726",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -14408,7 +16698,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_634",
+            "id": "ui_724",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -14429,7 +16719,7 @@
             }
           },
           {
-            "id": "ui_635",
+            "id": "ui_725",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -14456,7 +16746,7 @@
       "id": "segmented_linear_ease-in_ease-out_ease-in-out_2_344",
       "name": "Control / Segmented / linear ease-in ease-out ease-in-out",
       "node": {
-        "id": "ui_646",
+        "id": "ui_736",
         "name": "Segmented",
         "x": 0,
         "y": 0,
@@ -14482,7 +16772,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_639",
+            "id": "ui_729",
             "name": "linear",
             "x": 0,
             "y": 0,
@@ -14505,7 +16795,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_638",
+                "id": "ui_728",
                 "name": "linear",
                 "x": 0,
                 "y": 0,
@@ -14528,7 +16818,7 @@
             ]
           },
           {
-            "id": "ui_641",
+            "id": "ui_731",
             "name": "ease-in",
             "x": 0,
             "y": 0,
@@ -14551,7 +16841,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_640",
+                "id": "ui_730",
                 "name": "ease-in",
                 "x": 0,
                 "y": 0,
@@ -14574,7 +16864,7 @@
             ]
           },
           {
-            "id": "ui_643",
+            "id": "ui_733",
             "name": "ease-out",
             "x": 0,
             "y": 0,
@@ -14600,7 +16890,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_642",
+                "id": "ui_732",
                 "name": "ease-out",
                 "x": 0,
                 "y": 0,
@@ -14623,7 +16913,7 @@
             ]
           },
           {
-            "id": "ui_645",
+            "id": "ui_735",
             "name": "ease-in-out",
             "x": 0,
             "y": 0,
@@ -14646,7 +16936,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_644",
+                "id": "ui_734",
                 "name": "ease-in-out",
                 "x": 0,
                 "y": 0,
@@ -14675,7 +16965,7 @@
       "id": "icon_keyframeAdd_6",
       "name": "Icon / keyframeAdd",
       "node": {
-        "id": "ui_648",
+        "id": "ui_738",
         "name": "keyframeAdd",
         "x": 0,
         "y": 0,
@@ -14743,7 +17033,7 @@
       "id": "iconButton_keyframeAdd_false",
       "name": "Control / Icon button / keyframeAdd",
       "node": {
-        "id": "ui_650",
+        "id": "ui_740",
         "name": "keyframeAdd",
         "x": 0,
         "y": 0,
@@ -14766,7 +17056,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_649",
+            "id": "ui_739",
             "name": "Icon / keyframeAdd",
             "x": 0,
             "y": 0,
@@ -14783,7 +17073,7 @@
       "id": "timeline",
       "name": "Timeline / Fade in",
       "node": {
-        "id": "ui_654",
+        "id": "ui_744",
         "name": "Timeline",
         "x": 0,
         "y": 0,
@@ -14812,7 +17102,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_609",
+            "id": "ui_699",
             "name": "Timeline header",
             "x": 0,
             "y": 0,
@@ -14838,7 +17128,7 @@
             "justifyContent": "space-between",
             "children": [
               {
-                "id": "ui_598",
+                "id": "ui_688",
                 "name": "Animation settings",
                 "x": 0,
                 "y": 0,
@@ -14855,7 +17145,7 @@
                 "justifyContent": "start",
                 "children": [
                   {
-                    "id": "ui_572",
+                    "id": "ui_665",
                     "name": "Control / Segmented / Fade in Hover lift",
                     "x": 0,
                     "y": 0,
@@ -14866,7 +17156,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_576",
+                    "id": "ui_666",
                     "name": "Control / Icon button / plus",
                     "x": 0,
                     "y": 0,
@@ -14877,7 +17167,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_580",
+                    "id": "ui_670",
                     "name": "Control / Icon button / trash",
                     "x": 0,
                     "y": 0,
@@ -14888,7 +17178,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_581",
+                    "id": "ui_671",
                     "name": "Divider",
                     "x": 0,
                     "y": 0,
@@ -14903,7 +17193,7 @@
                     }
                   },
                   {
-                    "id": "ui_585",
+                    "id": "ui_675",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -14912,16 +17202,16 @@
                     "type": "instance",
                     "componentRef": "field_132_48",
                     "overrides": {
-                      "ui_582": {
+                      "ui_672": {
                         "content": "トリガー"
                       },
-                      "ui_583": {
+                      "ui_673": {
                         "content": "読み込み"
                       }
                     }
                   },
                   {
-                    "id": "ui_589",
+                    "id": "ui_679",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -14930,16 +17220,16 @@
                     "type": "instance",
                     "componentRef": "field_104_28",
                     "overrides": {
-                      "ui_586": {
+                      "ui_676": {
                         "content": "長さ"
                       },
-                      "ui_587": {
+                      "ui_677": {
                         "content": "800 ms"
                       }
                     }
                   },
                   {
-                    "id": "ui_593",
+                    "id": "ui_683",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -14948,16 +17238,16 @@
                     "type": "instance",
                     "componentRef": "field_96_28",
                     "overrides": {
-                      "ui_590": {
+                      "ui_680": {
                         "content": "遅延"
                       },
-                      "ui_591": {
+                      "ui_681": {
                         "content": "0 ms"
                       }
                     }
                   },
                   {
-                    "id": "ui_597",
+                    "id": "ui_687",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -14966,10 +17256,10 @@
                     "type": "instance",
                     "componentRef": "field_108_48",
                     "overrides": {
-                      "ui_594": {
+                      "ui_684": {
                         "content": "繰り返し"
                       },
-                      "ui_595": {
+                      "ui_685": {
                         "content": "1 回"
                       }
                     }
@@ -14977,7 +17267,7 @@
                 ]
               },
               {
-                "id": "ui_608",
+                "id": "ui_698",
                 "name": "Playback",
                 "x": 0,
                 "y": 0,
@@ -14994,7 +17284,7 @@
                 "justifyContent": "start",
                 "children": [
                   {
-                    "id": "ui_602",
+                    "id": "ui_692",
                     "name": "Control / Icon button / play",
                     "x": 0,
                     "y": 0,
@@ -15005,7 +17295,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_603",
+                    "id": "ui_693",
                     "name": "320 / 800 ms",
                     "x": 0,
                     "y": 0,
@@ -15026,7 +17316,7 @@
                     }
                   },
                   {
-                    "id": "ui_607",
+                    "id": "ui_697",
                     "name": "Control / Icon button / close",
                     "x": 0,
                     "y": 0,
@@ -15041,7 +17331,7 @@
             ]
           },
           {
-            "id": "ui_610",
+            "id": "ui_700",
             "name": "0",
             "x": 192,
             "y": 52,
@@ -15062,7 +17352,7 @@
             }
           },
           {
-            "id": "ui_611",
+            "id": "ui_701",
             "name": "200",
             "x": 346,
             "y": 52,
@@ -15083,7 +17373,7 @@
             }
           },
           {
-            "id": "ui_612",
+            "id": "ui_702",
             "name": "400",
             "x": 524,
             "y": 52,
@@ -15104,7 +17394,7 @@
             }
           },
           {
-            "id": "ui_613",
+            "id": "ui_703",
             "name": "600",
             "x": 702,
             "y": 52,
@@ -15125,7 +17415,7 @@
             }
           },
           {
-            "id": "ui_614",
+            "id": "ui_704",
             "name": "800 ms",
             "x": 856,
             "y": 52,
@@ -15146,7 +17436,7 @@
             }
           },
           {
-            "id": "ui_615",
+            "id": "ui_705",
             "name": "不透明度",
             "x": 16,
             "y": 82,
@@ -15167,7 +17457,7 @@
             }
           },
           {
-            "id": "ui_616",
+            "id": "ui_706",
             "name": "Track",
             "x": 192,
             "y": 92,
@@ -15182,7 +17472,7 @@
             }
           },
           {
-            "id": "ui_617",
+            "id": "ui_707",
             "name": "Keyframe",
             "x": 187,
             "y": 87,
@@ -15229,7 +17519,7 @@
             }
           },
           {
-            "id": "ui_618",
+            "id": "ui_708",
             "name": "Keyframe / Selected",
             "x": 541,
             "y": 85,
@@ -15276,7 +17566,7 @@
             }
           },
           {
-            "id": "ui_619",
+            "id": "ui_709",
             "name": "Y 位置",
             "x": 16,
             "y": 114,
@@ -15297,7 +17587,7 @@
             }
           },
           {
-            "id": "ui_620",
+            "id": "ui_710",
             "name": "Track",
             "x": 192,
             "y": 124,
@@ -15312,7 +17602,7 @@
             }
           },
           {
-            "id": "ui_621",
+            "id": "ui_711",
             "name": "Keyframe",
             "x": 187,
             "y": 119,
@@ -15359,7 +17649,7 @@
             }
           },
           {
-            "id": "ui_622",
+            "id": "ui_712",
             "name": "Keyframe",
             "x": 899,
             "y": 119,
@@ -15406,7 +17696,7 @@
             }
           },
           {
-            "id": "ui_625",
+            "id": "ui_715",
             "name": "Add track",
             "x": 8,
             "y": 140,
@@ -15423,7 +17713,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_623",
+                "id": "ui_713",
                 "name": "Icon / plus",
                 "x": 0,
                 "y": 0,
@@ -15434,7 +17724,7 @@
                 "overrides": {}
               },
               {
-                "id": "ui_624",
+                "id": "ui_714",
                 "name": "トラックを追加",
                 "x": 0,
                 "y": 0,
@@ -15457,7 +17747,7 @@
             ]
           },
           {
-            "id": "ui_626",
+            "id": "ui_716",
             "name": "Track label divider",
             "x": 176,
             "y": 48,
@@ -15472,7 +17762,7 @@
             }
           },
           {
-            "id": "ui_627",
+            "id": "ui_717",
             "name": "Playhead",
             "x": 476.8,
             "y": 56,
@@ -15487,7 +17777,7 @@
             }
           },
           {
-            "id": "ui_628",
+            "id": "ui_718",
             "name": "Playhead handle",
             "x": 472.8,
             "y": 48,
@@ -15508,7 +17798,7 @@
             }
           },
           {
-            "id": "ui_653",
+            "id": "ui_743",
             "name": "Keyframe settings",
             "x": 0,
             "y": 184,
@@ -15534,7 +17824,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_629",
+                "id": "ui_719",
                 "name": "キーフレーム",
                 "x": 0,
                 "y": 0,
@@ -15555,7 +17845,7 @@
                 }
               },
               {
-                "id": "ui_633",
+                "id": "ui_723",
                 "name": "Control / Field",
                 "x": 0,
                 "y": 0,
@@ -15564,16 +17854,16 @@
                 "type": "instance",
                 "componentRef": "field_112_28",
                 "overrides": {
-                  "ui_630": {
+                  "ui_720": {
                     "content": "時刻"
                   },
-                  "ui_631": {
+                  "ui_721": {
                     "content": "400 ms"
                   }
                 }
               },
               {
-                "id": "ui_637",
+                "id": "ui_727",
                 "name": "Control / Field",
                 "x": 0,
                 "y": 0,
@@ -15582,16 +17872,16 @@
                 "type": "instance",
                 "componentRef": "field_96_16",
                 "overrides": {
-                  "ui_634": {
+                  "ui_724": {
                     "content": "値"
                   },
-                  "ui_635": {
+                  "ui_725": {
                     "content": "100%"
                   }
                 }
               },
               {
-                "id": "ui_647",
+                "id": "ui_737",
                 "name": "Control / Segmented / linear ease-in ease-out ease-in-out",
                 "x": 0,
                 "y": 0,
@@ -15602,7 +17892,7 @@
                 "overrides": {}
               },
               {
-                "id": "ui_651",
+                "id": "ui_741",
                 "name": "Control / Icon button / keyframeAdd",
                 "x": 0,
                 "y": 0,
@@ -15613,7 +17903,7 @@
                 "overrides": {}
               },
               {
-                "id": "ui_652",
+                "id": "ui_742",
                 "name": "Control / Icon button / trash",
                 "x": 0,
                 "y": 0,
