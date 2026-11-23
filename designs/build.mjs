@@ -274,9 +274,11 @@ define("moreMenu", "Inspector / More menu", () => column("More menu", 200, [
   menuRow("ID をコピー"), row("Node ID", 184, [text("node_8f3a2c", 168, { size: 11, tone: 5 })], { height: 24, pad: 8 }),
 ], { pad: 8, gap: 4, fill: 0, stroke: 2, radius: 12 }));
 
+// カードの中身は幅いっぱいに伸ばし、プレビューで幅が変わってもカードに沿うようにする。
+const fill = (node) => ({ ...node, widthConstraint: { mode: "fill" } });
 define("projectCard", "Content / Project card", () => column("Project card", 300, [
   rect("Cover", 252, 176, { fill: 3 }), text("Quiet objects", 252, { size: 22, tone: 8, weight: 600 }), text("Art direction / 2026", 252, { tone: 5 }),
-], { pad: 24, gap: 16, fill: 1 }));
+].map(fill), { pad: 24, gap: 16, fill: 1 }));
 define("artboard", "Canvas / Selected work", () => frame("Desktop / Selected work", 780, 460, [
   at(text("Selected work", 600, { size: 30, tone: 8, weight: 600 }), 32, 24),
   at(use("projectCard"), 32, 104),
@@ -413,6 +415,19 @@ define("toast", "Canvas overlay / Toast", () => row("Toast", 280, [
 
 define("actionChip", "Canvas overlay / Actions", () =>
   row("Actions", 128, [text("100%", 48, { tone: 6, align: "center" }), iconButton("preview"), iconButton("panelRight")], floating));
+define("actionChip_preview", "Canvas overlay / Actions", () =>
+  row("Actions", 128, [text("100%", 48, { tone: 6, align: "center" }), iconButton("preview", true), iconButton("panelRight")], floating));
+
+// プレビューは選択中のフレームを指定した幅で描く。幅の切り換えはキャンバスの上中央に浮かべ、末尾のボタンで編集に戻る。
+const previewWidths = ["320", "390", "768", "1024", "1440"];
+const previewWidth = 390;
+define("previewBar", "Canvas overlay / Preview widths", () => row("Preview widths", 389, [
+  segmented(previewWidths, previewWidths.indexOf(String(previewWidth)), 248), field("幅", String(previewWidth), { width: 88 }), divider(1, 20), iconButton("close"),
+], floating));
+define("artboardNarrow", "Canvas / Selected work at 390", () => column("Desktop / Selected work", previewWidth, [
+  text("Selected work", previewWidth - 48, { size: 30, tone: 8, weight: 600 }),
+  { ...use("projectCard"), width: previewWidth - 48 }, { ...use("projectCard", { [slot("projectCard", 1)]: { content: "Everyday forms" } }), width: previewWidth - 48 },
+], { pad: 24, gap: 24, fill: 0 }));
 for (const timelineOpen of [false, true]) {
   define(`floatingTools_${timelineOpen}`, "Canvas overlay / Tools", () =>
     row("Tools", 297, [use("tools"), divider(1, 20), iconButton("timeline", timelineOpen)], floating));
@@ -464,15 +479,24 @@ define("timeline", "Timeline / Fade in", () => {
 const overlayInset = 12;
 // パネルの中に開くと下の節を隠すため、パネルの右隣に行の上端をそろえて開く。縦はパネル余白8 + タブ32 + 間隔8 + 見出し32。
 const componentMenuAnchor = { x: 240 + 4, y: 8 + 32 + 8 + 32 };
-function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false, assetsOpen = false, dialogRef = null, toast = false }) {
+function editor(id, name, index, { panelsOpen, timelineOpen = false, unsaved = false, fileMenuOpen = false, assetsOpen = false, dialogRef = null, toast = false, preview = false }) {
   const canvasLeft = panelsOpen ? 240 : 0;
   const canvasRight = panelsOpen ? 1160 : 1440;
   const centerOf = (width) => canvasLeft + (canvasRight - canvasLeft - width) / 2;
   const fileChip = use(`fileChip_${unsaved}_${fileMenuOpen}`);
-  const actionChip = use("actionChip");
+  const actionChip = use(preview ? "actionChip_preview" : "actionChip");
   const tools = use(`floatingTools_${timelineOpen}`);
   const canvasBottom = timelineOpen ? 960 - timelineSize.height : 960;
-  const children = [
+  const previewBar = use("previewBar");
+  const narrow = use("artboardNarrow");
+  // プレビュー中は編集しないので、選択枠と作成ツールを出さない。
+  const children = preview ? [
+    at(text(`Desktop / Selected work · ${previewWidth} px`, 240, { size: 11, tone: 5 }), centerOf(narrow.width), 104 - 24),
+    at(narrow, centerOf(narrow.width), 104),
+    at(fileChip, canvasLeft + overlayInset, overlayInset),
+    at(actionChip, canvasRight - overlayInset - actionChip.width, overlayInset),
+    at(previewBar, centerOf(previewBar.width), overlayInset),
+  ] : [
     ...canvasArea(centerOf(780), (canvasBottom - 460) / 2),
     at(fileChip, canvasLeft + overlayInset, overlayInset),
     at(actionChip, canvasRight - overlayInset - actionChip.width, overlayInset),
@@ -502,6 +526,7 @@ const screens = [
   editor("screen_assets", "A / アセットを開いた状態", 4, { panelsOpen: true, assetsOpen: true }),
   editor("screen_dialog", "A / 外部変更のダイアログを開いた状態", 5, { panelsOpen: true, unsaved: true, dialogRef: "dialog_external" }),
   editor("screen_toast", "A / エラーを表示した状態", 6, { panelsOpen: true, toast: true }),
+  editor("screen_preview", "A / 幅を切り換えてプレビューした状態", 7, { panelsOpen: false, preview: true }),
 ];
 const sheetColumns = [...Object.keys(inspectorKinds).map((kind) => ({ title: inspectorTitles[kind], node: column("Inspector panel", 280, [use(`inspector_${kind}`)], { pad: 16, fill: 0, radius: 12 }) })),
   { title: "⋯ メニュー", node: use("moreMenu") }, { title: "アセットの色の ⋯ メニュー", node: use("colorMenu") }];

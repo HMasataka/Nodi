@@ -22,7 +22,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_797",
+          "id": "ui_829",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -43,7 +43,7 @@
           }
         },
         {
-          "id": "ui_798",
+          "id": "ui_830",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -54,7 +54,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_799",
+          "id": "ui_831",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -73,7 +73,7 @@
           }
         },
         {
-          "id": "ui_800",
+          "id": "ui_832",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -95,7 +95,7 @@
           }
         },
         {
-          "id": "ui_801",
+          "id": "ui_833",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -117,7 +117,7 @@
           }
         },
         {
-          "id": "ui_802",
+          "id": "ui_834",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -139,7 +139,7 @@
           }
         },
         {
-          "id": "ui_803",
+          "id": "ui_835",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -161,7 +161,7 @@
           }
         },
         {
-          "id": "ui_796",
+          "id": "ui_828",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -187,7 +187,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_795",
+              "id": "ui_827",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -210,7 +210,7 @@
           ]
         },
         {
-          "id": "ui_792",
+          "id": "ui_822",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -221,7 +221,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_793",
+          "id": "ui_823",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -232,7 +232,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_794",
+          "id": "ui_824",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -243,7 +243,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_804",
+          "id": "ui_836",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -254,7 +254,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_805",
+          "id": "ui_837",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -287,7 +287,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_812",
+          "id": "ui_846",
           "name": "Desktop / Selected work",
           "x": 330,
           "y": 226,
@@ -308,7 +308,7 @@
           }
         },
         {
-          "id": "ui_813",
+          "id": "ui_847",
           "name": "Canvas / Selected work",
           "x": 330,
           "y": 250,
@@ -319,7 +319,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_814",
+          "id": "ui_848",
           "name": "Selection outline",
           "x": 362,
           "y": 354,
@@ -338,7 +338,7 @@
           }
         },
         {
-          "id": "ui_815",
+          "id": "ui_849",
           "name": "Handle",
           "x": 358,
           "y": 350,
@@ -360,7 +360,7 @@
           }
         },
         {
-          "id": "ui_816",
+          "id": "ui_850",
           "name": "Handle",
           "x": 658,
           "y": 350,
@@ -382,7 +382,7 @@
           }
         },
         {
-          "id": "ui_817",
+          "id": "ui_851",
           "name": "Handle",
           "x": 358,
           "y": 658,
@@ -404,7 +404,7 @@
           }
         },
         {
-          "id": "ui_818",
+          "id": "ui_852",
           "name": "Handle",
           "x": 658,
           "y": 658,
@@ -426,7 +426,7 @@
           }
         },
         {
-          "id": "ui_811",
+          "id": "ui_845",
           "name": "Size label",
           "x": 476,
           "y": 670,
@@ -452,7 +452,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_810",
+              "id": "ui_844",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -475,7 +475,7 @@
           ]
         },
         {
-          "id": "ui_807",
+          "id": "ui_839",
           "name": "Canvas overlay / File",
           "x": 12,
           "y": 12,
@@ -486,7 +486,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_808",
+          "id": "ui_840",
           "name": "Canvas overlay / Actions",
           "x": 1300,
           "y": 12,
@@ -497,7 +497,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_809",
+          "id": "ui_841",
           "name": "Canvas overlay / Tools",
           "x": 571.5,
           "y": 908,
@@ -530,7 +530,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_825",
+          "id": "ui_861",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 112,
@@ -551,7 +551,7 @@
           }
         },
         {
-          "id": "ui_826",
+          "id": "ui_862",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 136,
@@ -562,7 +562,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_827",
+          "id": "ui_863",
           "name": "Selection outline",
           "x": 342,
           "y": 240,
@@ -581,7 +581,7 @@
           }
         },
         {
-          "id": "ui_828",
+          "id": "ui_864",
           "name": "Handle",
           "x": 338,
           "y": 236,
@@ -603,7 +603,7 @@
           }
         },
         {
-          "id": "ui_829",
+          "id": "ui_865",
           "name": "Handle",
           "x": 638,
           "y": 236,
@@ -625,7 +625,7 @@
           }
         },
         {
-          "id": "ui_830",
+          "id": "ui_866",
           "name": "Handle",
           "x": 338,
           "y": 544,
@@ -647,7 +647,7 @@
           }
         },
         {
-          "id": "ui_831",
+          "id": "ui_867",
           "name": "Handle",
           "x": 638,
           "y": 544,
@@ -669,7 +669,7 @@
           }
         },
         {
-          "id": "ui_824",
+          "id": "ui_860",
           "name": "Size label",
           "x": 456,
           "y": 556,
@@ -695,7 +695,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_823",
+              "id": "ui_859",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -718,7 +718,7 @@
           ]
         },
         {
-          "id": "ui_820",
+          "id": "ui_854",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -729,7 +729,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_821",
+          "id": "ui_855",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -740,7 +740,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_822",
+          "id": "ui_856",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 680,
@@ -751,7 +751,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_832",
+          "id": "ui_868",
           "name": "Timeline / Fade in",
           "x": 240,
           "y": 732,
@@ -762,7 +762,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_833",
+          "id": "ui_869",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -773,7 +773,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_834",
+          "id": "ui_870",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -806,7 +806,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_841",
+          "id": "ui_879",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -827,7 +827,7 @@
           }
         },
         {
-          "id": "ui_842",
+          "id": "ui_880",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -838,7 +838,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_843",
+          "id": "ui_881",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -857,7 +857,7 @@
           }
         },
         {
-          "id": "ui_844",
+          "id": "ui_882",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -879,7 +879,7 @@
           }
         },
         {
-          "id": "ui_845",
+          "id": "ui_883",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -901,7 +901,7 @@
           }
         },
         {
-          "id": "ui_846",
+          "id": "ui_884",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -923,7 +923,7 @@
           }
         },
         {
-          "id": "ui_847",
+          "id": "ui_885",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -945,7 +945,7 @@
           }
         },
         {
-          "id": "ui_840",
+          "id": "ui_878",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -971,7 +971,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_839",
+              "id": "ui_877",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -994,7 +994,7 @@
           ]
         },
         {
-          "id": "ui_836",
+          "id": "ui_872",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1005,7 +1005,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_837",
+          "id": "ui_873",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1016,7 +1016,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_838",
+          "id": "ui_874",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1027,7 +1027,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_848",
+          "id": "ui_886",
           "name": "Canvas overlay / File menu",
           "x": 252,
           "y": 60,
@@ -1038,7 +1038,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_849",
+          "id": "ui_887",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1049,7 +1049,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_850",
+          "id": "ui_888",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1082,7 +1082,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_857",
+          "id": "ui_897",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -1103,7 +1103,7 @@
           }
         },
         {
-          "id": "ui_858",
+          "id": "ui_898",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -1114,7 +1114,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_859",
+          "id": "ui_899",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -1133,7 +1133,7 @@
           }
         },
         {
-          "id": "ui_860",
+          "id": "ui_900",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -1155,7 +1155,7 @@
           }
         },
         {
-          "id": "ui_861",
+          "id": "ui_901",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -1177,7 +1177,7 @@
           }
         },
         {
-          "id": "ui_862",
+          "id": "ui_902",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -1199,7 +1199,7 @@
           }
         },
         {
-          "id": "ui_863",
+          "id": "ui_903",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -1221,7 +1221,7 @@
           }
         },
         {
-          "id": "ui_856",
+          "id": "ui_896",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -1247,7 +1247,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_855",
+              "id": "ui_895",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -1270,7 +1270,7 @@
           ]
         },
         {
-          "id": "ui_852",
+          "id": "ui_890",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1281,7 +1281,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_853",
+          "id": "ui_891",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1292,7 +1292,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_854",
+          "id": "ui_892",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1303,7 +1303,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_864",
+          "id": "ui_904",
           "name": "Shell / Assets panel",
           "x": 0,
           "y": 0,
@@ -1314,7 +1314,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_865",
+          "id": "ui_905",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1325,7 +1325,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_866",
+          "id": "ui_906",
           "name": "Assets / Component menu",
           "x": 244,
           "y": 80,
@@ -1358,7 +1358,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_873",
+          "id": "ui_915",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -1379,7 +1379,7 @@
           }
         },
         {
-          "id": "ui_874",
+          "id": "ui_916",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -1390,7 +1390,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_875",
+          "id": "ui_917",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -1409,7 +1409,7 @@
           }
         },
         {
-          "id": "ui_876",
+          "id": "ui_918",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -1431,7 +1431,7 @@
           }
         },
         {
-          "id": "ui_877",
+          "id": "ui_919",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -1453,7 +1453,7 @@
           }
         },
         {
-          "id": "ui_878",
+          "id": "ui_920",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -1475,7 +1475,7 @@
           }
         },
         {
-          "id": "ui_879",
+          "id": "ui_921",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -1497,7 +1497,7 @@
           }
         },
         {
-          "id": "ui_872",
+          "id": "ui_914",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -1523,7 +1523,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_871",
+              "id": "ui_913",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -1546,7 +1546,7 @@
           ]
         },
         {
-          "id": "ui_868",
+          "id": "ui_908",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1557,7 +1557,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_869",
+          "id": "ui_909",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1568,7 +1568,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_870",
+          "id": "ui_910",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1579,7 +1579,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_880",
+          "id": "ui_922",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1590,7 +1590,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_881",
+          "id": "ui_923",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1601,7 +1601,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_883",
+          "id": "ui_925",
           "name": "Scrim",
           "x": 0,
           "y": 0,
@@ -1617,7 +1617,7 @@
           "opacity": 0.24
         },
         {
-          "id": "ui_882",
+          "id": "ui_924",
           "name": "Dialog / ファイルが外部で更新されました",
           "x": 520,
           "y": 384,
@@ -1650,7 +1650,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_890",
+          "id": "ui_934",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -1671,7 +1671,7 @@
           }
         },
         {
-          "id": "ui_891",
+          "id": "ui_935",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -1682,7 +1682,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_892",
+          "id": "ui_936",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -1701,7 +1701,7 @@
           }
         },
         {
-          "id": "ui_893",
+          "id": "ui_937",
           "name": "Handle",
           "x": 338,
           "y": 350,
@@ -1723,7 +1723,7 @@
           }
         },
         {
-          "id": "ui_894",
+          "id": "ui_938",
           "name": "Handle",
           "x": 638,
           "y": 350,
@@ -1745,7 +1745,7 @@
           }
         },
         {
-          "id": "ui_895",
+          "id": "ui_939",
           "name": "Handle",
           "x": 338,
           "y": 658,
@@ -1767,7 +1767,7 @@
           }
         },
         {
-          "id": "ui_896",
+          "id": "ui_940",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -1789,7 +1789,7 @@
           }
         },
         {
-          "id": "ui_889",
+          "id": "ui_933",
           "name": "Size label",
           "x": 456,
           "y": 670,
@@ -1815,7 +1815,7 @@
           "justifyContent": "center",
           "children": [
             {
-              "id": "ui_888",
+              "id": "ui_932",
               "name": "300 × 308",
               "x": 0,
               "y": 0,
@@ -1838,7 +1838,7 @@
           ]
         },
         {
-          "id": "ui_885",
+          "id": "ui_927",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1849,7 +1849,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_886",
+          "id": "ui_928",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1860,7 +1860,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_887",
+          "id": "ui_929",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1871,7 +1871,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_897",
+          "id": "ui_941",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1882,7 +1882,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_898",
+          "id": "ui_942",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1893,7 +1893,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_899",
+          "id": "ui_943",
           "name": "Canvas overlay / Toast",
           "x": 868,
           "y": 888,
@@ -1901,6 +1901,93 @@
           "height": 60,
           "type": "instance",
           "componentRef": "toast",
+          "overrides": {}
+        }
+      ]
+    },
+    {
+      "id": "screen_preview",
+      "name": "A / 幅を切り換えてプレビューした状態",
+      "x": 1600,
+      "y": 3200,
+      "width": 1440,
+      "height": 960,
+      "type": "frame",
+      "style": {
+        "fill": {
+          "type": "palette",
+          "id": "gray_2"
+        }
+      },
+      "layoutMode": "none",
+      "paddingRef": "space_0",
+      "gapRef": "space_0",
+      "alignItems": "start",
+      "justifyContent": "start",
+      "children": [
+        {
+          "id": "ui_950",
+          "name": "Desktop / Selected work · 390 px",
+          "x": 525,
+          "y": 80,
+          "width": 240,
+          "height": 20,
+          "type": "text",
+          "content": "Desktop / Selected work · 390 px",
+          "style": {
+            "fontSize": 11,
+            "lineHeight": 1.4545454545454546,
+            "fontFamily": "system",
+            "fontWeight": 400,
+            "color": {
+              "type": "palette",
+              "id": "gray_5"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_949",
+          "name": "Canvas / Selected work at 390",
+          "x": 525,
+          "y": 104,
+          "width": 390,
+          "height": 752,
+          "type": "instance",
+          "componentRef": "artboardNarrow",
+          "overrides": {}
+        },
+        {
+          "id": "ui_945",
+          "name": "Canvas overlay / File",
+          "x": 12,
+          "y": 12,
+          "width": 184,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "fileChip_false_false",
+          "overrides": {}
+        },
+        {
+          "id": "ui_946",
+          "name": "Canvas overlay / Actions",
+          "x": 1300,
+          "y": 12,
+          "width": 128,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "actionChip_preview",
+          "overrides": {}
+        },
+        {
+          "id": "ui_948",
+          "name": "Canvas overlay / Preview widths",
+          "x": 525.5,
+          "y": 12,
+          "width": 389,
+          "height": 40,
+          "type": "instance",
+          "componentRef": "previewBar",
           "overrides": {}
         }
       ]
@@ -1926,7 +2013,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_915",
+          "id": "ui_966",
           "name": "フレーム",
           "x": 40,
           "y": 40,
@@ -1947,7 +2034,7 @@
           }
         },
         {
-          "id": "ui_902",
+          "id": "ui_953",
           "name": "Inspector panel",
           "x": 40,
           "y": 76,
@@ -1973,7 +2060,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_901",
+              "id": "ui_952",
               "name": "Inspector / フレーム",
               "x": 0,
               "y": 0,
@@ -1986,7 +2073,7 @@
           ]
         },
         {
-          "id": "ui_916",
+          "id": "ui_967",
           "name": "テキスト",
           "x": 360,
           "y": 40,
@@ -2007,7 +2094,7 @@
           }
         },
         {
-          "id": "ui_904",
+          "id": "ui_955",
           "name": "Inspector panel",
           "x": 360,
           "y": 76,
@@ -2033,7 +2120,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_903",
+              "id": "ui_954",
               "name": "Inspector / テキスト",
               "x": 0,
               "y": 0,
@@ -2046,7 +2133,7 @@
           ]
         },
         {
-          "id": "ui_917",
+          "id": "ui_968",
           "name": "画像",
           "x": 680,
           "y": 40,
@@ -2067,7 +2154,7 @@
           }
         },
         {
-          "id": "ui_906",
+          "id": "ui_957",
           "name": "Inspector panel",
           "x": 680,
           "y": 76,
@@ -2093,7 +2180,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_905",
+              "id": "ui_956",
               "name": "Inspector / 画像",
               "x": 0,
               "y": 0,
@@ -2106,7 +2193,7 @@
           ]
         },
         {
-          "id": "ui_918",
+          "id": "ui_969",
           "name": "矩形と楕円",
           "x": 1000,
           "y": 40,
@@ -2127,7 +2214,7 @@
           }
         },
         {
-          "id": "ui_908",
+          "id": "ui_959",
           "name": "Inspector panel",
           "x": 1000,
           "y": 76,
@@ -2153,7 +2240,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_907",
+              "id": "ui_958",
               "name": "Inspector / 矩形と楕円",
               "x": 0,
               "y": 0,
@@ -2166,7 +2253,7 @@
           ]
         },
         {
-          "id": "ui_919",
+          "id": "ui_970",
           "name": "パス",
           "x": 1320,
           "y": 40,
@@ -2187,7 +2274,7 @@
           }
         },
         {
-          "id": "ui_910",
+          "id": "ui_961",
           "name": "Inspector panel",
           "x": 1320,
           "y": 76,
@@ -2213,7 +2300,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_909",
+              "id": "ui_960",
               "name": "Inspector / パス",
               "x": 0,
               "y": 0,
@@ -2226,7 +2313,7 @@
           ]
         },
         {
-          "id": "ui_920",
+          "id": "ui_971",
           "name": "インスタンス",
           "x": 1640,
           "y": 40,
@@ -2247,7 +2334,7 @@
           }
         },
         {
-          "id": "ui_912",
+          "id": "ui_963",
           "name": "Inspector panel",
           "x": 1640,
           "y": 76,
@@ -2273,7 +2360,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_911",
+              "id": "ui_962",
               "name": "Inspector / インスタンス",
               "x": 0,
               "y": 0,
@@ -2286,7 +2373,7 @@
           ]
         },
         {
-          "id": "ui_921",
+          "id": "ui_972",
           "name": "⋯ メニュー",
           "x": 1960,
           "y": 40,
@@ -2307,7 +2394,7 @@
           }
         },
         {
-          "id": "ui_913",
+          "id": "ui_964",
           "name": "Inspector / More menu",
           "x": 1960,
           "y": 76,
@@ -2318,7 +2405,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_922",
+          "id": "ui_973",
           "name": "アセットの色の ⋯ メニュー",
           "x": 2200,
           "y": 40,
@@ -2339,7 +2426,7 @@
           }
         },
         {
-          "id": "ui_914",
+          "id": "ui_965",
           "name": "Assets / Color menu",
           "x": 2200,
           "y": 76,
@@ -2372,7 +2459,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_929",
+          "id": "ui_980",
           "name": "ファイルが外部で更新されました",
           "x": 40,
           "y": 40,
@@ -2393,7 +2480,7 @@
           }
         },
         {
-          "id": "ui_924",
+          "id": "ui_975",
           "name": "Dialog / ファイルが外部で更新されました",
           "x": 40,
           "y": 76,
@@ -2404,7 +2491,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_930",
+          "id": "ui_981",
           "name": "未保存の変更があります",
           "x": 480,
           "y": 40,
@@ -2425,7 +2512,7 @@
           }
         },
         {
-          "id": "ui_925",
+          "id": "ui_976",
           "name": "Dialog / 未保存の変更があります",
           "x": 480,
           "y": 76,
@@ -2436,7 +2523,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_931",
+          "id": "ui_982",
           "name": "未保存の編集が見つかりました",
           "x": 920,
           "y": 40,
@@ -2457,7 +2544,7 @@
           }
         },
         {
-          "id": "ui_926",
+          "id": "ui_977",
           "name": "Dialog / 未保存の編集が見つかりました",
           "x": 920,
           "y": 76,
@@ -2468,7 +2555,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_932",
+          "id": "ui_983",
           "name": "復元データを読み取れません",
           "x": 1360,
           "y": 40,
@@ -2489,7 +2576,7 @@
           }
         },
         {
-          "id": "ui_927",
+          "id": "ui_978",
           "name": "Dialog / 復元データを読み取れません",
           "x": 1360,
           "y": 76,
@@ -2500,7 +2587,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_933",
+          "id": "ui_984",
           "name": "エラーのトースト",
           "x": 1800,
           "y": 40,
@@ -2521,7 +2608,7 @@
           }
         },
         {
-          "id": "ui_928",
+          "id": "ui_979",
           "name": "Canvas overlay / Toast",
           "x": 1800,
           "y": 76,
@@ -11831,6 +11918,9 @@
                 "type": "palette",
                 "id": "gray_3"
               }
+            },
+            "widthConstraint": {
+              "mode": "fill"
             }
           },
           {
@@ -11852,6 +11942,9 @@
                 "id": "gray_8"
               },
               "textAlign": "left"
+            },
+            "widthConstraint": {
+              "mode": "fill"
             }
           },
           {
@@ -11873,6 +11966,9 @@
                 "id": "gray_5"
               },
               "textAlign": "left"
+            },
+            "widthConstraint": {
+              "mode": "fill"
             }
           }
         ]
@@ -17467,10 +17563,837 @@
       }
     },
     {
+      "id": "icon_preview_8",
+      "name": "Icon / preview",
+      "node": {
+        "id": "ui_694",
+        "name": "preview",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.08,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.3,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.22
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.28
+          },
+          {
+            "kind": "line",
+            "x": 0.92,
+            "y": 0.5
+          },
+          {
+            "kind": "line",
+            "x": 0.7,
+            "y": 0.72
+          },
+          {
+            "kind": "line",
+            "x": 0.5,
+            "y": 0.78
+          },
+          {
+            "kind": "line",
+            "x": 0.3,
+            "y": 0.72
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.6108655439013544,
+            "y": 0.5459220118838107
+          },
+          {
+            "kind": "line",
+            "x": 0.5459220118838107,
+            "y": 0.6108655439013544
+          },
+          {
+            "kind": "line",
+            "x": 0.4540779881161892,
+            "y": 0.6108655439013544
+          },
+          {
+            "kind": "line",
+            "x": 0.3891344560986456,
+            "y": 0.5459220118838107
+          },
+          {
+            "kind": "line",
+            "x": 0.3891344560986456,
+            "y": 0.45407798811618927
+          },
+          {
+            "kind": "line",
+            "x": 0.45407798811618916,
+            "y": 0.3891344560986456
+          },
+          {
+            "kind": "line",
+            "x": 0.5459220118838108,
+            "y": 0.3891344560986456
+          },
+          {
+            "kind": "line",
+            "x": 0.6108655439013544,
+            "y": 0.45407798811618916
+          },
+          {
+            "kind": "close"
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_preview_true",
+      "name": "Control / Icon button / preview",
+      "node": {
+        "id": "ui_696",
+        "name": "preview",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_2"
+          },
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_695",
+            "name": "Icon / preview",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_preview_8",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "actionChip_preview",
+      "name": "Canvas overlay / Actions",
+      "node": {
+        "id": "ui_699",
+        "name": "Actions",
+        "x": 0,
+        "y": 0,
+        "width": 128,
+        "height": 40,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "width": 1
+          },
+          "cornerRadii": {
+            "topLeft": 12,
+            "topRight": 12,
+            "bottomRight": 12,
+            "bottomLeft": 12
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_693",
+            "name": "100%",
+            "x": 0,
+            "y": 0,
+            "width": 48,
+            "height": 20,
+            "type": "text",
+            "content": "100%",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_6"
+              },
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "ui_697",
+            "name": "Control / Icon button / preview",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_preview_true",
+            "overrides": {}
+          },
+          {
+            "id": "ui_698",
+            "name": "Control / Icon button / panelRight",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_panelRight_false",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "segmented_320_390_768_1024_1440_1_248",
+      "name": "Control / Segmented / 320 390 768 1024 1440",
+      "node": {
+        "id": "ui_710",
+        "name": "Segmented",
+        "x": 0,
+        "y": 0,
+        "width": 248,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 8,
+            "topRight": 8,
+            "bottomRight": 8,
+            "bottomLeft": 8
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_701",
+            "name": "320",
+            "x": 0,
+            "y": 0,
+            "width": 44.8,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_700",
+                "name": "320",
+                "x": 0,
+                "y": 0,
+                "width": 36.8,
+                "height": 20,
+                "type": "text",
+                "content": "320",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_703",
+            "name": "390",
+            "x": 0,
+            "y": 0,
+            "width": 44.8,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_702",
+                "name": "390",
+                "x": 0,
+                "y": 0,
+                "width": 36.8,
+                "height": 20,
+                "type": "text",
+                "content": "390",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 600,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_705",
+            "name": "768",
+            "x": 0,
+            "y": 0,
+            "width": 44.8,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_704",
+                "name": "768",
+                "x": 0,
+                "y": 0,
+                "width": 36.8,
+                "height": 20,
+                "type": "text",
+                "content": "768",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_707",
+            "name": "1024",
+            "x": 0,
+            "y": 0,
+            "width": 44.8,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_706",
+                "name": "1024",
+                "x": 0,
+                "y": 0,
+                "width": 36.8,
+                "height": 20,
+                "type": "text",
+                "content": "1024",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ui_709",
+            "name": "1440",
+            "x": 0,
+            "y": 0,
+            "width": 44.8,
+            "height": 24,
+            "type": "frame",
+            "style": {
+              "fill": null,
+              "cornerRadii": {
+                "topLeft": 6,
+                "topRight": 6,
+                "bottomRight": 6,
+                "bottomLeft": 6
+              }
+            },
+            "layoutMode": "horizontal",
+            "paddingRef": "space_0",
+            "gapRef": "space_0",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "children": [
+              {
+                "id": "ui_708",
+                "name": "1440",
+                "x": 0,
+                "y": 0,
+                "width": 36.8,
+                "height": 20,
+                "type": "text",
+                "content": "1440",
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 1.3333333333333333,
+                  "fontFamily": "system",
+                  "fontWeight": 400,
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "field_88_16",
+      "name": "Control / Field",
+      "node": {
+        "id": "ui_714",
+        "name": "Field",
+        "x": 0,
+        "y": 0,
+        "width": 88,
+        "height": 28,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_1"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_712",
+            "name": "X",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 20,
+            "type": "text",
+            "content": "X",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_5"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_713",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 52,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 12,
+              "lineHeight": 1.3333333333333333,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_close_6",
+      "name": "Icon / close",
+      "node": {
+        "id": "ui_717",
+        "name": "close",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.25,
+            "y": 0.25
+          },
+          {
+            "kind": "line",
+            "x": 0.75,
+            "y": 0.75
+          },
+          {
+            "kind": "move",
+            "x": 0.75,
+            "y": 0.25
+          },
+          {
+            "kind": "line",
+            "x": 0.25,
+            "y": 0.75
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_6"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "iconButton_close_false",
+      "name": "Control / Icon button / close",
+      "node": {
+        "id": "ui_719",
+        "name": "close",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 32,
+        "type": "frame",
+        "style": {
+          "fill": null,
+          "cornerRadii": {
+            "topLeft": 6,
+            "topRight": 6,
+            "bottomRight": 6,
+            "bottomLeft": 6
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_8",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_718",
+            "name": "Icon / close",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 16,
+            "type": "instance",
+            "componentRef": "icon_close_6",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "previewBar",
+      "name": "Canvas overlay / Preview widths",
+      "node": {
+        "id": "ui_721",
+        "name": "Preview widths",
+        "x": 0,
+        "y": 0,
+        "width": 389,
+        "height": 40,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          },
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "width": 1
+          },
+          "cornerRadii": {
+            "topLeft": 12,
+            "topRight": 12,
+            "bottomRight": 12,
+            "bottomLeft": 12
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_4",
+        "alignItems": "center",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_711",
+            "name": "Control / Segmented / 320 390 768 1024 1440",
+            "x": 0,
+            "y": 0,
+            "width": 248,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "segmented_320_390_768_1024_1440_1_248",
+            "overrides": {}
+          },
+          {
+            "id": "ui_715",
+            "name": "Control / Field",
+            "x": 0,
+            "y": 0,
+            "width": 88,
+            "height": 28,
+            "type": "instance",
+            "componentRef": "field_88_16",
+            "overrides": {
+              "ui_712": {
+                "content": "幅"
+              },
+              "ui_713": {
+                "content": "390"
+              }
+            }
+          },
+          {
+            "id": "ui_716",
+            "name": "Divider",
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 20,
+            "type": "rectangle",
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "gray_2"
+              }
+            }
+          },
+          {
+            "id": "ui_720",
+            "name": "Control / Icon button / close",
+            "x": 0,
+            "y": 0,
+            "width": 32,
+            "height": 32,
+            "type": "instance",
+            "componentRef": "iconButton_close_false",
+            "overrides": {}
+          }
+        ]
+      }
+    },
+    {
+      "id": "artboardNarrow",
+      "name": "Canvas / Selected work at 390",
+      "node": {
+        "id": "ui_725",
+        "name": "Desktop / Selected work",
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 752,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_0"
+          }
+        },
+        "layoutMode": "vertical",
+        "paddingRef": "space_24",
+        "gapRef": "space_24",
+        "alignItems": "start",
+        "justifyContent": "start",
+        "children": [
+          {
+            "id": "ui_722",
+            "name": "Selected work",
+            "x": 0,
+            "y": 0,
+            "width": 342,
+            "height": 40,
+            "type": "text",
+            "content": "Selected work",
+            "style": {
+              "fontSize": 30,
+              "lineHeight": 1.2,
+              "fontFamily": "system",
+              "fontWeight": 600,
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "textAlign": "left"
+            }
+          },
+          {
+            "id": "ui_723",
+            "name": "Content / Project card",
+            "x": 0,
+            "y": 0,
+            "width": 342,
+            "height": 308,
+            "type": "instance",
+            "componentRef": "projectCard",
+            "overrides": {}
+          },
+          {
+            "id": "ui_724",
+            "name": "Content / Project card",
+            "x": 0,
+            "y": 0,
+            "width": 342,
+            "height": 308,
+            "type": "instance",
+            "componentRef": "projectCard",
+            "overrides": {
+              "ui_447": {
+                "content": "Everyday forms"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "icon_timeline_6",
       "name": "Icon / timeline",
       "node": {
-        "id": "ui_695",
+        "id": "ui_728",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -17525,7 +18448,7 @@
       "id": "iconButton_timeline_false",
       "name": "Control / Icon button / timeline",
       "node": {
-        "id": "ui_697",
+        "id": "ui_730",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -17548,7 +18471,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_696",
+            "id": "ui_729",
             "name": "Icon / timeline",
             "x": 0,
             "y": 0,
@@ -17565,7 +18488,7 @@
       "id": "floatingTools_false",
       "name": "Canvas overlay / Tools",
       "node": {
-        "id": "ui_699",
+        "id": "ui_732",
         "name": "Tools",
         "x": 0,
         "y": 0,
@@ -17598,7 +18521,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_693",
+            "id": "ui_726",
             "name": "Shell / Tools",
             "x": 0,
             "y": 0,
@@ -17609,7 +18532,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_694",
+            "id": "ui_727",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -17624,7 +18547,7 @@
             }
           },
           {
-            "id": "ui_698",
+            "id": "ui_731",
             "name": "Control / Icon button / timeline",
             "x": 0,
             "y": 0,
@@ -17641,7 +18564,7 @@
       "id": "icon_timeline_8",
       "name": "Icon / timeline",
       "node": {
-        "id": "ui_702",
+        "id": "ui_735",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -17696,7 +18619,7 @@
       "id": "iconButton_timeline_true",
       "name": "Control / Icon button / timeline",
       "node": {
-        "id": "ui_704",
+        "id": "ui_737",
         "name": "timeline",
         "x": 0,
         "y": 0,
@@ -17722,7 +18645,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_703",
+            "id": "ui_736",
             "name": "Icon / timeline",
             "x": 0,
             "y": 0,
@@ -17739,7 +18662,7 @@
       "id": "floatingTools_true",
       "name": "Canvas overlay / Tools",
       "node": {
-        "id": "ui_706",
+        "id": "ui_739",
         "name": "Tools",
         "x": 0,
         "y": 0,
@@ -17772,7 +18695,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_700",
+            "id": "ui_733",
             "name": "Shell / Tools",
             "x": 0,
             "y": 0,
@@ -17783,7 +18706,7 @@
             "overrides": {}
           },
           {
-            "id": "ui_701",
+            "id": "ui_734",
             "name": "Divider",
             "x": 0,
             "y": 0,
@@ -17798,7 +18721,7 @@
             }
           },
           {
-            "id": "ui_705",
+            "id": "ui_738",
             "name": "Control / Icon button / timeline",
             "x": 0,
             "y": 0,
@@ -17815,7 +18738,7 @@
       "id": "segmented_Fade in_Hover lift_0_160",
       "name": "Control / Segmented / Fade in Hover lift",
       "node": {
-        "id": "ui_711",
+        "id": "ui_744",
         "name": "Segmented",
         "x": 0,
         "y": 0,
@@ -17841,7 +18764,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_708",
+            "id": "ui_741",
             "name": "Fade in",
             "x": 0,
             "y": 0,
@@ -17867,7 +18790,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_707",
+                "id": "ui_740",
                 "name": "Fade in",
                 "x": 0,
                 "y": 0,
@@ -17890,7 +18813,7 @@
             ]
           },
           {
-            "id": "ui_710",
+            "id": "ui_743",
             "name": "Hover lift",
             "x": 0,
             "y": 0,
@@ -17913,7 +18836,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_709",
+                "id": "ui_742",
                 "name": "Hover lift",
                 "x": 0,
                 "y": 0,
@@ -17942,7 +18865,7 @@
       "id": "icon_trash_6",
       "name": "Icon / trash",
       "node": {
-        "id": "ui_714",
+        "id": "ui_747",
         "name": "trash",
         "x": 0,
         "y": 0,
@@ -18017,7 +18940,7 @@
       "id": "iconButton_trash_false",
       "name": "Control / Icon button / trash",
       "node": {
-        "id": "ui_716",
+        "id": "ui_749",
         "name": "trash",
         "x": 0,
         "y": 0,
@@ -18040,7 +18963,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_715",
+            "id": "ui_748",
             "name": "Icon / trash",
             "x": 0,
             "y": 0,
@@ -18057,7 +18980,7 @@
       "id": "field_132_48",
       "name": "Control / Field",
       "node": {
-        "id": "ui_721",
+        "id": "ui_754",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -18083,7 +19006,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_719",
+            "id": "ui_752",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -18104,7 +19027,7 @@
             }
           },
           {
-            "id": "ui_720",
+            "id": "ui_753",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -18131,7 +19054,7 @@
       "id": "field_104_28",
       "name": "Control / Field",
       "node": {
-        "id": "ui_725",
+        "id": "ui_758",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -18157,7 +19080,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_723",
+            "id": "ui_756",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -18178,7 +19101,7 @@
             }
           },
           {
-            "id": "ui_724",
+            "id": "ui_757",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -18205,7 +19128,7 @@
       "id": "field_96_28",
       "name": "Control / Field",
       "node": {
-        "id": "ui_729",
+        "id": "ui_762",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -18231,7 +19154,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_727",
+            "id": "ui_760",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -18252,7 +19175,7 @@
             }
           },
           {
-            "id": "ui_728",
+            "id": "ui_761",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -18279,7 +19202,7 @@
       "id": "field_108_48",
       "name": "Control / Field",
       "node": {
-        "id": "ui_733",
+        "id": "ui_766",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -18305,7 +19228,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_731",
+            "id": "ui_764",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -18326,7 +19249,7 @@
             }
           },
           {
-            "id": "ui_732",
+            "id": "ui_765",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -18353,7 +19276,7 @@
       "id": "icon_play_6",
       "name": "Icon / play",
       "node": {
-        "id": "ui_736",
+        "id": "ui_769",
         "name": "play",
         "x": 0,
         "y": 0,
@@ -18396,7 +19319,7 @@
       "id": "iconButton_play_false",
       "name": "Control / Icon button / play",
       "node": {
-        "id": "ui_738",
+        "id": "ui_771",
         "name": "play",
         "x": 0,
         "y": 0,
@@ -18419,7 +19342,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_737",
+            "id": "ui_770",
             "name": "Icon / play",
             "x": 0,
             "y": 0,
@@ -18433,95 +19356,10 @@
       }
     },
     {
-      "id": "icon_close_6",
-      "name": "Icon / close",
-      "node": {
-        "id": "ui_741",
-        "name": "close",
-        "x": 0,
-        "y": 0,
-        "width": 16,
-        "height": 16,
-        "type": "path",
-        "commands": [
-          {
-            "kind": "move",
-            "x": 0.25,
-            "y": 0.25
-          },
-          {
-            "kind": "line",
-            "x": 0.75,
-            "y": 0.75
-          },
-          {
-            "kind": "move",
-            "x": 0.75,
-            "y": 0.25
-          },
-          {
-            "kind": "line",
-            "x": 0.25,
-            "y": 0.75
-          }
-        ],
-        "style": {
-          "fill": null,
-          "stroke": {
-            "color": {
-              "type": "palette",
-              "id": "gray_6"
-            },
-            "width": 1.5
-          }
-        }
-      }
-    },
-    {
-      "id": "iconButton_close_false",
-      "name": "Control / Icon button / close",
-      "node": {
-        "id": "ui_743",
-        "name": "close",
-        "x": 0,
-        "y": 0,
-        "width": 32,
-        "height": 32,
-        "type": "frame",
-        "style": {
-          "fill": null,
-          "cornerRadii": {
-            "topLeft": 6,
-            "topRight": 6,
-            "bottomRight": 6,
-            "bottomLeft": 6
-          }
-        },
-        "layoutMode": "horizontal",
-        "paddingRef": "space_8",
-        "gapRef": "space_0",
-        "alignItems": "center",
-        "justifyContent": "center",
-        "children": [
-          {
-            "id": "ui_742",
-            "name": "Icon / close",
-            "x": 0,
-            "y": 0,
-            "width": 16,
-            "height": 16,
-            "type": "instance",
-            "componentRef": "icon_close_6",
-            "overrides": {}
-          }
-        ]
-      }
-    },
-    {
       "id": "field_112_28",
       "name": "Control / Field",
       "node": {
-        "id": "ui_769",
+        "id": "ui_799",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -18547,7 +19385,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_767",
+            "id": "ui_797",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -18568,7 +19406,7 @@
             }
           },
           {
-            "id": "ui_768",
+            "id": "ui_798",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -18595,7 +19433,7 @@
       "id": "field_96_16",
       "name": "Control / Field",
       "node": {
-        "id": "ui_773",
+        "id": "ui_803",
         "name": "Field",
         "x": 0,
         "y": 0,
@@ -18621,7 +19459,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_771",
+            "id": "ui_801",
             "name": "X",
             "x": 0,
             "y": 0,
@@ -18642,7 +19480,7 @@
             }
           },
           {
-            "id": "ui_772",
+            "id": "ui_802",
             "name": "0",
             "x": 0,
             "y": 0,
@@ -18669,7 +19507,7 @@
       "id": "segmented_linear_ease-in_ease-out_ease-in-out_2_344",
       "name": "Control / Segmented / linear ease-in ease-out ease-in-out",
       "node": {
-        "id": "ui_783",
+        "id": "ui_813",
         "name": "Segmented",
         "x": 0,
         "y": 0,
@@ -18695,7 +19533,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_776",
+            "id": "ui_806",
             "name": "linear",
             "x": 0,
             "y": 0,
@@ -18718,7 +19556,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_775",
+                "id": "ui_805",
                 "name": "linear",
                 "x": 0,
                 "y": 0,
@@ -18741,7 +19579,7 @@
             ]
           },
           {
-            "id": "ui_778",
+            "id": "ui_808",
             "name": "ease-in",
             "x": 0,
             "y": 0,
@@ -18764,7 +19602,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_777",
+                "id": "ui_807",
                 "name": "ease-in",
                 "x": 0,
                 "y": 0,
@@ -18787,7 +19625,7 @@
             ]
           },
           {
-            "id": "ui_780",
+            "id": "ui_810",
             "name": "ease-out",
             "x": 0,
             "y": 0,
@@ -18813,7 +19651,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_779",
+                "id": "ui_809",
                 "name": "ease-out",
                 "x": 0,
                 "y": 0,
@@ -18836,7 +19674,7 @@
             ]
           },
           {
-            "id": "ui_782",
+            "id": "ui_812",
             "name": "ease-in-out",
             "x": 0,
             "y": 0,
@@ -18859,7 +19697,7 @@
             "justifyContent": "center",
             "children": [
               {
-                "id": "ui_781",
+                "id": "ui_811",
                 "name": "ease-in-out",
                 "x": 0,
                 "y": 0,
@@ -18888,7 +19726,7 @@
       "id": "icon_keyframeAdd_6",
       "name": "Icon / keyframeAdd",
       "node": {
-        "id": "ui_785",
+        "id": "ui_815",
         "name": "keyframeAdd",
         "x": 0,
         "y": 0,
@@ -18956,7 +19794,7 @@
       "id": "iconButton_keyframeAdd_false",
       "name": "Control / Icon button / keyframeAdd",
       "node": {
-        "id": "ui_787",
+        "id": "ui_817",
         "name": "keyframeAdd",
         "x": 0,
         "y": 0,
@@ -18979,7 +19817,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_786",
+            "id": "ui_816",
             "name": "Icon / keyframeAdd",
             "x": 0,
             "y": 0,
@@ -18996,7 +19834,7 @@
       "id": "timeline",
       "name": "Timeline / Fade in",
       "node": {
-        "id": "ui_791",
+        "id": "ui_821",
         "name": "Timeline",
         "x": 0,
         "y": 0,
@@ -19025,7 +19863,7 @@
         "justifyContent": "start",
         "children": [
           {
-            "id": "ui_746",
+            "id": "ui_776",
             "name": "Timeline header",
             "x": 0,
             "y": 0,
@@ -19051,7 +19889,7 @@
             "justifyContent": "space-between",
             "children": [
               {
-                "id": "ui_735",
+                "id": "ui_768",
                 "name": "Animation settings",
                 "x": 0,
                 "y": 0,
@@ -19068,7 +19906,7 @@
                 "justifyContent": "start",
                 "children": [
                   {
-                    "id": "ui_712",
+                    "id": "ui_745",
                     "name": "Control / Segmented / Fade in Hover lift",
                     "x": 0,
                     "y": 0,
@@ -19079,7 +19917,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_713",
+                    "id": "ui_746",
                     "name": "Control / Icon button / plus",
                     "x": 0,
                     "y": 0,
@@ -19090,7 +19928,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_717",
+                    "id": "ui_750",
                     "name": "Control / Icon button / trash",
                     "x": 0,
                     "y": 0,
@@ -19101,7 +19939,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_718",
+                    "id": "ui_751",
                     "name": "Divider",
                     "x": 0,
                     "y": 0,
@@ -19116,7 +19954,7 @@
                     }
                   },
                   {
-                    "id": "ui_722",
+                    "id": "ui_755",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -19125,16 +19963,16 @@
                     "type": "instance",
                     "componentRef": "field_132_48",
                     "overrides": {
-                      "ui_719": {
+                      "ui_752": {
                         "content": "トリガー"
                       },
-                      "ui_720": {
+                      "ui_753": {
                         "content": "読み込み"
                       }
                     }
                   },
                   {
-                    "id": "ui_726",
+                    "id": "ui_759",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -19143,16 +19981,16 @@
                     "type": "instance",
                     "componentRef": "field_104_28",
                     "overrides": {
-                      "ui_723": {
+                      "ui_756": {
                         "content": "長さ"
                       },
-                      "ui_724": {
+                      "ui_757": {
                         "content": "800 ms"
                       }
                     }
                   },
                   {
-                    "id": "ui_730",
+                    "id": "ui_763",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -19161,16 +19999,16 @@
                     "type": "instance",
                     "componentRef": "field_96_28",
                     "overrides": {
-                      "ui_727": {
+                      "ui_760": {
                         "content": "遅延"
                       },
-                      "ui_728": {
+                      "ui_761": {
                         "content": "0 ms"
                       }
                     }
                   },
                   {
-                    "id": "ui_734",
+                    "id": "ui_767",
                     "name": "Control / Field",
                     "x": 0,
                     "y": 0,
@@ -19179,10 +20017,10 @@
                     "type": "instance",
                     "componentRef": "field_108_48",
                     "overrides": {
-                      "ui_731": {
+                      "ui_764": {
                         "content": "繰り返し"
                       },
-                      "ui_732": {
+                      "ui_765": {
                         "content": "1 回"
                       }
                     }
@@ -19190,7 +20028,7 @@
                 ]
               },
               {
-                "id": "ui_745",
+                "id": "ui_775",
                 "name": "Playback",
                 "x": 0,
                 "y": 0,
@@ -19207,7 +20045,7 @@
                 "justifyContent": "start",
                 "children": [
                   {
-                    "id": "ui_739",
+                    "id": "ui_772",
                     "name": "Control / Icon button / play",
                     "x": 0,
                     "y": 0,
@@ -19218,7 +20056,7 @@
                     "overrides": {}
                   },
                   {
-                    "id": "ui_740",
+                    "id": "ui_773",
                     "name": "320 / 800 ms",
                     "x": 0,
                     "y": 0,
@@ -19239,7 +20077,7 @@
                     }
                   },
                   {
-                    "id": "ui_744",
+                    "id": "ui_774",
                     "name": "Control / Icon button / close",
                     "x": 0,
                     "y": 0,
@@ -19254,7 +20092,7 @@
             ]
           },
           {
-            "id": "ui_747",
+            "id": "ui_777",
             "name": "0",
             "x": 192,
             "y": 52,
@@ -19275,7 +20113,7 @@
             }
           },
           {
-            "id": "ui_748",
+            "id": "ui_778",
             "name": "200",
             "x": 346,
             "y": 52,
@@ -19296,7 +20134,7 @@
             }
           },
           {
-            "id": "ui_749",
+            "id": "ui_779",
             "name": "400",
             "x": 524,
             "y": 52,
@@ -19317,7 +20155,7 @@
             }
           },
           {
-            "id": "ui_750",
+            "id": "ui_780",
             "name": "600",
             "x": 702,
             "y": 52,
@@ -19338,7 +20176,7 @@
             }
           },
           {
-            "id": "ui_751",
+            "id": "ui_781",
             "name": "800 ms",
             "x": 856,
             "y": 52,
@@ -19359,7 +20197,7 @@
             }
           },
           {
-            "id": "ui_752",
+            "id": "ui_782",
             "name": "不透明度",
             "x": 16,
             "y": 82,
@@ -19380,7 +20218,7 @@
             }
           },
           {
-            "id": "ui_753",
+            "id": "ui_783",
             "name": "Track",
             "x": 192,
             "y": 92,
@@ -19395,7 +20233,7 @@
             }
           },
           {
-            "id": "ui_754",
+            "id": "ui_784",
             "name": "Keyframe",
             "x": 187,
             "y": 87,
@@ -19442,7 +20280,7 @@
             }
           },
           {
-            "id": "ui_755",
+            "id": "ui_785",
             "name": "Keyframe / Selected",
             "x": 541,
             "y": 85,
@@ -19489,7 +20327,7 @@
             }
           },
           {
-            "id": "ui_756",
+            "id": "ui_786",
             "name": "Y 位置",
             "x": 16,
             "y": 114,
@@ -19510,7 +20348,7 @@
             }
           },
           {
-            "id": "ui_757",
+            "id": "ui_787",
             "name": "Track",
             "x": 192,
             "y": 124,
@@ -19525,7 +20363,7 @@
             }
           },
           {
-            "id": "ui_758",
+            "id": "ui_788",
             "name": "Keyframe",
             "x": 187,
             "y": 119,
@@ -19572,7 +20410,7 @@
             }
           },
           {
-            "id": "ui_759",
+            "id": "ui_789",
             "name": "Keyframe",
             "x": 899,
             "y": 119,
@@ -19619,7 +20457,7 @@
             }
           },
           {
-            "id": "ui_762",
+            "id": "ui_792",
             "name": "Add track",
             "x": 8,
             "y": 140,
@@ -19636,7 +20474,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_760",
+                "id": "ui_790",
                 "name": "Icon / plus",
                 "x": 0,
                 "y": 0,
@@ -19647,7 +20485,7 @@
                 "overrides": {}
               },
               {
-                "id": "ui_761",
+                "id": "ui_791",
                 "name": "トラックを追加",
                 "x": 0,
                 "y": 0,
@@ -19670,7 +20508,7 @@
             ]
           },
           {
-            "id": "ui_763",
+            "id": "ui_793",
             "name": "Track label divider",
             "x": 176,
             "y": 48,
@@ -19685,7 +20523,7 @@
             }
           },
           {
-            "id": "ui_764",
+            "id": "ui_794",
             "name": "Playhead",
             "x": 476.8,
             "y": 56,
@@ -19700,7 +20538,7 @@
             }
           },
           {
-            "id": "ui_765",
+            "id": "ui_795",
             "name": "Playhead handle",
             "x": 472.8,
             "y": 48,
@@ -19721,7 +20559,7 @@
             }
           },
           {
-            "id": "ui_790",
+            "id": "ui_820",
             "name": "Keyframe settings",
             "x": 0,
             "y": 184,
@@ -19747,7 +20585,7 @@
             "justifyContent": "start",
             "children": [
               {
-                "id": "ui_766",
+                "id": "ui_796",
                 "name": "キーフレーム",
                 "x": 0,
                 "y": 0,
@@ -19768,7 +20606,7 @@
                 }
               },
               {
-                "id": "ui_770",
+                "id": "ui_800",
                 "name": "Control / Field",
                 "x": 0,
                 "y": 0,
@@ -19777,16 +20615,16 @@
                 "type": "instance",
                 "componentRef": "field_112_28",
                 "overrides": {
-                  "ui_767": {
+                  "ui_797": {
                     "content": "時刻"
                   },
-                  "ui_768": {
+                  "ui_798": {
                     "content": "400 ms"
                   }
                 }
               },
               {
-                "id": "ui_774",
+                "id": "ui_804",
                 "name": "Control / Field",
                 "x": 0,
                 "y": 0,
@@ -19795,16 +20633,16 @@
                 "type": "instance",
                 "componentRef": "field_96_16",
                 "overrides": {
-                  "ui_771": {
+                  "ui_801": {
                     "content": "値"
                   },
-                  "ui_772": {
+                  "ui_802": {
                     "content": "100%"
                   }
                 }
               },
               {
-                "id": "ui_784",
+                "id": "ui_814",
                 "name": "Control / Segmented / linear ease-in ease-out ease-in-out",
                 "x": 0,
                 "y": 0,
@@ -19815,7 +20653,7 @@
                 "overrides": {}
               },
               {
-                "id": "ui_788",
+                "id": "ui_818",
                 "name": "Control / Icon button / keyframeAdd",
                 "x": 0,
                 "y": 0,
@@ -19826,7 +20664,7 @@
                 "overrides": {}
               },
               {
-                "id": "ui_789",
+                "id": "ui_819",
                 "name": "Control / Icon button / trash",
                 "x": 0,
                 "y": 0,

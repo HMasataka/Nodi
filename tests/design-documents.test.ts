@@ -7,7 +7,7 @@ import { resolveDocumentInstances } from "../src/document/instances.ts";
 import { resolveDocumentLayout } from "../src/document/layout.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
 
-const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu", "screen_assets", "screen_dialog", "screen_toast"];
+const screenIds = ["screen_panels_open", "screen_panels_closed", "screen_timeline_open", "screen_file_menu", "screen_assets", "screen_dialog", "screen_toast", "screen_preview"];
 
 async function load() {
   const result = parseDocument(await readFile(new URL("../designs/nodi.nodi", import.meta.url), "utf8"));
@@ -35,11 +35,12 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
     assert.ok((usages.get(ref) ?? 0) >= 2, `${ref} が共通化されていません`);
 });
 
-test("メイン画面の案だけを並べ、すべて同じ選択状態を示す", async () => {
+test("メイン画面の案だけを並べ、プレビュー以外はすべて同じ選択状態を示す", async () => {
   const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
   assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector", "sheet_dialogs"]);
   for (const screen of document.children.filter(({ id }) => screenIds.includes(id))) {
     assert.equal(screen.type, "frame");
+    if (screen.id === "screen_preview") continue;
     if (screen.type !== "frame") continue;
     assert.equal(screen.width, 1440);
     assert.equal(screen.height, 960);
@@ -125,6 +126,17 @@ test("エラーのトーストはキャンバスの右下の角に付き、作�
   const tools = screen.children.find(({ name }) => name === "Canvas overlay / Tools")!;
   assert.deepEqual([1160 - toast.x - toast.width, 960 - toast.y - toast.height], [12, 12]);
   assert.ok(tools.x + tools.width <= toast.x || toast.y + toast.height <= tools.y, "作成ツールと重なっています");
+});
+
+test("プレビューは幅の切り換えをキャンバスの上中央に浮かべ、選択中のフレームをその幅で中央に描く", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const screen = document.children.find((child) => child.id === "screen_preview");
+  if (screen?.type !== "frame") assert.fail("screen_preview がありません");
+  const bar = screen.children.find(({ name }) => name === "Canvas overlay / Preview widths")!;
+  const frame = screen.children.find(({ name }) => name === "Canvas / Selected work at 390")!;
+  assert.deepEqual([bar.x, bar.y], [(1440 - bar.width) / 2, 12]);
+  assert.deepEqual([frame.width, frame.x], [390, (1440 - 390) / 2]);
+  assert.ok(!screen.children.some(({ name }) => name === "Canvas overlay / Tools" || name === "Selection outline"), "プレビュー中に編集の表示が残っています");
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {
