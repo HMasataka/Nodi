@@ -28,6 +28,7 @@ import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/co
 import "@/App.css";
 
 import { ActionChip } from "@/pages/editor/components/molecules/ActionChip";
+import { AssetsPanel } from "@/pages/editor/components/organisms/AssetsPanel";
 import { FileChip } from "@/pages/editor/components/molecules/FileChip";
 import { FloatingTools } from "@/pages/editor/components/molecules/FloatingTools";
 import { Segmented } from "@/pages/editor/components/atoms/Segmented";
@@ -48,7 +49,6 @@ function EditorPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [highlightedComponentId, setHighlightedComponentId] = useState<string | null>(null);
   const actions = useEditorActions(session, { playhead: playback.playhead, scrollProgress });
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
@@ -105,12 +105,13 @@ function EditorPage() {
           <Segmented<LeftPanelTab> label="左パネル" value={leftTab} onChange={setLeftTab} options={LEFT_PANEL_TABS} />
         </div>
         {leftTab === "layers"
-          ? <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
-            highlightedComponentId={highlightedComponentId}
-            onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
+          ? <LayersPanel nodes={design.children} selectedId={selectedId} selectedIds={selectedIds}
+            onSelect={actions.selectLayer} onReorder={actions.reorderLayer} />
+          : <AssetsPanel components={design.components} highlightedComponentId={selected?.type === "instance" ? selected.componentRef : null}
             onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
-            onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
-          : <PalettePanel palette={design.palette} {...actions.palette} />}
+            onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove}>
+            <PalettePanel palette={design.palette} {...actions.palette} />
+          </AssetsPanel>}
       </div>}
       <div className="editor-center">
         <div className="canvas-stage">
@@ -148,7 +149,7 @@ function EditorPage() {
         onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}
         componentName={selectedComponentName} componentNode={selectedComponentNode}
         onCreateComponent={actions.components.onCreateFromSelected}
-        onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }}
+        onGoToDefinition={() => { setLeftTab("assets"); if (!panels.layout.left) panels.toggle("left"); }}
         onSetOverride={(childId, patch) => { if (selectedId) actions.components.onSetOverride(selectedId, childId, patch); }}
         onResetOverride={(childId) => { if (selectedId) actions.components.onResetOverride(selectedId, childId); }}
         onDetach={() => actions.components.onDetach()} />}
