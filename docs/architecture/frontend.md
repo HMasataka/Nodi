@@ -43,5 +43,9 @@ MCP の公開ツールとアプリ側の要求検証は `src/agent/contracts.ts`
 ## 色
 
 - 編集画面の UI 色は `src/App.css` の `:root` に定義した CSS カスタムプロパティを使う。ルール内に色のリテラルを書かない。
+- `:root` の色は2層に分ける。
+  - パレットの段：`--white`、`--grey-900`〜`--grey-050`、`--purple-900`〜`--purple-050`、`--red-900`〜`--red-050`。色のリテラルはここにだけ書く。配色は `designs/README.md` の「配色」に合わせ、灰色は Swatches の Grey、主役は Palette 18 の紫、エラーは Palette 18 の補助色 Red (Vivid) を使う。
+  - 用途名：`--ink`、`--line`、`--accent` など。段を `var()` で参照し、半透明は `color-mix()` で作る。ルールは用途名だけを参照し、段を直接参照しない。
+- 紫は選択と主な操作に限って使い、それ以外の面・線・文字は灰色の段から選ぶ。
 - キャンバスと PNG の両方で使う描画色は `src/rendering/colors.ts` に置く。テキストのインラインコード背景など、2つの描画経路で一致させる必要がある色が対象。
 - 文書の既定色（`src/document/types.ts` の `DEFAULT_RECTANGLE_STYLE` など）は保存データの意味を持つため、UI トークンとは分けて扱う。
