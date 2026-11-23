@@ -9,9 +9,10 @@ test("画面の色は :root のトークンだけを使い、未定義・未使�
   const defined = new Set([...root[1].matchAll(/(--[a-z0-9-]+):/g)].map(([, name]) => name));
   const used = new Set([...css.matchAll(/var\((--[a-z0-9-]+)\)/g)].map(([, name]) => name));
   assert.deepEqual([...used].filter((name) => !defined.has(name)).sort(), []);
-  // パレットの段は一揃いで定義するため、未使用の段を許す。用途名のトークンは使われていなければならない。
+  // パレットと寸法の段は一揃いで定義するため、未使用の段を許す。用途名のトークンは使われていなければならない。
   const isStep = (name: string) => /^--(white|grey-\d{3}|purple-\d{3}|red-\d{3})$/.test(name);
-  assert.deepEqual([...defined].filter((name) => !isStep(name) && !used.has(name)).sort(), []);
+  const isScale = (name: string) => /^--(space|radius|font-size|line-height)-\d+$/.test(name);
+  assert.deepEqual([...defined].filter((name) => !isStep(name) && !isScale(name) && !used.has(name)).sort(), []);
 
   // 色のリテラルはパレットの段にだけ書き、用途名のトークンは段を参照する。
   for (const [, name, value] of root[1].matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)) {
@@ -24,4 +25,18 @@ test("画面の色は :root のトークンだけを使い、未定義・未使�
   assert.equal(/(?<![-\w])white(?![-\w])/.test(rules), false, "色名の直接指定が残っています");
   const stepsInRules = [...rules.matchAll(/var\((--[a-z0-9-]+)\)/g)].map(([, name]) => name).filter(isStep);
   assert.deepEqual(stepsInRules, [], "ルールがパレットの段を直接参照しています");
+});
+
+test("余白・角丸・文字サイズ・行高の段がデザインの値で :root にある", async () => {
+  const css = await readFile(new URL("../src/App.css", import.meta.url), "utf8");
+  const root = css.match(/:root \{([\s\S]*?)\n\}/);
+  assert.ok(root);
+  const values = Object.fromEntries([...root[1].matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)].map(([, name, value]) => [name, value]));
+  const px = (n: number) => (n === 0 ? "0" : `${n}px`);
+  for (const n of [0, 4, 8, 12, 16, 20, 24, 32]) assert.equal(values[`--space-${n}`], px(n));
+  for (const n of [4, 6, 8, 12]) assert.equal(values[`--radius-${n}`], px(n));
+  for (const n of [11, 12, 13, 15]) {
+    assert.equal(values[`--font-size-${n}`], px(n));
+    assert.equal(values[`--line-height-${n}`], px(Math.ceil((n + 4) / 4) * 4));
+  }
 });

@@ -6,6 +6,28 @@
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
 
+  /* 寸法の段。designs/README.md の「共通の約束」に合わせる。行高は文字サイズ+4px を4の倍数に切り上げた値 */
+  --space-0: 0;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --font-size-11: 11px;
+  --font-size-12: 12px;
+  --font-size-13: 13px;
+  --font-size-15: 15px;
+  --line-height-11: 16px;
+  --line-height-12: 16px;
+  --line-height-13: 20px;
+  --line-height-15: 20px;
+
   /* パレットの段。Palette 18 の紫、Swatches の Grey と Red (Vivid)（../design/color-palettes.md） */
   --white: #ffffff;
   --grey-900: #222222;
