@@ -54,6 +54,15 @@ export function guideStyle(guide: SnapGuide): CSSProperties {
     : { top: guide.position, left: guide.from, width: guide.to - guide.from };
 }
 
+// 間隔の札の線。垂直のガイドなら上下、水平のガイドなら左右に、隙間の始めから終わりまで引く。
+export function distanceStyle(guide: SnapGuide): CSSProperties {
+  if (!guide.distance) return {};
+  const { from, to, at } = guide.distance;
+  return guide.orientation === "vertical"
+    ? { left: at, top: from, height: to - from }
+    : { top: at, left: from, width: to - from };
+}
+
 function nodeBoxStyle(node: NodeGeometry, resolve: (color: Color) => string): CSSProperties {
   return { left: node.x, top: node.y, width: node.width, height: node.height,
     ...(node.opacity === 1 ? {} : { opacity: node.opacity }),
