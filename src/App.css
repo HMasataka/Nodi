@@ -76,10 +76,8 @@
   --text-secondary: var(--grey-700);
   --text-tertiary: var(--grey-500);
   --text-subtle: var(--grey-400);
-  --text-faint: var(--grey-300);
   --text-panel-index: var(--grey-400);
   --text-hint: var(--grey-400);
-  --text-status: var(--grey-500);
   --text-code: var(--grey-700);
   --text-id: var(--grey-700);
   --text-layer: var(--grey-800);
@@ -96,7 +94,6 @@
   /* 線 */
   --field-border: var(--grey-100);
   --input-border: var(--grey-200);
-  --divider-strong: var(--grey-200);
   --hint-border: var(--grey-300);
   --checkbox-border: var(--grey-400);
   --knob-border: var(--grey-900);
@@ -112,7 +109,6 @@
   --accent-shadow: color-mix(in srgb, var(--purple-500) 13%, transparent);
 
   /* 状態・通知 */
-  --status-ok: var(--grey-500);
   --error-border: var(--red-300);
   --error-surface: var(--red-050);
   --error-ink: var(--red-800);
@@ -146,65 +142,6 @@ button {
   min-width: 650px;
   overflow: hidden;
 }
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 64px;
-  flex: none;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--line);
-  background: var(--panel);
-  overflow-x: auto;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-  flex: none;
-}
-.brand-mark {
-  display: inline-grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  background: var(--ink);
-  color: var(--surface);
-  font-family: Georgia, serif;
-  font-size: 19px;
-  font-style: italic;
-}
-.brand-divider {
-  width: 1px;
-  height: 19px;
-  margin: 0 7px;
-  background: var(--divider-strong);
-}
-.document-title {
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0;
-  display: inline-block;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  vertical-align: middle;
-}
-.topbar-note {
-  margin-left: auto;
-  color: var(--text-faint);
-  font:
-    10px/1.2 ui-monospace,
-    monospace;
-  letter-spacing: 0.13em;
-  white-space: nowrap;
-}
 .add-button {
   flex: none;
   border: 1px solid var(--accent-border);
@@ -227,7 +164,6 @@ button {
 }
 .file-button:hover { border-color: var(--accent); }
 .file-button:disabled { cursor: not-allowed; opacity: .45; }
-.history-controls { display: flex; gap: 6px; }
 .add-button:hover {
   background: var(--accent-hover);
 }
@@ -356,8 +292,6 @@ button {
   white-space: nowrap;
 }
 .file-menu-status { color: var(--text-body); }
-/* 中央の列は狭くなるため、ツールバーの部品を縮めずに横へスクロールさせる。 */
-.topbar > * { flex: none; }
 .sidebar {
   background: var(--panel);
   overflow-y: auto;
@@ -906,9 +840,6 @@ button {
 .canvas-world { position: absolute; width: 100%; height: 100%; transform-origin: top left; pointer-events: none; }
 .canvas-world > :is(.canvas-frame, .canvas-node, .canvas-text, .canvas-image) { pointer-events: auto; }
 .canvas-surface.is-drawing { cursor: crosshair; }
-.drawing-tools { display: flex; gap: 4px; flex: none; }
-.drawing-tools button { border: 1px solid var(--line); border-radius: 5px; padding: 8px; background: var(--surface); color: var(--ink); font-size: 11px; white-space: nowrap; }
-.drawing-tools button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
 .draw-preview { position: absolute; border: 2px dashed var(--accent); border-radius: 2px; background: var(--accent-translucent); pointer-events: none; z-index: 10; }
 .draw-preview.is-ellipse { border-radius: 50%; }
 .pen-preview { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; color: var(--accent); pointer-events: none; z-index: 11; }
@@ -1168,36 +1099,6 @@ button {
 .timeline-keyframe input { width: 64px; }
 .timeline-add { display: flex; }
 
-.statusbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  height: 32px;
-  flex: none;
-  padding: 0 17px;
-  border-top: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--text-status);
-  font:
-    10px ui-monospace,
-    monospace;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.statusbar > span:last-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.status-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: 5px;
-  border-radius: 50%;
-  background: var(--status-ok);
-}
-.status-dot.is-dirty { background: var(--accent); }
 .error-toast {
   position: fixed;
   right: 20px;
@@ -1231,27 +1132,11 @@ button {
 .recovery-actions button { flex: 1; }
 
 @media (max-width: 840px) {
-  .workspace {
-    grid-template-columns: 158px minmax(0, 1fr) 194px;
-  }
-  .topbar-note {
-    display: none;
-  }
   .add-button {
     padding-inline: 10px;
   }
   .file-button {
     padding-inline: 9px;
-  }
-  .topbar {
-    gap: 8px;
-    padding-inline: 12px;
-  }
-  .brand {
-    margin-right: auto;
-  }
-  .document-title {
-    max-width: 90px;
   }
   .panel-heading,
   .properties {

@@ -6,7 +6,8 @@ import { test } from "vitest";
 
 import { CanvasNode } from "../src/pages/editor/components/molecules/CanvasNode/CanvasNode.tsx";
 import { createAgentApi } from "../src/agent/api.ts";
-import { CreationTools } from "../src/pages/editor/components/molecules/CreationTools/CreationTools.tsx";
+import { FileChip } from "../src/pages/editor/components/molecules/FileChip/FileChip.tsx";
+import { FloatingTools } from "../src/pages/editor/components/molecules/FloatingTools/FloatingTools.tsx";
 import { importSvgIcon } from "../src/document/commands/svgImport.ts";
 import { importSvgPaths } from "../src/document/svgPath.ts";
 import { renderFramePng } from "../src/export/framePng.ts";
@@ -90,10 +91,12 @@ test("未対応要素・属性・色・弧を欠けたアイコンにせず拒�
 
 test("取り込みUIが画像取り込みと並存し、PNGは複数パスを背面から描く", async () => {
   const noOp = () => {};
-  const controls = renderToStaticMarkup(<CreationTools onCreate={noOp} onImportImage={async () => {}} onImportSvg={async () => {}}
-    drawTool="select" onDrawToolChange={noOp} />);
-  assert.match(controls, /SVGパスを取り込む/);
-  assert.match(controls, /画像を追加/);
+  const menu = renderToStaticMarkup(<FileChip fileName="画面.nodi" filePath={null} isDirty={false} isBusy={false} canUndo={false} canRedo={false}
+    leftPanelOpen onToggleLeftPanel={noOp} onOpen={noOp} onSave={noOp} onImportSvg={async () => {}} onUndo={noOp} onRedo={noOp} defaultMenuOpen />);
+  assert.match(menu, /SVG パスを取り込む…/);
+  assert.match(menu, /aria-label="編集可能なSVGパスファイル"/);
+  const tools = renderToStaticMarkup(<FloatingTools drawTool="select" onDrawToolChange={noOp} onImportImage={async () => {}} timelineOpen={false} onToggleTimeline={noOp} />);
+  assert.match(tools, /aria-label="画像ファイル"/);
   const icon = success(importSvgPaths(svg('<path d="M10 20 L50 20 L30 40z" fill="#e8b487"/>' +
     '<path d="M20 25 L40 25 L30 35z" fill="none" stroke="#24383a" stroke-width="3"/>'), parse));
   const imported = success(importSvgIcon(document(), { icon, name: "ロゴ", x: 0, y: 0 }));

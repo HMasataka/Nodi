@@ -4,7 +4,7 @@ import { test } from "vitest";
 
 import { addNode } from "../src/document/commands/create.ts";
 import { Canvas } from "../src/pages/editor/components/organisms/Canvas/Canvas.tsx";
-import { DrawingTools } from "../src/pages/editor/components/molecules/DrawingTools/DrawingTools.tsx";
+import { FloatingTools } from "../src/pages/editor/components/molecules/FloatingTools/FloatingTools.tsx";
 import { commit, createHistory, redo, undo } from "../src/document/history.ts";
 import { document, frame, success } from "./support/factories.ts";
 import { extendPen, finishPenInput, penLocalPoint } from "../src/pages/editor/pen.ts";
@@ -51,8 +51,8 @@ test("開路・閉路は一度の作成で保存でき、Undo/Redoできる", ()
 });
 
 test("描画ツールと作画中の線・アンカーのプレビューを表示する", () => {
-  const toolbar = renderToStaticMarkup(<DrawingTools drawTool="path" onDrawToolChange={() => {}} />);
-  assert.match(toolbar, /aria-pressed="true"[^>]*>ペンでパスを描く/);
+  const toolbar = renderToStaticMarkup(<FloatingTools drawTool="path" onDrawToolChange={() => {}} onImportImage={async () => {}} timelineOpen={false} onToggleTimeline={() => {}} />);
+  assert.match(toolbar, /aria-label="ペン" title="ペン" aria-pressed="true"/);
   const noOp = () => {};
   const markup = renderToStaticMarkup(<Canvas design={document(frame())} selectedId={null} zoom={2} onZoom={noOp}
     drawTool="path" drawing={null} pen={{ ...initial, cursor: { x: 60, y: 80 } }}

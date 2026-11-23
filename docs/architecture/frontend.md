@@ -5,16 +5,18 @@
 | 場所 | 責務 |
 | --- | --- |
 | `src/App.tsx` | エディタページの起点 |
-| `src/pages/editor/index.tsx` | ツールバー、レイヤー、キャンバス、プロパティ、状態表示の接続 |
+| `src/pages/editor/index.tsx` | 3列の全高レイアウト（左パネル・キャンバス・右パネル）と、キャンバスに浮かせるチップ・作成ツール・タイムラインの接続 |
 | `src/pages/<page>/components/atoms/` | 単一の入力やアイコン、リサイズハンドル |
 | `src/pages/<page>/components/molecules/` | 入力を組み合わせた編集欄や描画ノード |
 | `src/pages/<page>/components/organisms/` | キャンバス、レイヤー一覧、プロパティなど画面領域 |
 | `src/pages/editor/hooks/useEditorDocument.ts` | ドキュメント・選択・履歴・保存状態、ファイル操作 |
 | `src/pages/editor/creation.ts`・`hooks/useElementCreation.ts` | 要素の作成初期値と作成・画像読み込み操作 |
 | `src/pages/editor/hooks/useEditorActions.ts` | 選択要素の編集・削除・複製・書き出し |
-| `src/pages/editor/components/organisms/EditorToolbar/` | 文書操作と作成・描画ツールの組み立て |
 | `src/pages/editor/components/organisms/Timeline/` | 再生操作とキーフレーム・タイムラインの編集 |
-| `src/pages/editor/components/molecules/CreationTools/`・`DocumentControls/`・`DrawingTools/` | ツールバー内の操作群 |
+| `src/pages/editor/components/molecules/FileChip/` | キャンバス左上のファイルのチップとファイルメニュー（開く・保存・SVG 取り込み・元に戻す・やり直す） |
+| `src/pages/editor/components/molecules/ActionChip/` | キャンバス右上の倍率と右パネルの開閉 |
+| `src/pages/editor/components/molecules/FloatingTools/` | キャンバス下中央の作成ツール（描くツール・画像の取り込み・タイムラインの開閉） |
+| `src/pages/editor/panelLayout.ts`・`hooks/usePanelLayout.ts` | 左右のパネルとタイムラインの開閉状態と列の幅 |
 | `src/pages/editor/components/molecules/ElementAppearance/` | 要素種別ごとの編集欄の切り替え |
 | `src/pages/editor/hooks/useCanvasInteraction.ts` | 要素のドラッグ・範囲選択・描画ツールと Undo / Redo |
 | `src/pages/editor/hooks/useCanvasViewport.ts` | パン・ズーム、Space キー操作、MCP からの表示位置調整 |
