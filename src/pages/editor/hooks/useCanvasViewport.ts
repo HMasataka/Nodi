@@ -9,7 +9,7 @@ import { panScroll } from "@/pages/editor/viewport";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import type { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
-import { cameraScreenGeometry, focusCamera, INITIAL_CAMERA, initialCamera, zoomCamera } from "@/pages/editor/camera.ts";
+import { cameraScreenGeometry, documentBounds, fitCamera, focusCamera, INITIAL_CAMERA, initialCamera, zoomCamera } from "@/pages/editor/camera.ts";
 import type { DragState, PanState } from "@/pages/editor/types";
 
 const SPACE_PAN_EXCLUDED = "input, textarea, [contenteditable], button:not(.canvas-node):not(.canvas-text):not(.canvas-image)";
@@ -70,6 +70,18 @@ export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>,
     if (!viewport) return;
     const rect = viewport.getBoundingClientRect();
     zoomAt(cameraRef.current.zoom * factor, rect.left + viewport.clientWidth / 2, rect.top + viewport.clientHeight / 2);
+  }
+
+  // 画面の中心を保ったまま倍率を変える。
+  function zoomTo(target: number) {
+    zoomBy(target / cameraRef.current.zoom);
+  }
+
+  function fitAll() {
+    const viewport = viewportRef.current;
+    if (!viewport || isInteracting() || !viewport.clientWidth || !viewport.clientHeight) return;
+    const bounds = documentBounds(resolveDocumentLayout(resolveDocumentInstances(designRef.current), { measure: measureNode }));
+    if (bounds) updateCamera(fitCamera(bounds, { width: viewport.clientWidth, height: viewport.clientHeight }));
   }
 
   function focusElement(id: string) {
@@ -137,5 +149,5 @@ export function useCanvasViewport(session: ReturnType<typeof useEditorDocument>,
     if (pan.current?.pointerId === pointerId) pan.current = null;
   }
 
-  return { camera, zoom, zoomBy, viewportRef, pan, spacePressed, startPan, continuePan, finishPan };
+  return { camera, zoom, zoomBy, zoomTo, fitAll, viewportRef, pan, spacePressed, startPan, continuePan, finishPan };
 }

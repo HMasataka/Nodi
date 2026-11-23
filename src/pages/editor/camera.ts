@@ -33,3 +33,23 @@ export function cameraScreenGeometry(bounds: Geometry, camera: CanvasCamera): Ge
   return { x: bounds.x * camera.zoom - camera.scrollLeft, y: bounds.y * camera.zoom - camera.scrollTop,
     width: bounds.width * camera.zoom, height: bounds.height * camera.zoom };
 }
+
+const FIT_MARGIN = 64;
+
+// 最上位の要素をすべて囲む外接枠。要素がないときは null。
+export function documentBounds(document: Document): Geometry | null {
+  const boxes = document.children.map((node) => absoluteGeometry(document, node.id)).filter((box): box is Geometry => !!box);
+  if (boxes.length === 0) return null;
+  const left = Math.min(...boxes.map((box) => box.x));
+  const top = Math.min(...boxes.map((box) => box.y));
+  const right = Math.max(...boxes.map((box) => box.x + box.width));
+  const bottom = Math.max(...boxes.map((box) => box.y + box.height));
+  return { x: left, y: top, width: right - left, height: bottom - top };
+}
+
+// 外接枠が余白付きで画面に収まる倍率で、枠の中心を画面の中心に置く。
+export function fitCamera(bounds: Geometry, size: { width: number; height: number }): CanvasCamera {
+  const zoom = clampZoom(Math.min(Math.max(1, size.width - FIT_MARGIN) / Math.max(1, bounds.width), Math.max(1, size.height - FIT_MARGIN) / Math.max(1, bounds.height)));
+  return { zoom, scrollLeft: (bounds.x + bounds.width / 2) * zoom - size.width / 2,
+    scrollTop: (bounds.y + bounds.height / 2) * zoom - size.height / 2 };
+}
