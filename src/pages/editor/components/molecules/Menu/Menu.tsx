@@ -1,4 +1,4 @@
-import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 export type MenuEntry =
   | { type: "item"; label: string; shortcut?: string; disabled?: boolean; onSelect(): void }
@@ -29,20 +29,30 @@ type MenuProps = {
   trigger(props: MenuTriggerProps): ReactNode;
   align?: "start" | "end";
   defaultOpen?: boolean;
+  // スクロールする領域の外に開くときの位置。開いたボタンを受け取り、画面上の位置を返す。メニューは position: fixed で置く。
+  fixedTo?(anchor: HTMLElement): { top: number; left: number };
 };
 
 // ボタンから開くメニュー。外側のクリック・Esc・項目の選択で閉じ、開いたボタンにフォーカスを戻す。
-export function Menu({ label, entries, trigger, align = "start", defaultOpen = false }: MenuProps) {
+export function Menu({ label, entries, trigger, align = "start", defaultOpen = false, fixedTo }: MenuProps) {
   const id = useId();
   const [open, setOpen] = useState(defaultOpen);
   const anchor = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLButtonElement | null)[]>([]);
+  const [fixedPosition, setFixedPosition] = useState<CSSProperties | null>(null);
   const enabled = entries.flatMap((entry, index) => (entry.type === "item" && !entry.disabled ? [index] : []));
 
   function close(restoreFocus: boolean) {
     setOpen(false);
     if (restoreFocus) anchor.current?.querySelector<HTMLElement>("[aria-haspopup='menu']")?.focus();
   }
+
+  useLayoutEffect(() => {
+    const opener = anchor.current?.querySelector<HTMLElement>("[aria-haspopup='menu']");
+    if (!open || !fixedTo || !opener) { setFixedPosition(null); return; }
+    setFixedPosition({ position: "fixed", ...fixedTo(opener) });
+    // 開いたときの位置で固定する。
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -67,7 +77,7 @@ export function Menu({ label, entries, trigger, align = "start", defaultOpen = f
 
   return <div className="menu-anchor" ref={anchor}>
     {trigger({ "aria-haspopup": "menu", "aria-expanded": open, "aria-controls": id, onClick: () => setOpen((value) => !value) })}
-    {open ? <div id={id} role="menu" aria-label={label} className={`menu menu-${align}`} onKeyDown={onKeyDown}>
+    {open ? <div id={id} role="menu" aria-label={label} className={`menu menu-${align}`} style={fixedPosition ?? undefined} onKeyDown={onKeyDown}>
       {entries.map((entry, index) => {
         if (entry.type === "separator") return <div key={index} role="separator" className="menu-separator" />;
         if (entry.type === "note") return <div key={index} role="presentation" className="menu-note">{entry.content}</div>;
