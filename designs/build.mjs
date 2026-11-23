@@ -98,7 +98,10 @@ const iconPaths = {
   import: [[0.5, 0.12], [0.5, 0.62], null, [0.3, 0.42], [0.5, 0.62], [0.7, 0.42], null, [0.15, 0.62], [0.15, 0.85], [0.85, 0.85], [0.85, 0.62]],
 };
 function icon(kind, tone = 6) {
-  return use(define(`icon_${kind}_${tone}`, `Icon / ${kind}`, () => {
+  return use(define(`icon_${kind}_${tone}`, `Icon / ${kind}`, () => iconPathNode(kind, tone)));
+}
+function iconPathNode(kind, tone) {
+  {
     let move = true;
     const commands = iconPaths[kind].flatMap((point) => {
       if (point === null) { move = true; return []; }
@@ -108,7 +111,7 @@ function icon(kind, tone = 6) {
       return [command];
     });
     return { id: uid(), name: kind, x: 0, y: 0, width: 16, height: 16, type: "path", commands, style: { fill: null, stroke: { color: gray(tone), width: 1.5 } } };
-  }));
+  }
 }
 
 function iconButton(kind, active = false) {
@@ -285,14 +288,21 @@ define("artboard", "Canvas / Selected work", () => frame("Desktop / Selected wor
   at(use("projectCard", { [slot("projectCard", 1)]: { content: "Everyday forms" } }), 364, 104),
 ], { fill: 0 }));
 
+// キャンバスの上の表示は、線を濃いグレーの1px、つまみを白地の8px角、寸法を濃い地の札にそろえる。
+const selectionHandle = (centerX, centerY) => at(rect("Handle", 8, 8, { fill: 0, stroke: 8 }), centerX - 4, centerY - 4);
+function sizeChip(label) {
+  const ref = define("sizeChip", "Canvas / Size label", () =>
+    row("Size label", 72, [text("0 × 0", 64, { size: 11, tone: 0, align: "center" })], { height: 20, pad: 4, justify: "center", fill: 8, radius: 4 }));
+  return use(ref, { [slot(ref, 0)]: { content: label } });
+}
 const selectedCard = { x: 32, y: 104, width: 300, height: 308 };
 function canvasArea(x, y) {
   const left = x + selectedCard.x;
   const top = y + selectedCard.y;
-  const handle = (handleX, handleY) => at(rect("Handle", 8, 8, { fill: 0, stroke: 8 }), handleX - 4, handleY - 4);
+  const handle = selectionHandle;
   const right = left + selectedCard.width;
   const bottom = top + selectedCard.height;
-  const sizeLabel = row("Size label", 72, [text("300 × 308", 64, { size: 11, tone: 0, align: "center" })], { height: 20, pad: 4, justify: "center", fill: 8, radius: 4 });
+  const sizeLabel = sizeChip("300 × 308");
   return [
     at(text("Desktop / Selected work", 240, { size: 11, tone: 5 }), x, y - 24),
     at(use("artboard"), x, y),
@@ -550,6 +560,112 @@ const dialogChildren = dialogColumns.flatMap(({ title, node }) => {
 });
 const dialogSheetHeight = 76 + Math.max(...dialogColumns.map(({ node }) => node.height)) + 40;
 screens.push({ ...frame("Dialog / 種類ごとの文言", dialogX, dialogSheetHeight, dialogChildren, { fill: 2 }), id: "sheet_dialogs", x: 80, y: inspectorSheet.y + inspectorSheet.height + 80 });
+
+// 編集中にキャンバスへ重ねる表示を、場面ごとのタイルに並べる。
+function vectorPath(name, commands, style) {
+  const xs = commands.flatMap((c) => c.kind === "close" ? [] : c.kind === "cubic" ? [c.x1, c.x2, c.x] : [c.x]);
+  const ys = commands.flatMap((c) => c.kind === "close" ? [] : c.kind === "cubic" ? [c.y1, c.y2, c.y] : [c.y]);
+  const [left, top] = [Math.min(...xs), Math.min(...ys)];
+  const [width, height] = [Math.max(Math.max(...xs) - left, 1), Math.max(Math.max(...ys) - top, 1)];
+  const nx = (x) => (x - left) / width;
+  const ny = (y) => (y - top) / height;
+  return { id: uid(), name, x: left, y: top, width, height, type: "path", style,
+    commands: commands.map((c) => c.kind === "close" ? c : c.kind === "cubic"
+      ? { kind: "cubic", x1: nx(c.x1), y1: ny(c.y1), x2: nx(c.x2), y2: ny(c.y2), x: nx(c.x), y: ny(c.y) }
+      : { kind: c.kind, x: nx(c.x), y: ny(c.y) }) };
+}
+const M = (x, y) => ({ kind: "move", x, y });
+const L = (x, y) => ({ kind: "line", x, y });
+const C = (x1, y1, x2, y2, x, y) => ({ kind: "cubic", x1, y1, x2, y2, x, y });
+const line = (name, x1, y1, x2, y2, tone = 8) => vectorPath(name, [M(x1, y1), L(x2, y2)], { fill: null, stroke: { color: gray(tone), width: 1 } });
+const box = (name, x, y, width, height, options) => at(rect(name, width, height, options), x, y);
+const outline = (x, y, width, height) => box("Selection outline", x, y, width, height, { fill: null, stroke: 8 });
+const handlesOf = (x, y, width, height) => [selectionHandle(x, y), selectionHandle(x + width, y), selectionHandle(x, y + height), selectionHandle(x + width, y + height)];
+const chipAt = (label, centerX, top) => at(sizeChip(label), centerX - 36, top);
+// 間隔の札は狭い隙間に収まるよう、寸法の札より細くする。
+function distanceChip(label, centerX, top) {
+  const ref = define("distanceChip", "Canvas / Distance label", () =>
+    row("Distance label", 32, [text("0", 24, { size: 11, tone: 0, align: "center" })], { height: 20, pad: 4, justify: "center", fill: 8, radius: 4 }));
+  return at(use(ref, { [slot(ref, 0)]: { content: label } }), centerX - 16, top);
+}
+const anchor = (centerX, centerY, selected = false) => box(selected ? "Anchor / Selected" : "Anchor", centerX - 4, centerY - 4, 8, 8, { fill: selected ? 8 : 0, stroke: 8 });
+const bezierHandle = (fromX, fromY, toX, toY) => [line("Handle line", fromX, fromY, toX, toY, 6),
+  { id: uid(), name: "Bezier handle", x: toX - 3, y: toY - 3, width: 6, height: 6, type: "ellipse", style: { fill: gray(0), stroke: { color: gray(8), width: 1 } } }];
+const block = (name, x, y, width, height) => box(name, x, y, width, height, { fill: 1, stroke: 3 });
+const hint = (content) => at(text(content, 352, { size: 11, tone: 5 }), 24, 272);
+const tileSize = { width: 400, height: 300 };
+const artboardRect = () => box("Artboard", 24, 24, 352, 240, { fill: 0 });
+
+const canvasTiles = [
+  ["範囲選択", () => [
+    artboardRect(), block("Card A", 56, 56, 96, 72), block("Card B", 184, 56, 96, 72), block("Card C", 56, 160, 96, 72), block("Card D", 184, 160, 96, 72),
+    { ...box("Marquee fill", 40, 44, 264, 96, { fill: 8 }), opacity: 0.06 }, box("Marquee", 40, 44, 264, 96, { fill: null, stroke: 6 }),
+    outline(56, 56, 96, 72), outline(184, 56, 96, 72), hint("ドラッグした範囲に掛かる要素を選ぶ"),
+  ]],
+  ["Shift で加算選択", () => [
+    artboardRect(), block("Card A", 56, 56, 96, 72), block("Card B", 184, 56, 96, 72), block("Card C", 56, 160, 96, 72), block("Card D", 184, 160, 96, 72),
+    outline(56, 56, 96, 72), outline(184, 160, 96, 72), outline(56, 56, 224, 176), ...handlesOf(56, 56, 224, 176), chipAt("224 × 176", 168, 240),
+    hint("個々の要素の枠と、まとめた範囲の枠とつまみを出す"),
+  ]],
+  ["スナップと整列ガイド", () => [
+    artboardRect(), block("Card A", 56, 72, 120, 96), block("Card B", 232, 72, 104, 96),
+    line("Guide", 32, 72, 368, 72), line("Guide", 32, 168, 368, 168), line("Distance", 176, 120, 232, 120),
+    distanceChip("56", 204, 128), outline(232, 72, 104, 96), ...handlesOf(232, 72, 104, 96),
+    hint("そろった辺にガイドを引き、隣との間隔を札で出す"),
+  ]],
+  ["楕円を描いている途中", () => [
+    artboardRect(), { id: uid(), name: "Ellipse", x: 120, y: 64, width: 160, height: 120, type: "ellipse", style: { fill: gray(1), stroke: { color: gray(8), width: 1 } } },
+    outline(120, 64, 160, 120), ...handlesOf(120, 64, 160, 120), chipAt("160 × 120", 200, 196), hint("ドラッグ中は外接する枠と寸法を出す。Shift で正円"),
+  ]],
+  ["ペンで描いている途中", () => [
+    artboardRect(),
+    vectorPath("Path", [M(72, 200), C(96, 120, 136, 96, 176, 104), C(216, 112, 232, 176, 272, 176)], { fill: null, stroke: { color: gray(8), width: 1.5 } }),
+    line("Next segment", 272, 176, 336, 88, 5),
+    anchor(72, 200), anchor(176, 104), ...bezierHandle(272, 176, 232, 176), ...bezierHandle(272, 176, 312, 176), anchor(272, 176, true),
+    hint("クリックで点、ドラッグで曲線。Enter で確定、Esc で取り消し"),
+  ]],
+  ["パスの点の編集", () => [
+    artboardRect(),
+    vectorPath("Path", [M(96, 192), C(80, 120, 144, 64, 200, 72), C(256, 80, 312, 112, 304, 176), C(296, 224, 200, 232, 160, 216), L(96, 192), { kind: "close" }],
+      { fill: gray(1), stroke: { color: gray(8), width: 1.5 } }),
+    anchor(96, 192), ...bezierHandle(200, 72, 144, 64), ...bezierHandle(200, 72, 256, 80), anchor(200, 72, true), anchor(304, 176), anchor(160, 216),
+    hint("選んだ点を黒で示し、その点のハンドルだけを出す"),
+  ]],
+  ["マスク", () => {
+    const tag = (content) => row("Tag", 48, [text(content, 40, { size: 11, tone: 6, align: "center" })], { height: 20, pad: 4, justify: "center", fill: 2, radius: 4 });
+    const maskLayer = (name, kind, depth, label) => {
+      const children = [icon(kind, 5), text(name, depth ? 48 : 64, { tone: 7 })];
+      if (depth) children.unshift(frame("Indent", 12, 1));
+      if (label) children.push(tag(label));
+      return row("Layer row", 152, children, { height: 28, pad: 8, gap: 4, radius: 6 });
+    };
+    return [
+      artboardRect(),
+      at(column("Layers", 168, [maskLayer("Mask", "ellipse", 0, "マスク"), maskLayer("Cover", "image", 1, null), maskLayer("Title", "text", 0, null)], { pad: 8, fill: 1, radius: 8 }), 32, 32),
+      { ...box("Masked out", 208, 48, 152, 200, { fill: 4 }), opacity: 0.16 },
+      { id: uid(), name: "Masked image", x: 216, y: 72, width: 136, height: 152, type: "ellipse", style: { fill: gray(4) } },
+      { id: uid(), name: "Mask outline", x: 216, y: 72, width: 136, height: 152, type: "ellipse", style: { fill: null, stroke: { color: gray(8), width: 1 } } },
+      hint("外側は薄く出し、レイヤーには「マスク」の札を付ける"),
+    ];
+  }],
+  ["画像", () => [
+    artboardRect(), box("Image", 104, 56, 192, 144, { fill: 3, radius: 12 }),
+    at({ ...use(define("icon_image_large", "Icon / image large", () => ({ ...iconPathNode("image", 0), width: 48, height: 48 }))) }, 176, 104),
+    outline(104, 56, 192, 144), ...handlesOf(104, 56, 192, 144), chipAt("192 × 144", 200, 212),
+    hint("取り込んだ画像は角丸で切り抜き、中央に置いて選ぶ"),
+  ]],
+];
+let canvasColumn = 0;
+const canvasSheetChildren = canvasTiles.flatMap(([title, build], index) => {
+  const x = 40 + (index % 4) * (tileSize.width + 40);
+  const y = 40 + Math.floor(index / 4) * (tileSize.height + 76);
+  canvasColumn = Math.max(canvasColumn, index % 4);
+  return [at(text(title, tileSize.width, { size: 13, tone: 8, weight: 600 }), x, y),
+    at(frame(title, tileSize.width, tileSize.height, build(), { fill: 2, stroke: 3, radius: 12 }), x, y + 36)];
+});
+const lastSheet = screens.at(-1);
+screens.push({ ...frame("Canvas / 編集中の表示", 40 + 4 * (tileSize.width + 40), 40 + 2 * (tileSize.height + 76), canvasSheetChildren, { fill: 2 }),
+  id: "sheet_canvas", x: 80, y: lastSheet.y + lastSheet.height + 80 });
 
 for (const ref of ["layersPanel", "assetsPanel", "inspectorPanel"]) components.find((item) => item.id === ref).node.height = 960;
 

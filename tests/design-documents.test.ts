@@ -37,7 +37,7 @@ test("デザイン文書の共通定義・参照・上書きを保存して再�
 
 test("メイン画面の案だけを並べ、プレビュー以外はすべて同じ選択状態を示す", async () => {
   const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
-  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector", "sheet_dialogs"]);
+  assert.deepEqual(document.children.map(({ id }) => id), [...screenIds, "sheet_inspector", "sheet_dialogs", "sheet_canvas"]);
   for (const screen of document.children.filter(({ id }) => screenIds.includes(id))) {
     assert.equal(screen.type, "frame");
     if (screen.id === "screen_preview") continue;
@@ -137,6 +137,27 @@ test("プレビューは幅の切り換えをキャンバスの上中央に浮�
   assert.deepEqual([bar.x, bar.y], [(1440 - bar.width) / 2, 12]);
   assert.deepEqual([frame.width, frame.x], [390, (1440 - 390) / 2]);
   assert.ok(!screen.children.some(({ name }) => name === "Canvas overlay / Tools" || name === "Selection outline"), "プレビュー中に編集の表示が残っています");
+});
+
+test("キャンバスの上の表示は、つまみ・点・ガイドの大きさと色を場面によらずそろえる", async () => {
+  const document = resolveDocumentLayout(resolveDocumentInstances(await load()));
+  const sheet = document.children.find((child) => child.id === "sheet_canvas");
+  if (sheet?.type !== "frame") assert.fail("sheet_canvas がありません");
+  const tiles = sheet.children.filter((child) => child.type === "frame").map(({ name }) => name);
+  assert.deepEqual(tiles, ["範囲選択", "Shift で加算選択", "スナップと整列ガイド", "楕円を描いている途中", "ペンで描いている途中", "パスの点の編集", "マスク", "画像"]);
+  const nodes: DocumentNode[] = [];
+  const visit = (node: DocumentNode) => { nodes.push(node); if (node.type === "frame") node.children.forEach(visit); };
+  visit(sheet);
+  for (const screen of document.children.filter(({ id }) => screenIds.includes(id))) visit(screen);
+  const strokeTone = (node: DocumentNode) => "style" in node && node.style && "stroke" in node.style ? node.style.stroke?.color : undefined;
+  for (const node of nodes) {
+    if (node.name === "Handle" || node.name.startsWith("Anchor")) {
+      assert.deepEqual([node.width, node.height], [8, 8], node.name);
+      assert.deepEqual(strokeTone(node), { type: "palette", id: "gray_8" }, node.name);
+    }
+    if (node.name === "Selection outline" || node.name === "Guide") assert.deepEqual(strokeTone(node), { type: "palette", id: "gray_8" }, node.name);
+  }
+  assert.ok(nodes.some(({ name }) => name === "Guide") && nodes.some(({ name }) => name === "Anchor / Selected"));
 });
 
 test("タイムラインはパネルの間のキャンバス下端を占め、作成ツールはその上に付く", async () => {

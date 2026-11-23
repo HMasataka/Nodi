@@ -22,7 +22,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_829",
+          "id": "ui_830",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -43,7 +43,7 @@
           }
         },
         {
-          "id": "ui_830",
+          "id": "ui_831",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -54,7 +54,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_831",
+          "id": "ui_832",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -73,31 +73,9 @@
           }
         },
         {
-          "id": "ui_832",
-          "name": "Handle",
-          "x": 338,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
           "id": "ui_833",
           "name": "Handle",
-          "x": 638,
+          "x": 338,
           "y": 350,
           "width": 8,
           "height": 8,
@@ -119,6 +97,28 @@
         {
           "id": "ui_834",
           "name": "Handle",
+          "x": 638,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_835",
+          "name": "Handle",
           "x": 338,
           "y": 658,
           "width": 8,
@@ -139,7 +139,7 @@
           }
         },
         {
-          "id": "ui_835",
+          "id": "ui_836",
           "name": "Handle",
           "x": 638,
           "y": 658,
@@ -161,53 +161,19 @@
           }
         },
         {
-          "id": "ui_828",
-          "name": "Size label",
+          "id": "ui_829",
+          "name": "Canvas / Size label",
           "x": 456,
           "y": 670,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_827",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
           "id": "ui_822",
@@ -243,7 +209,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_836",
+          "id": "ui_837",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -254,7 +220,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_837",
+          "id": "ui_838",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -427,55 +393,21 @@
         },
         {
           "id": "ui_845",
-          "name": "Size label",
+          "name": "Canvas / Size label",
           "x": 476,
           "y": 670,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_844",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
-          "id": "ui_839",
+          "id": "ui_840",
           "name": "Canvas overlay / File",
           "x": 12,
           "y": 12,
@@ -486,7 +418,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_840",
+          "id": "ui_841",
           "name": "Canvas overlay / Actions",
           "x": 1300,
           "y": 12,
@@ -497,7 +429,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_841",
+          "id": "ui_842",
           "name": "Canvas overlay / Tools",
           "x": 571.5,
           "y": 908,
@@ -530,7 +462,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_861",
+          "id": "ui_860",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 112,
@@ -551,7 +483,7 @@
           }
         },
         {
-          "id": "ui_862",
+          "id": "ui_861",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 136,
@@ -562,7 +494,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_863",
+          "id": "ui_862",
           "name": "Selection outline",
           "x": 342,
           "y": 240,
@@ -581,9 +513,31 @@
           }
         },
         {
-          "id": "ui_864",
+          "id": "ui_863",
           "name": "Handle",
           "x": 338,
+          "y": 236,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_864",
+          "name": "Handle",
+          "x": 638,
           "y": 236,
           "width": 8,
           "height": 8,
@@ -605,28 +559,6 @@
         {
           "id": "ui_865",
           "name": "Handle",
-          "x": 638,
-          "y": 236,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_866",
-          "name": "Handle",
           "x": 338,
           "y": 544,
           "width": 8,
@@ -647,7 +579,7 @@
           }
         },
         {
-          "id": "ui_867",
+          "id": "ui_866",
           "name": "Handle",
           "x": 638,
           "y": 544,
@@ -669,53 +601,19 @@
           }
         },
         {
-          "id": "ui_860",
-          "name": "Size label",
+          "id": "ui_859",
+          "name": "Canvas / Size label",
           "x": 456,
           "y": 556,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_859",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
           "id": "ui_854",
@@ -751,7 +649,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_868",
+          "id": "ui_867",
           "name": "Timeline / Fade in",
           "x": 240,
           "y": 732,
@@ -762,7 +660,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_869",
+          "id": "ui_868",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -773,7 +671,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_870",
+          "id": "ui_869",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -806,7 +704,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_879",
+          "id": "ui_877",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -827,7 +725,7 @@
           }
         },
         {
-          "id": "ui_880",
+          "id": "ui_878",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -838,7 +736,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_881",
+          "id": "ui_879",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -857,10 +755,54 @@
           }
         },
         {
-          "id": "ui_882",
+          "id": "ui_880",
           "name": "Handle",
           "x": 338,
           "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_881",
+          "name": "Handle",
+          "x": 638,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_882",
+          "name": "Handle",
+          "x": 338,
+          "y": 658,
           "width": 8,
           "height": 8,
           "type": "rectangle",
@@ -882,28 +824,6 @@
           "id": "ui_883",
           "name": "Handle",
           "x": 638,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_884",
-          "name": "Handle",
-          "x": 338,
           "y": 658,
           "width": 8,
           "height": 8,
@@ -923,78 +843,22 @@
           }
         },
         {
-          "id": "ui_885",
-          "name": "Handle",
-          "x": 638,
-          "y": 658,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_878",
-          "name": "Size label",
+          "id": "ui_876",
+          "name": "Canvas / Size label",
           "x": 456,
           "y": 670,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_877",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
-          "id": "ui_872",
+          "id": "ui_871",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1005,7 +869,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_873",
+          "id": "ui_872",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1016,7 +880,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_874",
+          "id": "ui_873",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1027,7 +891,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_886",
+          "id": "ui_884",
           "name": "Canvas overlay / File menu",
           "x": 252,
           "y": 60,
@@ -1038,7 +902,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_887",
+          "id": "ui_885",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1049,7 +913,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_888",
+          "id": "ui_886",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1082,7 +946,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_897",
+          "id": "ui_894",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -1103,7 +967,7 @@
           }
         },
         {
-          "id": "ui_898",
+          "id": "ui_895",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -1114,7 +978,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_899",
+          "id": "ui_896",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -1133,74 +997,74 @@
           }
         },
         {
+          "id": "ui_897",
+          "name": "Handle",
+          "x": 338,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_898",
+          "name": "Handle",
+          "x": 638,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_899",
+          "name": "Handle",
+          "x": 338,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
           "id": "ui_900",
           "name": "Handle",
-          "x": 338,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_901",
-          "name": "Handle",
-          "x": 638,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_902",
-          "name": "Handle",
-          "x": 338,
-          "y": 658,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_903",
-          "name": "Handle",
           "x": 638,
           "y": 658,
           "width": 8,
@@ -1221,56 +1085,22 @@
           }
         },
         {
-          "id": "ui_896",
-          "name": "Size label",
+          "id": "ui_893",
+          "name": "Canvas / Size label",
           "x": 456,
           "y": 670,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_895",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
-          "id": "ui_890",
+          "id": "ui_888",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1281,7 +1111,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_891",
+          "id": "ui_889",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1292,7 +1122,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_892",
+          "id": "ui_890",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1303,7 +1133,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_904",
+          "id": "ui_901",
           "name": "Shell / Assets panel",
           "x": 0,
           "y": 0,
@@ -1314,7 +1144,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_905",
+          "id": "ui_902",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1325,7 +1155,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_906",
+          "id": "ui_903",
           "name": "Assets / Component menu",
           "x": 244,
           "y": 80,
@@ -1358,7 +1188,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_915",
+          "id": "ui_911",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -1379,7 +1209,7 @@
           }
         },
         {
-          "id": "ui_916",
+          "id": "ui_912",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -1390,7 +1220,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_917",
+          "id": "ui_913",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -1409,144 +1239,110 @@
           }
         },
         {
-          "id": "ui_918",
-          "name": "Handle",
-          "x": 338,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_919",
-          "name": "Handle",
-          "x": 638,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_920",
-          "name": "Handle",
-          "x": 338,
-          "y": 658,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_921",
-          "name": "Handle",
-          "x": 638,
-          "y": 658,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
           "id": "ui_914",
-          "name": "Size label",
+          "name": "Handle",
+          "x": 338,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_915",
+          "name": "Handle",
+          "x": 638,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_916",
+          "name": "Handle",
+          "x": 338,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_917",
+          "name": "Handle",
+          "x": 638,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_910",
+          "name": "Canvas / Size label",
           "x": 456,
           "y": 670,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_913",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
-          "id": "ui_908",
+          "id": "ui_905",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1557,7 +1353,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_909",
+          "id": "ui_906",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1568,7 +1364,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_910",
+          "id": "ui_907",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1579,7 +1375,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_922",
+          "id": "ui_918",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1590,7 +1386,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_923",
+          "id": "ui_919",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1601,7 +1397,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_925",
+          "id": "ui_921",
           "name": "Scrim",
           "x": 0,
           "y": 0,
@@ -1617,7 +1413,7 @@
           "opacity": 0.24
         },
         {
-          "id": "ui_924",
+          "id": "ui_920",
           "name": "Dialog / ファイルが外部で更新されました",
           "x": 520,
           "y": 384,
@@ -1650,7 +1446,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_934",
+          "id": "ui_929",
           "name": "Desktop / Selected work",
           "x": 310,
           "y": 226,
@@ -1671,7 +1467,7 @@
           }
         },
         {
-          "id": "ui_935",
+          "id": "ui_930",
           "name": "Canvas / Selected work",
           "x": 310,
           "y": 250,
@@ -1682,7 +1478,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_936",
+          "id": "ui_931",
           "name": "Selection outline",
           "x": 342,
           "y": 354,
@@ -1701,76 +1497,10 @@
           }
         },
         {
-          "id": "ui_937",
+          "id": "ui_932",
           "name": "Handle",
           "x": 338,
           "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_938",
-          "name": "Handle",
-          "x": 638,
-          "y": 350,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_939",
-          "name": "Handle",
-          "x": 338,
-          "y": 658,
-          "width": 8,
-          "height": 8,
-          "type": "rectangle",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_0"
-            },
-            "stroke": {
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "width": 1
-            }
-          }
-        },
-        {
-          "id": "ui_940",
-          "name": "Handle",
-          "x": 638,
-          "y": 658,
           "width": 8,
           "height": 8,
           "type": "rectangle",
@@ -1790,55 +1520,87 @@
         },
         {
           "id": "ui_933",
-          "name": "Size label",
+          "name": "Handle",
+          "x": 638,
+          "y": 350,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_934",
+          "name": "Handle",
+          "x": 338,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_935",
+          "name": "Handle",
+          "x": 638,
+          "y": 658,
+          "width": 8,
+          "height": 8,
+          "type": "rectangle",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_8"
+              },
+              "width": 1
+            }
+          }
+        },
+        {
+          "id": "ui_928",
+          "name": "Canvas / Size label",
           "x": 456,
           "y": 670,
           "width": 72,
           "height": 20,
-          "type": "frame",
-          "style": {
-            "fill": {
-              "type": "palette",
-              "id": "gray_8"
-            },
-            "cornerRadii": {
-              "topLeft": 4,
-              "topRight": 4,
-              "bottomRight": 4,
-              "bottomLeft": 4
+          "type": "instance",
+          "componentRef": "sizeChip",
+          "overrides": {
+            "ui_827": {
+              "content": "300 × 308"
             }
-          },
-          "layoutMode": "horizontal",
-          "paddingRef": "space_4",
-          "gapRef": "space_0",
-          "alignItems": "center",
-          "justifyContent": "center",
-          "children": [
-            {
-              "id": "ui_932",
-              "name": "300 × 308",
-              "x": 0,
-              "y": 0,
-              "width": 64,
-              "height": 20,
-              "type": "text",
-              "content": "300 × 308",
-              "style": {
-                "fontSize": 11,
-                "lineHeight": 1.4545454545454546,
-                "fontFamily": "system",
-                "fontWeight": 400,
-                "color": {
-                  "type": "palette",
-                  "id": "gray_0"
-                },
-                "textAlign": "center"
-              }
-            }
-          ]
+          }
         },
         {
-          "id": "ui_927",
+          "id": "ui_923",
           "name": "Canvas overlay / File",
           "x": 252,
           "y": 12,
@@ -1849,7 +1611,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_928",
+          "id": "ui_924",
           "name": "Canvas overlay / Actions",
           "x": 1020,
           "y": 12,
@@ -1860,7 +1622,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_929",
+          "id": "ui_925",
           "name": "Canvas overlay / Tools",
           "x": 551.5,
           "y": 908,
@@ -1871,7 +1633,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_941",
+          "id": "ui_936",
           "name": "Shell / Layers panel",
           "x": 0,
           "y": 0,
@@ -1882,7 +1644,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_942",
+          "id": "ui_937",
           "name": "Shell / Inspector panel",
           "x": 1160,
           "y": 0,
@@ -1893,7 +1655,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_943",
+          "id": "ui_938",
           "name": "Canvas overlay / Toast",
           "x": 868,
           "y": 888,
@@ -1926,7 +1688,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_950",
+          "id": "ui_945",
           "name": "Desktop / Selected work · 390 px",
           "x": 525,
           "y": 80,
@@ -1947,7 +1709,7 @@
           }
         },
         {
-          "id": "ui_949",
+          "id": "ui_944",
           "name": "Canvas / Selected work at 390",
           "x": 525,
           "y": 104,
@@ -1958,7 +1720,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_945",
+          "id": "ui_940",
           "name": "Canvas overlay / File",
           "x": 12,
           "y": 12,
@@ -1969,7 +1731,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_946",
+          "id": "ui_941",
           "name": "Canvas overlay / Actions",
           "x": 1300,
           "y": 12,
@@ -1980,7 +1742,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_948",
+          "id": "ui_943",
           "name": "Canvas overlay / Preview widths",
           "x": 525.5,
           "y": 12,
@@ -2013,7 +1775,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_966",
+          "id": "ui_961",
           "name": "フレーム",
           "x": 40,
           "y": 40,
@@ -2034,7 +1796,7 @@
           }
         },
         {
-          "id": "ui_953",
+          "id": "ui_948",
           "name": "Inspector panel",
           "x": 40,
           "y": 76,
@@ -2060,7 +1822,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_952",
+              "id": "ui_947",
               "name": "Inspector / フレーム",
               "x": 0,
               "y": 0,
@@ -2073,7 +1835,7 @@
           ]
         },
         {
-          "id": "ui_967",
+          "id": "ui_962",
           "name": "テキスト",
           "x": 360,
           "y": 40,
@@ -2094,7 +1856,7 @@
           }
         },
         {
-          "id": "ui_955",
+          "id": "ui_950",
           "name": "Inspector panel",
           "x": 360,
           "y": 76,
@@ -2120,7 +1882,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_954",
+              "id": "ui_949",
               "name": "Inspector / テキスト",
               "x": 0,
               "y": 0,
@@ -2133,7 +1895,7 @@
           ]
         },
         {
-          "id": "ui_968",
+          "id": "ui_963",
           "name": "画像",
           "x": 680,
           "y": 40,
@@ -2154,7 +1916,7 @@
           }
         },
         {
-          "id": "ui_957",
+          "id": "ui_952",
           "name": "Inspector panel",
           "x": 680,
           "y": 76,
@@ -2180,7 +1942,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_956",
+              "id": "ui_951",
               "name": "Inspector / 画像",
               "x": 0,
               "y": 0,
@@ -2193,7 +1955,7 @@
           ]
         },
         {
-          "id": "ui_969",
+          "id": "ui_964",
           "name": "矩形と楕円",
           "x": 1000,
           "y": 40,
@@ -2214,7 +1976,7 @@
           }
         },
         {
-          "id": "ui_959",
+          "id": "ui_954",
           "name": "Inspector panel",
           "x": 1000,
           "y": 76,
@@ -2240,7 +2002,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_958",
+              "id": "ui_953",
               "name": "Inspector / 矩形と楕円",
               "x": 0,
               "y": 0,
@@ -2253,7 +2015,7 @@
           ]
         },
         {
-          "id": "ui_970",
+          "id": "ui_965",
           "name": "パス",
           "x": 1320,
           "y": 40,
@@ -2274,7 +2036,7 @@
           }
         },
         {
-          "id": "ui_961",
+          "id": "ui_956",
           "name": "Inspector panel",
           "x": 1320,
           "y": 76,
@@ -2300,7 +2062,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_960",
+              "id": "ui_955",
               "name": "Inspector / パス",
               "x": 0,
               "y": 0,
@@ -2313,7 +2075,7 @@
           ]
         },
         {
-          "id": "ui_971",
+          "id": "ui_966",
           "name": "インスタンス",
           "x": 1640,
           "y": 40,
@@ -2334,7 +2096,7 @@
           }
         },
         {
-          "id": "ui_963",
+          "id": "ui_958",
           "name": "Inspector panel",
           "x": 1640,
           "y": 76,
@@ -2360,7 +2122,7 @@
           "justifyContent": "start",
           "children": [
             {
-              "id": "ui_962",
+              "id": "ui_957",
               "name": "Inspector / インスタンス",
               "x": 0,
               "y": 0,
@@ -2373,7 +2135,7 @@
           ]
         },
         {
-          "id": "ui_972",
+          "id": "ui_967",
           "name": "⋯ メニュー",
           "x": 1960,
           "y": 40,
@@ -2394,7 +2156,7 @@
           }
         },
         {
-          "id": "ui_964",
+          "id": "ui_959",
           "name": "Inspector / More menu",
           "x": 1960,
           "y": 76,
@@ -2405,7 +2167,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_973",
+          "id": "ui_968",
           "name": "アセットの色の ⋯ メニュー",
           "x": 2200,
           "y": 40,
@@ -2426,7 +2188,7 @@
           }
         },
         {
-          "id": "ui_965",
+          "id": "ui_960",
           "name": "Assets / Color menu",
           "x": 2200,
           "y": 76,
@@ -2459,7 +2221,7 @@
       "justifyContent": "start",
       "children": [
         {
-          "id": "ui_980",
+          "id": "ui_975",
           "name": "ファイルが外部で更新されました",
           "x": 40,
           "y": 40,
@@ -2480,7 +2242,7 @@
           }
         },
         {
-          "id": "ui_975",
+          "id": "ui_970",
           "name": "Dialog / ファイルが外部で更新されました",
           "x": 40,
           "y": 76,
@@ -2491,7 +2253,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_981",
+          "id": "ui_976",
           "name": "未保存の変更があります",
           "x": 480,
           "y": 40,
@@ -2512,7 +2274,7 @@
           }
         },
         {
-          "id": "ui_976",
+          "id": "ui_971",
           "name": "Dialog / 未保存の変更があります",
           "x": 480,
           "y": 76,
@@ -2523,7 +2285,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_982",
+          "id": "ui_977",
           "name": "未保存の編集が見つかりました",
           "x": 920,
           "y": 40,
@@ -2544,7 +2306,7 @@
           }
         },
         {
-          "id": "ui_977",
+          "id": "ui_972",
           "name": "Dialog / 未保存の編集が見つかりました",
           "x": 920,
           "y": 76,
@@ -2555,7 +2317,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_983",
+          "id": "ui_978",
           "name": "復元データを読み取れません",
           "x": 1360,
           "y": 40,
@@ -2576,7 +2338,7 @@
           }
         },
         {
-          "id": "ui_978",
+          "id": "ui_973",
           "name": "Dialog / 復元データを読み取れません",
           "x": 1360,
           "y": 76,
@@ -2587,7 +2349,7 @@
           "overrides": {}
         },
         {
-          "id": "ui_984",
+          "id": "ui_979",
           "name": "エラーのトースト",
           "x": 1800,
           "y": 40,
@@ -2608,7 +2370,7 @@
           }
         },
         {
-          "id": "ui_979",
+          "id": "ui_974",
           "name": "Canvas overlay / Toast",
           "x": 1800,
           "y": 76,
@@ -2617,6 +2379,2551 @@
           "type": "instance",
           "componentRef": "toast",
           "overrides": {}
+        }
+      ]
+    },
+    {
+      "id": "sheet_canvas",
+      "name": "Canvas / 編集中の表示",
+      "x": 80,
+      "y": 5703,
+      "width": 1800,
+      "height": 792,
+      "type": "frame",
+      "style": {
+        "fill": {
+          "type": "palette",
+          "id": "gray_2"
+        }
+      },
+      "layoutMode": "none",
+      "paddingRef": "space_0",
+      "gapRef": "space_0",
+      "alignItems": "start",
+      "justifyContent": "start",
+      "children": [
+        {
+          "id": "ui_981",
+          "name": "範囲選択",
+          "x": 40,
+          "y": 40,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "範囲選択",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_992",
+          "name": "範囲選択",
+          "x": 40,
+          "y": 76,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_982",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_983",
+              "name": "Card A",
+              "x": 56,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_984",
+              "name": "Card B",
+              "x": 184,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_985",
+              "name": "Card C",
+              "x": 56,
+              "y": 160,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_986",
+              "name": "Card D",
+              "x": 184,
+              "y": 160,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_987",
+              "name": "Marquee fill",
+              "x": 40,
+              "y": 44,
+              "width": 264,
+              "height": 96,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_8"
+                }
+              },
+              "opacity": 0.06
+            },
+            {
+              "id": "ui_988",
+              "name": "Marquee",
+              "x": 40,
+              "y": 44,
+              "width": 264,
+              "height": 96,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_6"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_989",
+              "name": "Selection outline",
+              "x": 56,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_990",
+              "name": "Selection outline",
+              "x": 184,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_991",
+              "name": "ドラッグした範囲に掛かる要素を選ぶ",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "ドラッグした範囲に掛かる要素を選ぶ",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_993",
+          "name": "Shift で加算選択",
+          "x": 480,
+          "y": 40,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "Shift で加算選択",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1008",
+          "name": "Shift で加算選択",
+          "x": 480,
+          "y": 76,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_994",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_995",
+              "name": "Card A",
+              "x": 56,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_996",
+              "name": "Card B",
+              "x": 184,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_997",
+              "name": "Card C",
+              "x": 56,
+              "y": 160,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_998",
+              "name": "Card D",
+              "x": 184,
+              "y": 160,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_999",
+              "name": "Selection outline",
+              "x": 56,
+              "y": 56,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1000",
+              "name": "Selection outline",
+              "x": 184,
+              "y": 160,
+              "width": 96,
+              "height": 72,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1001",
+              "name": "Selection outline",
+              "x": 56,
+              "y": 56,
+              "width": 224,
+              "height": 176,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1002",
+              "name": "Handle",
+              "x": 52,
+              "y": 52,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1003",
+              "name": "Handle",
+              "x": 276,
+              "y": 52,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1004",
+              "name": "Handle",
+              "x": 52,
+              "y": 228,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1005",
+              "name": "Handle",
+              "x": 276,
+              "y": 228,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1006",
+              "name": "Canvas / Size label",
+              "x": 132,
+              "y": 240,
+              "width": 72,
+              "height": 20,
+              "type": "instance",
+              "componentRef": "sizeChip",
+              "overrides": {
+                "ui_827": {
+                  "content": "224 × 176"
+                }
+              }
+            },
+            {
+              "id": "ui_1007",
+              "name": "個々の要素の枠と、まとめた範囲の枠とつまみを出す",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "個々の要素の枠と、まとめた範囲の枠とつまみを出す",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_1009",
+          "name": "スナップと整列ガイド",
+          "x": 920,
+          "y": 40,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "スナップと整列ガイド",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1025",
+          "name": "スナップと整列ガイド",
+          "x": 920,
+          "y": 76,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_1010",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_1011",
+              "name": "Card A",
+              "x": 56,
+              "y": 72,
+              "width": 120,
+              "height": 96,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1012",
+              "name": "Card B",
+              "x": 232,
+              "y": 72,
+              "width": 104,
+              "height": 96,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_3"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1013",
+              "name": "Guide",
+              "x": 32,
+              "y": 72,
+              "width": 336,
+              "height": 1,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1014",
+              "name": "Guide",
+              "x": 32,
+              "y": 168,
+              "width": 336,
+              "height": 1,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1015",
+              "name": "Distance",
+              "x": 176,
+              "y": 120,
+              "width": 56,
+              "height": 1,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1018",
+              "name": "Canvas / Distance label",
+              "x": 188,
+              "y": 128,
+              "width": 32,
+              "height": 20,
+              "type": "instance",
+              "componentRef": "distanceChip",
+              "overrides": {
+                "ui_1016": {
+                  "content": "56"
+                }
+              }
+            },
+            {
+              "id": "ui_1019",
+              "name": "Selection outline",
+              "x": 232,
+              "y": 72,
+              "width": 104,
+              "height": 96,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1020",
+              "name": "Handle",
+              "x": 228,
+              "y": 68,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1021",
+              "name": "Handle",
+              "x": 332,
+              "y": 68,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1022",
+              "name": "Handle",
+              "x": 228,
+              "y": 164,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1023",
+              "name": "Handle",
+              "x": 332,
+              "y": 164,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1024",
+              "name": "そろった辺にガイドを引き、隣との間隔を札で出す",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "そろった辺にガイドを引き、隣との間隔を札で出す",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_1026",
+          "name": "楕円を描いている途中",
+          "x": 1360,
+          "y": 40,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "楕円を描いている途中",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1036",
+          "name": "楕円を描いている途中",
+          "x": 1360,
+          "y": 76,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_1027",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_1028",
+              "name": "Ellipse",
+              "x": 120,
+              "y": 64,
+              "width": 160,
+              "height": 120,
+              "type": "ellipse",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1029",
+              "name": "Selection outline",
+              "x": 120,
+              "y": 64,
+              "width": 160,
+              "height": 120,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1030",
+              "name": "Handle",
+              "x": 116,
+              "y": 60,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1031",
+              "name": "Handle",
+              "x": 276,
+              "y": 60,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1032",
+              "name": "Handle",
+              "x": 116,
+              "y": 180,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1033",
+              "name": "Handle",
+              "x": 276,
+              "y": 180,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1034",
+              "name": "Canvas / Size label",
+              "x": 164,
+              "y": 196,
+              "width": 72,
+              "height": 20,
+              "type": "instance",
+              "componentRef": "sizeChip",
+              "overrides": {
+                "ui_827": {
+                  "content": "160 × 120"
+                }
+              }
+            },
+            {
+              "id": "ui_1035",
+              "name": "ドラッグ中は外接する枠と寸法を出す。Shift で正円",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "ドラッグ中は外接する枠と寸法を出す。Shift で正円",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_1037",
+          "name": "ペンで描いている途中",
+          "x": 40,
+          "y": 416,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "ペンで描いている途中",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1049",
+          "name": "ペンで描いている途中",
+          "x": 40,
+          "y": 452,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_1038",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_1039",
+              "name": "Path",
+              "x": 72,
+              "y": 96,
+              "width": 200,
+              "height": 104,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1.5
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "kind": "cubic",
+                  "x1": 0.12,
+                  "y1": 0.23076923076923078,
+                  "x2": 0.32,
+                  "y2": 0,
+                  "x": 0.52,
+                  "y": 0.07692307692307693
+                },
+                {
+                  "kind": "cubic",
+                  "x1": 0.72,
+                  "y1": 0.15384615384615385,
+                  "x2": 0.8,
+                  "y2": 0.7692307692307693,
+                  "x": 1,
+                  "y": 0.7692307692307693
+                }
+              ]
+            },
+            {
+              "id": "ui_1040",
+              "name": "Next segment",
+              "x": 272,
+              "y": 88,
+              "width": 64,
+              "height": 88,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_5"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 1
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1041",
+              "name": "Anchor",
+              "x": 68,
+              "y": 196,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1042",
+              "name": "Anchor",
+              "x": 172,
+              "y": 100,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1043",
+              "name": "Handle line",
+              "x": 232,
+              "y": 176,
+              "width": 40,
+              "height": 1,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_6"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 1,
+                  "y": 0
+                },
+                {
+                  "kind": "line",
+                  "x": 0,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1044",
+              "name": "Bezier handle",
+              "x": 229,
+              "y": 173,
+              "width": 6,
+              "height": 6,
+              "type": "ellipse",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1045",
+              "name": "Handle line",
+              "x": 272,
+              "y": 176,
+              "width": 40,
+              "height": 1,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_6"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1046",
+              "name": "Bezier handle",
+              "x": 309,
+              "y": 173,
+              "width": 6,
+              "height": 6,
+              "type": "ellipse",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1047",
+              "name": "Anchor / Selected",
+              "x": 268,
+              "y": 172,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_8"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1048",
+              "name": "クリックで点、ドラッグで曲線。Enter で確定、Esc で取り消し",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "クリックで点、ドラッグで曲線。Enter で確定、Esc で取り消し",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_1050",
+          "name": "パスの点の編集",
+          "x": 480,
+          "y": 416,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "パスの点の編集",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1062",
+          "name": "パスの点の編集",
+          "x": 480,
+          "y": 452,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_1051",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_1052",
+              "name": "Path",
+              "x": 80,
+              "y": 64,
+              "width": 232,
+              "height": 168,
+              "type": "path",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1.5
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0.06896551724137931,
+                  "y": 0.7619047619047619
+                },
+                {
+                  "kind": "cubic",
+                  "x1": 0,
+                  "y1": 0.3333333333333333,
+                  "x2": 0.27586206896551724,
+                  "y2": 0,
+                  "x": 0.5172413793103449,
+                  "y": 0.047619047619047616
+                },
+                {
+                  "kind": "cubic",
+                  "x1": 0.7586206896551724,
+                  "y1": 0.09523809523809523,
+                  "x2": 1,
+                  "y2": 0.2857142857142857,
+                  "x": 0.9655172413793104,
+                  "y": 0.6666666666666666
+                },
+                {
+                  "kind": "cubic",
+                  "x1": 0.9310344827586207,
+                  "y1": 0.9523809523809523,
+                  "x2": 0.5172413793103449,
+                  "y2": 1,
+                  "x": 0.3448275862068966,
+                  "y": 0.9047619047619048
+                },
+                {
+                  "kind": "line",
+                  "x": 0.06896551724137931,
+                  "y": 0.7619047619047619
+                },
+                {
+                  "kind": "close"
+                }
+              ]
+            },
+            {
+              "id": "ui_1053",
+              "name": "Anchor",
+              "x": 92,
+              "y": 188,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1054",
+              "name": "Handle line",
+              "x": 144,
+              "y": 64,
+              "width": 56,
+              "height": 8,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_6"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 1,
+                  "y": 1
+                },
+                {
+                  "kind": "line",
+                  "x": 0,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "id": "ui_1055",
+              "name": "Bezier handle",
+              "x": 141,
+              "y": 61,
+              "width": 6,
+              "height": 6,
+              "type": "ellipse",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1056",
+              "name": "Handle line",
+              "x": 200,
+              "y": 72,
+              "width": 56,
+              "height": 8,
+              "type": "path",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_6"
+                  },
+                  "width": 1
+                }
+              },
+              "commands": [
+                {
+                  "kind": "move",
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 1
+                }
+              ]
+            },
+            {
+              "id": "ui_1057",
+              "name": "Bezier handle",
+              "x": 253,
+              "y": 77,
+              "width": 6,
+              "height": 6,
+              "type": "ellipse",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1058",
+              "name": "Anchor / Selected",
+              "x": 196,
+              "y": 68,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_8"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1059",
+              "name": "Anchor",
+              "x": 300,
+              "y": 172,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1060",
+              "name": "Anchor",
+              "x": 156,
+              "y": 212,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1061",
+              "name": "選んだ点を黒で示し、その点のハンドルだけを出す",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "選んだ点を黒で示し、その点のハンドルだけを出す",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_1063",
+          "name": "マスク",
+          "x": 920,
+          "y": 416,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "マスク",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1084",
+          "name": "マスク",
+          "x": 920,
+          "y": 452,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_1064",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_1079",
+              "name": "Layers",
+              "x": 32,
+              "y": 32,
+              "width": 168,
+              "height": 100,
+              "type": "frame",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_1"
+                },
+                "cornerRadii": {
+                  "topLeft": 8,
+                  "topRight": 8,
+                  "bottomRight": 8,
+                  "bottomLeft": 8
+                }
+              },
+              "layoutMode": "vertical",
+              "paddingRef": "space_8",
+              "gapRef": "space_0",
+              "alignItems": "start",
+              "justifyContent": "start",
+              "children": [
+                {
+                  "id": "ui_1070",
+                  "name": "Layer row",
+                  "x": 0,
+                  "y": 0,
+                  "width": 152,
+                  "height": 28,
+                  "type": "frame",
+                  "style": {
+                    "fill": null,
+                    "cornerRadii": {
+                      "topLeft": 6,
+                      "topRight": 6,
+                      "bottomRight": 6,
+                      "bottomLeft": 6
+                    }
+                  },
+                  "layoutMode": "horizontal",
+                  "paddingRef": "space_8",
+                  "gapRef": "space_4",
+                  "alignItems": "center",
+                  "justifyContent": "start",
+                  "children": [
+                    {
+                      "id": "ui_1066",
+                      "name": "Icon / ellipse",
+                      "x": 0,
+                      "y": 0,
+                      "width": 16,
+                      "height": 16,
+                      "type": "instance",
+                      "componentRef": "icon_ellipse_5",
+                      "overrides": {}
+                    },
+                    {
+                      "id": "ui_1067",
+                      "name": "Mask",
+                      "x": 0,
+                      "y": 0,
+                      "width": 64,
+                      "height": 20,
+                      "type": "text",
+                      "content": "Mask",
+                      "style": {
+                        "fontSize": 12,
+                        "lineHeight": 1.3333333333333333,
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "color": {
+                          "type": "palette",
+                          "id": "gray_7"
+                        },
+                        "textAlign": "left"
+                      }
+                    },
+                    {
+                      "id": "ui_1069",
+                      "name": "Tag",
+                      "x": 0,
+                      "y": 0,
+                      "width": 48,
+                      "height": 20,
+                      "type": "frame",
+                      "style": {
+                        "fill": {
+                          "type": "palette",
+                          "id": "gray_2"
+                        },
+                        "cornerRadii": {
+                          "topLeft": 4,
+                          "topRight": 4,
+                          "bottomRight": 4,
+                          "bottomLeft": 4
+                        }
+                      },
+                      "layoutMode": "horizontal",
+                      "paddingRef": "space_4",
+                      "gapRef": "space_0",
+                      "alignItems": "center",
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "id": "ui_1068",
+                          "name": "マスク",
+                          "x": 0,
+                          "y": 0,
+                          "width": 40,
+                          "height": 20,
+                          "type": "text",
+                          "content": "マスク",
+                          "style": {
+                            "fontSize": 11,
+                            "lineHeight": 1.4545454545454546,
+                            "fontFamily": "system",
+                            "fontWeight": 400,
+                            "color": {
+                              "type": "palette",
+                              "id": "gray_6"
+                            },
+                            "textAlign": "center"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "ui_1075",
+                  "name": "Layer row",
+                  "x": 0,
+                  "y": 0,
+                  "width": 152,
+                  "height": 28,
+                  "type": "frame",
+                  "style": {
+                    "fill": null,
+                    "cornerRadii": {
+                      "topLeft": 6,
+                      "topRight": 6,
+                      "bottomRight": 6,
+                      "bottomLeft": 6
+                    }
+                  },
+                  "layoutMode": "horizontal",
+                  "paddingRef": "space_8",
+                  "gapRef": "space_4",
+                  "alignItems": "center",
+                  "justifyContent": "start",
+                  "children": [
+                    {
+                      "id": "ui_1074",
+                      "name": "Indent",
+                      "x": 0,
+                      "y": 0,
+                      "width": 12,
+                      "height": 1,
+                      "type": "frame",
+                      "style": {
+                        "fill": null
+                      },
+                      "layoutMode": "none",
+                      "paddingRef": "space_0",
+                      "gapRef": "space_0",
+                      "alignItems": "start",
+                      "justifyContent": "start",
+                      "children": []
+                    },
+                    {
+                      "id": "ui_1072",
+                      "name": "Icon / image",
+                      "x": 0,
+                      "y": 0,
+                      "width": 16,
+                      "height": 16,
+                      "type": "instance",
+                      "componentRef": "icon_image_5",
+                      "overrides": {}
+                    },
+                    {
+                      "id": "ui_1073",
+                      "name": "Cover",
+                      "x": 0,
+                      "y": 0,
+                      "width": 48,
+                      "height": 20,
+                      "type": "text",
+                      "content": "Cover",
+                      "style": {
+                        "fontSize": 12,
+                        "lineHeight": 1.3333333333333333,
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "color": {
+                          "type": "palette",
+                          "id": "gray_7"
+                        },
+                        "textAlign": "left"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "id": "ui_1078",
+                  "name": "Layer row",
+                  "x": 0,
+                  "y": 0,
+                  "width": 152,
+                  "height": 28,
+                  "type": "frame",
+                  "style": {
+                    "fill": null,
+                    "cornerRadii": {
+                      "topLeft": 6,
+                      "topRight": 6,
+                      "bottomRight": 6,
+                      "bottomLeft": 6
+                    }
+                  },
+                  "layoutMode": "horizontal",
+                  "paddingRef": "space_8",
+                  "gapRef": "space_4",
+                  "alignItems": "center",
+                  "justifyContent": "start",
+                  "children": [
+                    {
+                      "id": "ui_1076",
+                      "name": "Icon / text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 16,
+                      "height": 16,
+                      "type": "instance",
+                      "componentRef": "icon_text_5",
+                      "overrides": {}
+                    },
+                    {
+                      "id": "ui_1077",
+                      "name": "Title",
+                      "x": 0,
+                      "y": 0,
+                      "width": 64,
+                      "height": 20,
+                      "type": "text",
+                      "content": "Title",
+                      "style": {
+                        "fontSize": 12,
+                        "lineHeight": 1.3333333333333333,
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "color": {
+                          "type": "palette",
+                          "id": "gray_7"
+                        },
+                        "textAlign": "left"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "ui_1080",
+              "name": "Masked out",
+              "x": 208,
+              "y": 48,
+              "width": 152,
+              "height": 200,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_4"
+                }
+              },
+              "opacity": 0.16
+            },
+            {
+              "id": "ui_1081",
+              "name": "Masked image",
+              "x": 216,
+              "y": 72,
+              "width": 136,
+              "height": 152,
+              "type": "ellipse",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_4"
+                }
+              }
+            },
+            {
+              "id": "ui_1082",
+              "name": "Mask outline",
+              "x": 216,
+              "y": 72,
+              "width": 136,
+              "height": 152,
+              "type": "ellipse",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1083",
+              "name": "外側は薄く出し、レイヤーには「マスク」の札を付ける",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "外側は薄く出し、レイヤーには「マスク」の札を付ける",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ui_1085",
+          "name": "画像",
+          "x": 1360,
+          "y": 416,
+          "width": 400,
+          "height": 24,
+          "type": "text",
+          "content": "画像",
+          "style": {
+            "fontSize": 13,
+            "lineHeight": 1.5384615384615385,
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "color": {
+              "type": "palette",
+              "id": "gray_8"
+            },
+            "textAlign": "left"
+          }
+        },
+        {
+          "id": "ui_1097",
+          "name": "画像",
+          "x": 1360,
+          "y": 452,
+          "width": 400,
+          "height": 300,
+          "type": "frame",
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "gray_2"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "gray_3"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 12,
+              "topRight": 12,
+              "bottomRight": 12,
+              "bottomLeft": 12
+            }
+          },
+          "layoutMode": "none",
+          "paddingRef": "space_0",
+          "gapRef": "space_0",
+          "alignItems": "start",
+          "justifyContent": "start",
+          "children": [
+            {
+              "id": "ui_1086",
+              "name": "Artboard",
+              "x": 24,
+              "y": 24,
+              "width": 352,
+              "height": 240,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                }
+              }
+            },
+            {
+              "id": "ui_1087",
+              "name": "Image",
+              "x": 104,
+              "y": 56,
+              "width": 192,
+              "height": 144,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_3"
+                },
+                "cornerRadii": {
+                  "topLeft": 12,
+                  "topRight": 12,
+                  "bottomRight": 12,
+                  "bottomLeft": 12
+                }
+              }
+            },
+            {
+              "id": "ui_1089",
+              "name": "Icon / image large",
+              "x": 176,
+              "y": 104,
+              "width": 48,
+              "height": 48,
+              "type": "instance",
+              "componentRef": "icon_image_large",
+              "overrides": {}
+            },
+            {
+              "id": "ui_1090",
+              "name": "Selection outline",
+              "x": 104,
+              "y": 56,
+              "width": 192,
+              "height": 144,
+              "type": "rectangle",
+              "style": {
+                "fill": null,
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1091",
+              "name": "Handle",
+              "x": 100,
+              "y": 52,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1092",
+              "name": "Handle",
+              "x": 292,
+              "y": 52,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1093",
+              "name": "Handle",
+              "x": 100,
+              "y": 196,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1094",
+              "name": "Handle",
+              "x": 292,
+              "y": 196,
+              "width": 8,
+              "height": 8,
+              "type": "rectangle",
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "gray_0"
+                },
+                "stroke": {
+                  "color": {
+                    "type": "palette",
+                    "id": "gray_8"
+                  },
+                  "width": 1
+                }
+              }
+            },
+            {
+              "id": "ui_1095",
+              "name": "Canvas / Size label",
+              "x": 164,
+              "y": 212,
+              "width": 72,
+              "height": 20,
+              "type": "instance",
+              "componentRef": "sizeChip",
+              "overrides": {
+                "ui_827": {
+                  "content": "192 × 144"
+                }
+              }
+            },
+            {
+              "id": "ui_1096",
+              "name": "取り込んだ画像は角丸で切り抜き、中央に置いて選ぶ",
+              "x": 24,
+              "y": 272,
+              "width": 352,
+              "height": 20,
+              "type": "text",
+              "content": "取り込んだ画像は角丸で切り抜き、中央に置いて選ぶ",
+              "style": {
+                "fontSize": 11,
+                "lineHeight": 1.4545454545454546,
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "color": {
+                  "type": "palette",
+                  "id": "gray_5"
+                },
+                "textAlign": "left"
+              }
+            }
+          ]
         }
       ]
     }
@@ -20677,6 +22984,326 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "id": "sizeChip",
+      "name": "Canvas / Size label",
+      "node": {
+        "id": "ui_828",
+        "name": "Size label",
+        "x": 0,
+        "y": 0,
+        "width": 72,
+        "height": 20,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_8"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_827",
+            "name": "0 × 0",
+            "x": 0,
+            "y": 0,
+            "width": 64,
+            "height": 20,
+            "type": "text",
+            "content": "0 × 0",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "distanceChip",
+      "name": "Canvas / Distance label",
+      "node": {
+        "id": "ui_1017",
+        "name": "Distance label",
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 20,
+        "type": "frame",
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "gray_8"
+          },
+          "cornerRadii": {
+            "topLeft": 4,
+            "topRight": 4,
+            "bottomRight": 4,
+            "bottomLeft": 4
+          }
+        },
+        "layoutMode": "horizontal",
+        "paddingRef": "space_4",
+        "gapRef": "space_0",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "children": [
+          {
+            "id": "ui_1016",
+            "name": "0",
+            "x": 0,
+            "y": 0,
+            "width": 24,
+            "height": 20,
+            "type": "text",
+            "content": "0",
+            "style": {
+              "fontSize": 11,
+              "lineHeight": 1.4545454545454546,
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "color": {
+                "type": "palette",
+                "id": "gray_0"
+              },
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "icon_ellipse_5",
+      "name": "Icon / ellipse",
+      "node": {
+        "id": "ui_1065",
+        "name": "ellipse",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.8325966317040632,
+            "y": 0.6377660356514323
+          },
+          {
+            "kind": "line",
+            "x": 0.6377660356514323,
+            "y": 0.8325966317040632
+          },
+          {
+            "kind": "line",
+            "x": 0.3622339643485677,
+            "y": 0.8325966317040632
+          },
+          {
+            "kind": "line",
+            "x": 0.16740336829593677,
+            "y": 0.6377660356514323
+          },
+          {
+            "kind": "line",
+            "x": 0.16740336829593677,
+            "y": 0.36223396434856775
+          },
+          {
+            "kind": "line",
+            "x": 0.36223396434856747,
+            "y": 0.16740336829593688
+          },
+          {
+            "kind": "line",
+            "x": 0.6377660356514324,
+            "y": 0.16740336829593683
+          },
+          {
+            "kind": "line",
+            "x": 0.8325966317040632,
+            "y": 0.36223396434856747
+          },
+          {
+            "kind": "close"
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_5"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "icon_image_5",
+      "name": "Icon / image",
+      "node": {
+        "id": "ui_1071",
+        "name": "image",
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.12,
+            "y": 0.18
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.18
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.82
+          },
+          {
+            "kind": "line",
+            "x": 0.12,
+            "y": 0.82
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.12,
+            "y": 0.72
+          },
+          {
+            "kind": "line",
+            "x": 0.4,
+            "y": 0.46
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.66
+          },
+          {
+            "kind": "line",
+            "x": 0.72,
+            "y": 0.54
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.7
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_5"
+            },
+            "width": 1.5
+          }
+        }
+      }
+    },
+    {
+      "id": "icon_image_large",
+      "name": "Icon / image large",
+      "node": {
+        "id": "ui_1088",
+        "name": "image",
+        "x": 0,
+        "y": 0,
+        "width": 48,
+        "height": 48,
+        "type": "path",
+        "commands": [
+          {
+            "kind": "move",
+            "x": 0.12,
+            "y": 0.18
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.18
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.82
+          },
+          {
+            "kind": "line",
+            "x": 0.12,
+            "y": 0.82
+          },
+          {
+            "kind": "close"
+          },
+          {
+            "kind": "move",
+            "x": 0.12,
+            "y": 0.72
+          },
+          {
+            "kind": "line",
+            "x": 0.4,
+            "y": 0.46
+          },
+          {
+            "kind": "line",
+            "x": 0.6,
+            "y": 0.66
+          },
+          {
+            "kind": "line",
+            "x": 0.72,
+            "y": 0.54
+          },
+          {
+            "kind": "line",
+            "x": 0.88,
+            "y": 0.7
+          }
+        ],
+        "style": {
+          "fill": null,
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "gray_0"
+            },
+            "width": 1.5
+          }
+        }
       }
     }
   ]
