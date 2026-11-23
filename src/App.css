@@ -247,10 +247,24 @@ button {
 
 .workspace {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr) 242px;
+  grid-template-columns: 240px minmax(0, 1fr) 280px;
+  grid-template-rows: minmax(0, 1fr);
   flex: 1;
   min-height: 0;
 }
+.editor-center {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.editor-center .canvas-container { flex: 1; }
+.panel-toggles {
+  display: flex;
+  gap: var(--space-4);
+}
+/* 中央の列は狭くなるため、ツールバーの部品を縮めずに横へスクロールさせる。 */
+.topbar > * { flex: none; }
 .sidebar {
   background: var(--panel);
   overflow-y: auto;
