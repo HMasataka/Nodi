@@ -21,6 +21,7 @@ import { useCanvasInteraction } from "@/pages/editor/hooks/useCanvasInteraction"
 import { useEditorActions } from "@/pages/editor/hooks/useEditorActions";
 import { useEditorDocument } from "@/pages/editor/hooks/useEditorDocument";
 import { useEditorShortcuts } from "@/pages/editor/hooks/useEditorShortcuts";
+import { usePanelLayout } from "@/pages/editor/hooks/usePanelLayout";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Color, DocumentNode } from "@/document/types.ts";
@@ -28,10 +29,14 @@ import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContex
 import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/commands/index.ts";
 import "@/App.css";
 
+import { IconButton } from "@/pages/editor/components/atoms/IconButton";
+import { workspaceColumns } from "@/pages/editor/panelLayout.ts";
+
 function EditorPage() {
   const session = useEditorDocument();
   const interaction = useCanvasInteraction(session);
   const playback = usePlayback();
+  const panels = usePanelLayout();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -67,40 +72,48 @@ function EditorPage() {
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
     <PaletteContext.Provider value={design.palette}>
     <main className="app-shell">
-    <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
-      canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
-      isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
-       onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
-      drawTool={drawTool} onDrawToolChange={setDrawTool} />
-
-    <div className="workspace">
-      <div className="left-panels">
+    <div className="workspace" style={{ gridTemplateColumns: workspaceColumns(panels.layout) }}>
+      {panels.layout.left && <div className="left-panels">
         <LayersPanel nodes={design.children} components={design.components} selectedId={selectedId} selectedIds={selectedIds}
           highlightedComponentId={highlightedComponentId}
           onSelect={actions.selectLayer} onReorder={actions.reorderLayer}
           onPlaceInstance={actions.components.onPlaceInstance} onRenameComponent={actions.components.onRename}
           onDuplicateComponent={actions.components.onDuplicate} onRemoveComponent={actions.components.onRemove} />
         <PalettePanel palette={design.palette} {...actions.palette} />
+      </div>}
+      <div className="editor-center">
+        <EditorToolbar fileName={filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント"} filePath={filePath}
+          canUndo={history.past.length > 0 && !drag.current && !pathDrag.current} canRedo={history.future.length > 0 && !drag.current && !pathDrag.current}
+          isBusy={isBusy} onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")}
+          onOpen={openFile} onSave={saveFile} onCreate={actions.create} onImportImage={actions.importImage} onImportSvg={actions.importSvg}
+          drawTool={drawTool} onDrawToolChange={setDrawTool}>
+          <div className="panel-toggles">
+            <IconButton icon="panelLeft" label="左パネル" pressed={panels.layout.left} onClick={() => panels.toggle("left")} />
+            <IconButton icon="panelRight" label="右パネル" pressed={panels.layout.right} onClick={() => panels.toggle("right")} />
+          </div>
+        </EditorToolbar>
+        <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
+          drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
+          onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
+          onNodeEnter={(id) => setHoveredId(id)}
+          onNodeLeave={(id) => setHoveredId((current) => current === id ? null : current)}
+          onNodeClick={(id) => setClickedIds((current) => {
+            const next = new Set(current);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+          })}
+          onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
+          onPathPointPointerUp={finishPathPointDrag} onPathPointPointerCancel={cancelPathPointDrag}
+          onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
+          onWorldPointerDown={onWorldPointerDown} onWorldDoubleClick={() => finishPen(false)}
+          onWorldPointerMove={(event) => { updateDrawing(event); updatePenCursor(event); updateSelection(event); }}
+          onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
+          onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
+          onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
+        <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
+        <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
       </div>
-      <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} onZoom={zoomBy} viewportRef={viewportRef}
-        drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
-        onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
-        onNodeEnter={(id) => setHoveredId(id)}
-        onNodeLeave={(id) => setHoveredId((current) => current === id ? null : current)}
-        onNodeClick={(id) => setClickedIds((current) => {
-          const next = new Set(current);
-          if (next.has(id)) next.delete(id); else next.add(id);
-          return next;
-        })}
-        onPathPointPointerDown={startPathPointDrag} onPathPointPointerMove={continuePathPointDrag}
-        onPathPointPointerUp={finishPathPointDrag} onPathPointPointerCancel={cancelPathPointDrag}
-        onPanPointerDown={startPan} onPanPointerMove={continuePan} onPanPointerUp={finishPan}
-        onWorldPointerDown={onWorldPointerDown} onWorldDoubleClick={() => finishPen(false)}
-        onWorldPointerMove={(event) => { updateDrawing(event); updatePenCursor(event); updateSelection(event); }}
-        onWorldPointerUp={(event) => { finishDrawing(event); finishSelection(event); }}
-        onWorldPointerCancel={(pointerId) => { cancelDrawing(pointerId); cancelSelection(pointerId); }}
-        onImageError={(id) => setError(`画像を表示できません: ${id}`)} />
-      <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
+      {panels.layout.right && <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
         spacingUsages={Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]))}
         onCreateSpacingToken={actions.spacingTokens.onCreate} onRenameSpacingToken={actions.spacingTokens.onRename}
         onSetSpacingToken={actions.spacingTokens.onValue} onRemoveSpacingToken={actions.spacingTokens.onRemove} {...actions.inspector}
@@ -109,11 +122,8 @@ function EditorPage() {
         onGoToDefinition={() => { if (selected?.type === "instance") setHighlightedComponentId(selected.componentRef); }}
         onSetOverride={(childId, patch) => { if (selectedId) actions.components.onSetOverride(selectedId, childId, patch); }}
         onResetOverride={(childId) => { if (selectedId) actions.components.onResetOverride(selectedId, childId); }}
-        onDetach={() => actions.components.onDetach()} />
+        onDetach={() => actions.components.onDetach()} />}
     </div>
-
-    <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />
-    <EditorStatus selected={selected} isDirty={isDirty} filePath={filePath} />
     {error && <ErrorToast message={error} onClose={() => setError(null)} />}
     {recoveryStatus.kind !== "none" && <RecoveryDialog status={recoveryStatus} onRestore={restoreRecovery}
       onDiscard={() => { void discardRecovery(); }} />}
