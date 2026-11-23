@@ -81,7 +81,6 @@
   --text-code: var(--grey-700);
   --text-id: var(--grey-700);
   --text-layer: var(--grey-800);
-  --text-order: var(--grey-500);
   --text-dialog: var(--grey-700);
   --text-label: var(--grey-600);
   --text-body: var(--grey-800);
@@ -101,6 +100,7 @@
   /* アクセント */
   --accent-strong: var(--purple-700);
   --accent-soft: var(--purple-050);
+  --accent-ink: var(--purple-800);
   --accent-hover: var(--purple-600);
   --accent-border: var(--purple-600);
   --accent-fill: var(--purple-600);
@@ -393,34 +393,69 @@ button {
   gap: 3px;
 }
 .layer-list {
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--space-8) var(--space-8);
 }
-.layer-item { display: flex; align-items: center; gap: 2px; }
+.layer-item { position: relative; display: flex; align-items: center; }
 .layer-item .layer-row { flex: 1; min-width: 0; }
-.layer-order { flex: none; width: 19px; height: 25px; border: 0; border-radius: 4px; padding: 0; background: transparent; color: var(--text-order); font-size: 13px; }
-.layer-order:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent-strong); }
+/* 並び替えのボタンは場所を確保したまま隠し、行にポインターかフォーカスがあるときだけ出す。 */
+.layer-order {
+  visibility: hidden;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-4);
+  padding: 0;
+  background: transparent;
+  color: var(--text-label);
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-12);
+  cursor: pointer;
+}
+.layer-item:hover .layer-order,
+.layer-item:focus-within .layer-order { visibility: visible; }
+.layer-order:hover:not(:disabled) { background: var(--surface); color: var(--ink); }
 .layer-order:disabled { opacity: .25; cursor: default; }
 .layer-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-8);
   width: 100%;
+  height: 28px;
   border: 0;
-  border-radius: 5px;
-  padding: 9px 11px;
+  border-radius: var(--radius-6);
+  padding: 0 var(--space-8);
   background: transparent;
-  color: var(--text-layer);
+  color: var(--text-body);
   text-align: left;
-  font-size: 12px;
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-12);
+  cursor: pointer;
 }
+.layer-row .icon { color: var(--text-label); }
 .layer-row:hover {
   background: var(--surface-muted);
 }
 .layer-row.is-selected {
   background: var(--accent-soft);
-  color: var(--accent-strong);
-  font-weight: 700;
+  color: var(--accent-ink);
+  font-weight: 600;
 }
+.layer-row.is-selected .icon { color: var(--accent-strong); }
+.layer-badge {
+  flex: none;
+  margin-left: auto;
+  border-radius: var(--radius-4);
+  padding: 0 var(--space-4);
+  background: var(--surface-muted);
+  color: var(--text-label);
+  font-size: var(--font-size-11);
+  line-height: var(--line-height-11);
+  font-weight: 400;
+}
+.layer-row.is-selected .layer-badge { background: var(--surface); }
 .icon {
   display: block;
   flex: none;
@@ -903,7 +938,6 @@ button {
 .canvas-mask { background: transparent; color: var(--accent); outline-style: dashed; }
 .canvas-mask-group { position: absolute; inset: 0; pointer-events: none; }
 .canvas-mask-group > * { pointer-events: auto; }
-.layer-mask-label { margin-left: 5px; color: var(--text-tertiary); font-size: 10px; }
 .mask-control { display: flex; align-items: center; gap: 8px; margin: 12px 0; color: var(--text-tertiary); font-size: 11px; }
 .canvas-node:active {
   cursor: grabbing;
