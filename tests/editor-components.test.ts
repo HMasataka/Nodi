@@ -159,7 +159,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       status: { kind: "available", draft: { sourcePath: "/tmp/画面.nodi", document: document() } },
       onRestore: noOp, onDiscard: noOp,
     }));
-    assert.match(recovery, /元のファイルは上書きされません/);
+    assert.match(recovery, /元のファイルは上書きされず/);
     assert.match(recovery, /編集を復元/);
     assert.match(recovery, /破棄して開始/);
   } finally {

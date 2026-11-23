@@ -81,7 +81,6 @@
   --text-code: var(--grey-700);
   --text-id: var(--grey-700);
   --text-layer: var(--grey-800);
-  --text-dialog: var(--grey-700);
   --text-label: var(--grey-600);
   --text-body: var(--grey-800);
 
@@ -112,8 +111,7 @@
   --toast-surface: var(--grey-900);
   --toast-ink: var(--white);
   --toast-muted: var(--grey-200);
-  --scrim: color-mix(in srgb, var(--grey-900) 66%, transparent);
-  --dialog-border: var(--grey-100);
+  --scrim: color-mix(in srgb, var(--grey-900) 24%, transparent);
   --dialog-shadow: color-mix(in srgb, var(--grey-900) 27%, transparent);
   --menu-shadow: color-mix(in srgb, var(--grey-900) 12%, transparent);
   --guide-halo: color-mix(in srgb, var(--white) 53%, transparent);
@@ -1170,14 +1168,65 @@ button {
   color: var(--toast-muted);
 }
 .icon-button.error-toast-close:hover { color: var(--toast-ink); background: transparent; }
-.recovery-scrim { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: var(--scrim); }
-.recovery-dialog { width: min(100%, 460px); border: 1px solid var(--dialog-border); border-radius: 9px; padding: 28px; background: var(--panel); box-shadow: 0 28px 70px var(--dialog-shadow); }
-.recovery-eyebrow { color: var(--accent); font: 10px ui-monospace, monospace; letter-spacing: .16em; }
-.recovery-dialog h2 { margin: 12px 0; color: var(--ink); font-size: 21px; letter-spacing: -.04em; }
-.recovery-dialog p { color: var(--text-dialog); font-size: 12px; line-height: 1.8; }
-.recovery-path { display: block; margin-top: 16px; padding: 10px; border-radius: 4px; background: var(--surface-muted); color: var(--text-code); font: 11px/1.5 ui-monospace, monospace; overflow-wrap: anywhere; }
-.recovery-actions { display: flex; gap: 10px; margin-top: 24px; }
-.recovery-actions button { flex: 1; }
+
+.dialog-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: var(--space-24);
+  background: var(--scrim);
+}
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  box-sizing: border-box;
+  width: min(100%, 400px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-12);
+  padding: var(--space-24);
+  background: var(--surface);
+  box-shadow: 0 24px 64px var(--dialog-shadow);
+  outline: none;
+}
+.dialog-message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+.dialog-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--font-size-15);
+  line-height: var(--line-height-15);
+  font-weight: 600;
+}
+.dialog-body p {
+  margin: 0;
+  color: var(--text-body);
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-12);
+}
+.dialog-body p + p { margin-top: var(--space-4); }
+.dialog-path {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-6);
+  padding: var(--space-4) var(--space-8);
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  font-size: var(--font-size-11);
+  line-height: var(--line-height-11);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
 
 @media (max-width: 840px) {
   .add-button {
