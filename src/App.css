@@ -813,7 +813,20 @@ button {
   line-height: var(--line-height-11);
   font-variant-numeric: tabular-nums;
 }
-.color-row { height: 28px; }
+.color-row,
+.spacing-row { height: 28px; }
+.asset-spacing-editor {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-4);
+}
+.asset-spacing-usage {
+  color: var(--text-label);
+  font-size: var(--font-size-11);
+  line-height: var(--line-height-11);
+}
 .asset-color-editor {
   display: grid;
   grid-template-columns: 128px 80px;
@@ -1093,20 +1106,6 @@ button {
 .text-icon-actions { display: grid; gap: 5px; padding: 10px; margin: 12px 0; border: 1px solid var(--field-border); border-radius: 5px; }
 .text-icon-actions .property-help { margin: 0; }
 .text-icon-actions .file-button { margin-top: 5px; }
-.spacing-token-panel { padding: 17px 20px 15px; border-bottom: 1px solid var(--line); }
-.spacing-token-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.spacing-token-heading .field-label { margin: 0; }
-.spacing-token-count { color: var(--text-subtle); font: 10px ui-monospace, monospace; white-space: nowrap; }
-.spacing-token-list { display: grid; gap: 7px; margin: 12px 0; }
-.spacing-token-row { display: grid; grid-template-columns: 4px minmax(0, 1fr) 68px; gap: 7px; align-items: end; padding: 9px; border: 1px solid var(--field-border); border-radius: 5px; background: var(--surface); }
-.spacing-token-mark { align-self: stretch; border-radius: 2px; background: var(--accent); }
-.spacing-token-row label, .spacing-token-create label { display: grid; gap: 4px; min-width: 0; color: var(--text-tertiary); font-size: 10px; }
-.spacing-token-row input, .spacing-token-create input { box-sizing: border-box; width: 100%; min-width: 0; border: 1px solid var(--input-border); border-radius: 4px; padding: 6px; color: var(--ink); background: var(--surface); font-size: 11px; }
-.spacing-token-foot { grid-column: 2 / -1; display: flex; align-items: center; justify-content: space-between; gap: 6px; color: var(--text-subtle); font: 10px ui-monospace, monospace; }
-.spacing-token-foot .file-button { padding: 3px 6px; font-size: 10px; }
-.spacing-token-create { display: grid; grid-template-columns: minmax(0, 1fr) 64px auto; align-items: end; gap: 6px; }
-.spacing-token-create .file-button { padding: 7px 9px; font-size: 10px; }
-.spacing-token-panel .property-help { margin: 8px 0 0; }
 .frame-spacing-field { display: grid; gap: 6px; margin: 10px 0; }
 .frame-spacing-field > label { color: var(--text-tertiary); font-size: 11px; }
 .frame-spacing-field select { width: 100%; min-width: 0; border: 1px solid var(--input-border); border-radius: 4px; padding: 7px; color: var(--ink); background: var(--surface); font-size: 11px; }

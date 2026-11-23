@@ -4,7 +4,7 @@ import { Field } from "@/pages/editor/components/atoms/Field";
 import { Icon } from "@/pages/editor/components/atoms/Icon";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { alphaByte, rgbColor, withAlphaByte, withRgbColor } from "@/document/color.ts";
-import type { ComponentDefinition, PaletteColor } from "@/document/types";
+import type { ComponentDefinition, PaletteColor, SpacingToken } from "@/document/types";
 import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 
 export type AssetsPanelProps = {
@@ -22,6 +22,13 @@ export type AssetsPanelProps = {
   onRecolorPalette(id: string, color: string): void;
   onDuplicatePalette(id: string): void;
   onDeletePalette(id: string): void;
+  spacing: readonly SpacingToken[];
+  // 余白ごとの参照数。削除したときに px 値で固定される箇所の数として示す。
+  spacingUsages: Record<string, number>;
+  onCreateSpacing(name: string, value: number): void;
+  onRenameSpacing(id: string, name: string): void;
+  onSetSpacing(id: string, value: number): void;
+  onRemoveSpacing(id: string): void;
 };
 
 // 節の見出し。名前の直後に件数を置き、追加などの操作を右端にそろえる。
@@ -54,6 +61,7 @@ export function AssetsPanel(props: AssetsPanelProps) {
   return <aside className="sidebar assets" aria-label="アセット">
     <ComponentsSection {...props} />
     <ColorsSection {...props} />
+    <SpacingSection {...props} />
   </aside>;
 }
 
@@ -164,6 +172,74 @@ function ColorsSection({ palette, onCreatePalette, onImportPalette, onRenamePale
               onCommit={(value) => recolor(parseHexInput(color.color, value))} />
             <Field label="A" className="asset-color-alpha" inputMode="numeric" value={String(alphaByte(color.color))}
               onCommit={(value) => recolor(parseAlphaInput(color.color, value))} />
+          </div> : null}
+        </div>;
+      })}
+  </section>;
+}
+
+// 追加する余白の名前。「余白 1」から順に、使われていない番号を選ぶ。
+export function nextSpacingName(tokens: readonly SpacingToken[]): string {
+  const names = new Set(tokens.map((token) => token.name));
+  let number = 1;
+  while (names.has(`余白 ${number}`)) number++;
+  return `余白 ${number}`;
+}
+
+// px 欄の入力。0 以上の有限の数だけを受け付ける。
+export function parseSpacingInput(input: string): number | null {
+  const raw = input.trim();
+  const value = Number(raw);
+  return raw !== "" && Number.isFinite(value) && value >= 0 ? value : null;
+}
+
+// 余白の行の「⋯」メニュー。参照されている余白は、削除すると参照先が px 値で固定されることを添える。
+export function spacingMenuEntries(usage: number, actions: { rename(): void; remove(): void }): MenuEntry[] {
+  return [
+    { type: "item", label: "名前を変更", onSelect: actions.rename },
+    { type: "separator" },
+    { type: "item", label: "削除", onSelect: actions.remove },
+    ...(usage > 0 ? [{ type: "note" as const, content: `${usage} 箇所で使用中。削除すると参照先は現在の px 値で固定されます。` }] : []),
+  ];
+}
+
+function SpacingSection({ spacing, spacingUsages, onCreateSpacing, onRenameSpacing, onSetSpacing, onRemoveSpacing }: AssetsPanelProps) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [count, setCount] = useState(spacing.length);
+  // 追加した余白をすぐ編集できるよう、増えたときは末尾の行を選ぶ。
+  if (count !== spacing.length) {
+    setCount(spacing.length);
+    if (spacing.length > count) setSelectedId(spacing[spacing.length - 1].id);
+  }
+  return <section className="asset-section" aria-label="余白">
+    <AssetHeader title="余白" count={spacing.length}
+      actions={<IconButton icon="plus" label="余白を追加" onClick={() => onCreateSpacing(nextSpacingName(spacing), 8)} />} />
+    {spacing.length === 0
+      ? <p className="asset-empty">共通の余白を作ると、複数のフレームの余白や間隔に同じ px 値を当てられます。</p>
+      : spacing.map((token) => {
+        const active = token.id === selectedId;
+        const usage = spacingUsages[token.id] ?? 0;
+        return <div key={token.id} className="asset-spacing">
+          <div className={`asset-row spacing-row${active ? " is-active" : ""}`}>
+            {renamingId === token.id
+              ? <RenameInput value={token.name} label="余白の名前"
+                onDone={(name) => { setRenamingId(null); if (name !== null && name.trim() && name.trim() !== token.name) onRenameSpacing(token.id, name.trim()); }} />
+              : <button type="button" className="asset-row-name" aria-pressed={active}
+                onClick={() => setSelectedId(active ? null : token.id)} onDoubleClick={() => setRenamingId(token.id)}>{token.name}</button>}
+            <span className="asset-row-value">{token.value}</span>
+            {active ? <div className="asset-row-actions">
+              <Menu label={`${token.name}の操作`} fixedTo={besidePanel} entries={spacingMenuEntries(usage, {
+                rename: () => setRenamingId(token.id), remove: () => onRemoveSpacing(token.id),
+              })} trigger={(trigger) => <IconButton {...trigger} icon="more" label={`${token.name}の操作`} />} />
+            </div> : null}
+          </div>
+          {active ? <div className="asset-spacing-editor">
+            <Field label="px" inputMode="decimal" value={String(token.value)} onCommit={(value) => {
+              const next = parseSpacingInput(value);
+              if (next !== null && next !== token.value) onSetSpacing(token.id, next);
+            }} />
+            <span className="asset-spacing-usage">{usage} 箇所で使用</span>
           </div> : null}
         </div>;
       })}
