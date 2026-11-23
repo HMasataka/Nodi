@@ -17,6 +17,7 @@ import { findNode, moveNodes, setNodeGeometry, setPath } from "@/document/comman
 import { IDENTITY_TRANSFORM, invertTransform, transformPoint, transformVector } from "@/document/transform.ts";
 import { type SnapGuide, snapMove, snapResize } from "@/pages/editor/snapping";
 
+import { drawnElementInput } from "@/pages/editor/creation";
 import { isTextEditingTarget } from "@/pages/editor/shortcuts.ts";
 
 export function useCanvasInteraction(session: ReturnType<typeof useEditorDocument>) {
@@ -285,8 +286,9 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     const end = worldPoint(event);
     const geometry = drawingGeometry(active.start, end, active.parentTransform);
     cancelDrawing(event.pointerId);
-    if (geometry.width < 4 || geometry.height < 4) return;
-    const result = agentApi.add({ type: active.tool, parentId: active.parentId ?? undefined, ...geometry });
+    const input = drawnElementInput(active.tool, geometry, active.parentId ?? undefined);
+    if (!input) return;
+    const result = agentApi.add(input);
     if (Result.isFailure(result)) { setError(result.error.message); return; }
     setSelectedId(result.value.id);
     setDrawTool("select");

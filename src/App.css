@@ -276,6 +276,19 @@ button {
 }
 .file-chip { left: var(--space-12); }
 .action-chip { right: var(--space-12); }
+.floating-tools {
+  top: auto;
+  bottom: var(--space-12);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.floating-tools-divider {
+  flex: none;
+  width: 1px;
+  height: 20px;
+  margin: 0 var(--space-4);
+  background: var(--line);
+}
 .action-chip-zoom {
   width: 48px;
   color: var(--text-secondary);

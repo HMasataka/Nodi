@@ -35,6 +35,8 @@ export type DragState = SingleDragState | GroupDragState;
 
 export interface PanState { pointerId: number; clientX: number; clientY: number; scrollLeft: number; scrollTop: number }
 export interface SelectionRegion { pointerId: number; start: Point; end: Point; additive: boolean }
-export type DrawTool = "select" | "rectangle" | "ellipse" | "path";
-export interface DrawingState { pointerId: number; tool: "rectangle" | "ellipse"; start: Point; end: Point; parentId: string | null; parentTransform: Transform }
+export type DrawTool = "select" | "frame" | "rectangle" | "ellipse" | "path" | "text";
+// ドラッグで外接枠を描いて作るツール。ペン（path）は点を打って描く。
+export type ShapeDrawTool = Exclude<DrawTool, "select" | "path">;
+export interface DrawingState { pointerId: number; tool: ShapeDrawTool; start: Point; end: Point; parentId: string | null; parentTransform: Transform }
 export interface PenState { points: Point[]; cursor: Point; parentId: string | null; parentTransform: Transform }

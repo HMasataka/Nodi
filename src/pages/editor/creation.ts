@@ -1,4 +1,5 @@
 import type { AddNodeInput } from "@/document/commands/index.ts";
+import type { ShapeDrawTool } from "@/pages/editor/types";
 import type { Document, DocumentNode, Geometry } from "@/document/types";
 
 export type CreateKind = "rectangle" | "ellipse" | "frame" | "text";
@@ -41,4 +42,17 @@ export function imageCreationInput(document: Document, selected: DocumentNode | 
     type: "image", source, name: filename.replace(/\.[^.]+$/, "") || "画像",
     ...placement("image", document, selected), ...INITIAL_SIZE.image,
   };
+}
+
+const MIN_DRAWN_SIZE = 4;
+
+// 描くツールで描いた外接枠から作る要素。小さすぎる枠は誤操作として作らないが、テキストはクリックした位置に既定の大きさで置く。
+export function drawnElementInput(tool: ShapeDrawTool, geometry: Geometry, parentId?: string): AddNodeInput | null {
+  const tooSmall = geometry.width < MIN_DRAWN_SIZE || geometry.height < MIN_DRAWN_SIZE;
+  if (tool === "text") {
+    const box = tooSmall ? { x: geometry.x, y: geometry.y, ...INITIAL_SIZE.text } : geometry;
+    return { type: "text", content: "テキスト", parentId, ...box };
+  }
+  if (tooSmall) return null;
+  return { type: tool, parentId, ...geometry };
 }
