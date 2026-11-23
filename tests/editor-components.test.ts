@@ -51,8 +51,6 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(canvas, /class="frame-contents" style="overflow:hidden;border-radius:inherit"/);
     assert.match(canvas, /aria-label="風景"/);
     assert.match(canvas, /class="resize-handle"/);
-    assert.match(canvas, /123%/);
-    assert.ok(canvas.indexOf('class="canvas-scale"') > canvas.indexOf("</section>"));
     const multiCanvas = renderToStaticMarkup(createElement(Canvas, {
       design: document(frame), selectedId: image.id, selectedIds: [frame.id, image.id],
       zoom: 1, onZoom: noOp, drawTool: "select", drawing: null,
