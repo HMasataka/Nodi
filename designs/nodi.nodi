@@ -12545,89 +12545,6 @@
       }
     },
     {
-      "id": "assetHeader_",
-      "name": "Assets / Section header",
-      "node": {
-        "id": "ui_516",
-        "name": "Section header",
-        "x": 0,
-        "y": 0,
-        "width": 224,
-        "height": 32,
-        "type": "frame",
-        "style": {
-          "fill": null
-        },
-        "layoutMode": "horizontal",
-        "paddingRef": "space_0",
-        "gapRef": "space_8",
-        "alignItems": "center",
-        "justifyContent": "space-between",
-        "children": [
-          {
-            "id": "ui_513",
-            "name": "見出し",
-            "x": 0,
-            "y": 0,
-            "width": 112,
-            "height": 20,
-            "type": "text",
-            "content": "見出し",
-            "style": {
-              "fontSize": 11,
-              "lineHeight": 1.4545454545454546,
-              "fontFamily": "system",
-              "fontWeight": 600,
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "textAlign": "left"
-            }
-          },
-          {
-            "id": "ui_514",
-            "name": "00",
-            "x": 0,
-            "y": 0,
-            "width": 24,
-            "height": 20,
-            "type": "text",
-            "content": "00",
-            "style": {
-              "fontSize": 11,
-              "lineHeight": 1.4545454545454546,
-              "fontFamily": "system",
-              "fontWeight": 400,
-              "color": {
-                "type": "palette",
-                "id": "gray_5"
-              },
-              "textAlign": "left"
-            }
-          },
-          {
-            "id": "ui_515",
-            "name": "Actions",
-            "x": 0,
-            "y": 0,
-            "width": 72,
-            "height": 32,
-            "type": "frame",
-            "style": {
-              "fill": null
-            },
-            "layoutMode": "horizontal",
-            "paddingRef": "space_0",
-            "gapRef": "space_4",
-            "alignItems": "center",
-            "justifyContent": "end",
-            "children": []
-          }
-        ]
-      }
-    },
-    {
       "id": "icon_component_8",
       "name": "Icon / component",
       "node": {
@@ -13023,7 +12940,7 @@
       "id": "icon_import_6",
       "name": "Icon / import",
       "node": {
-        "id": "ui_539",
+        "id": "ui_540",
         "name": "import",
         "x": 0,
         "y": 0,
@@ -13093,7 +13010,7 @@
       "id": "iconButton_import_false",
       "name": "Control / Icon button / import",
       "node": {
-        "id": "ui_541",
+        "id": "ui_542",
         "name": "import",
         "x": 0,
         "y": 0,
@@ -13116,7 +13033,7 @@
         "justifyContent": "center",
         "children": [
           {
-            "id": "ui_540",
+            "id": "ui_541",
             "name": "Icon / import",
             "x": 0,
             "y": 0,
@@ -13125,112 +13042,6 @@
             "type": "instance",
             "componentRef": "icon_import_6",
             "overrides": {}
-          }
-        ]
-      }
-    },
-    {
-      "id": "assetHeader_import_plus",
-      "name": "Assets / Section header",
-      "node": {
-        "id": "ui_545",
-        "name": "Section header",
-        "x": 0,
-        "y": 0,
-        "width": 224,
-        "height": 32,
-        "type": "frame",
-        "style": {
-          "fill": null
-        },
-        "layoutMode": "horizontal",
-        "paddingRef": "space_0",
-        "gapRef": "space_8",
-        "alignItems": "center",
-        "justifyContent": "space-between",
-        "children": [
-          {
-            "id": "ui_537",
-            "name": "見出し",
-            "x": 0,
-            "y": 0,
-            "width": 112,
-            "height": 20,
-            "type": "text",
-            "content": "見出し",
-            "style": {
-              "fontSize": 11,
-              "lineHeight": 1.4545454545454546,
-              "fontFamily": "system",
-              "fontWeight": 600,
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "textAlign": "left"
-            }
-          },
-          {
-            "id": "ui_538",
-            "name": "00",
-            "x": 0,
-            "y": 0,
-            "width": 24,
-            "height": 20,
-            "type": "text",
-            "content": "00",
-            "style": {
-              "fontSize": 11,
-              "lineHeight": 1.4545454545454546,
-              "fontFamily": "system",
-              "fontWeight": 400,
-              "color": {
-                "type": "palette",
-                "id": "gray_5"
-              },
-              "textAlign": "left"
-            }
-          },
-          {
-            "id": "ui_544",
-            "name": "Actions",
-            "x": 0,
-            "y": 0,
-            "width": 72,
-            "height": 32,
-            "type": "frame",
-            "style": {
-              "fill": null
-            },
-            "layoutMode": "horizontal",
-            "paddingRef": "space_0",
-            "gapRef": "space_4",
-            "alignItems": "center",
-            "justifyContent": "end",
-            "children": [
-              {
-                "id": "ui_542",
-                "name": "Control / Icon button / import",
-                "x": 0,
-                "y": 0,
-                "width": 32,
-                "height": 32,
-                "type": "instance",
-                "componentRef": "iconButton_import_false",
-                "overrides": {}
-              },
-              {
-                "id": "ui_543",
-                "name": "Control / Icon button / plus",
-                "x": 0,
-                "y": 0,
-                "width": 32,
-                "height": 32,
-                "type": "instance",
-                "componentRef": "iconButton_plus_false",
-                "overrides": {}
-              }
-            ]
           }
         ]
       }
@@ -13448,101 +13259,6 @@
       }
     },
     {
-      "id": "assetHeader_plus",
-      "name": "Assets / Section header",
-      "node": {
-        "id": "ui_570",
-        "name": "Section header",
-        "x": 0,
-        "y": 0,
-        "width": 224,
-        "height": 32,
-        "type": "frame",
-        "style": {
-          "fill": null
-        },
-        "layoutMode": "horizontal",
-        "paddingRef": "space_0",
-        "gapRef": "space_8",
-        "alignItems": "center",
-        "justifyContent": "space-between",
-        "children": [
-          {
-            "id": "ui_566",
-            "name": "見出し",
-            "x": 0,
-            "y": 0,
-            "width": 112,
-            "height": 20,
-            "type": "text",
-            "content": "見出し",
-            "style": {
-              "fontSize": 11,
-              "lineHeight": 1.4545454545454546,
-              "fontFamily": "system",
-              "fontWeight": 600,
-              "color": {
-                "type": "palette",
-                "id": "gray_8"
-              },
-              "textAlign": "left"
-            }
-          },
-          {
-            "id": "ui_567",
-            "name": "00",
-            "x": 0,
-            "y": 0,
-            "width": 24,
-            "height": 20,
-            "type": "text",
-            "content": "00",
-            "style": {
-              "fontSize": 11,
-              "lineHeight": 1.4545454545454546,
-              "fontFamily": "system",
-              "fontWeight": 400,
-              "color": {
-                "type": "palette",
-                "id": "gray_5"
-              },
-              "textAlign": "left"
-            }
-          },
-          {
-            "id": "ui_569",
-            "name": "Actions",
-            "x": 0,
-            "y": 0,
-            "width": 72,
-            "height": 32,
-            "type": "frame",
-            "style": {
-              "fill": null
-            },
-            "layoutMode": "horizontal",
-            "paddingRef": "space_0",
-            "gapRef": "space_4",
-            "alignItems": "center",
-            "justifyContent": "end",
-            "children": [
-              {
-                "id": "ui_568",
-                "name": "Control / Icon button / plus",
-                "x": 0,
-                "y": 0,
-                "width": 32,
-                "height": 32,
-                "type": "instance",
-                "componentRef": "iconButton_plus_false",
-                "overrides": {}
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
       "id": "spacingRow",
       "name": "Assets / Spacing row",
       "node": {
@@ -13675,21 +13391,101 @@
             "children": [
               {
                 "id": "ui_517",
-                "name": "Assets / Section header",
+                "name": "Section header",
                 "x": 0,
                 "y": 0,
                 "width": 224,
                 "height": 32,
-                "type": "instance",
-                "componentRef": "assetHeader_",
-                "overrides": {
-                  "ui_513": {
-                    "content": "コンポーネント"
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_0",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "children": [
+                  {
+                    "id": "ui_515",
+                    "name": "Title",
+                    "x": 0,
+                    "y": 0,
+                    "width": 116,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "start",
+                    "children": [
+                      {
+                        "id": "ui_513",
+                        "name": "コンポーネント",
+                        "x": 0,
+                        "y": 0,
+                        "width": 88,
+                        "height": 20,
+                        "type": "text",
+                        "content": "コンポーネント",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 600,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_8"
+                          },
+                          "textAlign": "left"
+                        }
+                      },
+                      {
+                        "id": "ui_514",
+                        "name": "3",
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 20,
+                        "type": "text",
+                        "content": "3",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 400,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_5"
+                          },
+                          "textAlign": "left"
+                        }
+                      }
+                    ]
                   },
-                  "ui_514": {
-                    "content": "03"
+                  {
+                    "id": "ui_516",
+                    "name": "Actions",
+                    "x": 0,
+                    "y": 0,
+                    "width": 72,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "end",
+                    "children": []
                   }
-                }
+                ]
               },
               {
                 "id": "ui_527",
@@ -13772,21 +13568,124 @@
             "children": [
               {
                 "id": "ui_546",
-                "name": "Assets / Section header",
+                "name": "Section header",
                 "x": 0,
                 "y": 0,
                 "width": 224,
                 "height": 32,
-                "type": "instance",
-                "componentRef": "assetHeader_import_plus",
-                "overrides": {
-                  "ui_537": {
-                    "content": "色"
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_0",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "children": [
+                  {
+                    "id": "ui_539",
+                    "name": "Title",
+                    "x": 0,
+                    "y": 0,
+                    "width": 44,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "start",
+                    "children": [
+                      {
+                        "id": "ui_537",
+                        "name": "色",
+                        "x": 0,
+                        "y": 0,
+                        "width": 16,
+                        "height": 20,
+                        "type": "text",
+                        "content": "色",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 600,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_8"
+                          },
+                          "textAlign": "left"
+                        }
+                      },
+                      {
+                        "id": "ui_538",
+                        "name": "6",
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 20,
+                        "type": "text",
+                        "content": "6",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 400,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_5"
+                          },
+                          "textAlign": "left"
+                        }
+                      }
+                    ]
                   },
-                  "ui_538": {
-                    "content": "06"
+                  {
+                    "id": "ui_545",
+                    "name": "Actions",
+                    "x": 0,
+                    "y": 0,
+                    "width": 72,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "end",
+                    "children": [
+                      {
+                        "id": "ui_543",
+                        "name": "Control / Icon button / import",
+                        "x": 0,
+                        "y": 0,
+                        "width": 32,
+                        "height": 32,
+                        "type": "instance",
+                        "componentRef": "iconButton_import_false",
+                        "overrides": {}
+                      },
+                      {
+                        "id": "ui_544",
+                        "name": "Control / Icon button / plus",
+                        "x": 0,
+                        "y": 0,
+                        "width": 32,
+                        "height": 32,
+                        "type": "instance",
+                        "componentRef": "iconButton_plus_false",
+                        "overrides": {}
+                      }
+                    ]
                   }
-                }
+                ]
               },
               {
                 "id": "ui_552",
@@ -13998,21 +13897,113 @@
             "children": [
               {
                 "id": "ui_571",
-                "name": "Assets / Section header",
+                "name": "Section header",
                 "x": 0,
                 "y": 0,
                 "width": 224,
                 "height": 32,
-                "type": "instance",
-                "componentRef": "assetHeader_plus",
-                "overrides": {
-                  "ui_566": {
-                    "content": "余白"
+                "type": "frame",
+                "style": {
+                  "fill": null
+                },
+                "layoutMode": "horizontal",
+                "paddingRef": "space_0",
+                "gapRef": "space_0",
+                "alignItems": "center",
+                "justifyContent": "space-between",
+                "children": [
+                  {
+                    "id": "ui_568",
+                    "name": "Title",
+                    "x": 0,
+                    "y": 0,
+                    "width": 56,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "start",
+                    "children": [
+                      {
+                        "id": "ui_566",
+                        "name": "余白",
+                        "x": 0,
+                        "y": 0,
+                        "width": 28,
+                        "height": 20,
+                        "type": "text",
+                        "content": "余白",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 600,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_8"
+                          },
+                          "textAlign": "left"
+                        }
+                      },
+                      {
+                        "id": "ui_567",
+                        "name": "3",
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 20,
+                        "type": "text",
+                        "content": "3",
+                        "style": {
+                          "fontSize": 11,
+                          "lineHeight": 1.4545454545454546,
+                          "fontFamily": "system",
+                          "fontWeight": 400,
+                          "color": {
+                            "type": "palette",
+                            "id": "gray_5"
+                          },
+                          "textAlign": "left"
+                        }
+                      }
+                    ]
                   },
-                  "ui_567": {
-                    "content": "03"
+                  {
+                    "id": "ui_570",
+                    "name": "Actions",
+                    "x": 0,
+                    "y": 0,
+                    "width": 72,
+                    "height": 32,
+                    "type": "frame",
+                    "style": {
+                      "fill": null
+                    },
+                    "layoutMode": "horizontal",
+                    "paddingRef": "space_0",
+                    "gapRef": "space_4",
+                    "alignItems": "center",
+                    "justifyContent": "end",
+                    "children": [
+                      {
+                        "id": "ui_569",
+                        "name": "Control / Icon button / plus",
+                        "x": 0,
+                        "y": 0,
+                        "width": 32,
+                        "height": 32,
+                        "type": "instance",
+                        "componentRef": "iconButton_plus_false",
+                        "overrides": {}
+                      }
+                    ]
                   }
-                }
+                ]
               },
               {
                 "id": "ui_575",

@@ -304,11 +304,12 @@ define("layersPanel", "Shell / Layers panel", () => column("Layers panel", 240, 
 ], { pad: 8, gap: 8, fill: 0, border: ["right"] }));
 
 // アセットは文書全体で共有する定義（コンポーネント、色、余白）。各節の見出しに件数と追加の操作を置き、行ごとの操作は「⋯」メニューにまとめる。
+// 件数は見出しの直後に置き、名前と一続きに読めるようにする。追加などの操作は右端にそろえる。
 function assetHeader(title, count, actions) {
-  const ref = define(`assetHeader_${actions.join("_")}`, "Assets / Section header", () =>
-    row("Section header", 224, [text("見出し", 112, { size: 11, tone: 8, weight: 600 }), text("00", 24, { size: 11, tone: 5 }),
-      row("Actions", 72, actions.map((kind) => iconButton(kind)), { height: 32, gap: 4, justify: "end" })], { height: 32, gap: 8, justify: "space-between" }));
-  return use(ref, { [slot(ref, 0)]: { content: title }, [slot(ref, 1)]: { content: count } });
+  const titleWidth = title.length * 12 + 4;
+  const label = row("Title", titleWidth + 4 + 24, [text(title, titleWidth, { size: 11, tone: 8, weight: 600 }), text(count, 24, { size: 11, tone: 5 })], { height: 32, gap: 4 });
+  return row("Section header", 224, [label, row("Actions", 72, actions.map((kind) => iconButton(kind)), { height: 32, gap: 4, justify: "end" })],
+    { height: 32, justify: "space-between" });
 }
 function componentRow(name, highlighted = false) {
   const ref = define(`componentRow_${highlighted}`, `Assets / Component row${highlighted ? " / Highlighted" : ""}`, () =>
@@ -335,13 +336,13 @@ define("colorEditor", "Assets / Color editor", () => row("Color editor", 216, [
 ], { pad: 0, gap: 8 }));
 define("assetsPanel", "Shell / Assets panel", () => column("Assets panel", 240, [
   segmented(["レイヤー", "アセット"], 1, 224),
-  column("コンポーネント", 224, [assetHeader("コンポーネント", "03", []),
+  column("コンポーネント", 224, [assetHeader("コンポーネント", "3", []),
     componentRow("Project card", true), componentRow("Nav link"), componentRow("Button / Primary")]),
   divider(224),
-  column("色", 224, [assetHeader("色", "06", ["import", "plus"]),
+  column("色", 224, [assetHeader("色", "6", ["import", "plus"]),
     ...assetColors.flatMap(([name, hex, tone], index) => index === 0 ? [colorRow(name, hex, tone, true), column("Selected color", 224, [use("colorEditor")], { pad: 4 })] : [colorRow(name, hex, tone)])]),
   divider(224),
-  column("余白", 224, [assetHeader("余白", "03", ["plus"]), ...assetSpacing.map(([name, value]) => spacingRow(name, value))]),
+  column("余白", 224, [assetHeader("余白", "3", ["plus"]), ...assetSpacing.map(([name, value]) => spacingRow(name, value))]),
 ], { pad: 8, gap: 8, fill: 0, border: ["right"] }));
 define("componentMenu", "Assets / Component menu", () => column("Component menu", 200, [
   menuRow("キャンバスに配置"), menuRow("名前を変更"), menuRow("複製"), divider(184), menuRow("削除"),
