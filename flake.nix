@@ -36,6 +36,14 @@
               pkg-config
             ];
 
+            buildInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux (with pkgs; [
+              dbus
+              gtk3
+              librsvg
+              openssl
+              webkitgtk_4_1
+            ]);
+
             RUSTC_WRAPPER = "${pkgs.kache}/bin/kache";
 
             shellHook = ''
