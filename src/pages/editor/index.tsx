@@ -49,6 +49,8 @@ function EditorPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [clickedIds, setClickedIds] = useState<ReadonlySet<string>>(new Set());
   const [scrollProgress, setScrollProgress] = useState(0);
+  // タイムラインで開いているアニメーション。プロパティのアニメーションの行からも切り換える。
+  const [activeAnimationId, setActiveAnimationId] = useState<string | null>(null);
   const actions = useEditorActions(session, { playhead: playback.playhead, scrollProgress });
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
@@ -147,7 +149,8 @@ function EditorPage() {
             timelineOpen={panels.layout.timeline} onToggleTimeline={() => panels.toggle("timeline")} />
           {error && <ErrorToast message={error} onClose={() => setError(null)} />}
         </div>
-        {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline} />}
+        {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline}
+          activeAnimationId={activeAnimationId} onSelectAnimation={setActiveAnimationId} onClose={() => panels.toggle("timeline")} />}
       </div>
       {panels.layout.right && <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
         {...actions.inspector}

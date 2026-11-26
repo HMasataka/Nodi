@@ -239,11 +239,13 @@ export function useEditorActions(session: ReturnType<typeof useEditorDocument>, 
       onDetach: detachSelectedInstance,
     },
     timeline: {
-      onAddAnimation: () => {
-        if (!selectedId) return;
+      // 足したアニメーションの ID を返す。タイムラインとプロパティは、足したアニメーションを開くのに使う。
+      onAddAnimation: (): string | null => {
+        if (!selectedId) return null;
         const result = addAnimation(designRef.current, selectedId, { name: "アニメーション", trigger: "load" });
-        if (Result.isFailure(result)) { setError(result.error.message); return; }
+        if (Result.isFailure(result)) { setError(result.error.message); return null; }
         recordDocument(result.value.document);
+        return result.value.animation.id;
       },
       onRemoveAnimation: (animationId: string) => {
         if (selectedId) applyDocument(removeAnimation(designRef.current, selectedId, animationId));
