@@ -1153,7 +1153,6 @@ button {
 .gradient-marker.is-selected { border-color: var(--accent); background: var(--accent); }
 .gradient-marker:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .gradient-stop-row { display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center; gap: var(--space-4); }
-.style-fields .frame-overflow-label { grid-column: 1 / -1; justify-content: flex-start; gap: 12px; }
 /* 「⋯」メニューの末尾に、コピーする ID を小さく出す。 */
 .node-id {
   display: block;
@@ -1181,11 +1180,8 @@ button {
 .text-icon-actions { display: grid; gap: 5px; padding: 10px; margin: 12px 0; border: 1px solid var(--field-border); border-radius: 5px; }
 .text-icon-actions .property-help { margin: 0; }
 .text-icon-actions .file-button { margin-top: 5px; }
-.frame-spacing-field { display: grid; gap: 6px; margin: 10px 0; }
-.frame-spacing-field > label { color: var(--text-tertiary); font-size: 11px; }
-.frame-spacing-field select { width: 100%; min-width: 0; border: 1px solid var(--input-border); border-radius: 4px; padding: 7px; color: var(--ink); background: var(--surface); font-size: 11px; }
-.frame-spacing-field input:disabled { color: var(--text-subtle); background: var(--panel); }
-.spacing-reference-note { color: var(--accent); font-size: 10px; }
+.frame-layout-fields { display: flex; flex-direction: column; gap: var(--space-8); }
+.spacing-reference-note { margin: 0; color: var(--text-label); font-size: var(--font-size-11); line-height: var(--line-height-11); }
 .frame-preview { margin: 4px 0 8px; }
 .preview-controls { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
 .preview-controls .file-button { padding: 5px 8px; font-size: 10px; }

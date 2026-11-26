@@ -11,7 +11,7 @@ import { document, frame, success } from "./support/factories.ts";
 
 test("共通値の一覧は使用数を示し、参照中のフレームは名前と解決済みpx値を表示する", () => {
   const token = { id: "sp1", name: "カード余白", value: 24 };
-  const first = frame({ id: "first", paddingRef: token.id, gapRef: token.id });
+  const first = frame({ id: "first", layoutMode: "vertical", paddingRef: token.id, gapRef: token.id });
   const second = frame({ id: "second", paddingRef: token.id });
   const design = { ...document(first, second), spacing: [token] };
   assert.equal(spacingTokenUsage(design, token.id), 3);
@@ -23,8 +23,8 @@ test("共通値の一覧は使用数を示し、参照中のフレームは名�
   const layout = renderToStaticMarkup(<FrameLayoutEditor node={first} tokens={[token]} onChange={() => {}} />);
   assert.match(layout, /カード余白 · 24px/);
   assert.match(layout, /共通値を編集すると反映/);
-  assert.match(layout, /disabled="" value="24"/);
-  const direct = renderToStaticMarkup(<FrameLayoutEditor node={frame({ id: "direct", padding: 9 })} tokens={[token]} onChange={() => {}} />);
+  assert.match(layout, /disabled=""[^>]*value="24"/);
+  const direct = renderToStaticMarkup(<FrameLayoutEditor node={frame({ id: "direct", layoutMode: "horizontal", padding: 9 })} tokens={[token]} onChange={() => {}} />);
   assert.match(direct, /直接指定/);
   assert.match(direct, /value="9"/);
 });

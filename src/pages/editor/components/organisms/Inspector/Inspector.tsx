@@ -207,10 +207,7 @@ export function Inspector(props: InspectorProps) {
         </Section>
         {node.type === "frame" && <Section id="layout" title="自動レイアウト">
           <FrameLayoutEditor key={`${node.id}:${node.layoutMode}:${node.padding}:${node.gap}:${node.paddingRef}:${node.gapRef}:${spacingTokens.map((token) => `${token.id}:${token.name}:${token.value}`).join(":")}:${node.alignItems}:${node.justifyContent}`}
-            node={node} tokens={spacingTokens} onChange={onFrameLayout} />
-          <label className="frame-overflow-label">はみ出しを表示
-            <input type="checkbox" checked={!node.clipContent} onChange={(event) => onFrameStyle({ clipContent: !event.currentTarget.checked })} />
-          </label>
+            node={node} tokens={spacingTokens} onChange={onFrameLayout} onClipContent={(clipContent) => onFrameStyle({ clipContent })} />
         </Section>}
         {node.type === "text" && <Section id="text" title="テキスト">
           <TextAppearance key={node.id} node={node} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange} />

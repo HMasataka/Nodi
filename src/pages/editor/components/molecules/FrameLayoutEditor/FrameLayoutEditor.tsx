@@ -1,57 +1,53 @@
-import { useState } from "react";
-
 import type { FrameLayoutPatch } from "@/document/commands/index.ts";
 import type { FrameNode, LayoutAlignment, LayoutJustify, LayoutMode, SpacingToken } from "@/document/types";
 
-export function FrameLayoutEditor({ node, tokens = [], onChange }: { node: FrameNode; tokens?: SpacingToken[]; onChange(patch: FrameLayoutPatch): void }) {
-  const paddingToken = tokens.find((token) => token.id === node.paddingRef);
-  const gapToken = tokens.find((token) => token.id === node.gapRef);
-  const [padding, setPadding] = useState(String(paddingToken?.value ?? node.padding));
-  const [gap, setGap] = useState(String(gapToken?.value ?? node.gap));
-  function commitNumber(raw: string, current: number, apply: (value: number) => void) {
-    const value = raw.trim();
-    if (value === "" || !Number.isFinite(Number(value)) || Number(value) < 0) return;
-    if (Number(value) !== current) apply(Number(value));
-  }
+import { Checkbox } from "@/pages/editor/components/atoms/Checkbox";
+import { Field } from "@/pages/editor/components/atoms/Field";
+import { Segmented } from "@/pages/editor/components/atoms/Segmented";
+import { SelectField } from "@/pages/editor/components/atoms/SelectField";
+
+const MODES: readonly { value: LayoutMode; label: string }[] = [{ value: "none", label: "なし" }, { value: "vertical", label: "縦" }, { value: "horizontal", label: "横" }];
+const ALIGNMENTS: readonly { value: LayoutAlignment; label: string }[] = [{ value: "start", label: "始点" }, { value: "center", label: "中央" }, { value: "end", label: "終点" }];
+const JUSTIFY: readonly { value: LayoutJustify; label: string }[] = [...ALIGNMENTS, { value: "space-between", label: "均等" }];
+
+function parseSpacing(raw: string, current: number): number | null {
+  const value = Number(raw);
+  return raw.trim() !== "" && Number.isFinite(value) && value >= 0 && value !== current ? value : null;
+}
+
+type SpacingKey = "gap" | "padding";
+
+// 間隔と余白は、直接の値か、アセットの余白（共通値）の参照を持つ。参照中は共通値を出して直接の入力を止める。
+function SpacingFields({ node, tokens, onChange }: { node: FrameNode; tokens: SpacingToken[]; onChange(patch: FrameLayoutPatch): void }) {
+  const fields: readonly [SpacingKey, string][] = [["gap", "間隔"], ["padding", "余白"]];
+  const refOf = (key: SpacingKey) => key === "gap" ? node.gapRef : node.paddingRef;
+  const tokenOf = (key: SpacingKey) => tokens.find((token) => token.id === refOf(key));
+  const options = [{ value: "", label: "直接指定" }, ...tokens.map((token) => ({ value: token.id, label: `${token.name} · ${token.value}px` }))];
+  return <>
+    <div className="field-pair">
+      {fields.map(([key, label]) => <Field key={key} className="is-wide-label" label={label} type="number" min="0" step="any"
+        value={String(tokenOf(key)?.value ?? node[key])} disabled={!!refOf(key)}
+        onCommit={(raw) => { const value = parseSpacing(raw, node[key]); if (value !== null) onChange({ [key]: value }); }} />)}
+    </div>
+    {tokens.length > 0 && <div className="field-pair">
+      {fields.map(([key, label]) => <SelectField key={key} className="is-wide-label" label={label} aria-label={`${label}の共通値`} value={refOf(key) ?? ""}
+        options={options} onChange={(id) => onChange(key === "gap" ? { gapRef: id || null } : { paddingRef: id || null })} />)}
+    </div>}
+    {fields.flatMap(([key, label]) => { const token = tokenOf(key); return token ? [<p key={key} className="spacing-reference-note">{label}：{token.name} · 共通値を編集すると反映</p>] : []; })}
+  </>;
+}
+
+// フレームの節。自動レイアウトの向き、間隔と余白、揃えと配分、はみ出しを隠すを並べる。向きが「なし」のときは並べ方の設定を出さない。
+export function FrameLayoutEditor({ node, tokens = [], onChange, onClipContent }: {
+  node: FrameNode; tokens?: SpacingToken[]; onChange(patch: FrameLayoutPatch): void; onClipContent?(clip: boolean): void;
+}) {
   return <div className="frame-layout-fields">
-    <div className="field-label">レイアウト</div>
-    <label>方向
-      <select value={node.layoutMode} onChange={(event) => onChange({ layoutMode: event.currentTarget.value as LayoutMode })}>
-        <option value="none">なし（絶対配置）</option>
-        <option value="horizontal">横</option>
-        <option value="vertical">縦</option>
-      </select>
-    </label>
-    <div className="frame-spacing-field"><label htmlFor={`padding-mode-${node.id}`}>余白の指定方法</label>
-      <select id={`padding-mode-${node.id}`} value={node.paddingRef ?? ""} onChange={(event) => onChange({ paddingRef: event.currentTarget.value || null })}>
-        <option value="">直接指定</option>
-        {tokens.map((token) => <option key={token.id} value={token.id}>{token.name} · {token.value}px</option>)}
-      </select>
-      <label>余白（px）<input type="number" min="0" step="any" value={paddingToken?.value ?? padding} disabled={!!node.paddingRef}
-        onChange={(event) => setPadding(event.currentTarget.value)}
-        onBlur={() => { commitNumber(padding, node.padding, (value) => onChange({ padding: value })); setPadding(String(node.padding)); }} /></label>
-      {paddingToken && <span className="spacing-reference-note">↳ {paddingToken.name} · 共通値を編集すると反映</span>}
-    </div>
-    <div className="frame-spacing-field"><label htmlFor={`gap-mode-${node.id}`}>間隔の指定方法</label>
-      <select id={`gap-mode-${node.id}`} value={node.gapRef ?? ""} onChange={(event) => onChange({ gapRef: event.currentTarget.value || null })}>
-        <option value="">直接指定</option>
-        {tokens.map((token) => <option key={token.id} value={token.id}>{token.name} · {token.value}px</option>)}
-      </select>
-      <label>間隔（px）<input type="number" min="0" step="any" value={gapToken?.value ?? gap} disabled={!!node.gapRef}
-        onChange={(event) => setGap(event.currentTarget.value)}
-        onBlur={() => { commitNumber(gap, node.gap, (value) => onChange({ gap: value })); setGap(String(node.gap)); }} /></label>
-      {gapToken && <span className="spacing-reference-note">↳ {gapToken.name} · 共通値を編集すると反映</span>}
-    </div>
-    <label>交差軸の整列
-      <select value={node.alignItems} onChange={(event) => onChange({ alignItems: event.currentTarget.value as LayoutAlignment })}>
-        <option value="start">先頭</option><option value="center">中央</option><option value="end">末尾</option>
-      </select>
-    </label>
-    <label>主軸の分配
-      <select value={node.justifyContent} onChange={(event) => onChange({ justifyContent: event.currentTarget.value as LayoutJustify })}>
-        <option value="start">先頭</option><option value="center">中央</option><option value="end">末尾</option><option value="space-between">均等</option>
-      </select>
-    </label>
-    <p className="property-help">横・縦にすると子要素を padding と間隔に従って並べます。既定は「なし」で、既存の絶対配置は変わりません。</p>
+    <Segmented<LayoutMode> label="自動レイアウトの向き" value={node.layoutMode} options={MODES} onChange={(layoutMode) => onChange({ layoutMode })} />
+    {node.layoutMode !== "none" && <>
+      <SpacingFields node={node} tokens={tokens} onChange={onChange} />
+      <Segmented<LayoutAlignment> label="揃え" value={node.alignItems} options={ALIGNMENTS} onChange={(alignItems) => onChange({ alignItems })} />
+      <Segmented<LayoutJustify> label="配分" value={node.justifyContent} options={JUSTIFY} onChange={(justifyContent) => onChange({ justifyContent })} />
+    </>}
+    {onClipContent && <Checkbox label="はみ出しを隠す" checked={node.clipContent} onChange={onClipContent} />}
   </div>;
 }
