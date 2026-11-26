@@ -102,6 +102,11 @@ function EditorPage() {
     zoomReset: () => zoomTo(1),
     zoomFit: fitAll,
     togglePanel: ({ panel }) => panels.toggle(panel),
+    togglePreview: () => {
+      if (previewFrame) { setPreviewing(false); return; }
+      if (selected?.type !== "frame") return false;
+      setPreviewing(true);
+    },
   });
 
   return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>

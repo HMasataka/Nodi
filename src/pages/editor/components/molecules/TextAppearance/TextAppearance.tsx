@@ -3,6 +3,7 @@ import { type MouseEvent, useEffect, useMemo, useState } from "react";
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
+import { matchTextMarkKey } from "@/pages/editor/shortcuts.ts";
 import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 import { graphemeBoundaries, graphemeSegments } from "@/document/textLayout";
 import { rangeHasMark, remapTextMarks } from "@/document/textMarks";
@@ -46,7 +47,15 @@ export function TextAppearance({ node, onTextContent, onTextStyle, onTextMarkRan
     <ContentEditor value={draft}
       onChange={(value, start, end) => { setDraft(value); setSelection({ start, end }); }}
       onSelect={(start, end) => setSelection({ start, end })}
-      onBlur={() => { if (draft !== node.content) onTextContent(draft); }} />
+      onBlur={() => { if (draft !== node.content) onTextContent(draft); }}
+      onKeyDown={(event) => {
+        // ⌘B・⌘U（Windows・Linux では Ctrl）で選択範囲の太字・下線を切り換える。
+        const mark = matchTextMarkKey(event);
+        if (!mark || !canStyle) return;
+        event.preventDefault();
+        if (mark === "bold") apply({ fontWeight: bold ? (baseWeight >= 600 ? 400 : null) : 700 });
+        else apply({ underline: !underline });
+      }} />
     <TextStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onTextStyle} />
     <div className="text-mark-controls" role="group" aria-label="選択範囲の装飾">
       <div className="text-mark-row">
