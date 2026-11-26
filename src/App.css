@@ -1014,7 +1014,11 @@ button {
   outline: calc(1px / var(--canvas-zoom)) solid var(--accent);
   outline-offset: 0;
 }
-.canvas-mask { background: transparent; color: var(--accent); outline-style: dashed; }
+/* マスクは外接枠を出さず、マスクの形を紫の 1px の線で示す。切り抜かれた外側は薄く出す。 */
+.canvas-mask { background: transparent; color: var(--accent); }
+.canvas-node.canvas-mask.is-selected { outline: none; }
+.canvas-mask-outside { position: absolute; inset: 0; opacity: 0.2; pointer-events: none; }
+.canvas-mask-outside * { pointer-events: none; }
 .canvas-mask-group { position: absolute; inset: 0; pointer-events: none; }
 .canvas-mask-group > * { pointer-events: auto; }
 .mask-control { display: flex; align-items: center; gap: 8px; margin: 12px 0; color: var(--text-tertiary); font-size: 11px; }
