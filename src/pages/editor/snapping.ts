@@ -3,13 +3,15 @@ import { composeTransform, invertTransform, nodeTransform, transformPoint, trans
 import type { Document, Geometry } from "@/document/types.ts";
 import { locateSelection, walkVisibleNodes } from "@/document/geometry.ts";
 
-export interface SnapGuide { orientation: "vertical" | "horizontal"; position: number; from: number; to: number }
+// 間隔の札。そろえた相手との、ガイドと直交する向きの隙間を from から to までの線と値で示す。at は線を引く位置。
+export interface SnapDistance { from: number; to: number; at: number; value: number }
+export interface SnapGuide { orientation: "vertical" | "horizontal"; position: number; from: number; to: number; distance?: SnapDistance }
 
 type Axis = "x" | "y";
 type SnapMode = "move" | "resize";
 
 interface AxisEdges { start: number; center: number; end: number; size: number }
-interface SnapMatch { adjustment: number; distance: number; guide: SnapGuide }
+interface SnapMatch { adjustment: number; distance: number; guide: SnapGuide; other: Geometry }
 
 // 判定は画面上で 8px 以内。ズームに応じてドキュメント座標へ換算する。
 const SNAP_DISTANCE_ON_SCREEN = 8;
@@ -84,15 +86,33 @@ function closestSnap(moving: Geometry, others: Geometry[], axis: Axis, mode: Sna
         const adjustment = difference * anchor.adjustmentFactor;
         if (distance > threshold || (mode === "resize" && movingEdges.size + adjustment <= 0)) continue;
         if (closest && distance >= closest.distance) continue;
-        closest = { adjustment, distance, guide: guideAcross(moving, other, axis, target) };
+        closest = { adjustment, distance, guide: guideAcross(moving, other, axis, target), other };
       }
     }
   }
   return closest;
 }
 
-function guidesFor(xSnap: SnapMatch | null, ySnap: SnapMatch | null): SnapGuide[] {
-  return [xSnap?.guide, ySnap?.guide].filter((guide): guide is SnapGuide => guide !== undefined);
+// ガイドと直交する向きに離れているときの隙間。重なっているときは null。
+export function gapBetween(moving: Geometry, other: Geometry, orientation: SnapGuide["orientation"]): SnapDistance | null {
+  // 垂直のガイド（左右の辺をそろえた）なら上下の隙間、水平のガイドなら左右の隙間を測る。
+  const [start, size, crossStart, crossSize] = orientation === "vertical"
+    ? ["y", "height", "x", "width"] as const : ["x", "width", "y", "height"] as const;
+  const crossFrom = Math.max(moving[crossStart], other[crossStart]);
+  const crossTo = Math.min(moving[crossStart] + moving[crossSize], other[crossStart] + other[crossSize]);
+  const at = crossFrom <= crossTo ? (crossFrom + crossTo) / 2 : moving[crossStart] + moving[crossSize] / 2;
+  const [first, second] = moving[start] >= other[start] ? [other, moving] : [moving, other];
+  const from = first[start] + first[size];
+  const to = second[start];
+  return to > from ? { from, to, at, value: Math.round((to - from) * 10) / 10 } : null;
+}
+
+// moved はスナップした後の位置。そろえた相手との隙間を、間隔の札としてガイドに添える。
+function guidesFor(xSnap: SnapMatch | null, ySnap: SnapMatch | null, moved?: Geometry): SnapGuide[] {
+  return [xSnap, ySnap].filter((match): match is SnapMatch => match !== null).map(({ guide, other }) => {
+    const distance = moved ? gapBetween(moved, other, guide.orientation) : null;
+    return distance ? { ...guide, distance } : guide;
+  });
 }
 
 export function snapMove(document: Document, ids: string[], dx: number, dy: number, zoom: number) {
@@ -104,9 +124,10 @@ export function snapMove(document: Document, ids: string[], dx: number, dy: numb
   const others = otherElementBounds(document, ids);
   const xSnap = closestSnap(moving, others, "x", "move", zoom);
   const ySnap = closestSnap(moving, others, "y", "move", zoom);
+  const moved = { ...moving, x: moving.x + (xSnap?.adjustment ?? 0), y: moving.y + (ySnap?.adjustment ?? 0) };
   return {
     dx: dx + (xSnap?.adjustment ?? 0), dy: dy + (ySnap?.adjustment ?? 0),
-    guides: guidesFor(xSnap, ySnap),
+    guides: guidesFor(xSnap, ySnap, moved),
   };
 }
 
@@ -138,8 +159,9 @@ export function snapResize(document: Document, id: string, geometry: Geometry, z
   const others = otherElementBounds(document, [id]);
   const xSnap = closestSnap(moving, others, "x", "resize", zoom);
   const ySnap = closestSnap(moving, others, "y", "resize", zoom);
+  const moved = { ...moving, width: moving.width + (xSnap?.adjustment ?? 0), height: moving.height + (ySnap?.adjustment ?? 0) };
   return {
     geometry: { ...geometry, width: geometry.width + (xSnap?.adjustment ?? 0), height: geometry.height + (ySnap?.adjustment ?? 0) },
-    guides: guidesFor(xSnap, ySnap),
+    guides: guidesFor(xSnap, ySnap, moved),
   };
 }

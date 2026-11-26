@@ -118,7 +118,6 @@
   --scrim: color-mix(in srgb, var(--grey-900) 24%, transparent);
   --dialog-shadow: color-mix(in srgb, var(--grey-900) 27%, transparent);
   --menu-shadow: color-mix(in srgb, var(--grey-900) 12%, transparent);
-  --guide-halo: color-mix(in srgb, var(--white) 53%, transparent);
 }
 
 * {
@@ -924,9 +923,38 @@ button {
   outline: calc(1px / var(--canvas-zoom)) solid var(--accent);
   pointer-events: none;
 }
-.alignment-guide { position: absolute; z-index: 11; pointer-events: none; background: var(--accent); box-shadow: 0 0 0 1px var(--guide-halo); }
-.alignment-guide.vertical { width: 1px; }
-.alignment-guide.horizontal { height: 1px; }
+/* そろった辺のガイドは、倍率に依らず画面上で 1px の紫の線にする。 */
+.alignment-guide { position: absolute; z-index: 11; pointer-events: none; background: var(--accent); }
+.alignment-guide.vertical { width: calc(1px / var(--canvas-zoom)); }
+.alignment-guide.horizontal { height: calc(1px / var(--canvas-zoom)); }
+/* 隣との間隔は、隙間に 1px の線を引き、その中央に細い札で値を出す。 */
+.snap-distance { position: absolute; z-index: 11; pointer-events: none; background: var(--accent); }
+.snap-distance.is-vertical { width: calc(1px / var(--canvas-zoom)); }
+.snap-distance.is-horizontal { height: calc(1px / var(--canvas-zoom)); }
+.snap-distance-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 20px;
+  border-radius: var(--radius-4);
+  padding: 0 var(--space-4);
+  color: var(--on-accent);
+  background: var(--accent-fill);
+  font: 400 var(--font-size-11) / var(--line-height-11) "Avenir Next", "Hiragino Kaku Gothic ProN", sans-serif;
+  white-space: nowrap;
+}
+/* 札は線に重ねず、横の線なら 8px 下、縦の線なら 8px 右に置く。 */
+.snap-distance.is-horizontal .snap-distance-label {
+  transform: translate(-50%, calc(8px / var(--canvas-zoom))) scale(calc(1 / var(--canvas-zoom)));
+  transform-origin: 50% 0;
+}
+.snap-distance.is-vertical .snap-distance-label {
+  transform: translate(calc(8px / var(--canvas-zoom)), -50%) scale(calc(1 / var(--canvas-zoom)));
+  transform-origin: 0 50%;
+}
 .spacing-guides { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 11; color: var(--accent); }
 .spacing-guides line { stroke: currentColor; stroke-dasharray: 4 3; }
 .spacing-guides text { fill: currentColor; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }

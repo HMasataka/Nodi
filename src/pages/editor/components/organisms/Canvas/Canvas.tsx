@@ -8,7 +8,7 @@ import type { SnapGuide } from "@/pages/editor/snapping";
 import { transformPoint } from "@/document/transform.ts";
 import { type CanvasCamera, selectionBounds } from "@/pages/editor/camera.ts";
 import { CanvasNodes, type NodeInteraction, sizeLabel } from "@/pages/editor/components/molecules/CanvasNode";
-import { canvasSurfaceStyle, canvasWorldStyle, drawPreviewStyle, guideStyle, selectionPreviewStyle } from "@/pages/editor/canvasStyles";
+import { canvasSurfaceStyle, canvasWorldStyle, distanceStyle, drawPreviewStyle, guideStyle, selectionPreviewStyle } from "@/pages/editor/canvasStyles";
 import { drawingGeometry, marqueeTargets, RESIZE_CORNERS } from "@/pages/editor/geometry";
 import type { DrawingState, DrawTool, PenState } from "@/pages/editor/types";
 
@@ -88,6 +88,10 @@ export function Canvas(props: CanvasProps) {
             {selection && <div className="selection-preview" style={selectionPreviewStyle(selection)} />}
             {guides.map((guide, index) => <div key={`${guide.orientation}:${index}`} className={`alignment-guide ${guide.orientation}`}
               style={guideStyle(guide)} />)}
+            {guides.flatMap((guide, index) => guide.distance ? [<div key={`distance:${index}`}
+              className={`snap-distance ${guide.orientation === "vertical" ? "is-vertical" : "is-horizontal"}`} style={distanceStyle(guide)}>
+              <span className="snap-distance-label">{guide.distance.value}</span>
+            </div>] : [])}
             {spacing && !spacing.error && <svg className="spacing-guides" aria-hidden="true">
               {([spacing.x, spacing.y] as const).flatMap((measurement) => measurement?.intervals.map(({ from, to, distance }, index) => {
                 const horizontal = measurement.axis === "x";
