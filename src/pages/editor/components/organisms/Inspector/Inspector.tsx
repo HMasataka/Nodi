@@ -3,6 +3,7 @@ import type { DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageS
 
 import type { ReactNode } from "react";
 
+import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FillEditor } from "@/pages/editor/components/molecules/FillEditor";
 import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayoutEditor";
@@ -211,6 +212,9 @@ export function Inspector(props: InspectorProps) {
         </Section>}
         {node.type === "text" && <Section id="text" title="テキスト">
           <TextAppearance key={node.id} node={node} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange} />
+        </Section>}
+        {node.type === "text" && <Section id="textcolor" title="文字色">
+          <ColorField label="色" value={node.style.color} fallback="#222222" onChange={(color) => onTextStyle({ color })} />
         </Section>}
         {node.type === "image" && <Section id="image" title="画像">
           <ImageStyleEditor key={`${node.id}:${node.style.fit}:${JSON.stringify(node.style.focalPoint)}`} node={node} onChange={onImageStyle} />
