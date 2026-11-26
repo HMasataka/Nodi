@@ -56,6 +56,7 @@ export function Canvas(props: CanvasProps) {
     onPathPointPointerMove: props.onPathPointPointerMove,
     onPathPointPointerUp: props.onPathPointPointerUp,
     onPathPointPointerCancel: props.onPathPointPointerCancel,
+    selectedPathPoint: props.selectedPathPoint,
   };
   const marqueeHits = selection ? marqueeTargets(design, selection) : [];
   // 複数を選んでいるときは、まとめた範囲を枠・つまみ・寸法で示す。
@@ -118,11 +119,13 @@ export function Canvas(props: CanvasProps) {
               {RESIZE_CORNERS.map((corner) => <ResizeHandle key={`${corner.x}${corner.y}`} corner={corner} onPointerDown={() => {}} />)}
               <span className="canvas-size-label" aria-hidden="true">{sizeLabel(preview.width, preview.height)}</span>
             </div>}
+            {/* ペンで描いている途中は、置いた点と線を出し、最後の点からポインタまでの次の線分を薄く出す。 */}
             {pen && <svg className="pen-preview" aria-hidden="true">
-              <polyline points={[...penPoints, ...(penCursor ? [penCursor] : [])].map((point) => `${point.x},${point.y}`).join(" ")}
-                fill="none" stroke="currentColor" strokeWidth={2 / zoom} strokeDasharray={`${5 / zoom} ${3 / zoom}`} />
-              {penPoints.map((point, index) => <circle key={index} cx={point.x} cy={point.y} r={4 / zoom}
-                fill={index === 0 ? "#ffffff" : "currentColor"} stroke="currentColor" strokeWidth={2 / zoom} />)}
+              <polyline className="pen-path" points={penPoints.map((point) => `${point.x},${point.y}`).join(" ")} strokeWidth={1.5 / zoom} />
+              {penCursor && penPoints.length > 0 && <line className="pen-next-segment" x1={penPoints[penPoints.length - 1].x} y1={penPoints[penPoints.length - 1].y}
+                x2={penCursor.x} y2={penCursor.y} strokeWidth={1 / zoom} />}
+              {penPoints.map((point, index) => <rect key={index} className={`path-anchor${index === penPoints.length - 1 ? " is-selected" : ""}`}
+                x={point.x - 4 / zoom} y={point.y - 4 / zoom} width={8 / zoom} height={8 / zoom} strokeWidth={1 / zoom} />)}
             </svg>}
           </div>
         </div>

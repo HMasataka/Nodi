@@ -59,10 +59,12 @@ export interface NodeInteraction {
   onNodeEnter?(id: string): void;
   onNodeLeave?(id: string): void;
   onNodeClick?(id: string): void;
-  onPathPointPointerDown?(event: PointerEvent<SVGCircleElement>, node: PathNode, index: number, part: PathPointPart): void;
-  onPathPointPointerMove?(event: PointerEvent<SVGCircleElement>): void;
+  onPathPointPointerDown?(event: PointerEvent<SVGElement>, node: PathNode, index: number, part: PathPointPart): void;
+  onPathPointPointerMove?(event: PointerEvent<SVGElement>): void;
   onPathPointPointerUp?(pointerId: number): void;
   onPathPointPointerCancel?(): void;
+  // 選んでいるパスの点。点を選ぶと、その点だけを紫で塗り、その点のハンドルだけを出す。
+  selectedPathPoint?: { nodeId: string; index: number } | null;
 }
 
 interface CanvasNodeProps {
@@ -75,38 +77,46 @@ interface CanvasNodeProps {
 
 function pathControls(node: PathNode, zoom: number, interaction: NodeInteraction) {
   if (!interaction.onPathPointPointerDown) return null;
-  const controls: ReactNode[] = [];
-  let previous: { x: number; y: number } | null = null;
+  const selected = interaction.selectedPathPoint?.nodeId === node.id ? interaction.selectedPathPoint.index : null;
+  const handles: ReactNode[] = [];
+  const anchors: ReactNode[] = [];
+  let previous: { x: number; y: number; index: number } | null = null;
   node.commands.forEach((command, index) => {
     if (command.kind === "close") return;
     const handler = (part: PathPointPart) => ({
-      onPointerDown: (event: PointerEvent<SVGCircleElement>) => interaction.onPathPointPointerDown?.(event, node, index, part),
+      onPointerDown: (event: PointerEvent<SVGElement>) => interaction.onPathPointPointerDown?.(event, node, index, part),
       onPointerMove: interaction.onPathPointPointerMove,
-      onPointerUp: (event: PointerEvent<SVGCircleElement>) => interaction.onPathPointPointerUp?.(event.pointerId),
+      onPointerUp: (event: PointerEvent<SVGElement>) => interaction.onPathPointPointerUp?.(event.pointerId),
       onPointerCancel: interaction.onPathPointPointerCancel,
       onLostPointerCapture: interaction.onPathPointPointerCancel,
     });
     const x = command.x * node.width;
     const y = command.y * node.height;
+    // ハンドルは細い線の先に 6px の丸を付ける。点を選んでいるときは、その点に付くハンドルだけを出す。
+    const bezierHandle = (key: string, part: PathPointPart, from: { x: number; y: number }, to: { x: number; y: number }) =>
+      <g key={key} className="path-handle">
+        <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} strokeWidth={1 / zoom} />
+        <circle data-path-control={key} cx={to.x} cy={to.y} r={3 / zoom} strokeWidth={1 / zoom} {...handler(part)} />
+      </g>;
     if (command.kind === "cubic" && previous) {
-      const x1 = command.x1 * node.width;
-      const y1 = command.y1 * node.height;
-      const x2 = command.x2 * node.width;
-      const y2 = command.y2 * node.height;
-      controls.push(<g key={`handles-${index}`} className="path-handles">
-        <line x1={previous.x * node.width} y1={previous.y * node.height} x2={x1} y2={y1} />
-        <line x1={x2} y1={y2} x2={x} y2={y} />
-        <circle data-path-control={`in-${index}`} cx={x1} cy={y1} r={4 / zoom} {...handler("in")} />
-        <circle data-path-control={`out-${index}`} cx={x2} cy={y2} r={4 / zoom} {...handler("out")} />
-      </g>);
+      if (selected === null || selected === previous.index) {
+        handles.push(bezierHandle(`in-${index}`, "in", { x: previous.x * node.width, y: previous.y * node.height },
+          { x: command.x1 * node.width, y: command.y1 * node.height }));
+      }
+      if (selected === null || selected === index) {
+        handles.push(bezierHandle(`out-${index}`, "out", { x, y }, { x: command.x2 * node.width, y: command.y2 * node.height }));
+      }
     }
-    controls.push(<circle key={`anchor-${index}`} className="path-anchor" data-path-control={`anchor-${index}`}
-      cx={x} cy={y} r={5 / zoom} {...handler("anchor")} />);
-    previous = command;
+    // 点は白地に紫の枠の 8px 角にし、選んだ点だけ紫で塗る。
+    anchors.push(<rect key={`anchor-${index}`} className={`path-anchor${selected === index ? " is-selected" : ""}`}
+      data-path-control={`anchor-${index}`} x={x - 4 / zoom} y={y - 4 / zoom} width={8 / zoom} height={8 / zoom} strokeWidth={1 / zoom}
+      {...handler("anchor")} />);
+    previous = { x: command.x, y: command.y, index };
   });
   return <svg className="path-controls" aria-label="パスの点とハンドル" style={{ left: node.x, top: node.y, width: node.width, height: node.height,
     ...(node.rotation ? { transform: `rotate(${node.rotation}deg)`, transformOrigin: "center center" } : {}) }}>
-    {controls}
+    {handles}
+    {anchors}
   </svg>;
 }
 
