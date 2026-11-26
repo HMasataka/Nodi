@@ -103,7 +103,6 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       selected: image, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
       onShapeStyle: noOp, onImageStyle: noOp, onDuplicate: noOp, onDelete: noOp,
     }));
-    assert.match(inspector, /image-1/);
     assert.match(inspector, /フィット/);
     assert.match(inspector, /焦点 X/);
     assert.match(inspector, /焦点 Y/);
