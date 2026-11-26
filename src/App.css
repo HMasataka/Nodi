@@ -79,7 +79,6 @@
   --text-secondary: var(--grey-700);
   --text-tertiary: var(--grey-500);
   --text-subtle: var(--grey-400);
-  --text-panel-index: var(--grey-400);
   --text-hint: var(--grey-400);
   --text-code: var(--grey-700);
   --text-id: var(--grey-700);
@@ -305,26 +304,6 @@ button {
 }
 .inspector {
   border-left: 1px solid var(--line);
-}
-.panel-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 57px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--line);
-}
-.panel-heading h2 {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-.panel-heading span {
-  color: var(--text-panel-index);
-  font:
-    11px ui-monospace,
-    monospace;
 }
 .panel-empty {
   margin: 20px;
@@ -1099,19 +1078,19 @@ button {
 }
 
 .properties {
-  padding: 20px;
-}
-.selection-type {
   display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 26px;
-  font-size: 13px;
-  font-weight: 700;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
 }
-.selection-type .layer-icon {
-  color: var(--accent);
-}
+/* 見出し：種類を小さく、その下に名前を大きく出す。 */
+.inspector-heading { display: flex; flex-direction: column; gap: var(--space-4); }
+.inspector-kind { display: flex; align-items: center; gap: var(--space-4); color: var(--text-tertiary); font-size: var(--font-size-11); line-height: var(--line-height-11); }
+.inspector-heading input { border-color: transparent; padding: var(--space-4) 0; font-size: 14px; font-weight: 600; }
+.inspector-heading input:focus { border-color: var(--input-border); padding: var(--space-4) var(--space-8); }
+/* 節は見出しと中身を 8px 間隔で並べ、節の間に区切り線を引く。 */
+.inspector-section { display: flex; flex-direction: column; gap: var(--space-8); padding-top: var(--space-12); border-top: 1px solid var(--line); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .field-label {
   display: block;
   margin: 0 0 9px;
@@ -1128,11 +1107,6 @@ button {
   background: var(--surface);
   color: var(--ink);
   font-size: 12px;
-}
-.property-divider {
-  height: 1px;
-  margin: 23px 0;
-  background: var(--line);
 }
 .measure-row {
   display: grid;
@@ -1339,7 +1313,6 @@ button {
   .file-button {
     padding-inline: 9px;
   }
-  .panel-heading,
   .properties {
     padding-left: 14px;
     padding-right: 14px;
