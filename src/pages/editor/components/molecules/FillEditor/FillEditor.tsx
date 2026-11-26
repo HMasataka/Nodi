@@ -29,15 +29,15 @@ export function FillEditor({ label, fill, onChange }: { label: string; fill: Fil
   }
   return <div className="fill-editor">
     <label>{label}
-      <select value={gradient?.type ?? (resolved === null ? "none" : "solid")} onChange={(event) => {
+      <select value={gradient?.type ?? "solid"} onChange={(event) => {
         const kind = event.currentTarget.value;
         const stops = gradient?.stops.map((stop) => ({ ...stop })) ?? [
           { position: 0, color: typeof resolved === "string" ? resolved : "#ffffff" }, { position: 1, color: "#000000" },
         ];
-        onChange(kind === "none" ? null : kind === "solid" ? stops[0].color
+        onChange(kind === "solid" ? stops[0].color
           : kind === "radial" ? { ...DEFAULT_RADIAL_FILL, stops } : { ...DEFAULT_LINEAR_FILL, stops });
       }}>
-        <option value="solid">単色</option><option value="linear">線形</option><option value="radial">放射状</option><option value="none">なし</option>
+        <option value="solid">単色</option><option value="linear">線形</option><option value="radial">放射状</option>
       </select>
     </label>
     {typeof resolved === "string" && <ColorField label="色" value={resolved} fallback="#ffffff" onChange={onChange} />}

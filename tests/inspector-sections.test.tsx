@@ -18,14 +18,14 @@ function sections(selected: DocumentNode, extra: Record<string, unknown> = {}): 
 }
 
 test("どの種類でも、位置とサイズ・種類ごとの節・見た目の節・効果の順に並べ、持たない節は出さない", () => {
-  assert.deepEqual(sections(frame()), ["位置とサイズ", "自動レイアウト", "見た目", "効果", "プレビュー"]);
+  assert.deepEqual(sections(frame()), ["位置とサイズ", "自動レイアウト", "塗り", "線", "角丸", "効果", "プレビュー"]);
   assert.deepEqual(sections(text()), ["位置とサイズ", "テキスト", "効果"]);
   assert.deepEqual(sections(image()), ["位置とサイズ", "画像", "角丸", "効果"]);
-  assert.deepEqual(sections(rectangle()), ["位置とサイズ", "マスク", "見た目", "効果"]);
-  assert.deepEqual(sections(ellipse()), ["位置とサイズ", "マスク", "見た目", "効果"]);
-  assert.deepEqual(sections(path()), ["位置とサイズ", "パス", "見た目", "効果"]);
+  assert.deepEqual(sections(rectangle()), ["位置とサイズ", "マスク", "塗り", "線", "角丸", "効果"]);
+  assert.deepEqual(sections(ellipse()), ["位置とサイズ", "マスク", "塗り", "線", "効果"]);
+  assert.deepEqual(sections(path()), ["位置とサイズ", "パス", "塗り", "線", "効果"]);
   assert.deepEqual(sections(instance({ componentRef: "c" }), { componentNode: frame() }), ["位置とサイズ", "コンポーネント", "上書き", "効果"]);
-  assert.deepEqual(sections(rectangle(), { selectedCount: 2 }), ["2 個を選択中", "位置とサイズ", "マスク", "見た目", "効果"]);
+  assert.deepEqual(sections(rectangle(), { selectedCount: 2 }), ["2 個を選択中", "位置とサイズ", "マスク", "塗り", "線", "角丸", "効果"]);
 });
 
 test("見出しに種類と名前と「⋯」を出し、列から操作のボタンを外す", () => {
