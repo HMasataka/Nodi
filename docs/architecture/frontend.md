@@ -17,7 +17,7 @@
 | `src/pages/editor/components/molecules/ActionChip/` | キャンバス右上の倍率と右パネルの開閉 |
 | `src/pages/editor/components/molecules/FloatingTools/` | キャンバス下中央の作成ツール（描くツール・画像の取り込み・タイムラインの開閉） |
 | `src/pages/editor/panelLayout.ts`・`hooks/usePanelLayout.ts` | 左右のパネルとタイムラインの開閉状態と列の幅 |
-| `src/pages/editor/components/molecules/ElementAppearance/` | 要素種別ごとの編集欄の切り替え |
+| `src/pages/editor/components/molecules/TextAppearance/` | テキストの本文・選択範囲の装飾・文字の見た目の編集欄 |
 | `src/pages/editor/hooks/useCanvasInteraction.ts` | 要素のドラッグ・範囲選択・描画ツールと Undo / Redo |
 | `src/pages/editor/hooks/useCanvasViewport.ts` | パン・ズーム、Space キー操作、MCP からの表示位置調整 |
 | `src/pages/editor/hooks/useMcpBridge.ts` | 実行中のアプリへの MCP 要求を編集 API に渡す |

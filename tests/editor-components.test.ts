@@ -96,7 +96,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       onDuplicate: noOp, onDelete: noOp, onSetOverride: noOp, onResetOverride: noOp, onDetach: noOp,
     }));
     assert.match(instanceInspector, /インスタンス/);
-    assert.match(instanceInspector, /オーバーライド/);
+    assert.match(instanceInspector, /上書き/);
     assert.match(instanceInspector, /切り離す/);
     assert.match(instanceInspector, /ラベル/);
     const inspector = renderToStaticMarkup(createElement(Inspector, {
