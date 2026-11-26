@@ -103,7 +103,7 @@ function AppearanceSections({ node, onStyle }: { node: FrameNode | RectangleNode
     <Section id="fill" title="塗り" action={style.fill === null
       ? { kind: "add", label: "塗りを追加", onClick: () => onStyle({ fill: defaultFill }) }
       : { kind: "remove", label: "塗りを外す", onClick: () => onStyle({ fill: null }) }}>
-      {style.fill !== null && <FillEditor label="種類" fill={style.fill} onChange={(fill) => onStyle({ fill })} />}
+      {style.fill !== null && <FillEditor fill={style.fill} onChange={(fill) => onStyle({ fill })} />}
     </Section>
     <Section id="stroke" title="線" action={stroked
       ? { kind: "remove", label: "線を外す", onClick: () => onStyle("border" in style ? { stroke: null, border: {} } : { stroke: null }) }

@@ -1141,13 +1141,15 @@ button {
 .color-field input[type="number"] { width: 72px; min-width: 0; }
 .shadow-editor { display: grid; gap: 7px; padding: 10px 0; border-top: 1px solid var(--field-border); }
 .shadow-editor .mask-control { margin: 0; }
-.fill-editor { display: grid; grid-column: 1 / -1; gap: 6px; min-width: 0; padding-bottom: 6px; }
-.fill-editor > label, .gradient-point, .gradient-stop { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-.fill-editor select { width: 98px; min-width: 0; padding: 3px; border: 1px solid var(--field-border); border-radius: 4px; background: var(--surface); }
-.gradient-point span { min-width: 30px; font-size: 11px; color: var(--text-tertiary); }
-.gradient-point input, .gradient-stop input { width: 54px; }
-.gradient-stop { display: grid; grid-template-columns: 1fr auto; gap: 4px; padding: 6px; border: 1px solid var(--field-border); border-radius: 4px; }
-.gradient-stop .color-field { grid-column: 1 / -1; }
+.fill-editor { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
+/* グラデーションの帯と、帯の下の色の位置の札。札はスライダーのつまみと同じ 12px 角で、選んだ札を紫で塗る。 */
+.gradient-stops { position: relative; height: 40px; }
+.gradient-bar { height: 24px; box-sizing: border-box; border: 1px solid var(--line); border-radius: var(--radius-4); cursor: copy; }
+.gradient-markers { position: absolute; top: 28px; right: 0; left: 0; height: 12px; }
+.gradient-marker { position: absolute; top: 0; width: 12px; height: 12px; box-sizing: border-box; border: 1px solid var(--knob-border); border-radius: 3px; padding: 0; background: var(--surface); cursor: grab; touch-action: none; }
+.gradient-marker.is-selected { border-color: var(--accent); background: var(--accent); }
+.gradient-marker:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gradient-stop-row { display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center; gap: var(--space-4); }
 .style-fields .frame-overflow-label { grid-column: 1 / -1; justify-content: flex-start; gap: 12px; }
 /* 「⋯」メニューの末尾に、コピーする ID を小さく出す。 */
 .node-id {
