@@ -153,6 +153,7 @@ function EditorPage() {
         {...actions.inspector}
         componentName={selectedComponentName} componentNode={selectedComponentNode}
         onCreateComponent={actions.components.onCreateFromSelected}
+        onCopyId={(id) => { navigator.clipboard.writeText(id).catch(() => setError("ID をクリップボードにコピーできません")); }}
         onGoToDefinition={() => { setLeftTab("assets"); if (!panels.layout.left) panels.toggle("left"); }}
         onSetOverride={(childId, patch) => { if (selectedId) actions.components.onSetOverride(selectedId, childId, patch); }}
         onResetOverride={(childId) => { if (selectedId) actions.components.onResetOverride(selectedId, childId); }}

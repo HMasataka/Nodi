@@ -9,6 +9,7 @@ import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayo
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
+import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { ImageStyleEditor } from "@/pages/editor/components/molecules/ImageStyleEditor";
 import { InstanceOverrides } from "@/pages/editor/components/molecules/InstanceOverrides";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
@@ -19,6 +20,7 @@ import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyle
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearance";
 
+import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 import { SectionHeader, type SectionHeaderAction } from "@/pages/editor/components/molecules/SectionHeader";
 
 interface InspectorProps {
@@ -50,6 +52,7 @@ interface InspectorProps {
   spacing?: { x?: SelectionSpacing; y?: SelectionSpacing; error?: string };
   onDistribute?(axis: SpacingAxis, mode: "equal" | number): void;
   onExportFrame(): void;
+  onCopyId(id: string): void;
   isExporting: boolean;
   onCreateComponent(): void;
   onGoToDefinition(): void;
@@ -63,6 +66,33 @@ interface InspectorProps {
 const KIND_LABELS: Record<DocumentNode["type"], string> = {
   frame: "フレーム", text: "テキスト", image: "画像", rectangle: "矩形", ellipse: "楕円", path: "パス", instance: "インスタンス",
 };
+
+// 見出しの「⋯」メニュー。編集のたびには使わない操作をまとめる。フレームだけが持つ操作は、ほかの種類では押せなくする。
+export function moreMenuEntries(node: DocumentNode, selectedCount: number, isExporting: boolean, actions: {
+  rename(): void; duplicate(): void; remove(): void; reorder(direction: LayerDirection): void; createComponent(): void; exportFrame(): void; copyId(): void;
+}): MenuEntry[] {
+  const isFrame = node.type === "frame";
+  return [
+    { type: "item", label: "名前を変更", onSelect: actions.rename },
+    { type: "item", label: "複製", onSelect: actions.duplicate },
+    { type: "item", label: selectedCount > 1 ? "選択中を削除" : "削除", onSelect: actions.remove },
+    { type: "separator" },
+    { type: "item", label: "最前面へ", onSelect: () => actions.reorder("front") },
+    { type: "item", label: "最背面へ", onSelect: () => actions.reorder("back") },
+    { type: "separator" },
+    { type: "item", label: "コンポーネントを作成", disabled: !isFrame, onSelect: actions.createComponent },
+    { type: "item", label: isExporting ? "PNG を生成中…" : "PNG に書き出す", disabled: !isFrame || isExporting, onSelect: actions.exportFrame },
+    { type: "separator" },
+    { type: "item", label: "ID をコピー", onSelect: actions.copyId },
+    { type: "note", content: <code className="node-id">{node.id}</code> },
+  ];
+}
+
+// 「⋯」メニューは、プロパティの列からはみ出さないよう、ボタンの右端にそろえて下に開く。
+export function belowAlignedEnd(opener: HTMLElement): { top: number; left: number } {
+  const rect = opener.getBoundingClientRect();
+  return { top: rect.bottom + 8, left: Math.max(8, rect.right - 200) };
+}
 
 // プロパティの節。見出しと中身を一組にし、節の間は CSS で区切り線を引く。
 function Section({ id, title, action, children }: { id: string; title: string; action?: SectionHeaderAction; children: ReactNode }) {
@@ -132,7 +162,7 @@ function SelectionTools({ selectedCount, onAlign, textIcon, onAlignTextIcon, spa
 export function Inspector(props: InspectorProps) {
   const { selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle,
     onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder,
-    onExportFrame, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
+    onExportFrame, onCopyId, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
   if (!selected) {
     return <aside className="sidebar inspector" aria-label="プロパティ">
       <p className="panel-empty">キャンバス上の要素を選択すると、ここに詳細が表示されます。</p>
@@ -143,9 +173,16 @@ export function Inspector(props: InspectorProps) {
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="properties">
         <div className="inspector-heading">
-          <span className="inspector-kind"><LayerIcon type={node.type} />{KIND_LABELS[node.type]}</span>
-          <label className="visually-hidden" htmlFor="node-name">名前</label>
-          <NameEditor key={`${node.id}:${node.name}`} node={node} onRename={onRename} />
+          <div className="inspector-title">
+            <span className="inspector-kind"><LayerIcon type={node.type} />{KIND_LABELS[node.type]}</span>
+            <label className="visually-hidden" htmlFor="node-name">名前</label>
+            <NameEditor key={`${node.id}:${node.name}`} node={node} onRename={onRename} />
+          </div>
+          <Menu label="要素の操作" align="end" fixedTo={belowAlignedEnd} entries={moreMenuEntries(node, selectedCount, isExporting, {
+            rename: () => { const input = window.document.getElementById("node-name") as HTMLInputElement | null; input?.focus(); input?.select(); },
+            duplicate: onDuplicate, remove: onDelete, reorder: onReorder, createComponent: onCreateComponent, exportFrame: onExportFrame,
+            copyId: () => onCopyId(node.id),
+          })} trigger={(trigger) => <IconButton {...trigger} icon="more" label="要素の操作" />} />
         </div>
         {selectedCount > 1 && <SelectionTools selectedCount={selectedCount} onAlign={props.onAlign} textIcon={props.textIcon}
           onAlignTextIcon={props.onAlignTextIcon} spacing={props.spacing} onDistribute={props.onDistribute} />}
@@ -198,25 +235,10 @@ export function Inspector(props: InspectorProps) {
           <ShadowEditor key={`${node.id}:${JSON.stringify(node.shadow)}`} shadow={node.shadow} onChange={onShadow} />
           <NumberProperty label="全体ぼかし px" value={node.blur} min={0} onChange={onBlur} />
         </Section>
-        <Section id="actions" title="操作">
-          <div className="field-label">要素 ID</div>
-          <code className="node-id">{node.id}</code>
-          <div className="node-actions">
-            <button type="button" className="file-button" onClick={onDuplicate}>複製</button>
-            <button type="button" className="file-button" onClick={onDelete}>{selectedCount > 1 ? "選択中を削除" : "削除"}</button>
-          </div>
-          <div className="node-actions layer-depth-actions">
-            <button type="button" className="file-button" onClick={() => onReorder("front")}>最前面へ</button>
-            <button type="button" className="file-button" onClick={() => onReorder("back")}>最背面へ</button>
-          </div>
-          {node.type === "frame" && <>
-            <button type="button" className="file-button" onClick={onCreateComponent}>コンポーネントを作成</button>
-            <FramePreview key={node.id} frame={node} spacing={spacingTokens} />
-            <button type="button" className="file-button export-button" onClick={onExportFrame} disabled={isExporting}>
-              {isExporting ? "PNG を生成中…" : "PNG に書き出す"}
-            </button>
-          </>}
-        </Section>
+        {/* プレビューのモード（#331）ができるまで、フレームの縮小表示をここに残す。 */}
+        {node.type === "frame" && <Section id="preview" title="プレビュー">
+          <FramePreview key={node.id} frame={node} spacing={spacingTokens} />
+        </Section>}
       </div>
     </aside>
   );

@@ -1084,7 +1084,8 @@ button {
   padding: var(--space-16);
 }
 /* 見出し：種類を小さく、その下に名前を大きく出す。 */
-.inspector-heading { display: flex; flex-direction: column; gap: var(--space-4); }
+.inspector-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-8); }
+.inspector-title { display: flex; flex: 1; flex-direction: column; gap: var(--space-4); min-width: 0; }
 .inspector-kind { display: flex; align-items: center; gap: var(--space-4); color: var(--text-tertiary); font-size: var(--font-size-11); line-height: var(--line-height-11); }
 .inspector-heading input { border-color: transparent; padding: var(--space-4) 0; font-size: 14px; font-weight: 600; }
 .inspector-heading input:focus { border-color: var(--input-border); padding: var(--space-4) var(--space-8); }
@@ -1150,14 +1151,13 @@ button {
 .border-edge label { min-width: 0; }
 .style-fields .border-edge input[type="checkbox"] { width: 15px; height: 15px; margin: 0; accent-color: var(--accent); }
 .style-fields .border-edge input[type="number"] { width: 48px; }
+/* 「⋯」メニューの末尾に、コピーする ID を小さく出す。 */
 .node-id {
   display: block;
-  border: 1px solid var(--field-border);
-  border-radius: 4px;
-  padding: 9px;
+  padding: 0 var(--space-8);
   color: var(--text-id);
   font:
-    10px/1.5 ui-monospace,
+    var(--font-size-11) / var(--line-height-11) ui-monospace,
     monospace;
   overflow-wrap: anywhere;
   user-select: all;
@@ -1168,9 +1168,6 @@ button {
   font-size: 11px;
   line-height: 1.7;
 }
-.node-actions { display: flex; gap: 8px; margin-top: 20px; }
-.node-actions .file-button { flex: 1; }
-.layer-depth-actions { margin-top: 8px; }
 .alignment-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 16px 0; }
 .alignment-actions .file-button { padding: 7px 3px; font-size: 10px; }
 .spacing-actions { display: grid; gap: 9px; margin: 12px 0; }
@@ -1186,7 +1183,6 @@ button {
 .frame-spacing-field select { width: 100%; min-width: 0; border: 1px solid var(--input-border); border-radius: 4px; padding: 7px; color: var(--ink); background: var(--surface); font-size: 11px; }
 .frame-spacing-field input:disabled { color: var(--text-subtle); background: var(--panel); }
 .spacing-reference-note { color: var(--accent); font-size: 10px; }
-.export-button { width: 100%; margin-top: 12px; }
 .frame-preview { margin: 4px 0 8px; }
 .preview-controls { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
 .preview-controls .file-button { padding: 5px 8px; font-size: 10px; }
