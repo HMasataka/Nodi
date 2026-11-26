@@ -82,7 +82,6 @@
   --text-hint: var(--grey-400);
   --text-code: var(--grey-700);
   --text-id: var(--grey-700);
-  --text-layer: var(--grey-800);
   --text-label: var(--grey-600);
   --text-body: var(--grey-800);
 
@@ -836,24 +835,13 @@ button {
   font-size: var(--font-size-12);
   line-height: var(--line-height-12);
 }
-.instance-override {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
-  margin: 8px 0;
-}
-.instance-override-label {
-  color: var(--text-tertiary);
-  font-size: 11px;
-}
-.instance-override-input {
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 6px 8px;
-  background: var(--panel);
-  color: var(--text-layer);
-  font-size: 12px;
-}
+/* 上書きの行：名前・値・戻すを1行に並べる。上書きした値は濃く出す。 */
+.override-rows { display: flex; flex-direction: column; gap: var(--space-4); }
+.override-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 24px; align-items: center; gap: var(--space-8); height: 28px; border-radius: var(--radius-4); padding: 0 var(--space-4) 0 var(--space-8); background: var(--surface-muted); }
+.override-row-name { overflow: hidden; color: var(--text-label); font-size: var(--font-size-11); line-height: var(--line-height-11); text-overflow: ellipsis; white-space: nowrap; }
+.properties .override-row-value { min-width: 0; border: 0; padding: 0; color: var(--text-secondary); background: transparent; font-size: var(--font-size-12); }
+.override-row.is-overridden .override-row-value { color: var(--ink); }
+.override-row .icon-button { width: 24px; height: 24px; }
 
 .canvas-container {
   position: relative;

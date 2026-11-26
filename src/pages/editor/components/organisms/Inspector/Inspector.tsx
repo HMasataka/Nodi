@@ -3,6 +3,7 @@ import type { DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageS
 
 import { type ReactNode, useState } from "react";
 
+import { Button } from "@/pages/editor/components/atoms/Button";
 import { Checkbox } from "@/pages/editor/components/atoms/Checkbox";
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
@@ -252,9 +253,10 @@ export function Inspector(props: InspectorProps) {
         </Section>}
         {node.type === "instance" && <>
           <Section id="component" title="コンポーネント">
-            <p className="property-help">定義「{componentName ?? "不明"}」を参照しています。見た目は定義側で変更されます。</p>
-            <button type="button" className="file-button" onClick={onGoToDefinition}>定義へ移動</button>
-            <button type="button" className="file-button" onClick={onDetach}>切り離す</button>
+            <button type="button" className="link-row" onClick={onGoToDefinition} title="アセットで参照元を表示">
+              <span>{componentName ?? "参照元が見つかりません"}</span><Icon name="arrowRight" />
+            </button>
+            <Button onClick={onDetach}>切り離す</Button>
           </Section>
           {componentNode && <Section id="overrides" title="上書き">
             <InstanceOverrides node={componentNode} overrides={node.overrides} onSetOverride={onSetOverride} onResetOverride={onResetOverride} />
