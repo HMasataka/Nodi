@@ -1018,8 +1018,17 @@ button {
 .canvas-text-line { display: block; white-space: pre; }
 .canvas-image { position: absolute; border: 0; padding: 0; background: var(--image-placeholder); cursor: grab; touch-action: none; user-select: none; }
 .canvas-image img { width: 100%; height: 100%; pointer-events: none; user-select: none; }
-.image-filter-fields { display: grid; gap: 8px; min-width: 0; margin: 0; padding: 8px 0; border: 0; }
-.image-filter-fields legend { padding-bottom: 8px; color: var(--text-tertiary); font-size: 11px; }
+.image-style-fields, .image-adjustments { display: flex; flex-direction: column; gap: var(--space-8); }
+/* 下位の画面へ進む行。入力欄と同じ地に、右端へ矢印を置く。 */
+.link-row { display: flex; align-items: center; gap: var(--space-8); height: 28px; border: 0; border-radius: var(--radius-4); padding: 0 var(--space-8); color: var(--ink); background: var(--surface-muted); font: inherit; font-size: var(--font-size-12); text-align: left; cursor: pointer; }
+.link-row > span:first-child { flex: 1; }
+.link-row-note { color: var(--text-label); font-size: var(--font-size-11); }
+.link-row .icon { color: var(--text-secondary); }
+.link-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.image-adjustments-heading { display: flex; align-items: center; justify-content: space-between; height: 24px; }
+.image-adjustments-heading .icon-button { width: 24px; height: 24px; }
+.image-adjustments-back { display: flex; align-items: center; gap: var(--space-4); border: 0; padding: 0; color: var(--ink); background: none; font: inherit; font-size: var(--font-size-11); font-weight: 600; cursor: pointer; }
+.image-adjustments .slider { grid-template-columns: 84px minmax(0, 1fr) 40px; }
 .canvas-image svg { display: block; width: 100%; height: 100%; pointer-events: none; user-select: none; }
 .image-file-input { display: none; }
 .text-style-fields, .text-mark-controls { display: flex; flex-direction: column; gap: var(--space-8); }

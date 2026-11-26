@@ -106,7 +106,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(inspector, /フィット/);
     assert.match(inspector, /焦点 X/);
     assert.match(inspector, /焦点 Y/);
-    assert.match(inspector, /埋め込まれています/);
+    assert.match(inspector, /色調整/);
     const textInspector = renderToStaticMarkup(createElement(Inspector, {
       selected: text, onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp,
       onTextMarkRange: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp,
