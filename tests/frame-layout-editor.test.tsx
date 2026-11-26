@@ -16,12 +16,14 @@ test("レイアウト編集欄が現在値を表示し、解決後のキャン�
     const noOp = () => {};
     const layout = frame({ layoutMode: "vertical", padding: 16, gap: 8, alignItems: "center", justifyContent: "space-between" });
     const markup = renderToStaticMarkup(createElement(FrameLayoutEditor, { node: layout, onChange: noOp }));
-    assert.match(markup, /方向/);
-    assert.match(markup, /value="vertical" selected=""/);
-    assert.match(markup, /value="16"/);
-    assert.match(markup, /value="8"/);
-    assert.match(markup, /value="center" selected=""/);
-    assert.match(markup, /value="space-between" selected=""/);
+    const checked = [...markup.matchAll(/aria-checked="true"[^>]*>([^<]+)</g)].map(([, label]) => label);
+    assert.deepEqual(checked, ["縦", "中央", "均等"]);
+    assert.match(markup, />間隔<\/label><input[^>]*value="8"/);
+    assert.match(markup, />余白<\/label><input[^>]*value="16"/);
+    assert.doesNotMatch(markup, /はみ出しを隠す/);
+    const none = renderToStaticMarkup(createElement(FrameLayoutEditor, { node: frame({ clipContent: true }), onChange: noOp, onClipContent: noOp }));
+    assert.doesNotMatch(none, /間隔|揃え|配分/);
+    assert.match(none, /<input type="checkbox" checked=""[^>]*\/>.*はみ出しを隠す/);
 
     const canvas = renderToStaticMarkup(createElement(Canvas, {
       design: resolveDocumentLayout(document(frame({

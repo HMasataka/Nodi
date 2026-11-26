@@ -136,7 +136,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
       onExportFrame: noOp, isExporting: false,
     }));
     assert.match(frameInspector, /type="color" value="#aabbcc"/);
-    assert.match(frameInspector, /はみ出しを表示/);
+    assert.match(frameInspector, /はみ出しを隠す/);
 
     const radii = { topLeft: 20, topRight: 10, bottomRight: 5, bottomLeft: 0 };
     const clippedImage = makeImage({ width: 15, height: 10, style: { cornerRadii: radii, fit: "contain", focalPoint: { x: 0.2, y: 0.8 } } });
