@@ -122,6 +122,11 @@ function pathControls(node: PathNode, zoom: number, interaction: NodeInteraction
 
 export function CanvasNodes({ nodes, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction, zoom = 1 }: { nodes: DocumentNode[] } & Omit<CanvasNodeProps, "node">) {
   return <>{maskGroups(nodes).map((group, index) => <Fragment key={group.mask?.id ?? `unmasked-${index}`}>
+    {/* マスクを選んでいるときは、切り抜かれた外側も薄く出す。操作は受け付けない複製にする。 */}
+    {group.mask && selectedIds.includes(group.mask.id) && <div className="canvas-mask-outside" aria-hidden="true" inert>
+      {group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={null} selectedIds={[]}
+        interaction={{ ...interaction, onPathPointPointerDown: undefined }} zoom={zoom} />)}
+    </div>}
     {group.mask && <CanvasNode node={group.mask} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />}
     {group.mask ? <div className="canvas-mask-group" style={{ clipPath: `path("${pathToString(maskPath(group.mask))}")` }}>
       {group.children.map((child) => <CanvasNode key={child.id} node={child} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />)}
@@ -211,7 +216,7 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       {node.isMask
         ? <svg className="canvas-shape" aria-hidden="true"><path d={pathToString(node.type === "rectangle"
           ? boxShape(node.width, node.height, node.style, resolve).fill : ellipseShape(node.width, node.height, node.style, resolve).fill)}
-          fill="none" stroke="currentColor" strokeDasharray="4 3" /></svg>
+          fill="none" stroke="currentColor" strokeWidth={1 / zoom} /></svg>
         : shapeSvg(node.type === "rectangle" ? boxShape(node.width, node.height, node.style, resolve) : ellipseShape(node.width, node.height, node.style, resolve), clipId, node.width, node.height)}
       {node.type === "rectangle" && !node.isMask && borderSvg(node.width, node.height, node.style.border, resolve)}
       {handle}
