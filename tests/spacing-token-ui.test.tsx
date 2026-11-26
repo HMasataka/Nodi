@@ -29,9 +29,9 @@ test("共通値の一覧は使用数を示し、参照中のフレームは名�
   assert.match(direct, /value="9"/);
 });
 
-test("Studioの2フレームは同じ共通余白値を参照する", () => {
+test("Studioのセクションは同じ共通余白値を参照する", () => {
   const sample = success(parseDocument(readFileSync(new URL("../samples/studio.nodi", import.meta.url), "utf8")));
-  const token = sample.spacing.find(({ id }) => id === "sp_sample_card");
-  assert.equal(token?.value, 20);
+  const token = sample.spacing.find(({ id }) => id === "sp_sample_section");
+  assert.equal(token?.value, 80);
   assert.equal(spacingTokenUsage(sample, token!.id), 4);
 });
