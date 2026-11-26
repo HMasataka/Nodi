@@ -1,45 +1,35 @@
 import type { DocumentNode, SizeConstraint, SizeMode } from "@/document/types";
 import type { SizeAxis, SizeConstraintPatch } from "@/document/commands/index.ts";
 
-import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+import { Field } from "@/pages/editor/components/atoms/Field";
+import { SelectField } from "@/pages/editor/components/atoms/SelectField";
 
-function ConstraintControls({ label, constraint, onChange }: { label: string; constraint: SizeConstraint; onChange(patch: SizeConstraintPatch): void }) {
-  return <div className="constraint-controls">
-    <label className="geometry-field"><span>{label}</span>
-      <select value={constraint.mode} onChange={(event) => onChange({ mode: event.currentTarget.value as SizeMode })}>
-        <option value="fixed">固定</option><option value="fill">伸縮</option><option value="hug">内容</option>
-      </select>
-    </label>
-    <label className="geometry-field"><span>{label} 最小 px</span>
-      <input key={`${label}-min-${constraint.min ?? ""}`} type="number" min="0" step="any" defaultValue={constraint.min ?? ""}
-        onBlur={(event) => {
-          const raw = event.currentTarget.value.trim();
-          if (raw === "") { onChange({ min: undefined }); return; }
-          const value = Number(raw);
-          if (Number.isFinite(value) && value > 0 && value !== constraint.min) onChange({ min: value });
-          else event.currentTarget.value = constraint.min === undefined ? "" : String(constraint.min);
-        }}
-        onKeyDown={blurOnEnter} />
-    </label>
-    <label className="geometry-field"><span>{label} 最大 px</span>
-      <input key={`${label}-max-${constraint.max ?? ""}`} type="number" min="0" step="any" defaultValue={constraint.max ?? ""}
-        onBlur={(event) => {
-          const raw = event.currentTarget.value.trim();
-          if (raw === "") { onChange({ max: undefined }); return; }
-          const value = Number(raw);
-          if (Number.isFinite(value) && value > 0 && value !== constraint.max) onChange({ max: value });
-          else event.currentTarget.value = constraint.max === undefined ? "" : String(constraint.max);
-        }}
-        onKeyDown={blurOnEnter} />
-    </label>
-  </div>;
+const MODES: readonly { value: SizeMode; label: string }[] = [{ value: "fixed", label: "固定" }, { value: "fill", label: "伸縮" }, { value: "hug", label: "内容" }];
+const AXES: readonly [SizeAxis, string][] = [["width", "幅"], ["height", "高さ"]];
+
+// 最小・最大は固定以外のモードで使うので、そのときか値が入っているときだけ出す。
+export function showsSizeLimits(constraint: SizeConstraint): boolean {
+  return constraint.mode !== "fixed" || constraint.min !== undefined || constraint.max !== undefined;
 }
 
+function limitPatch(key: "min" | "max", raw: string, current: number | undefined): SizeConstraintPatch | null {
+  if (raw.trim() === "") return current === undefined ? null : { [key]: undefined };
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 && value !== current ? { [key]: value } : null;
+}
+
+// 幅と高さのサイズモードを選択式の入力欄で2列に並べ、その下に軸ごとの最小・最大を出す。
 export function SizeConstraintEditor({ node, onChange }: { node: DocumentNode; onChange(axis: SizeAxis, patch: SizeConstraintPatch): void }) {
-  return <div className="size-constraint-fields">
-    <div className="field-label">サイズモード</div>
-    <ConstraintControls label="幅" constraint={node.widthConstraint} onChange={(patch) => onChange("width", patch)} />
-    <ConstraintControls label="高さ" constraint={node.heightConstraint} onChange={(patch) => onChange("height", patch)} />
-    <p className="property-help">「固定」は位置・サイズの値を使い、「伸縮」は親フレームの空きや内寸へ合わせ、「内容」はテキストの内容に合わせます。</p>
+  const constraints: Record<SizeAxis, SizeConstraint> = { width: node.widthConstraint, height: node.heightConstraint };
+  return <div className="size-constraint-fields" role="group" aria-label="サイズモード">
+    <div className="field-pair">
+      {AXES.map(([axis, label]) => <SelectField key={axis} className="is-wide-label" label={label} value={constraints[axis].mode} options={MODES}
+        onChange={(mode) => onChange(axis, { mode })} />)}
+    </div>
+    {AXES.filter(([axis]) => showsSizeLimits(constraints[axis])).map(([axis, label]) => <div key={axis} className="field-pair">
+      {(["min", "max"] as const).map((key) => <Field key={key} className="is-wide-label" label={`${label}${key === "min" ? "最小" : "最大"}`}
+        type="number" min="0" step="any" placeholder="なし" value={constraints[axis][key] === undefined ? "" : String(constraints[axis][key])}
+        onCommit={(raw) => { const patch = limitPatch(key, raw, constraints[axis][key]); if (patch) onChange(axis, patch); }} />)}
+    </div>)}
   </div>;
 }

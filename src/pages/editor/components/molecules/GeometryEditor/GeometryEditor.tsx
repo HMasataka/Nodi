@@ -1,27 +1,16 @@
-import { useState } from "react";
 import type { DocumentNode, Geometry } from "@/document/types";
 
-import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+import { Field } from "@/pages/editor/components/atoms/Field";
 
+const FIELDS: readonly [keyof Geometry, string][][] = [[["x", "X"], ["y", "Y"]], [["width", "W"], ["height", "H"]]];
+
+// X・Y・W・H を2列で並べる。空欄は NaN として渡し、検証は確定する側に任せる。
 export function GeometryEditor({ node, onChange }: { node: DocumentNode; onChange(geometry: Geometry): void }) {
-  const [draft, setDraft] = useState<Record<keyof Geometry, string>>({
-    x: String(node.x), y: String(node.y), width: String(node.width), height: String(node.height),
-  });
-  const fields: { key: keyof Geometry; label: string }[] = [
-    { key: "x", label: "X" }, { key: "y", label: "Y" },
-    { key: "width", label: "W" }, { key: "height", label: "H" },
-  ];
-  return <div className="geometry-fields">
-    {fields.map(({ key, label }) => (
-      <label key={key} className="geometry-field">
-        <span>{label}</span>
-        <input type="number" step="any" value={draft[key]}
-          onChange={(event) => setDraft({ ...draft, [key]: event.currentTarget.value })}
-          onBlur={() => {
-            if (draft[key] !== String(node[key])) onChange({ ...node, [key]: draft[key].trim() === "" ? NaN : Number(draft[key]) });
-          }}
-          onKeyDown={blurOnEnter} />
-      </label>
-    ))}
-  </div>;
+  const geometry: Geometry = { x: node.x, y: node.y, width: node.width, height: node.height };
+  return <>
+    {FIELDS.map((row) => <div key={row[0][0]} className="field-pair">
+      {row.map(([key, label]) => <Field key={key} label={label} type="number" step="any" value={String(node[key])}
+        onCommit={(raw) => onChange({ ...geometry, [key]: raw.trim() === "" ? NaN : Number(raw) })} />)}
+    </div>)}
+  </>;
 }
