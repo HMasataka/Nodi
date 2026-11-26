@@ -3,7 +3,6 @@ import type { DocumentNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, 
 
 import type { ReactNode } from "react";
 
-import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayoutEditor";
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
@@ -20,6 +19,7 @@ import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyle
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearance";
 
+import { blurOnEnter, Field } from "@/pages/editor/components/atoms/Field";
 import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 import { SectionHeader, type SectionHeaderAction } from "@/pages/editor/components/molecules/SectionHeader";
 
@@ -190,8 +190,12 @@ export function Inspector(props: InspectorProps) {
           <GeometryEditor key={`${node.id}:${node.x}:${node.y}:${node.width}:${node.height}`} node={node} onChange={onGeometry} />
           <SizeConstraintEditor key={`${node.id}:${JSON.stringify(node.widthConstraint)}:${JSON.stringify(node.heightConstraint)}`}
             node={node} onChange={onSizeConstraint} />
-          <NumberProperty label="回転 °" value={node.rotation} onChange={onRotation} />
-          <NumberProperty label="不透明度 %" value={node.opacity} min={0} max={100} scale={100} onChange={onOpacity} />
+          <div className="field-pair">
+            <Field className="is-wide-label" label="回転" type="number" step="any" value={String(node.rotation)}
+              onCommit={(raw) => { const value = Number(raw); if (raw.trim() !== "" && Number.isFinite(value) && value !== node.rotation) onRotation(value); }} />
+            <Field className="is-wider-label" label="不透明度" type="number" min="0" max="100" step="any" value={String(node.opacity * 100)}
+              onCommit={(raw) => { const value = Number(raw); if (raw.trim() !== "" && value >= 0 && value <= 100 && value / 100 !== node.opacity) onOpacity(value / 100); }} />
+          </div>
         </Section>
         {node.type === "frame" && <Section id="layout" title="自動レイアウト">
           <FrameLayoutEditor key={`${node.id}:${node.layoutMode}:${node.padding}:${node.gap}:${node.paddingRef}:${node.gapRef}:${spacingTokens.map((token) => `${token.id}:${token.name}:${token.value}`).join(":")}:${node.alignItems}:${node.justifyContent}`}

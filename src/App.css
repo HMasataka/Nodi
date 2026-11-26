@@ -485,6 +485,11 @@ button {
   line-height: var(--line-height-12);
   outline: none;
 }
+/* 2つの入力欄を横に並べる行。 */
+.field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-8); }
+.field.is-wide-label .field-label-text { min-width: 28px; }
+.field.is-wider-label .field-label-text { min-width: 48px; }
+.size-constraint-fields { display: flex; flex-direction: column; gap: var(--space-8); }
 .select-field select {
   appearance: none;
   padding-right: var(--space-20);
@@ -1099,7 +1104,8 @@ button {
   font-size: 11px;
   font-weight: 600;
 }
-.properties input {
+/* 共通の入力欄（.field）は自前の見た目を持つので除く。 */
+.properties :not(.field) > input {
   width: 100%;
   border: 1px solid var(--input-border);
   border-radius: 5px;
@@ -1124,7 +1130,6 @@ button {
     11px ui-monospace,
     monospace;
 }
-.geometry-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
 .geometry-field { display: flex; align-items: center; gap: 5px; border: 1px solid var(--field-border); border-radius: 4px; padding: 0 6px; color: var(--text-tertiary); font: 11px ui-monospace, monospace; }
 .geometry-field input { min-width: 0; width: 100%; padding: 8px 0; border: 0; background: transparent; color: var(--ink); font: inherit; }
 .style-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
