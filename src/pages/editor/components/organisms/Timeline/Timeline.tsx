@@ -3,7 +3,7 @@ import type { Playback } from "@/pages/editor/hooks/usePlayback";
 import type { AnimatableProperty, Animation, DocumentNode, Keyframe } from "@/document/types";
 import type { AnimationTimingPatch, KeyframePatch } from "@/document/commands/index.ts";
 
-import { blurOnEnter } from "@/pages/editor/components/atoms/Field";
+import { KeyframeSettings } from "@/pages/editor/components/molecules/KeyframeSettings";
 import { TimelineHeader } from "@/pages/editor/components/molecules/TimelineHeader";
 import { useState } from "react";
 
@@ -23,17 +23,6 @@ interface TimelineProps {
   onAddKeyframe(id: string, property: AnimatableProperty, keyframe: Keyframe): void;
   onSetKeyframe(id: string, property: AnimatableProperty, time: number, patch: KeyframePatch): void;
   onRemoveKeyframe(id: string, property: AnimatableProperty, time: number): void;
-}
-
-function numberInput(value: number, onCommit: (value: number) => void, min?: number) {
-  return <input key={String(value)} type="number" min={min} step="any" defaultValue={String(value)}
-    onBlur={(event) => {
-      const raw = event.currentTarget.value.trim();
-      const parsed = Number(raw);
-      if (raw !== "" && Number.isFinite(parsed) && (min === undefined || parsed >= min) && parsed !== value) onCommit(parsed);
-      else event.currentTarget.value = String(value);
-    }}
-    onKeyDown={blurOnEnter} />;
 }
 
 // 開いているアニメーション。指定がないか見つからないときは最初のアニメーションを開く。
@@ -61,20 +50,19 @@ export function Timeline({ node, playback, scrollProgress, onScrollProgress, act
     {node && animation && <TimelineTracks animation={animation} node={node} playhead={playback.playhead} selected={selectedKeyframe}
       onSelect={setSelectedKeyframe} onSeek={playback.seek}
       onAddTrack={(property, keyframe) => { onAddKeyframe(animation.id, property, keyframe); setSelectedKeyframe({ property, time: keyframe.time }); }} />}
-    {animation && keyframe && selectedKeyframe && <div className="timeline-keyframe-settings">
-      <label>時刻 {numberInput(keyframe.time, (time) => { onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { time }); setSelectedKeyframe({ ...selectedKeyframe, time }); }, 0)}</label>
-      <label>値 {numberInput(keyframe.value, (value) => onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { value }))}</label>
-      <select value={keyframe.easing} onChange={(event) => onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { easing: event.currentTarget.value as KeyframePatch["easing"] })}>
-        <option value="linear">linear</option><option value="ease-in">ease-in</option>
-        <option value="ease-out">ease-out</option><option value="ease-in-out">ease-in-out</option>
-      </select>
-      <button type="button" className="file-button" onClick={() => { onRemoveKeyframe(animation.id, selectedKeyframe.property, keyframe.time); setSelectedKeyframe(null); }}>削除</button>
-      <button type="button" className="file-button" onClick={() => {
-        const value = evaluateAnimation(animation, playback.playhead)[selectedKeyframe.property] ?? 0;
+    {animation && <KeyframeSettings keyframe={keyframe} canAdd={animation.tracks.length > 0}
+      onTime={(time) => { if (!selectedKeyframe || !keyframe) return; onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { time }); setSelectedKeyframe({ ...selectedKeyframe, time }); }}
+      onValue={(value) => { if (selectedKeyframe && keyframe) onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { value }); }}
+      onEasing={(easing) => { if (selectedKeyframe && keyframe) onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { easing }); }}
+      onAdd={() => {
+        // 選んだキーフレームのトラック、選んでいなければ最初のトラックの、再生位置に足す。
+        const property = selectedKeyframe?.property ?? animation.tracks[0]?.property;
+        if (!property) return;
+        const value = evaluateAnimation(animation, playback.playhead)[property] ?? 0;
         const time = Math.round(localTime(animation, playback.playhead));
-        onAddKeyframe(animation.id, selectedKeyframe.property, { time, value, easing: "linear" });
-        setSelectedKeyframe({ ...selectedKeyframe, time });
-      }}>＋ キーフレーム</button>
-    </div>}
+        onAddKeyframe(animation.id, property, { time, value, easing: "linear" });
+        setSelectedKeyframe({ property, time });
+      }}
+      onRemove={() => { if (selectedKeyframe && keyframe) { onRemoveKeyframe(animation.id, selectedKeyframe.property, keyframe.time); setSelectedKeyframe(null); } }} />}
   </div>;
 }
