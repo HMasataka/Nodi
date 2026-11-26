@@ -32,3 +32,14 @@ test("パネルは画面の上端から下端まで伸ばし、タイムライ�
   assert.match(page, /\{panels\.layout\.left && <div className="left-panels">/);
   assert.match(page, /\{panels\.layout\.right && <Inspector/);
 });
+
+test("タイムラインはキャンバスの下端から 228px を占め、作成ツールはその 12px 上に来る", async () => {
+  const css = await readFile(new URL("../src/App.css", import.meta.url), "utf8");
+  const page = await readFile(new URL("../src/pages/editor/index.tsx", import.meta.url), "utf8");
+  assert.match(css, /\.timeline \{[^}]*flex: none;[^}]*height: 228px;/);
+  assert.match(css, /\.floating-tools \{[^}]*bottom: var\(--space-12\);/);
+  // 作成ツールはキャンバスの舞台の中に置き、タイムラインは舞台の下の兄弟にする。舞台が縮むので、ツールはタイムラインの上に来る。
+  const stage = page.slice(page.indexOf('<div className="canvas-stage">'), page.indexOf("{panels.layout.timeline && <Timeline"));
+  assert.ok(stage.includes("<FloatingTools"));
+  assert.match(css, /\.canvas-stage \{[^}]*flex: 1;/);
+});

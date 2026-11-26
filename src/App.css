@@ -1189,7 +1189,8 @@ button {
 .preview-width-field input { width: 60px; }
 .preview-stage { position: relative; overflow: hidden; margin-top: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--canvas-bg); }
 .preview-frame { position: absolute; top: 0; left: 0; transform-origin: top left; }
-.timeline { display: flex; flex-direction: column; gap: 6px; flex: none; padding: 10px 17px; border-top: 1px solid var(--line); background: var(--panel); }
+/* タイムラインは左右のパネルの間で、キャンバスの下端から 228px を占める。作成ツールはキャンバスの下端から 12px なので、開くとタイムラインの 12px 上に移る。 */
+.timeline { display: flex; flex-direction: column; gap: 6px; flex: none; box-sizing: border-box; height: 228px; overflow: auto; padding: 10px 17px; border-top: 1px solid var(--line); background: var(--surface); }
 .timeline-playhead { display: flex; align-items: center; gap: 8px; }
 .timeline-playhead input[type="range"] { flex: 1; }
 .timeline-time { font: 11px ui-monospace, monospace; color: var(--text-subtle); min-width: 72px; }
