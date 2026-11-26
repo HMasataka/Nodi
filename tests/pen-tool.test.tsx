@@ -60,5 +60,7 @@ test("描画ツールと作画中の線・アンカーのプレビューを表�
     onWorldDoubleClick={noOp} onWorldPointerMove={noOp} onWorldPointerUp={noOp} onWorldPointerCancel={noOp}
     onNodePointerDown={noOp} onNodePointerMove={noOp} onNodePointerUp={noOp} onResizePointerDown={noOp} onImageError={noOp} />);
   assert.match(markup, /class="pen-preview"/);
-  assert.match(markup, /points="80,60 20,110"/);
+  assert.match(markup, /class="pen-path" points="80,60"/);
+  assert.match(markup, /class="pen-next-segment" x1="80" y1="60" x2="20" y2="110"/);
+  assert.match(markup, /class="path-anchor is-selected" x="78" y="58" width="4" height="4"/);
 });

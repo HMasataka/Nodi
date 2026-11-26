@@ -36,6 +36,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   const [selection, setSelection] = useState<SelectionRegion | null>(null);
   const selectionRef = useRef<SelectionRegion | null>(null);
   const [guides, setGuides] = useState<SnapGuide[]>([]);
+  const [selectedPathPoint, setSelectedPathPoint] = useState<{ nodeId: string; index: number } | null>(null);
 
   function worldPoint(event: PointerEvent<Element>) {
     const viewport = viewportRef.current!;
@@ -55,16 +56,17 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
     setDrawToolState(tool);
   }
 
-  function startPathPointDrag(event: PointerEvent<SVGCircleElement>, node: PathNode, index: number, part: PathPointPart) {
+  function startPathPointDrag(event: PointerEvent<SVGElement>, node: PathNode, index: number, part: PathPointPart) {
     if (event.button !== 0 || drag.current || pathDrag.current || spacePressed.current || drawTool !== "select") return;
     event.preventDefault();
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
     beginPreview();
     pathDrag.current = { original: designRef.current, node, index, part, pointerId: event.pointerId };
+    if (part === "anchor") setSelectedPathPoint({ nodeId: node.id, index });
   }
 
-  function continuePathPointDrag(event: PointerEvent<SVGCircleElement>) {
+  function continuePathPointDrag(event: PointerEvent<SVGElement>) {
     const active = pathDrag.current;
     if (!active || active.pointerId !== event.pointerId) return;
     const world = worldPoint(event);
@@ -328,7 +330,7 @@ export function useCanvasInteraction(session: ReturnType<typeof useEditorDocumen
   });
 
   return {
-    drag, pathDrag, camera, zoom, zoomBy, zoomTo, fitAll, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+    drag, pathDrag, camera, zoom, zoomBy, zoomTo, fitAll, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides, selectedPathPoint,
     startDrag, startResize, continueDrag, finishDrag, stepHistory,
     startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,

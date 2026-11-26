@@ -67,7 +67,7 @@ function EditorPage() {
     ? measureTextIconAlignment(design, selectedIds, countRenderedTextLines) : null;
   const textIcon = textIconResult ? Result.isFailure(textIconResult) ? { error: textIconResult.error.message }
     : { measurement: textIconResult.value } : undefined;
-  const { drag, pathDrag, camera, zoom, zoomBy, zoomTo, fitAll, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides,
+  const { drag, pathDrag, camera, zoom, zoomBy, zoomTo, fitAll, viewportRef, drawTool, setDrawTool, drawing, pen, selection, guides, selectedPathPoint,
     startDrag, startResize, continueDrag, finishDrag, stepHistory, startPan, continuePan, finishPan,
     onWorldPointerDown, updateDrawing, finishDrawing, cancelDrawing, updatePenCursor, finishPen,
     startPathPointDrag, continuePathPointDrag, finishPathPointDrag, cancelPathPointDrag,
@@ -121,7 +121,7 @@ function EditorPage() {
       <div className="editor-center">
         <div className="canvas-stage">
           <Canvas design={applyScrollAnimations(applyAnimations(resolveDocumentLayout(resolveDocumentInstances(design), { measure: measureNode }), playback.playhead, resolveTriggers), scrollProgress)} selectedId={selectedId} selectedIds={selectedIds} spacing={spacing} textIcon={textIcon} zoom={zoom} viewportRef={viewportRef}
-            drawTool={drawTool} drawing={drawing} pen={pen} selection={selection} guides={guides} camera={camera}
+            drawTool={drawTool} drawing={drawing} pen={pen} selectedPathPoint={selectedPathPoint} selection={selection} guides={guides} camera={camera}
             onNodePointerDown={startDrag} onResizePointerDown={startResize} onNodePointerMove={continueDrag} onNodePointerUp={finishDrag}
             onNodeEnter={(id) => setHoveredId(id)}
             onNodeLeave={(id) => setHoveredId((current) => current === id ? null : current)}
