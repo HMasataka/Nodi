@@ -22,7 +22,9 @@ type SegmentedProps<T extends string> = {
 // 選択肢を横に並べて1つを選ぶ切り換え。radiogroup として、選んだ項目だけを Tab で止まる位置にする。
 export function Segmented<T extends string>({ label, value, options, onChange, className }: SegmentedProps<T>) {
   const items = useRef<(HTMLButtonElement | null)[]>([]);
-  const selected = Math.max(0, options.findIndex((option) => option.value === value));
+  // 値が選択肢にないときは、どれも選ばない。Tab で止まる位置だけ先頭に置く。
+  const selected = options.findIndex((option) => option.value === value);
+  const focusable = Math.max(0, selected);
   function move(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     const next = nextSegmentIndex(event.key, index, options.length);
     if (next === null) return;
@@ -33,7 +35,7 @@ export function Segmented<T extends string>({ label, value, options, onChange, c
   return <div role="radiogroup" aria-label={label} className={className ? `segmented ${className}` : "segmented"}>
     {options.map((option, index) => (
       <button key={option.value} ref={(element) => { items.current[index] = element; }} type="button" role="radio"
-        className="segmented-item" aria-checked={index === selected} tabIndex={index === selected ? 0 : -1}
+        className="segmented-item" aria-checked={index === selected} tabIndex={index === focusable ? 0 : -1}
         onClick={() => { if (option.value !== value) onChange(option.value); }} onKeyDown={(event) => move(event, index)}>
         {option.label}
       </button>

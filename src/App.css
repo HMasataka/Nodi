@@ -214,7 +214,10 @@ button {
 .action-chip { right: var(--space-12); }
 /* プレビューはキャンバスの舞台を覆い、チップだけを上に残す。幅の切り換えは上中央に浮かべる。 */
 .preview-mode { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; background: var(--canvas-bg); }
-.preview-bar { left: 50%; transform: translateX(-50%); }
+.preview-bar { left: 50%; gap: var(--space-8); transform: translateX(-50%); }
+.preview-widths { width: 248px; flex: none; }
+.preview-width { width: 88px; flex: none; }
+.preview-bar-divider { flex: none; width: 1px; height: 20px; background: var(--line); }
 .preview-canvas { flex: 1; overflow: auto; padding: 104px var(--space-24) var(--space-24); }
 .preview-artboard { position: relative; margin: 0 auto; }
 .preview-artboard > .canvas-frame { position: absolute; }
