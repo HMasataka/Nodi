@@ -3,7 +3,7 @@ import { test } from "vitest";
 
 import { selectAllIds } from "../src/pages/editor/selection.ts";
 import { document, frame, rectangle } from "./support/factories.ts";
-import { isMacPlatform, isTextEditingTarget, matchShortcut, runsWhileEditing, type ShortcutKey, shortcutLabel } from "../src/pages/editor/shortcuts.ts";
+import { isMacPlatform, isTextEditingTarget, matchShortcut, matchTextMarkKey, runsWhileEditing, type ShortcutKey, shortcutLabel } from "../src/pages/editor/shortcuts.ts";
 
 const key = (value: string, modifiers: Partial<ShortcutKey> = {}): ShortcutKey =>
   ({ key: value, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false, ...modifiers });
@@ -136,4 +136,20 @@ test("全体を表示は最上位の要素をすべて余白付きで画面に�
   assert.equal(camera.scrollTop, 100 - 332);
   assert.equal(fitCamera(bounds!, { width: 864, height: 864 }).zoom, 2);
   assert.equal(documentBounds(document()), null);
+});
+
+test("⌥⌘P でプレビューを切り換え、⌘B・⌘U は本文の選択範囲の太字・下線にする", async () => {
+  assert.equal(id(key("π", { metaKey: true, altKey: true, code: "KeyP" }), true), "togglePreview");
+  assert.equal(id(key("p", { ctrlKey: true, altKey: true, code: "KeyP" }), false), "togglePreview");
+  assert.equal(id(key("p", { metaKey: true, code: "KeyP" }), true), null);
+  assert.equal(matchTextMarkKey(key("b", { metaKey: true }), true), "bold");
+  assert.equal(matchTextMarkKey(key("U", { ctrlKey: true }), false), "underline");
+  assert.equal(matchTextMarkKey(key("b", { ctrlKey: true }), true), null);
+  assert.equal(matchTextMarkKey(key("b", { metaKey: true, shiftKey: true }), true), null);
+  assert.equal(matchTextMarkKey(key("i", { metaKey: true }), true), null);
+  const { readFile } = await import("node:fs/promises");
+  const page = await readFile(new URL("../src/pages/editor/index.tsx", import.meta.url), "utf8");
+  assert.match(page, /togglePreview: \(\) => \{\n {6}if \(previewFrame\) \{ setPreviewing\(false\); return; \}\n {6}if \(selected\?\.type !== "frame"\) return false;/);
+  const docs = await readFile(new URL("../docs/shortcuts.md", import.meta.url), "utf8");
+  for (const row of ["| 表示 | プレビューの切り換え | ⌥⌘P |", "| テキスト | 選択範囲の太字 | ⌘B |", "| テキスト | 選択範囲の下線 | ⌘U |"]) assert.ok(docs.includes(row), row);
 });

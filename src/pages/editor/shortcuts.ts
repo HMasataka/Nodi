@@ -7,7 +7,7 @@ export type Shortcut =
   | { id: "tool"; tool: DrawTool }
   | { id: "nudge"; dx: number; dy: number }
   | { id: "reorder"; direction: "front" | "back" | "forward" | "backward" }
-  | { id: "zoomIn" | "zoomOut" | "zoomReset" | "zoomFit" }
+  | { id: "zoomIn" | "zoomOut" | "zoomReset" | "zoomFit" | "togglePreview" }
   | { id: "togglePanel"; panel: "left" | "right" | "timeline" };
 export type ShortcutId = Shortcut["id"];
 
@@ -69,6 +69,7 @@ function matchPrimaryAltKey(event: ShortcutKey): Shortcut | null {
   if (event.shiftKey) return null;
   const panels: Record<string, "left" | "right" | "timeline"> = { Digit1: "left", Digit2: "right", Digit3: "timeline" };
   if (event.code && panels[event.code]) return { id: "togglePanel", panel: panels[event.code] };
+  if (event.code === "KeyP") return { id: "togglePreview" };
   if (event.code === "BracketRight") return { id: "reorder", direction: "front" };
   if (event.code === "BracketLeft") return { id: "reorder", direction: "back" };
   return null;
@@ -87,6 +88,14 @@ function matchPlainKey(event: ShortcutKey): Shortcut | null {
   if (event.key === "Escape") return { id: "deselect" };
   const tool = TOOL_KEYS[event.key.toLowerCase()];
   return tool ? { id: "tool", tool } : null;
+}
+
+// 本文の入力欄で選択範囲に掛ける装飾のキー。主の修飾キーと B・U だけを受け、ほかの修飾キーを伴うときは null。
+export function matchTextMarkKey(event: ShortcutKey, mac: boolean = isMacPlatform()): "bold" | "underline" | null {
+  const primary = mac ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
+  if (!primary || event.altKey || event.shiftKey) return null;
+  const key = event.key.toLowerCase();
+  return key === "b" ? "bold" : key === "u" ? "underline" : null;
 }
 
 // 入力中でも動かすショートカット。入力中の下書きを確定してから実行する。
