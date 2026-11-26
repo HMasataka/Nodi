@@ -9,8 +9,7 @@ import { savePng } from "../src/export/savePng.ts";
 import { wrapText } from "../src/document/textLayout.ts";
 import { corners, ellipse as makeEllipse, frame as makeFrame, image as makeImage, rectangle as makeRectangle, text as makeText, success } from "./support/factories.ts";
 
-function fakeCanvas() {
-  const calls = [];
+function fakeCanvas(calls = []) {
   const ctx = {
     save: () => calls.push(["save"]), restore: () => calls.push(["restore"]),
     translate: (...args) => calls.push(["translate", ...args]),
@@ -21,6 +20,7 @@ function fakeCanvas() {
     roundRect: (...args) => calls.push(["roundRect", ...args]),
     moveTo: (...args) => calls.push(["moveTo", ...args]),
     lineTo: (...args) => calls.push(["lineTo", ...args]),
+    bezierCurveTo: (...args) => calls.push(["bezierCurveTo", ...args]),
     closePath: () => calls.push(["closePath"]),
     ellipse: (...args) => calls.push(["ellipse", ...args]),
     fill: () => calls.push(["fill", ctx.fillStyle]), stroke: () => calls.push(["stroke"]),
@@ -29,12 +29,20 @@ function fakeCanvas() {
     measureText: (text) => ({ width: [...text].length * (8 + Number.parseFloat(ctx.letterSpacing ?? "0px")) }),
     fillText: (...args) => calls.push(["fillText", ...args]),
     drawImage: (...args) => calls.push(["drawImage", ...args]),
+    // グラデーション・影・ぼかし・画像フィルターの描画に使う。呼び出しは記録しない。
+    createLinearGradient: () => ({ addColorStop: () => {} }),
+    createRadialGradient: () => ({ addColorStop: () => {} }),
+    getTransform: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }),
+    setTransform: () => {}, scale: () => {},
+    getImageData: (x, y, width, height) => ({ data: new Uint8ClampedArray(width * height * 4), width, height }),
+    putImageData: () => {},
   };
   const canvas = {
     width: 0, height: 0,
     getContext: () => ctx,
     toBlob: (callback) => callback(new Blob(["png"], { type: "image/png" })),
   };
+  ctx.canvas = canvas;
   return { canvas, calls };
 }
 
@@ -69,16 +77,18 @@ test("回転したフレームは画像の角丸とフィットを保ち、辺�
 
 test("サンプルのフレームを寸法どおりに描き、編集 UI を含めない", async () => {
   const text = await readFile(new URL("../samples/studio.nodi", import.meta.url), "utf8");
-  const frame = success(parseDocument(text)).children[0];
+  const sample = success(parseDocument(text));
+  const frame = sample.children[0];
   const { canvas, calls } = fakeCanvas();
+  const canvases = [canvas];
   const blob = success(await renderFramePng(frame, {
-    createCanvas: () => canvas,
+    createCanvas: () => canvases.shift() ?? fakeCanvas(calls).canvas,
     loadImage: async () => ({ naturalWidth: 320, naturalHeight: 200 }),
-  }));
-  assert.equal(canvas.width, 960);
-  assert.equal(canvas.height, 710);
+  }, { components: sample.components, spacing: sample.spacing }, sample.palette));
+  assert.equal(canvas.width, 1440);
+  assert.equal(canvas.height, 3780);
   assert.equal(blob.type, "image/png");
-  assert.deepEqual(calls.find(([method]) => method === "fill"), ["fill", "#fbfaf7"]);
+  assert.deepEqual(calls.find(([method]) => method === "fill"), ["fill", "#0e0f13"]);
   assert.ok(calls.some(([method]) => method === "moveTo"));
   assert.ok(calls.some(([method]) => method === "ellipse"));
   assert.ok(calls.some(([method]) => method === "closePath"));
@@ -230,11 +240,12 @@ test("入れ子フレームの背景を先に描き、クリップ設定ごと�
 test("本文は枠幅で折り返し、画像が読めなければ失敗を返す", async () => {
   assert.deepEqual(wrapText("ABC\nDEF", 16, (value) => value.length * 8), ["AB", "C", "DE", "F"]);
   const text = await readFile(new URL("../samples/studio.nodi", import.meta.url), "utf8");
-  const frame = success(parseDocument(text)).children[0];
+  const sample = success(parseDocument(text));
+  const frame = sample.children[0];
   const rendered = await renderFramePng(frame, {
     createCanvas: () => fakeCanvas().canvas,
     loadImage: async () => Promise.reject(new Error("画像なし")),
-  });
+  }, { components: sample.components, spacing: sample.spacing }, sample.palette);
   assert.equal(rendered.type, "Failure");
   assert.match(rendered.error.message, /画像なし/);
   assert.equal(frame.children.length > 0, true);
