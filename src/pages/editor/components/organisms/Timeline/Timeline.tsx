@@ -7,7 +7,7 @@ import { KeyframeSettings } from "@/pages/editor/components/molecules/KeyframeSe
 import { TimelineHeader } from "@/pages/editor/components/molecules/TimelineHeader";
 import { useState } from "react";
 
-import { type KeyframeRef, localTime, TimelineTracks } from "@/pages/editor/components/molecules/TimelineTracks";
+import { type KeyframeRef, localTime, scrollProgressAt, scrollTime, TimelineTracks } from "@/pages/editor/components/molecules/TimelineTracks";
 
 interface TimelineProps {
   node?: DocumentNode;
@@ -34,21 +34,21 @@ export function Timeline({ node, playback, scrollProgress, onScrollProgress, act
   const animations = node?.animations ?? [];
   const animation = activeAnimation(animations, activeAnimationId);
   const [selectedKeyframe, setSelectedKeyframe] = useState<KeyframeRef | null>(null);
+  // スクロールのトリガーでは再生しないので、再生位置の線をスクロールの進み具合として動かす。
+  const scroll = animation?.trigger === "scroll";
+  const time = animation && scroll ? scrollTime(animation, scrollProgress) : playback.playhead;
+  const current = animation ? localTime(animation, time) : 0;
   const keyframe = animation && selectedKeyframe
     ? animation.tracks.find((track) => track.property === selectedKeyframe.property)?.keyframes.find((item) => item.time === selectedKeyframe.time) ?? null : null;
 
   return <div className="timeline" aria-label="タイムライン">
     <TimelineHeader animations={animations} active={animation} canAdd={!!node} playhead={playback.playhead} playing={playback.playing}
+      scrollProgress={scroll ? scrollProgress : undefined}
       onSelect={onSelectAnimation} onAdd={() => { const id = onAddAnimation(); if (id) onSelectAnimation(id); }} onRemove={onRemoveAnimation}
       onSetTiming={onSetTiming} onPlay={playback.play} onPause={playback.pause} onClose={onClose} />
-    {animation?.trigger === "scroll" && <div className="timeline-scroll">
-      <span className="timeline-time">スクロール</span>
-      <input type="range" min="0" max="1" step="0.01" value={scrollProgress}
-        onChange={(event) => onScrollProgress(Number(event.currentTarget.value))} />
-    </div>}
     {!node && <p className="timeline-empty">要素を選ぶとアニメーションを追加できます。</p>}
-    {node && animation && <TimelineTracks animation={animation} node={node} playhead={playback.playhead} selected={selectedKeyframe}
-      onSelect={setSelectedKeyframe} onSeek={playback.seek}
+    {node && animation && <TimelineTracks animation={animation} node={node} current={current} selected={selectedKeyframe}
+      onSelect={setSelectedKeyframe} onSeek={(local) => scroll ? onScrollProgress(scrollProgressAt(animation, local)) : playback.seek(animation.delay + local)}
       onAddTrack={(property, keyframe) => { onAddKeyframe(animation.id, property, keyframe); setSelectedKeyframe({ property, time: keyframe.time }); }} />}
     {animation && <KeyframeSettings keyframe={keyframe} canAdd={animation.tracks.length > 0}
       onTime={(time) => { if (!selectedKeyframe || !keyframe) return; onSetKeyframe(animation.id, selectedKeyframe.property, keyframe.time, { time }); setSelectedKeyframe({ ...selectedKeyframe, time }); }}
@@ -58,10 +58,10 @@ export function Timeline({ node, playback, scrollProgress, onScrollProgress, act
         // 選んだキーフレームのトラック、選んでいなければ最初のトラックの、再生位置に足す。
         const property = selectedKeyframe?.property ?? animation.tracks[0]?.property;
         if (!property) return;
-        const value = evaluateAnimation(animation, playback.playhead)[property] ?? 0;
-        const time = Math.round(localTime(animation, playback.playhead));
-        onAddKeyframe(animation.id, property, { time, value, easing: "linear" });
-        setSelectedKeyframe({ property, time });
+        const value = evaluateAnimation(animation, time)[property] ?? 0;
+        const at = Math.round(current);
+        onAddKeyframe(animation.id, property, { time: at, value, easing: "linear" });
+        setSelectedKeyframe({ property, time: at });
       }}
       onRemove={() => { if (selectedKeyframe && keyframe) { onRemoveKeyframe(animation.id, selectedKeyframe.property, keyframe.time); setSelectedKeyframe(null); } }} />}
   </div>;

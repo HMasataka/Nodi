@@ -1205,6 +1205,8 @@ button {
 .timeline-divider { flex: none; width: 1px; height: 20px; background: var(--line); }
 .timeline-trigger { width: 132px; flex: none; }
 .timeline-number { width: 104px; flex: none; }
+.timeline-scroll-label { color: var(--text-secondary); font-size: var(--font-size-11); }
+.timeline-scroll-value { min-width: 40px; color: var(--ink); font-size: var(--font-size-12); font-variant-numeric: tabular-nums; text-align: center; }
 /* トラック：左に 176px のラベルの列、右に時間の領域を置く。目盛りは 24px、トラックは 32px の行にする。 */
 .timeline-tracks { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: var(--space-16); margin-inline: 0 var(--space-16) !important; }
 .timeline-labels { display: flex; flex-direction: column; border-right: 1px solid var(--line); }

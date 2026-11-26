@@ -1,1 +1,1 @@
-export { baseValue, type KeyframeRef, localTime, PROPERTY_LABELS, rulerTicks, TimelineTracks } from "@/pages/editor/components/molecules/TimelineTracks/TimelineTracks";
+export { baseValue, type KeyframeRef, localTime, PROPERTY_LABELS, rulerTicks, scrollProgressAt, scrollTime, TimelineTracks } from "@/pages/editor/components/molecules/TimelineTracks/TimelineTracks";

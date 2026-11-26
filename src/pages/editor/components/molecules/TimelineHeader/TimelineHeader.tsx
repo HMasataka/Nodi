@@ -28,6 +28,8 @@ type TimelineHeaderProps = {
   canAdd: boolean;
   playhead: number;
   playing: boolean;
+  // スクロールのトリガーのときの進み具合（0〜1）。渡すと再生の代わりに割合を出す。
+  scrollProgress?: number;
   onSelect(id: string): void;
   onAdd(): void;
   onRemove(id: string): void;
@@ -38,7 +40,7 @@ type TimelineHeaderProps = {
 };
 
 // タイムラインの見出し。左にアニメーションの切り換え・追加・削除・名前の変更と、トリガー・長さ・遅延・繰り返しを、右に再生と現在時刻と閉じるを並べる。
-export function TimelineHeader({ animations, active, canAdd, playhead, playing, onSelect, onAdd, onRemove, onSetTiming, onPlay, onPause, onClose }: TimelineHeaderProps) {
+export function TimelineHeader({ animations, active, canAdd, playhead, playing, scrollProgress, onSelect, onAdd, onRemove, onSetTiming, onPlay, onPause, onClose }: TimelineHeaderProps) {
   const [renaming, setRenaming] = useState<string | null>(null);
   return <div className="timeline-header">
     <div className="timeline-settings">
@@ -65,8 +67,13 @@ export function TimelineHeader({ animations, active, canAdd, playhead, playing, 
       </>}
     </div>
     <div className="timeline-playback">
-      <IconButton icon="play" label={playing ? "停止" : "再生"} pressed={playing} disabled={!active} onClick={playing ? onPause : onPlay} />
-      <span className="timeline-time">{Math.round(playhead)} / {active ? Math.round(animationLength(active)) : 0} ms</span>
+      {scrollProgress !== undefined ? <>
+        <span className="timeline-scroll-label">スクロール</span>
+        <span className="timeline-scroll-value">{Math.round(scrollProgress * 100)}%</span>
+      </> : <>
+        <IconButton icon="play" label={playing ? "停止" : "再生"} pressed={playing} disabled={!active} onClick={playing ? onPause : onPlay} />
+        <span className="timeline-time">{Math.round(playhead)} / {active ? Math.round(animationLength(active)) : 0} ms</span>
+      </>}
       <IconButton icon="close" label="タイムラインを閉じる" onClick={onClose} />
     </div>
   </div>;
