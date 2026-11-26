@@ -1180,7 +1180,7 @@ button {
 .preview-stage { position: relative; overflow: hidden; margin-top: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--canvas-bg); }
 .preview-frame { position: absolute; top: 0; left: 0; transform-origin: top left; }
 /* タイムラインは左右のパネルの間で、キャンバスの下端から 228px を占める。作成ツールはキャンバスの下端から 12px なので、開くとタイムラインの 12px 上に移る。 */
-.timeline { display: flex; flex-direction: column; gap: 6px; flex: none; box-sizing: border-box; height: 228px; overflow: auto; padding: 0 0 var(--space-8); border-top: 1px solid var(--line); background: var(--surface); }
+.timeline { display: flex; flex-direction: column; gap: 6px; flex: none; box-sizing: border-box; height: 228px; overflow: auto; padding: 0; border-top: 1px solid var(--line); background: var(--surface); }
 .timeline > :not(.timeline-header) { margin-inline: var(--space-16); }
 /* 見出しは 48px の1行で、左に設定、右に再生を置く。 */
 .timeline-header { display: flex; flex: none; align-items: center; justify-content: space-between; gap: var(--space-8); height: 48px; box-sizing: border-box; padding: 0 var(--space-8); border-bottom: 1px solid var(--line); }
@@ -1212,8 +1212,13 @@ button {
 .timeline-playhead-line { position: absolute; top: 8px; bottom: 0; width: 1px; background: var(--accent); transform: translateX(-50%); pointer-events: none; }
 .timeline-playhead-line:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .timeline-playhead-handle { position: absolute; top: 0; left: -4px; width: 9px; height: 8px; border-radius: 2px; background: var(--accent); }
-.timeline-keyframe-settings { display: flex; align-items: center; gap: var(--space-8); font-size: var(--font-size-11); }
-.timeline-keyframe-settings input { width: 64px; }
+/* 下端のキーフレームの行。44px の高さで、上に区切り線を引く。 */
+.keyframe-settings { display: flex; flex: none; align-items: center; gap: var(--space-8); height: 44px; box-sizing: border-box; margin: auto 0 0 !important; padding: 0 var(--space-8); border-top: 1px solid var(--line); }
+.keyframe-settings-title { flex: none; width: 80px; color: var(--ink); font-size: var(--font-size-11); font-weight: 600; }
+.keyframe-settings-time { width: 112px; flex: none; }
+.keyframe-settings-value { width: 96px; flex: none; }
+.keyframe-settings-easing { width: 344px; flex: none; }
+.keyframe-settings-empty { flex: 1; color: var(--text-label); font-size: var(--font-size-11); }
 .timeline-time { min-width: 96px; color: var(--text-secondary); font-size: var(--font-size-12); font-variant-numeric: tabular-nums; text-align: center; white-space: nowrap; }
 .timeline-empty { margin: 0; color: var(--text-subtle); font-size: 11px; }
 
