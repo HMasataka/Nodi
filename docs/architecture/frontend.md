@@ -14,7 +14,8 @@
 | `src/pages/editor/hooks/useEditorActions.ts` | 選択要素の編集・削除・複製・書き出し |
 | `src/pages/editor/components/organisms/Timeline/` | 再生操作とキーフレーム・タイムラインの編集 |
 | `src/pages/editor/components/molecules/FileChip/` | キャンバス左上のファイルのチップとファイルメニュー（開く・保存・SVG 取り込み・元に戻す・やり直す） |
-| `src/pages/editor/components/molecules/ActionChip/` | キャンバス右上の倍率と右パネルの開閉 |
+| `src/pages/editor/components/molecules/ActionChip/` | キャンバス右上の倍率、プレビューの切り換え、右パネルの開閉 |
+| `src/pages/editor/components/organisms/PreviewStage/` | 選択中のフレームを指定した幅で描くプレビュー（幅の切り換え・入力、× と Esc で編集に戻る） |
 | `src/pages/editor/components/molecules/FloatingTools/` | キャンバス下中央の作成ツール（描くツール・画像の取り込み・タイムラインの開閉） |
 | `src/pages/editor/panelLayout.ts`・`hooks/usePanelLayout.ts` | 左右のパネルとタイムラインの開閉状態と列の幅 |
 | `src/pages/editor/components/molecules/TextAppearance/` | テキストの本文・選択範囲の装飾・文字の見た目の編集欄 |
