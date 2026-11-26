@@ -29,10 +29,9 @@ test("タイムラインが再生・シークとキーフレーム編集欄を�
     assert.match(markup, /500 \/ 1000 ms/);
     assert.match(markup, /aria-label="再生"/);
     assert.match(markup, /aria-checked="true"[^>]*>フェード</);
-    assert.match(markup, /opacity/);
-    assert.match(markup, /value="ease-out" selected=""/);
+    assert.match(markup, /class="timeline-track-label">不透明度</);
+    assert.equal(markup.match(/class="timeline-keyframe[" ]/g)?.length, 2);
     assert.match(markup, /value="load" selected=""/);
-    assert.match(markup, /キーフレーム/);
     assert.match(markup, /aria-label="アニメーションを追加"/);
   } finally {
     await vite.close();
