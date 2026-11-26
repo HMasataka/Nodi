@@ -3,584 +3,4597 @@
   "children": [
     {
       "id": "nd_sample_studio",
-      "name": "Studio / デスクトップ",
+      "name": "Studio / ホームページ",
       "type": "frame",
       "x": 80,
       "y": 70,
-      "width": 960,
-      "height": 710,
+      "width": 1440,
+      "height": 3780,
       "style": {
-        "fill": "#fbfaf7"
+        "fill": {
+          "type": "palette",
+          "id": "pc_sample_background"
+        },
+        "stroke": null,
+        "cornerRadii": {
+          "topLeft": 0,
+          "topRight": 0,
+          "bottomRight": 0,
+          "bottomLeft": 0
+        }
       },
+      "clipContent": true,
       "children": [
         {
-          "id": "nd_sample_header",
-          "name": "ヘッダー",
-          "type": "rectangle",
-          "x": 20,
-          "y": 44,
-          "width": 920,
-          "height": 68,
-          "style": {
-            "fill": "#d9e8e1",
-            "stroke": {
-              "color": "#a8bfb2",
-              "width": 1
-            },
-            "cornerRadii": {
-              "topLeft": 10,
-              "topRight": 10,
-              "bottomRight": 10,
-              "bottomLeft": 10
-            }
-          }
-        },
-        {
-          "id": "nd_sample_title",
-          "name": "スタジオ名",
-          "type": "text",
-          "x": 42,
-          "y": 60,
-          "width": 300,
-          "height": 34,
-          "content": "ATLAS STUDIO",
-          "style": {
-            "fontSize": 22,
-            "color": { "type": "palette", "id": "pc_sample_ink" },
-            "textAlign": "left",
-            "fontFamily": "system",
-            "fontWeight": 700,
-            "lineHeight": 1.2,
-            "letterSpacing": 1
-          }
-        },
-        {
-          "id": "nd_sample_sidebar",
+          "id": "nd_home_nav",
           "name": "ナビゲーション",
-          "type": "rectangle",
-          "x": 20,
-          "y": 130,
-          "width": 194,
-          "height": 550,
-          "style": {
-            "fill": "#e8e8e0",
-            "stroke": {
-              "color": "#c9cbc2",
-              "width": 1
-            },
-            "cornerRadii": {
-              "topLeft": 10,
-              "topRight": 10,
-              "bottomRight": 10,
-              "bottomLeft": 10
-            }
-          }
-        },
-        {
-          "id": "nd_sample_landscape",
-          "name": "ナビゲーションの風景",
-          "type": "image",
-          "x": 36,
-          "y": 180,
-          "width": 162,
-          "height": 102,
-          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20320%20200'%3E%3Crect%20width='320'%20height='200'%20fill='%23d9e8e1'/%3E%3Ccircle%20cx='220'%20cy='75'%20r='35'%20fill='%23f1e1d5'/%3E%3Cpath%20d='M0%20175L80%2090L145%20150L220%2070L320%20180V200H0Z'%20fill='%2386a992'/%3E%3C/svg%3E",
-          "style": {}
-        },
-        {
-          "id": "nd_sample_overview",
-          "name": "概要エリア",
           "type": "frame",
-          "x": 232,
-          "y": 130,
-          "width": 708,
-          "height": 550,
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 88,
           "style": {
-            "fill": "#ffffff"
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            },
+            "border": {
+              "bottom": {
+                "color": "#ffffff1a",
+                "width": 1
+              }
+            }
           },
+          "clipContent": true,
           "children": [
             {
-              "id": "nd_sample_intro",
-              "name": "イントロ",
-              "type": "rectangle",
-              "x": 18,
-              "y": 42,
-              "width": 672,
-              "height": 76,
-              "style": {
-                "fill": "#f1e1d5",
-                "stroke": {
-                  "color": "#d5b9a5",
-                  "width": 1
-                },
-                "cornerRadii": {
-                  "topLeft": 12,
-                  "topRight": 12,
-                  "bottomRight": 12,
-                  "bottomLeft": 12
-                }
-              }
-            },
-            {
-              "id": "nd_sample_overview_title",
-              "name": "概要の見出し",
-              "type": "text",
-              "x": 36,
-              "y": 55,
-              "width": 360,
-              "height": 30,
-              "content": "Overview",
-              "style": {
-                "fontSize": 20,
-                "color": "#44352c",
-                "textAlign": "left",
-                "fontFamily": "system",
-                "fontWeight": 600,
-                "lineHeight": 1.3,
-                "letterSpacing": -0.3
-              }
-            },
-            {
-              "id": "nd_sample_overview_subtitle",
-              "name": "概要の説明",
-              "type": "text",
-              "x": 36,
-              "y": 86,
-              "width": 600,
-              "height": 22,
-              "content": "作業状況をひと目で確認する",
-              "style": {
-                "fontSize": 12,
-                "color": { "type": "palette", "id": "pc_sample_muted" },
-                "textAlign": "left"
-              }
-            },
-            {
-              "id": "nd_sample_metric_a",
-              "name": "アクティブ",
-              "type": "rectangle",
-              "x": 18,
-              "y": 136,
-              "width": 210,
-              "height": 118,
-              "style": {
-                "fill": "#e0e9dc",
-                "stroke": {
-                  "color": "#b2c8ae",
-                  "width": 2
-                },
-                "cornerRadii": {
-                  "topLeft": 12,
-                  "topRight": 12,
-                  "bottomRight": 12,
-                  "bottomLeft": 12
-                }
-              }
-            },
-            {
-              "id": "nd_sample_status_dot",
-              "name": "アクティブ状態",
-              "type": "ellipse",
-              "x": 188,
-              "y": 152,
-              "width": 24,
-              "height": 24,
-              "style": {
-                "fill": "#7bb591",
-                "stroke": {
-                  "color": "#4e8b68",
-                  "width": 2
-                }
-              }
-            },
-            {
-              "id": "nd_sample_metric_b",
-              "name": "進行中",
-              "type": "rectangle",
-              "x": 248,
-              "y": 136,
-              "width": 210,
-              "height": 118,
-              "style": {
-                "fill": "#e4e6f0",
-                "stroke": {
-                  "color": "#b6bcd4",
-                  "width": 2
-                },
-                "cornerRadii": {
-                  "topLeft": 12,
-                  "topRight": 12,
-                  "bottomRight": 12,
-                  "bottomLeft": 12
-                }
-              }
-            },
-            {
-              "id": "nd_sample_metric_c",
-              "name": "完了",
-              "type": "rectangle",
-              "x": 478,
-              "y": 136,
-              "width": 212,
-              "height": 118,
-              "style": {
-                "fill": "#f1e7cf",
-                "stroke": {
-                  "color": "#d7c79b",
-                  "width": 2
-                },
-                "cornerRadii": {
-                  "topLeft": 12,
-                  "topRight": 12,
-                  "bottomRight": 12,
-                  "bottomLeft": 12
-                }
-              }
-            },
-            {
-              "id": "nd_sample_activity",
-              "name": "アクティビティ",
+              "id": "nd_home_logo",
+              "name": "ロゴ",
               "type": "frame",
-              "x": 18,
-              "y": 276,
-              "width": 440,
-              "height": 252,
+              "x": 0,
+              "y": 0,
+              "width": 240,
+              "height": 32,
               "style": {
-                "fill": "#f6f3ec"
-              },
-              "children": [
-                {
-                  "id": "nd_sample_activity_row_1",
-                  "name": "カード",
-                  "type": "rectangle",
-                  "x": 16,
-                  "y": 48,
-                  "width": 406,
-                  "height": 52,
-                  "style": {
-                    "fill": "#ecede6",
-                    "stroke": {
-                      "color": "#d4d7cb",
-                      "width": 1
-                    },
-                    "cornerRadii": {
-                      "topLeft": 7,
-                      "topRight": 7,
-                      "bottomRight": 7,
-                      "bottomLeft": 7
-                    }
-                  }
-                },
-                {
-                  "id": "nd_sample_activity_row_2",
-                  "name": "カード",
-                  "type": "rectangle",
-                  "x": 16,
-                  "y": 116,
-                  "width": 406,
-                  "height": 52,
-                  "style": {
-                    "fill": "#ecede6",
-                    "stroke": {
-                      "color": "#d4d7cb",
-                      "width": 1
-                    },
-                    "cornerRadii": {
-                      "topLeft": 7,
-                      "topRight": 7,
-                      "bottomRight": 7,
-                      "bottomLeft": 7
-                    }
-                  }
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
                 }
-              ]
-            },
-            {
-              "id": "nd_sample_tools",
-              "name": "ツールパネル",
-              "type": "frame",
-              "x": 478,
-              "y": 276,
-              "width": 212,
-              "height": 252,
-              "style": {
-                "fill": "#f9f7f0"
               },
               "clipContent": false,
               "children": [
                 {
-                  "id": "nd_sample_primary_action",
-                  "name": "メインボタン",
-                  "type": "rectangle",
-                  "x": 16,
-                  "y": 50,
-                  "width": 178,
-                  "height": 52,
-                  "style": {
-                    "fill": { "type": "palette", "id": "pc_sample_accent" },
-                    "stroke": {
-                      "color": "#c77852",
-                      "width": 2
+                  "id": "nd_home_logo_mark",
+                  "name": "ロゴマーク",
+                  "type": "path",
+                  "x": 0,
+                  "y": 2,
+                  "width": 30,
+                  "height": 28,
+                  "commands": [
+                    {
+                      "kind": "move",
+                      "x": 0.5,
+                      "y": 0
                     },
-                    "cornerRadii": {
-                      "topLeft": 10,
-                      "topRight": 10,
-                      "bottomRight": 10,
-                      "bottomLeft": 10
+                    {
+                      "kind": "line",
+                      "x": 1,
+                      "y": 1
+                    },
+                    {
+                      "kind": "line",
+                      "x": 0.74,
+                      "y": 1
+                    },
+                    {
+                      "kind": "line",
+                      "x": 0.5,
+                      "y": 0.5
+                    },
+                    {
+                      "kind": "line",
+                      "x": 0.26,
+                      "y": 1
+                    },
+                    {
+                      "kind": "line",
+                      "x": 0,
+                      "y": 1
+                    },
+                    {
+                      "kind": "close"
+                    }
+                  ],
+                  "fillRule": "nonzero",
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_accent"
+                    },
+                    "stroke": null
+                  }
+                },
+                {
+                  "id": "nd_sample_title",
+                  "name": "スタジオ名",
+                  "type": "text",
+                  "x": 44,
+                  "y": 0,
+                  "width": 200,
+                  "height": 32,
+                  "content": "ATLAS STUDIO",
+                  "style": {
+                    "fontSize": 20,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_ink"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 800,
+                    "lineHeight": 1.6,
+                    "letterSpacing": 3
+                  }
+                }
+              ]
+            },
+            {
+              "id": "nd_home_menu",
+              "name": "メニュー",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 380,
+              "height": 24,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_menu_0",
+                  "name": "メニュー / Work",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 60,
+                  "height": 24,
+                  "content": "Work",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  }
+                },
+                {
+                  "id": "nd_home_menu_1",
+                  "name": "メニュー / Services",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 84,
+                  "height": 24,
+                  "content": "Services",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  }
+                },
+                {
+                  "id": "nd_home_menu_2",
+                  "name": "メニュー / Studio",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 68,
+                  "height": 24,
+                  "content": "Studio",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  }
+                },
+                {
+                  "id": "nd_home_menu_3",
+                  "name": "メニュー / Journal",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 76,
+                  "height": 24,
+                  "content": "Journal",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  }
+                }
+              ],
+              "layoutMode": "horizontal",
+              "gap": 24,
+              "justifyContent": "center",
+              "alignItems": "center"
+            },
+            {
+              "id": "nd_home_nav_cta",
+              "name": "相談するボタン",
+              "type": "instance",
+              "componentRef": "cp_sample_button",
+              "x": 0,
+              "y": 0,
+              "width": 178,
+              "height": 52,
+              "overrides": {
+                "nd_cp_button_label": {
+                  "content": "相談する →"
+                }
+              }
+            }
+          ],
+          "padding": 44,
+          "layoutMode": "horizontal",
+          "justifyContent": "space-between",
+          "alignItems": "center",
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_hero",
+          "name": "ヒーロー",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1080,
+          "style": {
+            "fill": {
+              "type": "radial",
+              "center": {
+                "x": 0.5,
+                "y": 0.78
+              },
+              "radius": 0.62,
+              "stops": [
+                {
+                  "position": 0,
+                  "color": "#7b5cff38"
+                },
+                {
+                  "position": 0.55,
+                  "color": "#7b5cff0a"
+                },
+                {
+                  "position": 1,
+                  "color": "#0e0f1300"
+                }
+              ]
+            },
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            }
+          },
+          "clipContent": true,
+          "children": [
+            {
+              "id": "nd_home_eyebrow",
+              "name": "募集中のバッジ",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 286,
+              "height": 36,
+              "style": {
+                "fill": "#ffffff0d",
+                "stroke": {
+                  "color": "#ffffff26",
+                  "width": 1
+                },
+                "cornerRadii": {
+                  "topLeft": 18,
+                  "topRight": 18,
+                  "bottomRight": 18,
+                  "bottomLeft": 18
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_eyebrow_dot",
+                  "name": "募集中の点",
+                  "type": "ellipse",
+                  "x": 0,
+                  "y": 0,
+                  "width": 8,
+                  "height": 8,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_accent"
+                    },
+                    "stroke": null
+                  },
+                  "animations": [
+                    {
+                      "id": "an_home_dot_pulse",
+                      "name": "点の明滅",
+                      "trigger": "load",
+                      "duration": 1600,
+                      "delay": 100,
+                      "repeat": 20,
+                      "tracks": [
+                        {
+                          "property": "opacity",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 1,
+                              "easing": "ease-in-out"
+                            },
+                            {
+                              "time": 800,
+                              "value": 0.25,
+                              "easing": "ease-in-out"
+                            },
+                            {
+                              "time": 1600,
+                              "value": 1,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "nd_home_eyebrow_label",
+                  "name": "募集中の文言",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 230,
+                  "height": 20,
+                  "content": "NOW BOOKING — 2027 Q1",
+                  "style": {
+                    "fontSize": 12,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_ink"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 600,
+                    "lineHeight": 1.6,
+                    "letterSpacing": 2
+                  }
+                }
+              ],
+              "padding": 14,
+              "gap": 10,
+              "layoutMode": "horizontal",
+              "alignItems": "center"
+            },
+            {
+              "id": "nd_home_headline",
+              "name": "ヒーローの見出し",
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 1312,
+              "height": 216,
+              "content": "Design that\nmoves people.",
+              "style": {
+                "fontSize": 104,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_sample_ink"
+                },
+                "textAlign": "center",
+                "fontFamily": "system",
+                "fontWeight": 800,
+                "lineHeight": 1.02,
+                "letterSpacing": -3
+              },
+              "marks": [
+                {
+                  "start": 12,
+                  "end": 17,
+                  "color": {
+                    "type": "palette",
+                    "id": "pc_sample_accent"
+                  }
+                }
+              ],
+              "animations": [
+                {
+                  "id": "an_home_headline_in",
+                  "name": "見出しのフェードイン",
+                  "trigger": "load",
+                  "duration": 900,
+                  "delay": 120,
+                  "repeat": 1,
+                  "tracks": [
+                    {
+                      "property": "opacity",
+                      "keyframes": [
+                        {
+                          "time": 0,
+                          "value": 0,
+                          "easing": "ease-out"
+                        },
+                        {
+                          "time": 900,
+                          "value": 1,
+                          "easing": "linear"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_subtitle",
+              "name": "ヒーローの説明",
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 1312,
+              "height": 64,
+              "content": "ATLAS STUDIO は、ブランド・プロダクト・モーションを一本の線で設計する東京のデザインスタジオです。\n戦略から実装まで、少人数のチームで伴走します。",
+              "style": {
+                "fontSize": 18,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_sample_muted"
+                },
+                "textAlign": "center",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.75,
+                "letterSpacing": 0
+              },
+              "marks": [
+                {
+                  "start": 0,
+                  "end": 12,
+                  "fontWeight": 700,
+                  "color": {
+                    "type": "palette",
+                    "id": "pc_sample_ink"
+                  }
+                }
+              ],
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_hero_actions",
+              "name": "ヒーローのボタン",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 416,
+              "height": 56,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_hero_primary",
+                  "name": "相談するボタン（大）",
+                  "type": "instance",
+                  "componentRef": "cp_sample_button",
+                  "x": 0,
+                  "y": 0,
+                  "width": 240,
+                  "height": 56,
+                  "overrides": {
+                    "nd_cp_button_bg": {
+                      "width": 240,
+                      "height": 56
+                    },
+                    "nd_cp_button_label": {
+                      "content": "プロジェクトを相談する",
+                      "width": 208
                     }
                   }
                 },
                 {
-                  "id": "nd_sample_secondary_action",
-                  "name": "サブボタン",
-                  "type": "rectangle",
-                  "x": 16,
-                  "y": 120,
-                  "width": 178,
-                  "height": 52,
-                  "style": {
-                    "fill": "#f9f7f0",
-                    "stroke": {
-                      "color": "#b8b7a9",
-                      "width": 1
+                  "id": "nd_home_hero_secondary",
+                  "name": "作品を見るボタン",
+                  "type": "instance",
+                  "componentRef": "cp_sample_button",
+                  "x": 0,
+                  "y": 0,
+                  "width": 160,
+                  "height": 56,
+                  "overrides": {
+                    "nd_cp_button_bg": {
+                      "width": 160,
+                      "height": 56,
+                      "fill": "#ffffff0f",
+                      "stroke": {
+                        "color": "#ffffff40",
+                        "width": 1
+                      }
                     },
-                    "cornerRadii": {
-                      "topLeft": 10,
-                      "topRight": 10,
-                      "bottomRight": 10,
-                      "bottomLeft": 10
+                    "nd_cp_button_label": {
+                      "content": "作品を見る",
+                      "width": 128,
+                      "color": {
+                        "type": "palette",
+                        "id": "pc_sample_ink"
+                      }
                     }
                   }
                 }
+              ],
+              "layoutMode": "horizontal",
+              "gap": 16,
+              "justifyContent": "center"
+            },
+            {
+              "id": "nd_home_showcase",
+              "name": "ショーケース",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 1200,
+              "height": 460,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_glow_violet",
+                  "name": "紫の光",
+                  "type": "ellipse",
+                  "x": 640,
+                  "y": -40,
+                  "width": 460,
+                  "height": 460,
+                  "style": {
+                    "fill": {
+                      "type": "radial",
+                      "center": {
+                        "x": 0.5,
+                        "y": 0.5
+                      },
+                      "radius": 0.5,
+                      "stops": [
+                        {
+                          "position": 0,
+                          "color": "#7b5cffcc"
+                        },
+                        {
+                          "position": 1,
+                          "color": "#7b5cff00"
+                        }
+                      ]
+                    },
+                    "stroke": null
+                  }
+                },
+                {
+                  "id": "nd_home_glow_lime",
+                  "name": "黄緑の光",
+                  "type": "ellipse",
+                  "x": 120,
+                  "y": 120,
+                  "width": 360,
+                  "height": 360,
+                  "style": {
+                    "fill": {
+                      "type": "radial",
+                      "center": {
+                        "x": 0.5,
+                        "y": 0.5
+                      },
+                      "radius": 0.5,
+                      "stops": [
+                        {
+                          "position": 0,
+                          "color": "#c8ff4d80"
+                        },
+                        {
+                          "position": 1,
+                          "color": "#c8ff4d00"
+                        }
+                      ]
+                    },
+                    "stroke": null
+                  }
+                },
+                {
+                  "id": "nd_home_mock_left",
+                  "name": "左のモックアップ",
+                  "type": "frame",
+                  "x": 60,
+                  "y": 110,
+                  "width": 360,
+                  "height": 280,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_surface"
+                    },
+                    "stroke": {
+                      "color": "#ffffff1f",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 20,
+                      "topRight": 20,
+                      "bottomRight": 20,
+                      "bottomLeft": 20
+                    }
+                  },
+                  "clipContent": true,
+                  "children": [
+                    {
+                      "id": "nd_home_mock_left_image",
+                      "name": "左のモックアップの画像",
+                      "type": "image",
+                      "x": 0,
+                      "y": 0,
+                      "width": 360,
+                      "height": 280,
+                      "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20600'%20width='800'%20height='600'%3E%3Crect%20width='800'%20height='600'%20fill='%23f2b38a'/%3E%3Ccircle%20cx='560'%20cy='220'%20r='120'%20fill='%23fff1d6'/%3E%3Cpath%20d='M0%20360%20C160%20300%20300%20420%20460%20360%20S720%20300%20800%20340%20V600%20H0Z'%20fill='%23d9734e'/%3E%3Cpath%20d='M0%20450%20C200%20390%20360%20500%20560%20440%20S760%20420%20800%20430%20V600%20H0Z'%20fill='%239c3f2e'/%3E%3Cpath%20d='M0%20530%20C220%20490%20420%20570%20800%20510%20V600%20H0Z'%20fill='%234a1f22'/%3E%3C/svg%3E",
+                      "style": {
+                        "fit": "cover",
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      }
+                    }
+                  ],
+                  "rotation": -7,
+                  "shadow": {
+                    "color": "#00000099",
+                    "offsetX": 0,
+                    "offsetY": 30,
+                    "blur": 40
+                  },
+                  "animations": [
+                    {
+                      "id": "an_mock_left_in",
+                      "name": "左のモックアップの登場",
+                      "trigger": "load",
+                      "duration": 900,
+                      "delay": 400,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 190,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 900,
+                              "value": 110,
+                              "easing": "linear"
+                            }
+                          ]
+                        },
+                        {
+                          "property": "opacity",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 600,
+                              "value": 1,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "nd_home_mock_right",
+                  "name": "右のモックアップ",
+                  "type": "frame",
+                  "x": 780,
+                  "y": 110,
+                  "width": 360,
+                  "height": 280,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_surface"
+                    },
+                    "stroke": {
+                      "color": "#ffffff1f",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 20,
+                      "topRight": 20,
+                      "bottomRight": 20,
+                      "bottomLeft": 20
+                    }
+                  },
+                  "clipContent": true,
+                  "children": [
+                    {
+                      "id": "nd_home_mock_right_image",
+                      "name": "右のモックアップの画像",
+                      "type": "image",
+                      "x": 0,
+                      "y": 0,
+                      "width": 360,
+                      "height": 280,
+                      "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20600'%20width='800'%20height='600'%3E%3Crect%20width='800'%20height='600'%20fill='%23c8ff4d'/%3E%3Cg%20stroke='%230e0f13'%20stroke-opacity='.18'%3E%3Cpath%20d='M0%20100H800M0%20200H800M0%20300H800M0%20400H800M0%20500H800M100%200V600M200%200V600M300%200V600M400%200V600M500%200V600M600%200V600M700%200V600'/%3E%3C/g%3E%3Crect%20x='100'%20y='100'%20width='200'%20height='200'%20fill='%230e0f13'/%3E%3Ccircle%20cx='500'%20cy='300'%20r='100'%20fill='%237b5cff'/%3E%3Cpath%20d='M600%20500%20L700%20300%20L800%20500Z'%20fill='%230e0f13'/%3E%3Crect%20x='300'%20y='400'%20width='100'%20height='100'%20fill='%23f4f1ea'/%3E%3C/svg%3E",
+                      "style": {
+                        "fit": "cover",
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      }
+                    }
+                  ],
+                  "rotation": 7,
+                  "shadow": {
+                    "color": "#00000099",
+                    "offsetX": 0,
+                    "offsetY": 30,
+                    "blur": 40
+                  },
+                  "animations": [
+                    {
+                      "id": "an_mock_right_in",
+                      "name": "右のモックアップの登場",
+                      "trigger": "load",
+                      "duration": 900,
+                      "delay": 550,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 190,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 900,
+                              "value": 110,
+                              "easing": "linear"
+                            }
+                          ]
+                        },
+                        {
+                          "property": "opacity",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 600,
+                              "value": 1,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "nd_home_mock_center",
+                  "name": "中央のモックアップ",
+                  "type": "frame",
+                  "x": 390,
+                  "y": 30,
+                  "width": 420,
+                  "height": 390,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_surface"
+                    },
+                    "stroke": {
+                      "color": "#ffffff1f",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 20,
+                      "topRight": 20,
+                      "bottomRight": 20,
+                      "bottomLeft": 20
+                    }
+                  },
+                  "clipContent": true,
+                  "children": [
+                    {
+                      "id": "nd_home_mock_center_image",
+                      "name": "中央のモックアップの画像",
+                      "type": "image",
+                      "x": 0,
+                      "y": 0,
+                      "width": 420,
+                      "height": 240,
+                      "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20600'%20width='800'%20height='600'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%232a1d6b'/%3E%3Cstop%20offset='1'%20stop-color='%230d0e14'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='800'%20height='600'%20fill='url%28%23g%29'/%3E%3Cg%20fill='none'%20stroke='%238f7bff'%20stroke-opacity='.45'%3E%3Ccircle%20cx='520'%20cy='300'%20r='90'/%3E%3Ccircle%20cx='520'%20cy='300'%20r='160'/%3E%3Ccircle%20cx='520'%20cy='300'%20r='240'/%3E%3Ccircle%20cx='520'%20cy='300'%20r='330'/%3E%3C/g%3E%3Ccircle%20cx='520'%20cy='300'%20r='70'%20fill='%23c8ff4d'/%3E%3Ccircle%20cx='360'%20cy='160'%20r='16'%20fill='%23f4f1ea'/%3E%3Ccircle%20cx='700'%20cy='470'%20r='26'%20fill='%237b5cff'/%3E%3Cpath%20d='M80%20520%20L260%20520'%20stroke='%23f4f1ea'%20stroke-width='6'/%3E%3Cpath%20d='M80%20552%20L190%20552'%20stroke='%23f4f1ea'%20stroke-opacity='.4'%20stroke-width='6'/%3E%3C/svg%3E",
+                      "style": {
+                        "fit": "cover",
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      }
+                    },
+                    {
+                      "id": "nd_home_avatar",
+                      "name": "担当者のアバター",
+                      "type": "frame",
+                      "x": 24,
+                      "y": 260,
+                      "width": 44,
+                      "height": 44,
+                      "style": {
+                        "fill": null,
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      },
+                      "clipContent": false,
+                      "children": [
+                        {
+                          "id": "nd_home_avatar_mask",
+                          "name": "アバターの丸いマスク",
+                          "type": "ellipse",
+                          "x": 0,
+                          "y": 0,
+                          "width": 44,
+                          "height": 44,
+                          "style": {
+                            "fill": "#ffffff",
+                            "stroke": null
+                          },
+                          "isMask": true
+                        },
+                        {
+                          "id": "nd_home_avatar_image",
+                          "name": "アバターの画像",
+                          "type": "image",
+                          "x": 0,
+                          "y": 0,
+                          "width": 44,
+                          "height": 44,
+                          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20200%20200'%20width='200'%20height='200'%3E%3Cdefs%3E%3CradialGradient%20id='r'%20cx='.35'%20cy='.3'%20r='.8'%3E%3Cstop%20offset='0'%20stop-color='%23ffd7b5'/%3E%3Cstop%20offset='.6'%20stop-color='%23e7865f'/%3E%3Cstop%20offset='1'%20stop-color='%235a2b6e'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect%20width='200'%20height='200'%20fill='url%28%23r%29'/%3E%3Ccircle%20cx='100'%20cy='84'%20r='38'%20fill='%232b1838'%20fill-opacity='.85'/%3E%3Cpath%20d='M30%20200%20C40%20140%20160%20140%20170%20200Z'%20fill='%232b1838'%20fill-opacity='.85'/%3E%3C/svg%3E",
+                          "style": {
+                            "fit": "cover",
+                            "cornerRadii": {
+                              "topLeft": 0,
+                              "topRight": 0,
+                              "bottomRight": 0,
+                              "bottomLeft": 0
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "nd_home_card_title",
+                      "name": "モックアップの見出し",
+                      "type": "text",
+                      "x": 80,
+                      "y": 258,
+                      "width": 300,
+                      "height": 26,
+                      "content": "Orbit — Brand System",
+                      "style": {
+                        "fontSize": 17,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_ink"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 700,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      }
+                    },
+                    {
+                      "id": "nd_home_card_meta",
+                      "name": "モックアップの補足",
+                      "type": "text",
+                      "x": 80,
+                      "y": 284,
+                      "width": 300,
+                      "height": 22,
+                      "content": "Identity · Motion · Web",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      }
+                    },
+                    {
+                      "id": "nd_home_card_bar_back",
+                      "name": "進み具合の下地",
+                      "type": "rectangle",
+                      "x": 24,
+                      "y": 334,
+                      "width": 372,
+                      "height": 6,
+                      "style": {
+                        "fill": "#ffffff14",
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 3,
+                          "topRight": 3,
+                          "bottomRight": 3,
+                          "bottomLeft": 3
+                        }
+                      }
+                    },
+                    {
+                      "id": "nd_home_card_bar",
+                      "name": "進み具合",
+                      "type": "rectangle",
+                      "x": 24,
+                      "y": 334,
+                      "width": 248,
+                      "height": 6,
+                      "style": {
+                        "fill": {
+                          "type": "linear",
+                          "start": {
+                            "x": 0,
+                            "y": 0.5
+                          },
+                          "end": {
+                            "x": 1,
+                            "y": 0.5
+                          },
+                          "stops": [
+                            {
+                              "position": 0,
+                              "color": {
+                                "type": "palette",
+                                "id": "pc_sample_violet"
+                              }
+                            },
+                            {
+                              "position": 1,
+                              "color": {
+                                "type": "palette",
+                                "id": "pc_sample_accent"
+                              }
+                            }
+                          ]
+                        },
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 3,
+                          "topRight": 3,
+                          "bottomRight": 3,
+                          "bottomLeft": 3
+                        }
+                      }
+                    },
+                    {
+                      "id": "nd_home_card_progress",
+                      "name": "進み具合の数値",
+                      "type": "text",
+                      "x": 24,
+                      "y": 352,
+                      "width": 200,
+                      "height": 22,
+                      "content": "Sprint 3 / 4",
+                      "style": {
+                        "fontSize": 12,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      }
+                    },
+                    {
+                      "id": "nd_home_card_percent",
+                      "name": "進み具合の割合",
+                      "type": "text",
+                      "x": 296,
+                      "y": 352,
+                      "width": 100,
+                      "height": 22,
+                      "content": "67%",
+                      "style": {
+                        "fontSize": 12,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_accent"
+                        },
+                        "textAlign": "right",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      }
+                    }
+                  ],
+                  "rotation": 0,
+                  "shadow": {
+                    "color": "#00000099",
+                    "offsetX": 0,
+                    "offsetY": 30,
+                    "blur": 40
+                  },
+                  "animations": [
+                    {
+                      "id": "an_mock_center_in",
+                      "name": "中央のモックアップの登場",
+                      "trigger": "load",
+                      "duration": 900,
+                      "delay": 250,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 110,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 900,
+                              "value": 30,
+                              "easing": "linear"
+                            }
+                          ]
+                        },
+                        {
+                          "property": "opacity",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 600,
+                              "value": 1,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "an_mock_center_hover",
+                      "name": "中央のモックアップの浮き上がり",
+                      "trigger": "hover",
+                      "duration": 300,
+                      "delay": 0,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 30,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 300,
+                              "value": 14,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "nd_home_live",
+                  "name": "プロトタイプのラベル",
+                  "type": "frame",
+                  "x": 120,
+                  "y": 392,
+                  "width": 172,
+                  "height": 40,
+                  "style": {
+                    "fill": "#f4f1ea",
+                    "stroke": null,
+                    "cornerRadii": {
+                      "topLeft": 20,
+                      "topRight": 20,
+                      "bottomRight": 20,
+                      "bottomLeft": 20
+                    }
+                  },
+                  "clipContent": false,
+                  "children": [
+                    {
+                      "id": "nd_home_live_dot",
+                      "name": "ライブの点",
+                      "type": "ellipse",
+                      "x": 0,
+                      "y": 0,
+                      "width": 8,
+                      "height": 8,
+                      "style": {
+                        "fill": "#ff5c7a",
+                        "stroke": null
+                      }
+                    },
+                    {
+                      "id": "nd_home_live_label",
+                      "name": "ライブの文言",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 120,
+                      "height": 20,
+                      "content": "Live prototype",
+                      "style": {
+                        "fontSize": 13,
+                        "color": "#0e0f13",
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 600,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      }
+                    }
+                  ],
+                  "padding": 16,
+                  "gap": 8,
+                  "layoutMode": "horizontal",
+                  "alignItems": "center",
+                  "rotation": -4,
+                  "shadow": {
+                    "color": "#00000066",
+                    "offsetX": 0,
+                    "offsetY": 12,
+                    "blur": 24
+                  },
+                  "animations": [
+                    {
+                      "id": "an_home_live_in",
+                      "name": "ラベルの登場",
+                      "trigger": "load",
+                      "duration": 500,
+                      "delay": 1100,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "opacity",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 500,
+                              "value": 1,
+                              "easing": "linear"
+                            }
+                          ]
+                        },
+                        {
+                          "property": "rotation",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": -14,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 500,
+                              "value": -4,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "nd_home_sparkle",
+                  "name": "きらめき",
+                  "type": "path",
+                  "x": 1080,
+                  "y": 20,
+                  "width": 56,
+                  "height": 56,
+                  "commands": [
+                    {
+                      "kind": "move",
+                      "x": 0.5,
+                      "y": 0
+                    },
+                    {
+                      "kind": "cubic",
+                      "x1": 0.55,
+                      "y1": 0.35,
+                      "x2": 0.65,
+                      "y2": 0.45,
+                      "x": 1,
+                      "y": 0.5
+                    },
+                    {
+                      "kind": "cubic",
+                      "x1": 0.65,
+                      "y1": 0.55,
+                      "x2": 0.55,
+                      "y2": 0.65,
+                      "x": 0.5,
+                      "y": 1
+                    },
+                    {
+                      "kind": "cubic",
+                      "x1": 0.45,
+                      "y1": 0.65,
+                      "x2": 0.35,
+                      "y2": 0.55,
+                      "x": 0,
+                      "y": 0.5
+                    },
+                    {
+                      "kind": "cubic",
+                      "x1": 0.35,
+                      "y1": 0.45,
+                      "x2": 0.45,
+                      "y2": 0.35,
+                      "x": 0.5,
+                      "y": 0
+                    },
+                    {
+                      "kind": "close"
+                    }
+                  ],
+                  "fillRule": "nonzero",
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_accent"
+                    },
+                    "stroke": null
+                  },
+                  "animations": [
+                    {
+                      "id": "an_home_sparkle_spin",
+                      "name": "きらめきの回転",
+                      "trigger": "load",
+                      "duration": 6000,
+                      "delay": 100,
+                      "repeat": 50,
+                      "tracks": [
+                        {
+                          "property": "rotation",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "linear"
+                            },
+                            {
+                              "time": 6000,
+                              "value": 360,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
               ]
             }
-          ]
+          ],
+          "padding": 64,
+          "gap": 28,
+          "layoutMode": "vertical",
+          "alignItems": "center",
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_clients",
+          "name": "取引先の帯",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 120,
+          "style": {
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            },
+            "border": {
+              "top": {
+                "color": "#ffffff1a",
+                "width": 1
+              },
+              "bottom": {
+                "color": "#ffffff1a",
+                "width": 1
+              }
+            }
+          },
+          "clipContent": true,
+          "children": [
+            {
+              "id": "nd_home_clients_names",
+              "name": "取引先の名前",
+              "type": "text",
+              "x": 360,
+              "y": 40,
+              "width": 2000,
+              "height": 40,
+              "content": "ARCADIA   ✦   NORTHWIND   ✦   MERIDIAN   ✦   KOMOREBI   ✦   HALCYON   ✦   OBSIDIAN   ✦   LUMEN   ✦   ARCADIA   ✦   NORTHWIND",
+              "style": {
+                "fontSize": 26,
+                "color": "#f4f1eaa6",
+                "textAlign": "left",
+                "fontFamily": "serif",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 4
+              },
+              "animations": [
+                {
+                  "id": "an_home_clients_scroll",
+                  "name": "取引先の横流れ",
+                  "trigger": "scroll",
+                  "duration": 1000,
+                  "delay": 0,
+                  "repeat": 1,
+                  "tracks": [
+                    {
+                      "property": "x",
+                      "keyframes": [
+                        {
+                          "time": 0,
+                          "value": 360,
+                          "easing": "linear"
+                        },
+                        {
+                          "time": 1000,
+                          "value": -340,
+                          "easing": "linear"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "nd_home_clients_fade",
+              "name": "取引先の左のぼかし",
+              "type": "rectangle",
+              "x": 0,
+              "y": 0,
+              "width": 360,
+              "height": 120,
+              "style": {
+                "fill": {
+                  "type": "linear",
+                  "start": {
+                    "x": 0,
+                    "y": 0.5
+                  },
+                  "end": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "stops": [
+                    {
+                      "position": 0,
+                      "color": {
+                        "type": "palette",
+                        "id": "pc_sample_background"
+                      }
+                    },
+                    {
+                      "position": 0.78,
+                      "color": {
+                        "type": "palette",
+                        "id": "pc_sample_background"
+                      }
+                    },
+                    {
+                      "position": 1,
+                      "color": "#0e0f1300"
+                    }
+                  ]
+                },
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              }
+            },
+            {
+              "id": "nd_home_clients_label",
+              "name": "取引先の見出し",
+              "type": "text",
+              "x": 80,
+              "y": 50,
+              "width": 220,
+              "height": 20,
+              "content": "TRUSTED BY TEAMS AT",
+              "style": {
+                "fontSize": 12,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_sample_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 600,
+                "lineHeight": 1.4,
+                "letterSpacing": 2
+              }
+            }
+          ],
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_services",
+          "name": "サービス",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 668,
+          "style": {
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            }
+          },
+          "clipContent": true,
+          "children": [
+            {
+              "id": "nd_home_services_head",
+              "name": "What we doの見出し行",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 100,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_services_titles",
+                  "name": "What we doの見出し",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 640,
+                  "height": 100,
+                  "style": {
+                    "fill": null,
+                    "stroke": null,
+                    "cornerRadii": {
+                      "topLeft": 0,
+                      "topRight": 0,
+                      "bottomRight": 0,
+                      "bottomLeft": 0
+                    }
+                  },
+                  "clipContent": false,
+                  "children": [
+                    {
+                      "id": "nd_home_services_eyebrow",
+                      "name": "What we doの小見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 20,
+                      "content": "/ SERVICES",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_accent"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 600,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 2
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_services_title",
+                      "name": "What we doの大見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 68,
+                      "content": "What we do",
+                      "style": {
+                        "fontSize": 56,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_ink"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 800,
+                        "lineHeight": 1.15,
+                        "letterSpacing": -1.5
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "layoutMode": "vertical",
+                  "gap": 12
+                },
+                {
+                  "id": "nd_home_services_lead",
+                  "name": "サービスの説明",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 420,
+                  "height": 56,
+                  "content": "3つの専門チームが一つのプロジェクトに入り、\n戦略・デザイン・実装の継ぎ目をなくします。",
+                  "style": {
+                    "fontSize": 16,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.75,
+                    "letterSpacing": 0
+                  }
+                }
+              ],
+              "layoutMode": "horizontal",
+              "justifyContent": "space-between",
+              "alignItems": "end",
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_service_cards",
+              "name": "サービスのカード",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 360,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_service_brand",
+                  "name": "サービス / Brand Identity",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 410,
+                  "height": 360,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_surface"
+                    },
+                    "stroke": {
+                      "color": "#ffffff14",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 24,
+                      "topRight": 24,
+                      "bottomRight": 24,
+                      "bottomLeft": 24
+                    }
+                  },
+                  "clipContent": true,
+                  "children": [
+                    {
+                      "id": "nd_home_service_brand_icon",
+                      "name": "Brand Identityのアイコン",
+                      "type": "frame",
+                      "x": 0,
+                      "y": 0,
+                      "width": 56,
+                      "height": 56,
+                      "style": {
+                        "fill": {
+                          "type": "linear",
+                          "start": {
+                            "x": 0,
+                            "y": 0
+                          },
+                          "end": {
+                            "x": 1,
+                            "y": 1
+                          },
+                          "stops": [
+                            {
+                              "position": 0,
+                              "color": {
+                                "type": "palette",
+                                "id": "pc_sample_accent"
+                              }
+                            },
+                            {
+                              "position": 1,
+                              "color": "#8ef0c0"
+                            }
+                          ]
+                        },
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 16,
+                          "topRight": 16,
+                          "bottomRight": 16,
+                          "bottomLeft": 16
+                        }
+                      },
+                      "clipContent": true,
+                      "children": [
+                        {
+                          "id": "nd_home_service_brand_glyph",
+                          "name": "Brand Identityの図形",
+                          "type": "path",
+                          "x": 16,
+                          "y": 16,
+                          "width": 24,
+                          "height": 24,
+                          "commands": [
+                            {
+                              "kind": "move",
+                              "x": 0.5,
+                              "y": 0
+                            },
+                            {
+                              "kind": "line",
+                              "x": 1,
+                              "y": 0.5
+                            },
+                            {
+                              "kind": "line",
+                              "x": 0.5,
+                              "y": 1
+                            },
+                            {
+                              "kind": "line",
+                              "x": 0,
+                              "y": 0.5
+                            },
+                            {
+                              "kind": "close"
+                            }
+                          ],
+                          "fillRule": "nonzero",
+                          "style": {
+                            "fill": "#0e0f13",
+                            "stroke": null
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "nd_home_service_brand_number",
+                      "name": "Brand Identityの番号",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 20,
+                      "content": "01",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_brand_title",
+                      "name": "Brand Identityの見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 36,
+                      "content": "Brand Identity",
+                      "style": {
+                        "fontSize": 28,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_ink"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 700,
+                        "lineHeight": 1.25,
+                        "letterSpacing": -0.5
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_brand_body",
+                      "name": "Brand Identityの説明",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 78,
+                      "content": "ロゴ、書体、色、トーン。ブランドの芯になる形を、運用できる仕組みにします。",
+                      "style": {
+                        "fontSize": 15,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "lineHeight": 1.7,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_brand_tags",
+                      "name": "Brand Identityのタグ",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 22,
+                      "content": "Strategy · Logo · Guideline",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_accent"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "gapRef": "sp_sample_stack",
+                  "paddingRef": "sp_sample_inner",
+                  "layoutMode": "vertical",
+                  "padding": 32,
+                  "gap": 16,
+                  "animations": [
+                    {
+                      "id": "an_home_service_brand_hover",
+                      "name": "Brand Identityの浮き上がり",
+                      "trigger": "hover",
+                      "duration": 260,
+                      "delay": 0,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 260,
+                              "value": -10,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_service_product",
+                  "name": "サービス / Product Design",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 410,
+                  "height": 360,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_surface"
+                    },
+                    "stroke": {
+                      "color": "#ffffff14",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 24,
+                      "topRight": 24,
+                      "bottomRight": 24,
+                      "bottomLeft": 24
+                    }
+                  },
+                  "clipContent": true,
+                  "children": [
+                    {
+                      "id": "nd_home_service_product_icon",
+                      "name": "Product Designのアイコン",
+                      "type": "frame",
+                      "x": 0,
+                      "y": 0,
+                      "width": 56,
+                      "height": 56,
+                      "style": {
+                        "fill": {
+                          "type": "linear",
+                          "start": {
+                            "x": 0,
+                            "y": 0
+                          },
+                          "end": {
+                            "x": 1,
+                            "y": 1
+                          },
+                          "stops": [
+                            {
+                              "position": 0,
+                              "color": {
+                                "type": "palette",
+                                "id": "pc_sample_accent"
+                              }
+                            },
+                            {
+                              "position": 1,
+                              "color": "#8ef0c0"
+                            }
+                          ]
+                        },
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 16,
+                          "topRight": 16,
+                          "bottomRight": 16,
+                          "bottomLeft": 16
+                        }
+                      },
+                      "clipContent": true,
+                      "children": [
+                        {
+                          "id": "nd_home_service_product_glyph",
+                          "name": "Product Designの図形",
+                          "type": "path",
+                          "x": 16,
+                          "y": 16,
+                          "width": 24,
+                          "height": 24,
+                          "commands": [
+                            {
+                              "kind": "move",
+                              "x": 0,
+                              "y": 0
+                            },
+                            {
+                              "kind": "line",
+                              "x": 1,
+                              "y": 0
+                            },
+                            {
+                              "kind": "line",
+                              "x": 1,
+                              "y": 0.42
+                            },
+                            {
+                              "kind": "line",
+                              "x": 0.42,
+                              "y": 0.42
+                            },
+                            {
+                              "kind": "line",
+                              "x": 0.42,
+                              "y": 1
+                            },
+                            {
+                              "kind": "line",
+                              "x": 0,
+                              "y": 1
+                            },
+                            {
+                              "kind": "close"
+                            }
+                          ],
+                          "fillRule": "nonzero",
+                          "style": {
+                            "fill": "#0e0f13",
+                            "stroke": null
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "nd_home_service_product_number",
+                      "name": "Product Designの番号",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 20,
+                      "content": "02",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_product_title",
+                      "name": "Product Designの見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 36,
+                      "content": "Product Design",
+                      "style": {
+                        "fontSize": 28,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_ink"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 700,
+                        "lineHeight": 1.25,
+                        "letterSpacing": -0.5
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_product_body",
+                      "name": "Product Designの説明",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 78,
+                      "content": "調査から UI、プロトタイプまで。使う人の動きに寄り添う画面を、開発チームと一緒に作ります。",
+                      "style": {
+                        "fontSize": 15,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "lineHeight": 1.7,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_product_tags",
+                      "name": "Product Designのタグ",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 22,
+                      "content": "Research · UI · Prototype",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_accent"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "gapRef": "sp_sample_stack",
+                  "paddingRef": "sp_sample_inner",
+                  "layoutMode": "vertical",
+                  "padding": 32,
+                  "gap": 16,
+                  "animations": [
+                    {
+                      "id": "an_home_service_product_hover",
+                      "name": "Product Designの浮き上がり",
+                      "trigger": "hover",
+                      "duration": 260,
+                      "delay": 0,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 260,
+                              "value": -10,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_service_motion",
+                  "name": "サービス / Motion & Web",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 410,
+                  "height": 360,
+                  "style": {
+                    "fill": {
+                      "type": "palette",
+                      "id": "pc_sample_surface"
+                    },
+                    "stroke": {
+                      "color": "#ffffff14",
+                      "width": 1
+                    },
+                    "cornerRadii": {
+                      "topLeft": 24,
+                      "topRight": 24,
+                      "bottomRight": 24,
+                      "bottomLeft": 24
+                    }
+                  },
+                  "clipContent": true,
+                  "children": [
+                    {
+                      "id": "nd_home_service_motion_icon",
+                      "name": "Motion & Webのアイコン",
+                      "type": "frame",
+                      "x": 0,
+                      "y": 0,
+                      "width": 56,
+                      "height": 56,
+                      "style": {
+                        "fill": {
+                          "type": "linear",
+                          "start": {
+                            "x": 0,
+                            "y": 0
+                          },
+                          "end": {
+                            "x": 1,
+                            "y": 1
+                          },
+                          "stops": [
+                            {
+                              "position": 0,
+                              "color": {
+                                "type": "palette",
+                                "id": "pc_sample_accent"
+                              }
+                            },
+                            {
+                              "position": 1,
+                              "color": "#8ef0c0"
+                            }
+                          ]
+                        },
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 16,
+                          "topRight": 16,
+                          "bottomRight": 16,
+                          "bottomLeft": 16
+                        }
+                      },
+                      "clipContent": true,
+                      "children": [
+                        {
+                          "id": "nd_home_service_motion_glyph",
+                          "name": "Motion & Webの図形",
+                          "type": "path",
+                          "x": 16,
+                          "y": 16,
+                          "width": 24,
+                          "height": 24,
+                          "commands": [
+                            {
+                              "kind": "move",
+                              "x": 0,
+                              "y": 0.5
+                            },
+                            {
+                              "kind": "cubic",
+                              "x1": 0.25,
+                              "y1": -0.1,
+                              "x2": 0.25,
+                              "y2": 1.1,
+                              "x": 0.5,
+                              "y": 0.5
+                            },
+                            {
+                              "kind": "cubic",
+                              "x1": 0.75,
+                              "y1": -0.1,
+                              "x2": 0.75,
+                              "y2": 1.1,
+                              "x": 1,
+                              "y": 0.5
+                            },
+                            {
+                              "kind": "line",
+                              "x": 1,
+                              "y": 0.7
+                            },
+                            {
+                              "kind": "cubic",
+                              "x1": 0.75,
+                              "y1": 1.3,
+                              "x2": 0.75,
+                              "y2": 0.1,
+                              "x": 0.5,
+                              "y": 0.7
+                            },
+                            {
+                              "kind": "cubic",
+                              "x1": 0.25,
+                              "y1": 1.3,
+                              "x2": 0.25,
+                              "y2": 0.1,
+                              "x": 0,
+                              "y": 0.7
+                            },
+                            {
+                              "kind": "close"
+                            }
+                          ],
+                          "fillRule": "nonzero",
+                          "style": {
+                            "fill": "#0e0f13",
+                            "stroke": null
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": "nd_home_service_motion_number",
+                      "name": "Motion & Webの番号",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 20,
+                      "content": "03",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_motion_title",
+                      "name": "Motion & Webの見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 36,
+                      "content": "Motion & Web",
+                      "style": {
+                        "fontSize": 28,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_ink"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 700,
+                        "lineHeight": 1.25,
+                        "letterSpacing": -0.5
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_motion_body",
+                      "name": "Motion & Webの説明",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 78,
+                      "content": "スクロールやホバーで動くサイトと映像で、ブランドの性格を伝えます。",
+                      "style": {
+                        "fontSize": 15,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_muted"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 400,
+                        "lineHeight": 1.7,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_service_motion_tags",
+                      "name": "Motion & Webのタグ",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 300,
+                      "height": 22,
+                      "content": "Interaction · Film · Webflow",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_accent"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 400,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 0
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "gapRef": "sp_sample_stack",
+                  "paddingRef": "sp_sample_inner",
+                  "layoutMode": "vertical",
+                  "padding": 32,
+                  "gap": 16,
+                  "animations": [
+                    {
+                      "id": "an_home_service_motion_hover",
+                      "name": "Motion & Webの浮き上がり",
+                      "trigger": "hover",
+                      "duration": 260,
+                      "delay": 0,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "y",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 0,
+                              "easing": "ease-out"
+                            },
+                            {
+                              "time": 260,
+                              "value": -10,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                }
+              ],
+              "layoutMode": "horizontal",
+              "gapRef": "sp_sample_gutter",
+              "gap": 24,
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            }
+          ],
+          "layoutMode": "vertical",
+          "paddingRef": "sp_sample_section",
+          "gap": 48,
+          "padding": 80,
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_works",
+          "name": "作品",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 908,
+          "style": {
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            },
+            "border": {
+              "top": {
+                "color": "#ffffff1a",
+                "width": 1
+              }
+            }
+          },
+          "clipContent": true,
+          "children": [
+            {
+              "id": "nd_home_works_head",
+              "name": "Selected workの見出し行",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 100,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_works_titles",
+                  "name": "Selected workの見出し",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 640,
+                  "height": 100,
+                  "style": {
+                    "fill": null,
+                    "stroke": null,
+                    "cornerRadii": {
+                      "topLeft": 0,
+                      "topRight": 0,
+                      "bottomRight": 0,
+                      "bottomLeft": 0
+                    }
+                  },
+                  "clipContent": false,
+                  "children": [
+                    {
+                      "id": "nd_home_works_eyebrow",
+                      "name": "Selected workの小見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 20,
+                      "content": "/ WORKS",
+                      "style": {
+                        "fontSize": 13,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_accent"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "monospace",
+                        "fontWeight": 600,
+                        "lineHeight": 1.4,
+                        "letterSpacing": 2
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_works_title",
+                      "name": "Selected workの大見出し",
+                      "type": "text",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 68,
+                      "content": "Selected work",
+                      "style": {
+                        "fontSize": 56,
+                        "color": {
+                          "type": "palette",
+                          "id": "pc_sample_ink"
+                        },
+                        "textAlign": "left",
+                        "fontFamily": "system",
+                        "fontWeight": 800,
+                        "lineHeight": 1.15,
+                        "letterSpacing": -1.5
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "layoutMode": "vertical",
+                  "gap": 12
+                },
+                {
+                  "id": "nd_home_works_link",
+                  "name": "作品一覧へのリンク",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 220,
+                  "height": 28,
+                  "content": "すべての作品を見る →",
+                  "style": {
+                    "fontSize": 16,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_ink"
+                    },
+                    "textAlign": "right",
+                    "fontFamily": "system",
+                    "fontWeight": 600,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  },
+                  "marks": [
+                    {
+                      "start": 0,
+                      "end": 9,
+                      "underline": true
+                    }
+                  ]
+                }
+              ],
+              "layoutMode": "horizontal",
+              "justifyContent": "space-between",
+              "alignItems": "end",
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_work_list",
+              "name": "作品の並び",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 600,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              },
+              "clipContent": false,
+              "children": [
+                {
+                  "id": "nd_home_work_orbit",
+                  "name": "作品 / Orbit — 宇宙ベンチャーのブランド",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 600,
+                  "height": 600,
+                  "style": {
+                    "fill": null,
+                    "stroke": null,
+                    "cornerRadii": {
+                      "topLeft": 0,
+                      "topRight": 0,
+                      "bottomRight": 0,
+                      "bottomLeft": 0
+                    }
+                  },
+                  "clipContent": false,
+                  "children": [
+                    {
+                      "id": "nd_home_work_orbit_image",
+                      "name": "Orbit — 宇宙ベンチャーのブランドの画像",
+                      "type": "image",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 556,
+                      "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20600'%20width='800'%20height='600'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%232a1d6b'/%3E%3Cstop%20offset='1'%20stop-color='%230d0e14'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='800'%20height='600'%20fill='url%28%23g%29'/%3E%3Cg%20fill='none'%20stroke='%238f7bff'%20stroke-opacity='.45'%3E%3Ccircle%20cx='520'%20cy='300'%20r='90'/%3E%3Ccircle%20cx='520'%20cy='300'%20r='160'/%3E%3Ccircle%20cx='520'%20cy='300'%20r='240'/%3E%3Ccircle%20cx='520'%20cy='300'%20r='330'/%3E%3C/g%3E%3Ccircle%20cx='520'%20cy='300'%20r='70'%20fill='%23c8ff4d'/%3E%3Ccircle%20cx='360'%20cy='160'%20r='16'%20fill='%23f4f1ea'/%3E%3Ccircle%20cx='700'%20cy='470'%20r='26'%20fill='%237b5cff'/%3E%3Cpath%20d='M80%20520%20L260%20520'%20stroke='%23f4f1ea'%20stroke-width='6'/%3E%3Cpath%20d='M80%20552%20L190%20552'%20stroke='%23f4f1ea'%20stroke-opacity='.4'%20stroke-width='6'/%3E%3C/svg%3E",
+                      "style": {
+                        "fit": "cover",
+                        "cornerRadii": {
+                          "topLeft": 20,
+                          "topRight": 20,
+                          "bottomRight": 20,
+                          "bottomLeft": 20
+                        }
+                      },
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_work_orbit_caption",
+                      "name": "Orbit — 宇宙ベンチャーのブランドのキャプション",
+                      "type": "frame",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 28,
+                      "style": {
+                        "fill": null,
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      },
+                      "clipContent": false,
+                      "children": [
+                        {
+                          "id": "nd_home_work_orbit_title",
+                          "name": "Orbit — 宇宙ベンチャーのブランドの作品名",
+                          "type": "text",
+                          "x": 0,
+                          "y": 0,
+                          "width": 360,
+                          "height": 28,
+                          "content": "Orbit — 宇宙ベンチャーのブランド",
+                          "style": {
+                            "fontSize": 20,
+                            "color": {
+                              "type": "palette",
+                              "id": "pc_sample_ink"
+                            },
+                            "textAlign": "left",
+                            "fontFamily": "system",
+                            "fontWeight": 700,
+                            "lineHeight": 1.4,
+                            "letterSpacing": 0
+                          }
+                        },
+                        {
+                          "id": "nd_home_work_orbit_meta",
+                          "name": "Orbit — 宇宙ベンチャーのブランドの分類",
+                          "type": "text",
+                          "x": 0,
+                          "y": 0,
+                          "width": 220,
+                          "height": 28,
+                          "content": "2026 · Brand",
+                          "style": {
+                            "fontSize": 14,
+                            "color": {
+                              "type": "palette",
+                              "id": "pc_sample_muted"
+                            },
+                            "textAlign": "right",
+                            "fontFamily": "monospace",
+                            "fontWeight": 400,
+                            "lineHeight": 2,
+                            "letterSpacing": 0
+                          }
+                        }
+                      ],
+                      "layoutMode": "horizontal",
+                      "justifyContent": "space-between",
+                      "alignItems": "center",
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "layoutMode": "vertical",
+                  "gap": 16,
+                  "animations": [
+                    {
+                      "id": "an_home_work_orbit_reveal",
+                      "name": "Orbit — 宇宙ベンチャーのブランドの表示",
+                      "trigger": "scroll",
+                      "duration": 1000,
+                      "delay": 0,
+                      "repeat": 1,
+                      "tracks": [
+                        {
+                          "property": "opacity",
+                          "keyframes": [
+                            {
+                              "time": 0,
+                              "value": 1,
+                              "easing": "linear"
+                            },
+                            {
+                              "time": 1000,
+                              "value": 0.35,
+                              "easing": "linear"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_work_stack",
+                  "name": "作品の縦並び",
+                  "type": "frame",
+                  "x": 0,
+                  "y": 0,
+                  "width": 628,
+                  "height": 600,
+                  "style": {
+                    "fill": null,
+                    "stroke": null,
+                    "cornerRadii": {
+                      "topLeft": 0,
+                      "topRight": 0,
+                      "bottomRight": 0,
+                      "bottomLeft": 0
+                    }
+                  },
+                  "clipContent": false,
+                  "children": [
+                    {
+                      "id": "nd_home_work_dune",
+                      "name": "作品 / Dune Hotel — 予約体験",
+                      "type": "frame",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 288,
+                      "style": {
+                        "fill": null,
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      },
+                      "clipContent": false,
+                      "children": [
+                        {
+                          "id": "nd_home_work_dune_image",
+                          "name": "Dune Hotel — 予約体験の画像",
+                          "type": "image",
+                          "x": 0,
+                          "y": 0,
+                          "width": 600,
+                          "height": 244,
+                          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20600'%20width='800'%20height='600'%3E%3Crect%20width='800'%20height='600'%20fill='%23f2b38a'/%3E%3Ccircle%20cx='560'%20cy='220'%20r='120'%20fill='%23fff1d6'/%3E%3Cpath%20d='M0%20360%20C160%20300%20300%20420%20460%20360%20S720%20300%20800%20340%20V600%20H0Z'%20fill='%23d9734e'/%3E%3Cpath%20d='M0%20450%20C200%20390%20360%20500%20560%20440%20S760%20420%20800%20430%20V600%20H0Z'%20fill='%239c3f2e'/%3E%3Cpath%20d='M0%20530%20C220%20490%20420%20570%20800%20510%20V600%20H0Z'%20fill='%234a1f22'/%3E%3C/svg%3E",
+                          "style": {
+                            "fit": "cover",
+                            "cornerRadii": {
+                              "topLeft": 20,
+                              "topRight": 20,
+                              "bottomRight": 20,
+                              "bottomLeft": 20
+                            },
+                            "filters": {
+                              "saturate": 1.15,
+                              "contrast": 1.05
+                            }
+                          },
+                          "widthConstraint": {
+                            "mode": "fill"
+                          }
+                        },
+                        {
+                          "id": "nd_home_work_dune_caption",
+                          "name": "Dune Hotel — 予約体験のキャプション",
+                          "type": "frame",
+                          "x": 0,
+                          "y": 0,
+                          "width": 600,
+                          "height": 28,
+                          "style": {
+                            "fill": null,
+                            "stroke": null,
+                            "cornerRadii": {
+                              "topLeft": 0,
+                              "topRight": 0,
+                              "bottomRight": 0,
+                              "bottomLeft": 0
+                            }
+                          },
+                          "clipContent": false,
+                          "children": [
+                            {
+                              "id": "nd_home_work_dune_title",
+                              "name": "Dune Hotel — 予約体験の作品名",
+                              "type": "text",
+                              "x": 0,
+                              "y": 0,
+                              "width": 360,
+                              "height": 28,
+                              "content": "Dune Hotel — 予約体験",
+                              "style": {
+                                "fontSize": 20,
+                                "color": {
+                                  "type": "palette",
+                                  "id": "pc_sample_ink"
+                                },
+                                "textAlign": "left",
+                                "fontFamily": "system",
+                                "fontWeight": 700,
+                                "lineHeight": 1.4,
+                                "letterSpacing": 0
+                              }
+                            },
+                            {
+                              "id": "nd_home_work_dune_meta",
+                              "name": "Dune Hotel — 予約体験の分類",
+                              "type": "text",
+                              "x": 0,
+                              "y": 0,
+                              "width": 220,
+                              "height": 28,
+                              "content": "2026 · Product",
+                              "style": {
+                                "fontSize": 14,
+                                "color": {
+                                  "type": "palette",
+                                  "id": "pc_sample_muted"
+                                },
+                                "textAlign": "right",
+                                "fontFamily": "monospace",
+                                "fontWeight": 400,
+                                "lineHeight": 2,
+                                "letterSpacing": 0
+                              }
+                            }
+                          ],
+                          "layoutMode": "horizontal",
+                          "justifyContent": "space-between",
+                          "alignItems": "center",
+                          "widthConstraint": {
+                            "mode": "fill"
+                          }
+                        }
+                      ],
+                      "layoutMode": "vertical",
+                      "gap": 16,
+                      "animations": [],
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "id": "nd_home_work_grid",
+                      "name": "作品 / Grid Type Foundry",
+                      "type": "frame",
+                      "x": 0,
+                      "y": 0,
+                      "width": 600,
+                      "height": 288,
+                      "style": {
+                        "fill": null,
+                        "stroke": null,
+                        "cornerRadii": {
+                          "topLeft": 0,
+                          "topRight": 0,
+                          "bottomRight": 0,
+                          "bottomLeft": 0
+                        }
+                      },
+                      "clipContent": false,
+                      "children": [
+                        {
+                          "id": "nd_home_work_grid_image",
+                          "name": "Grid Type Foundryの画像",
+                          "type": "image",
+                          "x": 0,
+                          "y": 0,
+                          "width": 600,
+                          "height": 244,
+                          "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20600'%20width='800'%20height='600'%3E%3Crect%20width='800'%20height='600'%20fill='%23c8ff4d'/%3E%3Cg%20stroke='%230e0f13'%20stroke-opacity='.18'%3E%3Cpath%20d='M0%20100H800M0%20200H800M0%20300H800M0%20400H800M0%20500H800M100%200V600M200%200V600M300%200V600M400%200V600M500%200V600M600%200V600M700%200V600'/%3E%3C/g%3E%3Crect%20x='100'%20y='100'%20width='200'%20height='200'%20fill='%230e0f13'/%3E%3Ccircle%20cx='500'%20cy='300'%20r='100'%20fill='%237b5cff'/%3E%3Cpath%20d='M600%20500%20L700%20300%20L800%20500Z'%20fill='%230e0f13'/%3E%3Crect%20x='300'%20y='400'%20width='100'%20height='100'%20fill='%23f4f1ea'/%3E%3C/svg%3E",
+                          "style": {
+                            "fit": "cover",
+                            "cornerRadii": {
+                              "topLeft": 20,
+                              "topRight": 20,
+                              "bottomRight": 20,
+                              "bottomLeft": 20
+                            },
+                            "filters": {
+                              "hueRotate": -12,
+                              "brightness": 0.95
+                            },
+                            "focalPoint": {
+                              "x": 0.3,
+                              "y": 0.4
+                            }
+                          },
+                          "widthConstraint": {
+                            "mode": "fill"
+                          }
+                        },
+                        {
+                          "id": "nd_home_work_grid_caption",
+                          "name": "Grid Type Foundryのキャプション",
+                          "type": "frame",
+                          "x": 0,
+                          "y": 0,
+                          "width": 600,
+                          "height": 28,
+                          "style": {
+                            "fill": null,
+                            "stroke": null,
+                            "cornerRadii": {
+                              "topLeft": 0,
+                              "topRight": 0,
+                              "bottomRight": 0,
+                              "bottomLeft": 0
+                            }
+                          },
+                          "clipContent": false,
+                          "children": [
+                            {
+                              "id": "nd_home_work_grid_title",
+                              "name": "Grid Type Foundryの作品名",
+                              "type": "text",
+                              "x": 0,
+                              "y": 0,
+                              "width": 360,
+                              "height": 28,
+                              "content": "Grid Type Foundry",
+                              "style": {
+                                "fontSize": 20,
+                                "color": {
+                                  "type": "palette",
+                                  "id": "pc_sample_ink"
+                                },
+                                "textAlign": "left",
+                                "fontFamily": "system",
+                                "fontWeight": 700,
+                                "lineHeight": 1.4,
+                                "letterSpacing": 0
+                              }
+                            },
+                            {
+                              "id": "nd_home_work_grid_meta",
+                              "name": "Grid Type Foundryの分類",
+                              "type": "text",
+                              "x": 0,
+                              "y": 0,
+                              "width": 220,
+                              "height": 28,
+                              "content": "2025 · Web",
+                              "style": {
+                                "fontSize": 14,
+                                "color": {
+                                  "type": "palette",
+                                  "id": "pc_sample_muted"
+                                },
+                                "textAlign": "right",
+                                "fontFamily": "monospace",
+                                "fontWeight": 400,
+                                "lineHeight": 2,
+                                "letterSpacing": 0
+                              }
+                            }
+                          ],
+                          "layoutMode": "horizontal",
+                          "justifyContent": "space-between",
+                          "alignItems": "center",
+                          "widthConstraint": {
+                            "mode": "fill"
+                          }
+                        }
+                      ],
+                      "layoutMode": "vertical",
+                      "gap": 16,
+                      "animations": [],
+                      "widthConstraint": {
+                        "mode": "fill"
+                      }
+                    }
+                  ],
+                  "layoutMode": "vertical",
+                  "gapRef": "sp_sample_gutter",
+                  "gap": 24,
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                }
+              ],
+              "layoutMode": "horizontal",
+              "gapRef": "sp_sample_gutter",
+              "gap": 24,
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            }
+          ],
+          "layoutMode": "vertical",
+          "paddingRef": "sp_sample_section",
+          "gap": 48,
+          "padding": 80,
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_stats",
+          "name": "実績の数字",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 220,
+          "style": {
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            },
+            "border": {
+              "top": {
+                "color": "#ffffff1a",
+                "width": 1
+              },
+              "bottom": {
+                "color": "#ffffff1a",
+                "width": 1
+              }
+            }
+          },
+          "clipContent": true,
+          "children": [
+            {
+              "id": "nd_home_stat_0",
+              "name": "実績 / ローンチしたプロジェクト",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 140,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                },
+                "border": {
+                  "left": {
+                    "color": "#ffffff1a",
+                    "width": 1
+                  }
+                }
+              },
+              "clipContent": true,
+              "children": [
+                {
+                  "id": "nd_home_stat_0_value",
+                  "name": "ローンチしたプロジェクトの数値",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 76,
+                  "content": "120+",
+                  "style": {
+                    "fontSize": 64,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_accent"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 800,
+                    "lineHeight": 1.15,
+                    "letterSpacing": -2
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_stat_0_label",
+                  "name": "ローンチしたプロジェクトの説明",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 24,
+                  "content": "ローンチしたプロジェクト",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                }
+              ],
+              "layoutMode": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_stat_1",
+              "name": "実績 / 年のスタジオの歩み",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 140,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                },
+                "border": {
+                  "left": {
+                    "color": "#ffffff1a",
+                    "width": 1
+                  }
+                }
+              },
+              "clipContent": true,
+              "children": [
+                {
+                  "id": "nd_home_stat_1_value",
+                  "name": "年のスタジオの歩みの数値",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 76,
+                  "content": "14",
+                  "style": {
+                    "fontSize": 64,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_ink"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 800,
+                    "lineHeight": 1.15,
+                    "letterSpacing": -2
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_stat_1_label",
+                  "name": "年のスタジオの歩みの説明",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 24,
+                  "content": "年のスタジオの歩み",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                }
+              ],
+              "layoutMode": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_stat_2",
+              "name": "実績 / 受賞したデザイン賞",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 140,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                },
+                "border": {
+                  "left": {
+                    "color": "#ffffff1a",
+                    "width": 1
+                  }
+                }
+              },
+              "clipContent": true,
+              "children": [
+                {
+                  "id": "nd_home_stat_2_value",
+                  "name": "受賞したデザイン賞の数値",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 76,
+                  "content": "38",
+                  "style": {
+                    "fontSize": 64,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_ink"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 800,
+                    "lineHeight": 1.15,
+                    "letterSpacing": -2
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_stat_2_label",
+                  "name": "受賞したデザイン賞の説明",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 24,
+                  "content": "受賞したデザイン賞",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                }
+              ],
+              "layoutMode": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            },
+            {
+              "id": "nd_home_stat_3",
+              "name": "実績 / 継続して依頼する顧客",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 320,
+              "height": 140,
+              "style": {
+                "fill": null,
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                },
+                "border": {
+                  "left": {
+                    "color": "#ffffff1a",
+                    "width": 1
+                  }
+                }
+              },
+              "clipContent": true,
+              "children": [
+                {
+                  "id": "nd_home_stat_3_value",
+                  "name": "継続して依頼する顧客の数値",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 76,
+                  "content": "9/10",
+                  "style": {
+                    "fontSize": 64,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_ink"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 800,
+                    "lineHeight": 1.15,
+                    "letterSpacing": -2
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_stat_3_label",
+                  "name": "継続して依頼する顧客の説明",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 280,
+                  "height": 24,
+                  "content": "継続して依頼する顧客",
+                  "style": {
+                    "fontSize": 15,
+                    "color": {
+                      "type": "palette",
+                      "id": "pc_sample_muted"
+                    },
+                    "textAlign": "left",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                }
+              ],
+              "layoutMode": "vertical",
+              "gap": 8,
+              "padding": 16,
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            }
+          ],
+          "layoutMode": "horizontal",
+          "paddingRef": "sp_sample_section",
+          "padding": 80,
+          "gap": 0,
+          "alignItems": "center",
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_cta_wrap",
+          "name": "問い合わせの余白",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 600,
+          "style": {
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            }
+          },
+          "clipContent": false,
+          "children": [
+            {
+              "id": "nd_home_cta",
+              "name": "問い合わせ",
+              "type": "frame",
+              "x": 0,
+              "y": 0,
+              "width": 1280,
+              "height": 440,
+              "style": {
+                "fill": {
+                  "type": "linear",
+                  "start": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "end": {
+                    "x": 1,
+                    "y": 1
+                  },
+                  "stops": [
+                    {
+                      "position": 0,
+                      "color": {
+                        "type": "palette",
+                        "id": "pc_sample_accent"
+                      }
+                    },
+                    {
+                      "position": 0.55,
+                      "color": "#8ef0c0"
+                    },
+                    {
+                      "position": 1,
+                      "color": "#a99bff"
+                    }
+                  ]
+                },
+                "stroke": null,
+                "cornerRadii": {
+                  "topLeft": 32,
+                  "topRight": 32,
+                  "bottomRight": 32,
+                  "bottomLeft": 32
+                }
+              },
+              "clipContent": true,
+              "children": [
+                {
+                  "id": "nd_home_cta_eyebrow",
+                  "name": "問い合わせの小見出し",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1000,
+                  "height": 20,
+                  "content": "/ CONTACT",
+                  "style": {
+                    "fontSize": 13,
+                    "color": "#0e0f13b3",
+                    "textAlign": "center",
+                    "fontFamily": "monospace",
+                    "fontWeight": 700,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 2
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_cta_title",
+                  "name": "問い合わせの見出し",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1000,
+                  "height": 168,
+                  "content": "Let's build\nwhat's next.",
+                  "style": {
+                    "fontSize": 80,
+                    "color": "#0e0f13",
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 800,
+                    "lineHeight": 1.05,
+                    "letterSpacing": -2.5
+                  },
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_cta_body",
+                  "name": "問い合わせの説明",
+                  "type": "text",
+                  "x": 0,
+                  "y": 0,
+                  "width": 1000,
+                  "height": 28,
+                  "content": "新規のご相談は hello@atlas.studio まで。2営業日以内にお返事します。",
+                  "style": {
+                    "fontSize": 17,
+                    "color": "#0e0f13cc",
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 400,
+                    "lineHeight": 1.4,
+                    "letterSpacing": 0
+                  },
+                  "marks": [
+                    {
+                      "start": 8,
+                      "end": 26,
+                      "fontWeight": 700,
+                      "underline": true
+                    }
+                  ],
+                  "widthConstraint": {
+                    "mode": "fill"
+                  }
+                },
+                {
+                  "id": "nd_home_cta_button",
+                  "name": "問い合わせボタン",
+                  "type": "instance",
+                  "componentRef": "cp_sample_button",
+                  "x": 0,
+                  "y": 0,
+                  "width": 220,
+                  "height": 56,
+                  "overrides": {
+                    "nd_cp_button_bg": {
+                      "width": 220,
+                      "height": 56,
+                      "fill": "#0e0f13"
+                    },
+                    "nd_cp_button_label": {
+                      "content": "メールで相談する",
+                      "width": 188,
+                      "color": "#f4f1ea"
+                    }
+                  }
+                }
+              ],
+              "layoutMode": "vertical",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "gap": 24,
+              "padding": 48,
+              "shadow": {
+                "color": "#c8ff4d33",
+                "offsetX": 0,
+                "offsetY": 24,
+                "blur": 60
+              },
+              "widthConstraint": {
+                "mode": "fill"
+              }
+            }
+          ],
+          "layoutMode": "vertical",
+          "paddingRef": "sp_sample_section",
+          "padding": 80,
+          "widthConstraint": {
+            "mode": "fill"
+          }
+        },
+        {
+          "id": "nd_home_footer",
+          "name": "フッター",
+          "type": "frame",
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 96,
+          "style": {
+            "fill": null,
+            "stroke": null,
+            "cornerRadii": {
+              "topLeft": 0,
+              "topRight": 0,
+              "bottomRight": 0,
+              "bottomLeft": 0
+            },
+            "border": {
+              "top": {
+                "color": "#ffffff1a",
+                "width": 1
+              }
+            }
+          },
+          "clipContent": true,
+          "children": [
+            {
+              "id": "nd_home_footer_copy",
+              "name": "著作権表示",
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 260,
+              "height": 22,
+              "content": "© 2026 ATLAS STUDIO",
+              "style": {
+                "fontSize": 14,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_sample_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_home_footer_links",
+              "name": "SNS へのリンク",
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 420,
+              "height": 22,
+              "content": "Instagram   Dribbble   LinkedIn   Journal",
+              "style": {
+                "fontSize": 14,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_sample_ink"
+                },
+                "textAlign": "center",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_home_footer_place",
+              "name": "所在地",
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 260,
+              "height": 22,
+              "content": "Tokyo · Kyoto",
+              "style": {
+                "fontSize": 14,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_sample_muted"
+                },
+                "textAlign": "right",
+                "fontFamily": "monospace",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            }
+          ],
+          "layoutMode": "horizontal",
+          "justifyContent": "space-between",
+          "alignItems": "center",
+          "padding": 48,
+          "widthConstraint": {
+            "mode": "fill"
+          }
         }
-      ]
+      ],
+      "layoutMode": "vertical"
     },
     {
       "id": "nd_sample_effects",
       "name": "Studio / 色と視覚効果",
       "type": "frame",
-      "x": 1120,
+      "x": 1640,
       "y": 70,
       "width": 960,
       "height": 680,
-      "style": { "fill": "#f4f1eb" },
+      "style": {
+        "fill": "#f4f1eb"
+      },
       "children": [
         {
-          "id": "nd_sample_effects_title", "name": "視覚効果の見出し", "type": "text",
-          "x": 36, "y": 28, "width": 840, "height": 42, "content": "COLOR & EFFECTS",
-          "style": { "fontSize": 30, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "fontWeight": 700, "letterSpacing": 1.5 }
+          "id": "nd_sample_effects_title",
+          "name": "視覚効果の見出し",
+          "type": "text",
+          "x": 36,
+          "y": 28,
+          "width": 840,
+          "height": 42,
+          "content": "COLOR & EFFECTS",
+          "style": {
+            "fontSize": 30,
+            "color": "#24383a",
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 700,
+            "letterSpacing": 1.5
+          }
         },
         {
-          "id": "nd_sample_effects_intro", "name": "視覚効果の説明", "type": "text",
-          "x": 38, "y": 82, "width": 860, "height": 26,
+          "id": "nd_sample_effects_intro",
+          "name": "視覚効果の説明",
+          "type": "text",
+          "x": 38,
+          "y": 82,
+          "width": 860,
+          "height": 26,
           "content": "6つのカードを選び、色・不透明度・影・ぼかしを編集してPNGと見比べる。",
-          "style": { "fontSize": 13, "color": "#697976", "textAlign": "left", "fontFamily": "system" }
+          "style": {
+            "fontSize": 13,
+            "color": "#697976",
+            "textAlign": "left",
+            "fontFamily": "system"
+          }
         },
         {
-          "id": "nd_sample_alpha_panel", "name": "01 / 半透明色", "type": "frame",
-          "x": 36, "y": 138, "width": 280, "height": 244,
-          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
-          "children": [
-            {
-              "id": "nd_sample_alpha_label", "name": "半透明色のラベル", "type": "text",
-              "x": 20, "y": 16, "width": 240, "height": 48, "content": "01  COLOR ALPHA\n8桁HEX / 塗り・線・文字",
-              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 },
-              "marks": [{ "start": 16, "end": 21, "color": "#237b7588" }]
-            },
-            {
-              "id": "nd_sample_alpha_back", "name": "半透明の辺線を持つ下地", "type": "rectangle",
-              "x": 20, "y": 76, "width": 240, "height": 140,
-              "style": { "fill": "#d9e8e1", "border": { "top": { "color": "#ffffffbb", "width": 5 }, "bottom": { "color": "#698d8499", "width": 3 } } }
-            },
-            {
-              "id": "nd_sample_alpha_rect", "name": "半透明の矩形", "type": "rectangle",
-              "x": 42, "y": 98, "width": 116, "height": 96,
-              "style": { "fill": "#158c8299", "stroke": { "color": "#075a5480", "width": 2 },
-                "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
-            },
-            {
-              "id": "nd_sample_alpha_ellipse", "name": "半透明の楕円", "type": "ellipse",
-              "x": 125, "y": 104, "width": 100, "height": 100,
-              "style": { "fill": "#ed9d6688", "stroke": { "color": "#9b594d99", "width": 2 } }
+          "id": "nd_sample_alpha_panel",
+          "name": "01 / 半透明色",
+          "type": "frame",
+          "x": 36,
+          "y": 138,
+          "width": 280,
+          "height": 244,
+          "style": {
+            "fill": "#ffffff",
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
             }
-          ]
-        },
-        {
-          "id": "nd_sample_linear_panel", "name": "02 / 線形グラデーション", "type": "frame",
-          "x": 340, "y": 138, "width": 280, "height": 244,
-          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          },
           "children": [
             {
-              "id": "nd_sample_linear_label", "name": "線形のラベル", "type": "text",
-              "x": 20, "y": 16, "width": 240, "height": 52, "content": "02  LINEAR\n3ストップ / ローカル座標",
-              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
-            },
-            {
-              "id": "nd_sample_linear_back", "name": "線形塗りの下地", "type": "rectangle",
-              "x": 20, "y": 76, "width": 240, "height": 140,
-              "style": { "fill": "#e1e9e5", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
-            },
-            {
-              "id": "nd_sample_linear_fill", "name": "半透明の線形塗り", "type": "rectangle",
-              "x": 31, "y": 88, "width": 218, "height": 116, "rotation": -4,
+              "id": "nd_sample_alpha_label",
+              "name": "半透明色のラベル",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 240,
+              "height": 48,
+              "content": "01  COLOR ALPHA\n8桁HEX / 塗り・線・文字",
               "style": {
-                "fill": { "type": "linear", "start": { "x": 0, "y": 0 }, "end": { "x": 1, "y": 1 },
-                  "stops": [{ "position": 0, "color": "#1d6f7688" }, { "position": 0.48, "color": "#72b5aabb" }, { "position": 1, "color": "#e9bb8aaa" }] },
-                "stroke": { "color": "#356d7180", "width": 1 },
-                "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 }
+                "fontSize": 14,
+                "color": "#24383a",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "lineHeight": 1.55
+              },
+              "marks": [
+                {
+                  "start": 16,
+                  "end": 21,
+                  "color": "#237b7588"
+                }
+              ]
+            },
+            {
+              "id": "nd_sample_alpha_back",
+              "name": "半透明の辺線を持つ下地",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 240,
+              "height": 140,
+              "style": {
+                "fill": "#d9e8e1",
+                "border": {
+                  "top": {
+                    "color": "#ffffffbb",
+                    "width": 5
+                  },
+                  "bottom": {
+                    "color": "#698d8499",
+                    "width": 3
+                  }
+                }
+              }
+            },
+            {
+              "id": "nd_sample_alpha_rect",
+              "name": "半透明の矩形",
+              "type": "rectangle",
+              "x": 42,
+              "y": 98,
+              "width": 116,
+              "height": 96,
+              "style": {
+                "fill": "#158c8299",
+                "stroke": {
+                  "color": "#075a5480",
+                  "width": 2
+                },
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
+            },
+            {
+              "id": "nd_sample_alpha_ellipse",
+              "name": "半透明の楕円",
+              "type": "ellipse",
+              "x": 125,
+              "y": 104,
+              "width": 100,
+              "height": 100,
+              "style": {
+                "fill": "#ed9d6688",
+                "stroke": {
+                  "color": "#9b594d99",
+                  "width": 2
+                }
               }
             }
           ]
         },
         {
-          "id": "nd_sample_radial_panel", "name": "03 / 放射状グラデーション", "type": "frame",
-          "x": 644, "y": 138, "width": 280, "height": 244,
-          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "id": "nd_sample_linear_panel",
+          "name": "02 / 線形グラデーション",
+          "type": "frame",
+          "x": 340,
+          "y": 138,
+          "width": 280,
+          "height": 244,
+          "style": {
+            "fill": "#ffffff",
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
           "children": [
             {
-              "id": "nd_sample_radial_label", "name": "放射状のラベル", "type": "text",
-              "x": 20, "y": 16, "width": 240, "height": 52, "content": "03  RADIAL\n中心と短辺基準の半径",
-              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+              "id": "nd_sample_linear_label",
+              "name": "線形のラベル",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 240,
+              "height": 52,
+              "content": "02  LINEAR\n3ストップ / ローカル座標",
+              "style": {
+                "fontSize": 14,
+                "color": "#24383a",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "lineHeight": 1.55
+              }
             },
             {
-              "id": "nd_sample_radial_back", "name": "放射状塗りの下地", "type": "rectangle",
-              "x": 20, "y": 76, "width": 240, "height": 140,
-              "style": { "fill": "#e6e3ed", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+              "id": "nd_sample_linear_back",
+              "name": "線形塗りの下地",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 240,
+              "height": 140,
+              "style": {
+                "fill": "#e1e9e5",
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
             },
             {
-              "id": "nd_sample_radial_fill", "name": "中心をずらした放射状塗り", "type": "ellipse",
-              "x": 65, "y": 78, "width": 150, "height": 138, "rotation": 18,
-              "style": { "fill": { "type": "radial", "center": { "x": 0.34, "y": 0.32 }, "radius": 0.72,
-                "stops": [{ "position": 0, "color": "#fff0cf" }, { "position": 0.48, "color": "#e9ad91dd" }, { "position": 1, "color": "#806c9ecc" }] } }
-            },
-            {
-              "id": "nd_sample_vector_icon", "name": "編集可能な星形アイコン", "type": "path",
-              "x": 187, "y": 145, "width": 54, "height": 54,
-              "commands": [
-                { "kind": "move", "x": 0.5, "y": 0 },
-                { "kind": "cubic", "x1": 0.52, "y1": 0.08, "x2": 0.62, "y2": 0.27, "x": 0.64, "y": 0.35 },
-                { "kind": "line", "x": 1, "y": 0.39 },
-                { "kind": "line", "x": 0.72, "y": 0.62 },
-                { "kind": "line", "x": 0.81, "y": 1 },
-                { "kind": "line", "x": 0.5, "y": 0.78 },
-                { "kind": "line", "x": 0.19, "y": 1 },
-                { "kind": "line", "x": 0.28, "y": 0.62 },
-                { "kind": "line", "x": 0, "y": 0.39 },
-                { "kind": "line", "x": 0.36, "y": 0.35 },
-                { "kind": "close" },
-                { "kind": "move", "x": 0.5, "y": 0.36 },
-                { "kind": "line", "x": 0.6, "y": 0.57 },
-                { "kind": "line", "x": 0.4, "y": 0.57 },
-                { "kind": "close" }
-              ],
-              "fillRule": "evenodd",
-              "style": { "fill": "#fff5dd", "stroke": { "color": "#685578", "width": 1 } }
+              "id": "nd_sample_linear_fill",
+              "name": "半透明の線形塗り",
+              "type": "rectangle",
+              "x": 31,
+              "y": 88,
+              "width": 218,
+              "height": 116,
+              "rotation": -4,
+              "style": {
+                "fill": {
+                  "type": "linear",
+                  "start": {
+                    "x": 0,
+                    "y": 0
+                  },
+                  "end": {
+                    "x": 1,
+                    "y": 1
+                  },
+                  "stops": [
+                    {
+                      "position": 0,
+                      "color": "#1d6f7688"
+                    },
+                    {
+                      "position": 0.48,
+                      "color": "#72b5aabb"
+                    },
+                    {
+                      "position": 1,
+                      "color": "#e9bb8aaa"
+                    }
+                  ]
+                },
+                "stroke": {
+                  "color": "#356d7180",
+                  "width": 1
+                },
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
             }
           ]
         },
         {
-          "id": "nd_sample_opacity_panel", "name": "04 / グループ不透明度", "type": "frame",
-          "x": 36, "y": 402, "width": 280, "height": 244,
-          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "id": "nd_sample_radial_panel",
+          "name": "03 / 放射状グラデーション",
+          "type": "frame",
+          "x": 644,
+          "y": 138,
+          "width": 280,
+          "height": 244,
+          "style": {
+            "fill": "#ffffff",
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
           "children": [
             {
-              "id": "nd_sample_opacity_label", "name": "不透明度のラベル", "type": "text",
-              "x": 20, "y": 16, "width": 240, "height": 52, "content": "04  GROUP OPACITY\n重なり全体に一度だけ62%",
-              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+              "id": "nd_sample_radial_label",
+              "name": "放射状のラベル",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 240,
+              "height": 52,
+              "content": "03  RADIAL\n中心と短辺基準の半径",
+              "style": {
+                "fontSize": 14,
+                "color": "#24383a",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "lineHeight": 1.55
+              }
             },
             {
-              "id": "nd_sample_opacity_back", "name": "不透明度の下地", "type": "rectangle",
-              "x": 20, "y": 76, "width": 240, "height": 140,
-              "style": { "fill": "#dce8e6", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+              "id": "nd_sample_radial_back",
+              "name": "放射状塗りの下地",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 240,
+              "height": 140,
+              "style": {
+                "fill": "#e6e3ed",
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
             },
             {
-              "id": "nd_sample_opacity_group", "name": "重なった子の半透明フレーム", "type": "frame",
-              "x": 29, "y": 85, "width": 222, "height": 122, "opacity": 0.62,
-              "style": { "fill": null },
-              "children": [
+              "id": "nd_sample_radial_fill",
+              "name": "中心をずらした放射状塗り",
+              "type": "ellipse",
+              "x": 65,
+              "y": 78,
+              "width": 150,
+              "height": 138,
+              "rotation": 18,
+              "style": {
+                "fill": {
+                  "type": "radial",
+                  "center": {
+                    "x": 0.34,
+                    "y": 0.32
+                  },
+                  "radius": 0.72,
+                  "stops": [
+                    {
+                      "position": 0,
+                      "color": "#fff0cf"
+                    },
+                    {
+                      "position": 0.48,
+                      "color": "#e9ad91dd"
+                    },
+                    {
+                      "position": 1,
+                      "color": "#806c9ecc"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "nd_sample_vector_icon",
+              "name": "編集可能な星形アイコン",
+              "type": "path",
+              "x": 187,
+              "y": 145,
+              "width": 54,
+              "height": 54,
+              "commands": [
                 {
-                  "id": "nd_sample_opacity_first", "name": "重なる青緑", "type": "rectangle",
-                  "x": 12, "y": 15, "width": 130, "height": 90,
-                  "style": { "fill": "#176f78", "cornerRadii": { "topLeft": 12, "topRight": 12, "bottomRight": 12, "bottomLeft": 12 } }
+                  "kind": "move",
+                  "x": 0.5,
+                  "y": 0
                 },
                 {
-                  "id": "nd_sample_opacity_second", "name": "重なる橙", "type": "rectangle",
-                  "x": 91, "y": 28, "width": 120, "height": 78,
-                  "style": { "fill": "#df9a69", "cornerRadii": { "topLeft": 12, "topRight": 12, "bottomRight": 12, "bottomLeft": 12 } }
+                  "kind": "cubic",
+                  "x1": 0.52,
+                  "y1": 0.08,
+                  "x2": 0.62,
+                  "y2": 0.27,
+                  "x": 0.64,
+                  "y": 0.35
+                },
+                {
+                  "kind": "line",
+                  "x": 1,
+                  "y": 0.39
+                },
+                {
+                  "kind": "line",
+                  "x": 0.72,
+                  "y": 0.62
+                },
+                {
+                  "kind": "line",
+                  "x": 0.81,
+                  "y": 1
+                },
+                {
+                  "kind": "line",
+                  "x": 0.5,
+                  "y": 0.78
+                },
+                {
+                  "kind": "line",
+                  "x": 0.19,
+                  "y": 1
+                },
+                {
+                  "kind": "line",
+                  "x": 0.28,
+                  "y": 0.62
+                },
+                {
+                  "kind": "line",
+                  "x": 0,
+                  "y": 0.39
+                },
+                {
+                  "kind": "line",
+                  "x": 0.36,
+                  "y": 0.35
+                },
+                {
+                  "kind": "close"
+                },
+                {
+                  "kind": "move",
+                  "x": 0.5,
+                  "y": 0.36
+                },
+                {
+                  "kind": "line",
+                  "x": 0.6,
+                  "y": 0.57
+                },
+                {
+                  "kind": "line",
+                  "x": 0.4,
+                  "y": 0.57
+                },
+                {
+                  "kind": "close"
+                }
+              ],
+              "fillRule": "evenodd",
+              "style": {
+                "fill": "#fff5dd",
+                "stroke": {
+                  "color": "#685578",
+                  "width": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_opacity_panel",
+          "name": "04 / グループ不透明度",
+          "type": "frame",
+          "x": 36,
+          "y": 402,
+          "width": 280,
+          "height": 244,
+          "style": {
+            "fill": "#ffffff",
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
+          "children": [
+            {
+              "id": "nd_sample_opacity_label",
+              "name": "不透明度のラベル",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 240,
+              "height": 52,
+              "content": "04  GROUP OPACITY\n重なり全体に一度だけ62%",
+              "style": {
+                "fontSize": 14,
+                "color": "#24383a",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "lineHeight": 1.55
+              }
+            },
+            {
+              "id": "nd_sample_opacity_back",
+              "name": "不透明度の下地",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 240,
+              "height": 140,
+              "style": {
+                "fill": "#dce8e6",
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
+            },
+            {
+              "id": "nd_sample_opacity_group",
+              "name": "重なった子の半透明フレーム",
+              "type": "frame",
+              "x": 29,
+              "y": 85,
+              "width": 222,
+              "height": 122,
+              "opacity": 0.62,
+              "style": {
+                "fill": null
+              },
+              "children": [
+                {
+                  "id": "nd_sample_opacity_first",
+                  "name": "重なる青緑",
+                  "type": "rectangle",
+                  "x": 12,
+                  "y": 15,
+                  "width": 130,
+                  "height": 90,
+                  "style": {
+                    "fill": "#176f78",
+                    "cornerRadii": {
+                      "topLeft": 12,
+                      "topRight": 12,
+                      "bottomRight": 12,
+                      "bottomLeft": 12
+                    }
+                  }
+                },
+                {
+                  "id": "nd_sample_opacity_second",
+                  "name": "重なる橙",
+                  "type": "rectangle",
+                  "x": 91,
+                  "y": 28,
+                  "width": 120,
+                  "height": 78,
+                  "style": {
+                    "fill": "#df9a69",
+                    "cornerRadii": {
+                      "topLeft": 12,
+                      "topRight": 12,
+                      "bottomRight": 12,
+                      "bottomLeft": 12
+                    }
+                  }
                 }
               ]
             }
           ]
         },
         {
-          "id": "nd_sample_shadow_panel", "name": "05 / 透過画像と外側影", "type": "frame",
-          "x": 340, "y": 402, "width": 280, "height": 244,
-          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "id": "nd_sample_shadow_panel",
+          "name": "05 / 透過画像と外側影",
+          "type": "frame",
+          "x": 340,
+          "y": 402,
+          "width": 280,
+          "height": 244,
+          "style": {
+            "fill": "#ffffff",
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
           "children": [
             {
-              "id": "nd_sample_shadow_label", "name": "外側影のラベル", "type": "text",
-              "x": 20, "y": 16, "width": 240, "height": 52, "content": "05  DROP SHADOW\n透過画像と文字の輪郭",
-              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+              "id": "nd_sample_shadow_label",
+              "name": "外側影のラベル",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 240,
+              "height": 52,
+              "content": "05  DROP SHADOW\n透過画像と文字の輪郭",
+              "style": {
+                "fontSize": 14,
+                "color": "#24383a",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "lineHeight": 1.55
+              }
             },
             {
-              "id": "nd_sample_shadow_back", "name": "外側影の下地", "type": "rectangle",
-              "x": 20, "y": 76, "width": 240, "height": 140,
-              "style": { "fill": "#e4ebed", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+              "id": "nd_sample_shadow_back",
+              "name": "外側影の下地",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 240,
+              "height": 140,
+              "style": {
+                "fill": "#e4ebed",
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
             },
             {
-              "id": "nd_sample_shadow_image", "name": "透明SVG画像の影", "type": "image",
-              "x": 35, "y": 88, "width": 115, "height": 110,
+              "id": "nd_sample_shadow_image",
+              "name": "透明SVG画像の影",
+              "type": "image",
+              "x": 35,
+              "y": 88,
+              "width": 115,
+              "height": 110,
               "source": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20120%20120'%3E%3Ccircle%20cx='60'%20cy='60'%20r='46'%20fill='%23e8b487'/%3E%3Cpath%20d='M60%2020L95%2085H25Z'%20fill='%231e797f'/%3E%3C/svg%3E",
-              "style": { "filters": { "saturate": 1.15 } },
-              "shadow": { "color": "#1c465866", "offsetX": 7, "offsetY": 8, "blur": 8 }
+              "style": {
+                "filters": {
+                  "saturate": 1.15
+                }
+              },
+              "shadow": {
+                "color": "#1c465866",
+                "offsetX": 7,
+                "offsetY": 8,
+                "blur": 8
+              }
             },
             {
-              "id": "nd_sample_shadow_text", "name": "文字の外側影", "type": "text",
-              "x": 151, "y": 119, "width": 100, "height": 40, "content": "studio",
-              "style": { "fontSize": 22, "color": "#2b656b", "textAlign": "left", "fontFamily": "system", "fontWeight": 700 },
-              "shadow": { "color": "#22556388", "offsetX": 3, "offsetY": 4, "blur": 4 }
+              "id": "nd_sample_shadow_text",
+              "name": "文字の外側影",
+              "type": "text",
+              "x": 151,
+              "y": 119,
+              "width": 100,
+              "height": 40,
+              "content": "studio",
+              "style": {
+                "fontSize": 22,
+                "color": "#2b656b",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 700
+              },
+              "shadow": {
+                "color": "#22556388",
+                "offsetX": 3,
+                "offsetY": 4,
+                "blur": 4
+              }
             }
           ]
         },
         {
-          "id": "nd_sample_blur_panel", "name": "06 / ぼかしとマスク", "type": "frame",
-          "x": 644, "y": 402, "width": 280, "height": 244,
-          "style": { "fill": "#ffffff", "cornerRadii": { "topLeft": 16, "topRight": 16, "bottomRight": 16, "bottomLeft": 16 } },
+          "id": "nd_sample_blur_panel",
+          "name": "06 / ぼかしとマスク",
+          "type": "frame",
+          "x": 644,
+          "y": 402,
+          "width": 280,
+          "height": 244,
+          "style": {
+            "fill": "#ffffff",
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
           "children": [
             {
-              "id": "nd_sample_blur_label", "name": "ぼかしのラベル", "type": "text",
-              "x": 20, "y": 16, "width": 240, "height": 52, "content": "06  BLUR & MASK\n子をまとめてぼかす",
-              "style": { "fontSize": 14, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "lineHeight": 1.55 }
+              "id": "nd_sample_blur_label",
+              "name": "ぼかしのラベル",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 240,
+              "height": 52,
+              "content": "06  BLUR & MASK\n子をまとめてぼかす",
+              "style": {
+                "fontSize": 14,
+                "color": "#24383a",
+                "textAlign": "left",
+                "fontFamily": "system",
+                "lineHeight": 1.55
+              }
             },
             {
-              "id": "nd_sample_blur_back", "name": "ぼかしの下地", "type": "rectangle",
-              "x": 20, "y": 76, "width": 240, "height": 140,
-              "style": { "fill": "#e9e1db", "cornerRadii": { "topLeft": 14, "topRight": 14, "bottomRight": 14, "bottomLeft": 14 } }
+              "id": "nd_sample_blur_back",
+              "name": "ぼかしの下地",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 240,
+              "height": 140,
+              "style": {
+                "fill": "#e9e1db",
+                "cornerRadii": {
+                  "topLeft": 14,
+                  "topRight": 14,
+                  "bottomRight": 14,
+                  "bottomLeft": 14
+                }
+              }
             },
             {
-              "id": "nd_sample_blur_group", "name": "ぼかし・影・不透明度を持つフレーム", "type": "frame",
-              "x": 31, "y": 89, "width": 218, "height": 114, "opacity": 0.88, "blur": 2.2,
-              "shadow": { "color": "#344d5c77", "offsetX": 4, "offsetY": 6, "blur": 5 },
-              "style": { "fill": "#e9f0ef", "cornerRadii": { "topLeft": 12, "topRight": 12, "bottomRight": 12, "bottomLeft": 12 } },
+              "id": "nd_sample_blur_group",
+              "name": "ぼかし・影・不透明度を持つフレーム",
+              "type": "frame",
+              "x": 31,
+              "y": 89,
+              "width": 218,
+              "height": 114,
+              "opacity": 0.88,
+              "blur": 2.2,
+              "shadow": {
+                "color": "#344d5c77",
+                "offsetX": 4,
+                "offsetY": 6,
+                "blur": 5
+              },
+              "style": {
+                "fill": "#e9f0ef",
+                "cornerRadii": {
+                  "topLeft": 12,
+                  "topRight": 12,
+                  "bottomRight": 12,
+                  "bottomLeft": 12
+                }
+              },
               "children": [
                 {
-                  "id": "nd_sample_blur_mask", "name": "子の表示範囲を決めるマスク", "type": "rectangle",
-                  "x": 13, "y": 13, "width": 192, "height": 88, "isMask": true,
-                  "style": { "fill": "#000000", "cornerRadii": { "topLeft": 10, "topRight": 10, "bottomRight": 10, "bottomLeft": 10 } }
+                  "id": "nd_sample_blur_mask",
+                  "name": "子の表示範囲を決めるマスク",
+                  "type": "rectangle",
+                  "x": 13,
+                  "y": 13,
+                  "width": 192,
+                  "height": 88,
+                  "isMask": true,
+                  "style": {
+                    "fill": "#000000",
+                    "cornerRadii": {
+                      "topLeft": 10,
+                      "topRight": 10,
+                      "bottomRight": 10,
+                      "bottomLeft": 10
+                    }
+                  }
                 },
                 {
-                  "id": "nd_sample_blur_gradient", "name": "マスク内の線形塗り", "type": "rectangle",
-                  "x": -5, "y": 6, "width": 228, "height": 100,
-                  "style": { "fill": { "type": "linear", "start": { "x": 0, "y": 0 }, "end": { "x": 1, "y": 1 },
-                    "stops": [{ "position": 0, "color": "#177782" }, { "position": 1, "color": "#d6b284" }] } }
+                  "id": "nd_sample_blur_gradient",
+                  "name": "マスク内の線形塗り",
+                  "type": "rectangle",
+                  "x": -5,
+                  "y": 6,
+                  "width": 228,
+                  "height": 100,
+                  "style": {
+                    "fill": {
+                      "type": "linear",
+                      "start": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "end": {
+                        "x": 1,
+                        "y": 1
+                      },
+                      "stops": [
+                        {
+                          "position": 0,
+                          "color": "#177782"
+                        },
+                        {
+                          "position": 1,
+                          "color": "#d6b284"
+                        }
+                      ]
+                    }
+                  }
                 },
                 {
-                  "id": "nd_sample_blur_text", "name": "ぼかした文字", "type": "text",
-                  "x": 31, "y": 39, "width": 170, "height": 34, "content": "SOFT FOCUS",
-                  "style": { "fontSize": 18, "color": "#ffffff", "textAlign": "center", "fontFamily": "system", "fontWeight": 700, "letterSpacing": 1 }
+                  "id": "nd_sample_blur_text",
+                  "name": "ぼかした文字",
+                  "type": "text",
+                  "x": 31,
+                  "y": 39,
+                  "width": 170,
+                  "height": 34,
+                  "content": "SOFT FOCUS",
+                  "style": {
+                    "fontSize": 18,
+                    "color": "#ffffff",
+                    "textAlign": "center",
+                    "fontFamily": "system",
+                    "fontWeight": 700,
+                    "letterSpacing": 1
+                  }
                 }
               ]
             }
@@ -589,58 +4602,252 @@
       ]
     },
     {
-      "id": "nd_sample_spacing", "name": "Studio / 共通の余白", "type": "frame",
-      "x": 80, "y": 1720, "width": 960, "height": 300,
-      "style": { "fill": "#fbfaf7" },
+      "id": "nd_sample_spacing",
+      "name": "Studio / 共通の余白",
+      "type": "frame",
+      "x": 1640,
+      "y": 830,
+      "width": 960,
+      "height": 300,
+      "style": {
+        "fill": "#fbfaf7"
+      },
       "children": [
-        { "id": "nd_sample_spacing_title", "name": "共通余白の見出し", "type": "text", "x": 32, "y": 25, "width": 600, "height": 32,
-          "content": "ONE VALUE, TWO FRAMES", "style": { "fontSize": 20, "color": "#24383a", "textAlign": "left", "fontWeight": 700 } },
-        { "id": "nd_sample_spacing_a", "name": "共通値を参照するフレーム A", "type": "frame", "x": 32, "y": 90, "width": 410, "height": 160,
-          "layoutMode": "horizontal", "paddingRef": "sp_sample_card", "gapRef": "sp_sample_card", "style": { "fill": "#e9f2ed" },
+        {
+          "id": "nd_sample_spacing_title",
+          "name": "共通余白の見出し",
+          "type": "text",
+          "x": 32,
+          "y": 25,
+          "width": 600,
+          "height": 32,
+          "content": "ONE VALUE, TWO FRAMES",
+          "style": {
+            "fontSize": 20,
+            "color": "#24383a",
+            "textAlign": "left",
+            "fontWeight": 700
+          }
+        },
+        {
+          "id": "nd_sample_spacing_a",
+          "name": "共通値を参照するフレーム A",
+          "type": "frame",
+          "x": 32,
+          "y": 90,
+          "width": 410,
+          "height": 160,
+          "layoutMode": "horizontal",
+          "paddingRef": "sp_sample_card",
+          "gapRef": "sp_sample_card",
+          "style": {
+            "fill": "#e9f2ed"
+          },
           "children": [
-            { "id": "nd_sample_spacing_a1", "name": "左", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#80aa97" } },
-            { "id": "nd_sample_spacing_a2", "name": "右", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#80aa97" } }
-          ] },
-        { "id": "nd_sample_spacing_b", "name": "共通値を参照するフレーム B", "type": "frame", "x": 482, "y": 90, "width": 410, "height": 160,
-          "layoutMode": "horizontal", "paddingRef": "sp_sample_card", "gapRef": "sp_sample_card", "style": { "fill": "#e9f2ed" },
+            {
+              "id": "nd_sample_spacing_a1",
+              "name": "左",
+              "type": "rectangle",
+              "x": 0,
+              "y": 0,
+              "width": 80,
+              "height": 80,
+              "style": {
+                "fill": "#80aa97"
+              }
+            },
+            {
+              "id": "nd_sample_spacing_a2",
+              "name": "右",
+              "type": "rectangle",
+              "x": 0,
+              "y": 0,
+              "width": 80,
+              "height": 80,
+              "style": {
+                "fill": "#80aa97"
+              }
+            }
+          ]
+        },
+        {
+          "id": "nd_sample_spacing_b",
+          "name": "共通値を参照するフレーム B",
+          "type": "frame",
+          "x": 482,
+          "y": 90,
+          "width": 410,
+          "height": 160,
+          "layoutMode": "horizontal",
+          "paddingRef": "sp_sample_card",
+          "gapRef": "sp_sample_card",
+          "style": {
+            "fill": "#e9f2ed"
+          },
           "children": [
-            { "id": "nd_sample_spacing_b1", "name": "左", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#557f78" } },
-            { "id": "nd_sample_spacing_b2", "name": "右", "type": "rectangle", "x": 0, "y": 0, "width": 80, "height": 80, "style": { "fill": "#557f78" } }
-          ] }
+            {
+              "id": "nd_sample_spacing_b1",
+              "name": "左",
+              "type": "rectangle",
+              "x": 0,
+              "y": 0,
+              "width": 80,
+              "height": 80,
+              "style": {
+                "fill": "#557f78"
+              }
+            },
+            {
+              "id": "nd_sample_spacing_b2",
+              "name": "右",
+              "type": "rectangle",
+              "x": 0,
+              "y": 0,
+              "width": 80,
+              "height": 80,
+              "style": {
+                "fill": "#557f78"
+              }
+            }
+          ]
+        }
       ]
     },
     {
       "id": "nd_sample_components",
       "name": "Studio / コンポーネント",
       "type": "frame",
-      "x": 80,
-      "y": 2100,
+      "x": 1640,
+      "y": 1210,
       "width": 960,
       "height": 400,
-      "style": { "fill": "#fbfaf7" },
+      "style": {
+        "fill": "#fbfaf7"
+      },
       "children": [
-        { "id": "nd_sample_components_title", "name": "コンポーネントの見出し", "type": "text", "x": 32, "y": 25, "width": 640, "height": 32,
-          "content": "ONE COMPONENT, MANY INSTANCES", "style": { "fontSize": 20, "color": "#24383a", "textAlign": "left", "fontWeight": 700 } },
-        { "id": "nd_sample_btn_instance_a", "name": "保存ボタン", "type": "instance", "componentRef": "cp_sample_button",
-          "x": 40, "y": 96, "width": 178, "height": 52,
-          "overrides": { "nd_cp_button_label": { "content": "保存する" } } },
-        { "id": "nd_sample_btn_instance_b", "name": "キャンセルボタン", "type": "instance", "componentRef": "cp_sample_button",
-          "x": 250, "y": 96, "width": 178, "height": 52,
-          "overrides": { "nd_cp_button_label": { "content": "キャンセル" } } },
-        { "id": "nd_sample_card_instance", "name": "カード", "type": "instance", "componentRef": "cp_sample_card",
-          "x": 40, "y": 180, "width": 300, "height": 140,
-          "overrides": { "nd_cp_card_title": { "content": "再利用するカード" } } }
+        {
+          "id": "nd_sample_components_title",
+          "name": "コンポーネントの見出し",
+          "type": "text",
+          "x": 32,
+          "y": 25,
+          "width": 640,
+          "height": 32,
+          "content": "ONE COMPONENT, MANY INSTANCES",
+          "style": {
+            "fontSize": 20,
+            "color": "#24383a",
+            "textAlign": "left",
+            "fontWeight": 700
+          }
+        },
+        {
+          "id": "nd_sample_btn_instance_a",
+          "name": "保存ボタン",
+          "type": "instance",
+          "componentRef": "cp_sample_button",
+          "x": 40,
+          "y": 96,
+          "width": 178,
+          "height": 52,
+          "overrides": {
+            "nd_cp_button_label": {
+              "content": "保存する"
+            }
+          }
+        },
+        {
+          "id": "nd_sample_btn_instance_b",
+          "name": "キャンセルボタン",
+          "type": "instance",
+          "componentRef": "cp_sample_button",
+          "x": 250,
+          "y": 96,
+          "width": 178,
+          "height": 52,
+          "overrides": {
+            "nd_cp_button_label": {
+              "content": "キャンセル"
+            }
+          }
+        },
+        {
+          "id": "nd_sample_card_instance",
+          "name": "カード",
+          "type": "instance",
+          "componentRef": "cp_sample_card",
+          "x": 40,
+          "y": 180,
+          "width": 300,
+          "height": 140,
+          "overrides": {
+            "nd_cp_card_title": {
+              "content": "再利用するカード"
+            }
+          }
+        }
       ]
     }
   ],
   "palette": [
-    { "id": "pc_sample_background", "name": "背景", "color": "#fbfaf7" },
-    { "id": "pc_sample_surface", "name": "面", "color": "#ffffff" },
-    { "id": "pc_sample_ink", "name": "本文", "color": "#24383a" },
-    { "id": "pc_sample_muted", "name": "補足", "color": "#6a5a50" },
-    { "id": "pc_sample_accent", "name": "アクセント", "color": "#f3d9c8" }
+    {
+      "id": "pc_sample_background",
+      "name": "背景",
+      "color": "#0e0f13"
+    },
+    {
+      "id": "pc_sample_surface",
+      "name": "面",
+      "color": "#17181f"
+    },
+    {
+      "id": "pc_sample_ink",
+      "name": "本文",
+      "color": "#f4f1ea"
+    },
+    {
+      "id": "pc_sample_muted",
+      "name": "補足",
+      "color": "#9b9aa6"
+    },
+    {
+      "id": "pc_sample_accent",
+      "name": "アクセント",
+      "color": "#c8ff4d"
+    },
+    {
+      "id": "pc_sample_violet",
+      "name": "紫",
+      "color": "#7b5cff"
+    }
   ],
-  "spacing": [{ "id": "sp_sample_card", "name": "カード内側", "value": 20 }],
+  "spacing": [
+    {
+      "id": "sp_sample_card",
+      "name": "カード内側",
+      "value": 20
+    },
+    {
+      "id": "sp_sample_section",
+      "name": "セクションの余白",
+      "value": 80
+    },
+    {
+      "id": "sp_sample_gutter",
+      "name": "列の間隔",
+      "value": 24
+    },
+    {
+      "id": "sp_sample_inner",
+      "name": "カードの内側",
+      "value": 32
+    },
+    {
+      "id": "sp_sample_stack",
+      "name": "カード内の行間",
+      "value": 16
+    }
+  ],
   "components": [
     {
       "id": "cp_sample_button",
@@ -653,7 +4860,9 @@
         "y": 0,
         "width": 178,
         "height": 52,
-        "style": { "fill": null },
+        "style": {
+          "fill": null
+        },
         "clipContent": false,
         "children": [
           {
@@ -665,9 +4874,17 @@
             "width": 178,
             "height": 52,
             "style": {
-              "fill": "#f3d9c8",
-              "stroke": { "color": "#c77852", "width": 2 },
-              "cornerRadii": { "topLeft": 10, "topRight": 10, "bottomRight": 10, "bottomLeft": 10 }
+              "fill": {
+                "type": "palette",
+                "id": "pc_sample_accent"
+              },
+              "stroke": null,
+              "cornerRadii": {
+                "topLeft": 26,
+                "topRight": 26,
+                "bottomRight": 26,
+                "bottomLeft": 26
+              }
             }
           },
           {
@@ -679,7 +4896,13 @@
             "width": 146,
             "height": 24,
             "content": "ボタン",
-            "style": { "fontSize": 14, "color": "#5a3323", "textAlign": "center", "fontFamily": "system", "fontWeight": 700 }
+            "style": {
+              "fontSize": 14,
+              "color": "#0e0f13",
+              "textAlign": "center",
+              "fontFamily": "system",
+              "fontWeight": 700
+            }
           }
         ]
       }
@@ -695,7 +4918,9 @@
         "y": 0,
         "width": 300,
         "height": 140,
-        "style": { "fill": "#ffffff" },
+        "style": {
+          "fill": "#ffffff"
+        },
         "children": [
           {
             "id": "nd_cp_card_title",
@@ -706,7 +4931,13 @@
             "width": 260,
             "height": 30,
             "content": "カード",
-            "style": { "fontSize": 18, "color": "#24383a", "textAlign": "left", "fontFamily": "system", "fontWeight": 700 }
+            "style": {
+              "fontSize": 18,
+              "color": "#24383a",
+              "textAlign": "left",
+              "fontFamily": "system",
+              "fontWeight": 700
+            }
           },
           {
             "id": "nd_cp_card_body",
@@ -717,7 +4948,11 @@
             "width": 260,
             "height": 60,
             "content": "定義を変えると参照先も更新されます。",
-            "style": { "fontSize": 13, "color": "#697976", "textAlign": "left" }
+            "style": {
+              "fontSize": 13,
+              "color": "#697976",
+              "textAlign": "left"
+            }
           }
         ]
       }
