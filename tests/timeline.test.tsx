@@ -22,18 +22,18 @@ test("タイムラインが再生・シークとキーフレーム編集欄を�
     const node = rectangle({ animations: [animation] });
     const markup = renderToStaticMarkup(createElement(Timeline, {
       node, playback: { playhead: 500, playing: false, play: noOp, pause: noOp, stop: noOp, seek: noOp },
-      scrollProgress: 0, onScrollProgress: noOp,
+      scrollProgress: 0, onScrollProgress: noOp, activeAnimationId: null, onSelectAnimation: noOp, onClose: noOp,
       onAddAnimation: noOp, onRemoveAnimation: noOp, onSetTiming: noOp,
       onAddKeyframe: noOp, onSetKeyframe: noOp, onRemoveKeyframe: noOp,
     }));
-    assert.match(markup, /500 ms/);
-    assert.match(markup, /▶/);
-    assert.match(markup, /フェード/);
+    assert.match(markup, /500 \/ 1000 ms/);
+    assert.match(markup, /aria-label="再生"/);
+    assert.match(markup, /aria-checked="true"[^>]*>フェード</);
     assert.match(markup, /opacity/);
     assert.match(markup, /value="ease-out" selected=""/);
     assert.match(markup, /value="load" selected=""/);
     assert.match(markup, /キーフレーム/);
-    assert.match(markup, /アニメーション/);
+    assert.match(markup, /aria-label="アニメーションを追加"/);
   } finally {
     await vite.close();
   }
