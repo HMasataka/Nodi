@@ -36,7 +36,7 @@ test("見出しに種類と名前と「⋯」を出し、列から操作のボ�
   for (const label of ["複製", "最前面へ", "最背面へ", "コンポーネントを作成", "PNG に書き出す", "要素 ID"]) {
     assert.ok(!markup.includes(label), label);
   }
-  for (const label of [">回転<", ">不透明度<", "全体ぼかし px"]) assert.ok(markup.includes(label), label);
+  for (const label of [">回転<", ">不透明度<", "効果を追加"]) assert.ok(markup.includes(label), label);
 });
 
 test("「⋯」メニューから各操作を実行でき、フレームだけの操作はほかの種類では押せない", () => {

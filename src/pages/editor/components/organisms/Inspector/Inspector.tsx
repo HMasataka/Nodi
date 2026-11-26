@@ -14,12 +14,12 @@ import { InstanceOverrides } from "@/pages/editor/components/molecules/InstanceO
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { PathPointEditor } from "@/pages/editor/components/molecules/PathPointEditor";
-import { ShadowEditor } from "@/pages/editor/components/molecules/ShadowEditor";
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearance";
 
 import { blurOnEnter, Field } from "@/pages/editor/components/atoms/Field";
 import { DEFAULT_STROKE, hasStroke, StrokeEditor } from "@/pages/editor/components/molecules/StrokeEditor";
+import { EffectsEditor, nextEffect } from "@/pages/editor/components/molecules/EffectsEditor";
 import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 import { SectionHeader, type SectionHeaderAction } from "@/pages/editor/components/molecules/SectionHeader";
 
@@ -124,21 +124,6 @@ function Section({ id, title, action, children }: { id: string; title: string; a
   </section>;
 }
 
-function NumberProperty({ label, value, min, max, scale = 1, onChange }: { label: string; value: number; min?: number; max?: number; scale?: number; onChange(value: number): void }) {
-  return <label className="geometry-field">
-    <span>{label}</span>
-    <input key={value} type="number" min={min} max={max} step="any" defaultValue={value * scale}
-      onBlur={(event) => {
-        const raw = event.currentTarget.value.trim();
-        const next = Number(raw) / scale;
-        const valid = raw !== "" && Number.isFinite(next) && (min === undefined || next * scale >= min) && (max === undefined || next * scale <= max);
-        if (valid && next !== value) onChange(next);
-        else event.currentTarget.value = String(value * scale);
-      }}
-      onKeyDown={blurOnEnter} />
-  </label>;
-}
-
 // 複数を選んでいるときの整列と間隔。見出しのすぐ下に置く。
 function SelectionTools({ selectedCount, onAlign, textIcon, onAlignTextIcon, spacing, onDistribute }: Pick<InspectorProps, "onAlign" | "textIcon" | "onAlignTextIcon" | "spacing" | "onDistribute"> & { selectedCount: number }) {
   return <Section id="selection" title={`${selectedCount} 個を選択中`}>
@@ -191,6 +176,7 @@ export function Inspector(props: InspectorProps) {
     </aside>;
   }
   const node = selected;
+  const added = nextEffect({ shadow: node.shadow, blur: node.blur });
   return (
     <aside className="sidebar inspector" aria-label="プロパティ">
       <div className="properties">
@@ -256,9 +242,11 @@ export function Inspector(props: InspectorProps) {
         {node.type === "image" && <Section id="corners" title="角丸">
           <CornerRadiiEditor key={node.id} radii={node.style.cornerRadii} onChange={(cornerRadii) => onImageStyle({ cornerRadii })} />
         </Section>}
-        <Section id="effects" title="効果">
-          <ShadowEditor key={`${node.id}:${JSON.stringify(node.shadow)}`} shadow={node.shadow} onChange={onShadow} />
-          <NumberProperty label="全体ぼかし px" value={node.blur} min={0} onChange={onBlur} />
+        <Section id="effects" title="効果" action={{ kind: "add", label: "効果を追加", disabled: added === null, onClick: () => {
+          if (added?.shadow) onShadow(added.shadow);
+          else if (added?.blur !== undefined) onBlur(added.blur);
+        } }}>
+          <EffectsEditor key={node.id} shadow={node.shadow} blur={node.blur} onShadow={onShadow} onBlur={onBlur} />
         </Section>
         {/* プレビューのモード（#331）ができるまで、フレームの縮小表示をここに残す。 */}
         {node.type === "frame" && <Section id="preview" title="プレビュー">
