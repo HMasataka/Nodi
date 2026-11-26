@@ -1,46 +1,35 @@
-import { ColorField } from "@/pages/editor/components/molecules/ColorField";
-import { useState } from "react";
 import type { TextNode, TextStyle } from "@/document/types";
 
+import { Field } from "@/pages/editor/components/atoms/Field";
+import { Segmented } from "@/pages/editor/components/atoms/Segmented";
+import { SelectField } from "@/pages/editor/components/atoms/SelectField";
+
+type FontFamily = TextStyle["fontFamily"];
+type TextAlign = TextStyle["textAlign"];
+
+const FAMILIES: readonly { value: FontFamily; label: string }[] = [
+  { value: "default", label: "標準" }, { value: "system", label: "システム" }, { value: "serif", label: "セリフ" }, { value: "monospace", label: "等幅" },
+];
+const WEIGHTS = [100, 200, 300, 400, 500, 600, 700, 800, 900].map((weight) => ({ value: String(weight), label: String(weight) }));
+const ALIGNS: readonly { value: TextAlign; label: string }[] = [{ value: "left", label: "左" }, { value: "center", label: "中央" }, { value: "right", label: "右" }];
+
+const parse = (raw: string) => raw.trim() === "" ? NaN : Number(raw);
+
+// 書体、サイズと太さ、行高と字間、揃えを並べる。値の検証は確定する側に任せる。
 export function TextStyleEditor({ node: { style }, onChange }: { node: TextNode; onChange(style: Partial<TextStyle>): void }) {
-  const [fontSize, setFontSize] = useState(String(style.fontSize));
-  const [lineHeight, setLineHeight] = useState(String(style.lineHeight));
-  const [letterSpacing, setLetterSpacing] = useState(String(style.letterSpacing));
   return <div className="text-style-fields">
-    <label>フォント
-      <select className="font-family-select" value={style.fontFamily}
-        onChange={(event) => onChange({ fontFamily: event.currentTarget.value as TextStyle["fontFamily"] })}>
-        <option value="default">標準</option><option value="system">システム</option>
-        <option value="serif">セリフ</option><option value="monospace">等幅</option>
-      </select>
-    </label>
-    <label>太さ
-      <select value={style.fontWeight}
-        onChange={(event) => onChange({ fontWeight: Number(event.currentTarget.value) })}>
-        {[100, 200, 300, 400, 500, 600, 700, 800, 900].map((weight) => <option key={weight} value={weight}>{weight}</option>)}
-      </select>
-    </label>
-    <label>文字サイズ
-      <input type="number" min="1" step="any" value={fontSize}
-        onChange={(event) => setFontSize(event.currentTarget.value)}
-        onBlur={() => { if (fontSize !== String(style.fontSize)) onChange({ fontSize: fontSize.trim() === "" ? NaN : Number(fontSize) }); }} />
-    </label>
-    <label>行高（倍）
-      <input type="number" min="0.1" step="any" value={lineHeight}
-        onChange={(event) => setLineHeight(event.currentTarget.value)}
-        onBlur={() => { if (lineHeight !== String(style.lineHeight)) onChange({ lineHeight: lineHeight.trim() === "" ? NaN : Number(lineHeight) }); }} />
-    </label>
-    <label>字間（px）
-      <input type="number" step="any" value={letterSpacing}
-        onChange={(event) => setLetterSpacing(event.currentTarget.value)}
-        onBlur={() => { if (letterSpacing !== String(style.letterSpacing)) onChange({ letterSpacing: letterSpacing.trim() === "" ? NaN : Number(letterSpacing) }); }} />
-    </label>
-    <ColorField label="文字色" value={style.color} fallback="#272b29" onChange={(color) => onChange({ color })} />
-    <label>揃え
-      <select value={style.textAlign} onChange={(event) => onChange({ textAlign: event.currentTarget.value as TextStyle["textAlign"] })}>
-        <option value="left">左</option><option value="center">中央</option><option value="right">右</option>
-      </select>
-    </label>
-    <p>標準は Avenir Next を優先し、利用できないフォントは代替フォントで表示します。字間は負値でも指定できます。枠の幅で折り返し、高さを超えた本文は隠れます。枠の高さは「位置・サイズ」で変更できます。</p>
+    <SelectField<FontFamily> className="is-wide-label" label="書体" value={style.fontFamily} options={FAMILIES} onChange={(fontFamily) => onChange({ fontFamily })} />
+    <div className="field-pair">
+      <Field className="is-wider-label" label="サイズ" type="number" min="1" step="any" value={String(style.fontSize)}
+        onCommit={(raw) => onChange({ fontSize: parse(raw) })} />
+      <SelectField className="is-wide-label" label="太さ" value={String(style.fontWeight)} options={WEIGHTS} onChange={(weight) => onChange({ fontWeight: Number(weight) })} />
+    </div>
+    <div className="field-pair">
+      <Field className="is-wide-label" label="行高" type="number" min="0.1" step="any" value={String(style.lineHeight)}
+        onCommit={(raw) => onChange({ lineHeight: parse(raw) })} />
+      <Field className="is-wide-label" label="字間" type="number" step="any" value={String(style.letterSpacing)}
+        onCommit={(raw) => onChange({ letterSpacing: parse(raw) })} />
+    </div>
+    <Segmented<TextAlign> label="揃え" value={style.textAlign} options={ALIGNS} onChange={(textAlign) => onChange({ textAlign })} />
   </div>;
 }

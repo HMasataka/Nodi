@@ -88,7 +88,6 @@
 
   /* 面 */
   --surface-muted: var(--grey-050);
-  --surface-subtle: var(--grey-050);
   --image-placeholder: var(--grey-100);
 
   /* 線 */
@@ -174,7 +173,6 @@ button {
 .file-button:focus-visible,
 .layer-row:focus-visible,
 .canvas-node:focus-visible,
-.text-mark-actions button:focus-visible,
 .properties input:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -1024,21 +1022,13 @@ button {
 .image-filter-fields legend { padding-bottom: 8px; color: var(--text-tertiary); font-size: 11px; }
 .canvas-image svg { display: block; width: 100%; height: 100%; pointer-events: none; user-select: none; }
 .image-file-input { display: none; }
-.content-editor { width: 100%; min-height: 100px; margin-bottom: 18px; border: 1px solid var(--field-border); border-radius: 4px; padding: 8px; resize: vertical; font: 12px/1.5 "Avenir Next", sans-serif; }
-.text-mark-controls { display: grid; gap: 8px; margin-bottom: 18px; padding: 10px; border: 1px solid var(--field-border); border-radius: 5px; background: var(--surface-subtle); }
-.text-mark-controls p { margin: 0; color: var(--text-tertiary); font-size: 11px; }
-.text-mark-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.text-mark-actions button { border: 1px solid var(--input-border); border-radius: 4px; padding: 6px 8px; background: var(--surface); color: var(--ink); font-size: 11px; }
-.text-mark-actions button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
-.text-mark-actions button:disabled { opacity: .45; cursor: default; }
-.text-mark-actions label { display: flex; align-items: center; gap: 6px; color: var(--text-tertiary); font-size: 11px; }
-.text-mark-actions input[type="color"] { width: 32px; height: 26px; padding: 2px; }
-.text-style-fields { display: grid; gap: 10px; margin-bottom: 18px; }
-.text-style-fields label { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--text-tertiary); font-size: 11px; }
-.text-style-fields input[type="number"], .text-style-fields select { width: 80px; border: 1px solid var(--field-border); border-radius: 4px; padding: 6px; background: var(--surface); }
-.text-style-fields .font-family-select { width: min(145px, 65%); }
-.text-style-fields input[type="color"] { width: 42px; height: 28px; border: 1px solid var(--field-border); border-radius: 4px; padding: 2px; background: var(--surface); }
-.text-style-fields p { margin: 0; color: var(--text-subtle); font-size: 11px; line-height: 1.5; }
+.text-style-fields, .text-mark-controls { display: flex; flex-direction: column; gap: var(--space-8); }
+/* 選択範囲の装飾は、見出しの右にアイコンボタンを並べる。 */
+.text-mark-row { display: flex; align-items: center; gap: var(--space-4); }
+.text-mark-caption { flex: 1; min-width: 0; color: var(--text-label); font-size: var(--font-size-11); line-height: var(--line-height-11); }
+.text-mark-color { display: flex; align-items: center; gap: var(--space-4); }
+.text-mark-color > :first-child { flex: 1; min-width: 0; }
+.content-editor { width: 100%; min-height: 100px; border: 1px solid var(--field-border); border-radius: 4px; padding: 8px; resize: vertical; font: 12px/1.5 "Avenir Next", sans-serif; }
 /* つまみは白地に紫の枠の 8px 角。角の中心に置く。 */
 .resize-handle {
   position: absolute;

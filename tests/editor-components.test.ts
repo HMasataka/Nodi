@@ -30,7 +30,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(textMarkup, /line-height:1.75/);
     assert.match(textMarkup, /letter-spacing:-0.5px/);
     const textStyleMarkup = renderToStaticMarkup(createElement(TextStyleEditor, { node: text, onChange: noOp }));
-    assert.match(textStyleMarkup, /フォント/);
+    assert.match(textStyleMarkup, /書体/);
     assert.match(textStyleMarkup, /value="system" selected=""/);
     assert.match(textStyleMarkup, /value="700" selected=""/);
     assert.match(textStyleMarkup, /value="1.75"/);
@@ -113,7 +113,7 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     }));
     assert.match(textInspector, /選択範囲の装飾/);
     assert.match(textInspector, /本文から文字を選択してください/);
-    assert.match(textInspector, /aria-pressed="false" disabled=""[^>]*>太字/);
+    assert.match(textInspector, /<button disabled=""[^>]*aria-label="太字"[^>]*aria-pressed="false"/);
     const back = makeRectangle({ id: "back", name: "背面", x: 10, y: 10, width: 80, height: 80,
       style: { fill: "#123456", stroke: null, cornerRadii: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 } } });
     const front = { ...back, id: "front", name: "前面", x: 20, y: 20 };

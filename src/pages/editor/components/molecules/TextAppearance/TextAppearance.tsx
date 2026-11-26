@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { type MouseEvent, useEffect, useMemo, useState } from "react";
 
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { ContentEditor } from "@/pages/editor/components/atoms/ContentEditor";
+import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { TextStyleEditor } from "@/pages/editor/components/molecules/TextStyleEditor";
 import { graphemeBoundaries, graphemeSegments } from "@/document/textLayout";
 import { rangeHasMark, remapTextMarks } from "@/document/textMarks";
@@ -39,35 +40,30 @@ export function TextAppearance({ node, onTextContent, onTextStyle, onTextMarkRan
     onTextMarkRange({ content: draft, start: selection.start, end: selection.end, patch });
   }
 
+  // ボタンを押しても本文の選択範囲を失わないよう、押した時点でフォーカスを移さない。
+  const keepSelection = { onMouseDown: (event: MouseEvent) => event.preventDefault() };
   return <>
-    <div className="field-label">本文</div>
     <ContentEditor value={draft}
       onChange={(value, start, end) => { setDraft(value); setSelection({ start, end }); }}
       onSelect={(start, end) => setSelection({ start, end })}
       onBlur={() => { if (draft !== node.content) onTextContent(draft); }} />
-    <div className="field-label">選択範囲の装飾</div>
-    <div className="text-mark-controls" aria-label="選択範囲の装飾">
-      <p>{canStyle ? `${graphemeSegments(draft.slice(selection.start, selection.end)).length} 文字を選択中` : "本文から文字を選択してください"}</p>
-      <div className="text-mark-actions">
-        <button type="button" aria-pressed={bold} disabled={!canStyle}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => apply({ fontWeight: bold ? (baseWeight >= 600 ? 400 : null) : 700 })}>太字</button>
-        <button type="button" aria-pressed={underline} disabled={!canStyle}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => apply({ underline: !underline })}>下線</button>
-        <button type="button" aria-pressed={code} disabled={!canStyle}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => apply({ code: !code })}>コード</button>
+    <TextStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onTextStyle} />
+    <div className="text-mark-controls" role="group" aria-label="選択範囲の装飾">
+      <div className="text-mark-row">
+        <span className="text-mark-caption">{canStyle ? `選択範囲（${graphemeSegments(draft.slice(selection.start, selection.end)).length} 文字）` : "選択範囲"}</span>
+        <IconButton icon="bold" label="太字" pressed={bold} disabled={!canStyle} {...keepSelection}
+          onClick={() => apply({ fontWeight: bold ? (baseWeight >= 600 ? 400 : null) : 700 })} />
+        <IconButton icon="underline" label="下線" pressed={underline} disabled={!canStyle} {...keepSelection}
+          onClick={() => apply({ underline: !underline })} />
+        <IconButton icon="code" label="コード" pressed={code} disabled={!canStyle} {...keepSelection}
+          onClick={() => apply({ code: !code })} />
       </div>
-      <div className="text-mark-actions">
+      <div className="text-mark-color">
         <ColorField key={`${node.id}:${selection.start}:${selection.end}:${color}`} label="文字色" value={color} fallback={node.style.color}
           disabled={!canStyle} onChange={(value) => apply({ color: value })} />
-        <button type="button" disabled={!canStyle} onMouseDown={(event) => event.preventDefault()}
-          onClick={() => apply({ color: null })}>色を戻す</button>
+        <IconButton icon="reset" label="選択範囲の文字色を戻す" disabled={!canStyle} {...keepSelection} onClick={() => apply({ color: null })} />
       </div>
+      {!canStyle && <p className="property-help">本文から文字を選択してください</p>}
     </div>
-    <div className="field-label">文字の見た目</div>
-    <TextStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`}
-      node={node} onChange={onTextStyle} />
   </>;
 }
