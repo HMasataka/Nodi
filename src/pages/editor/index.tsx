@@ -156,6 +156,13 @@ function EditorPage() {
         {...actions.inspector}
         componentName={selectedComponentName} componentNode={selectedComponentNode}
         onCreateComponent={actions.components.onCreateFromSelected}
+        onOpenAnimation={(id) => { setActiveAnimationId(id); if (!panels.layout.timeline) panels.toggle("timeline"); }}
+        onAddAnimation={() => {
+          const id = actions.timeline.onAddAnimation();
+          if (!id) return;
+          setActiveAnimationId(id);
+          if (!panels.layout.timeline) panels.toggle("timeline");
+        }}
         onCopyId={(id) => { navigator.clipboard.writeText(id).catch(() => setError("ID をクリップボードにコピーできません")); }}
         onGoToDefinition={() => { setLeftTab("assets"); if (!panels.layout.left) panels.toggle("left"); }}
         onSetOverride={(childId, patch) => { if (selectedId) actions.components.onSetOverride(selectedId, childId, patch); }}

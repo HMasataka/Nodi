@@ -1133,6 +1133,13 @@ button {
 .effects-editor { gap: var(--space-12); }
 .effect-heading { display: flex; align-items: center; justify-content: space-between; height: 24px; color: var(--text-label); font-size: var(--font-size-11); line-height: var(--line-height-11); }
 .effect-heading .icon-button { width: 24px; height: 24px; }
+/* アニメーションの行：名前とトリガーを並べ、押すとタイムラインで開く。 */
+.animation-rows { display: flex; flex-direction: column; gap: var(--space-4); }
+.animation-row { display: flex; align-items: center; gap: var(--space-8); height: 28px; border: 0; border-radius: var(--radius-4); padding: 0 var(--space-8); color: var(--ink); background: var(--surface-muted); font: inherit; font-size: var(--font-size-12); text-align: left; cursor: pointer; }
+.animation-row:hover { background: var(--accent-soft); }
+.animation-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.animation-row-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.animation-row-trigger { flex: none; color: var(--text-label); font-size: var(--font-size-11); }
 .fill-editor { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
 /* グラデーションの帯と、帯の下の色の位置の札。札はスライダーのつまみと同じ 12px 角で、選んだ札を紫で塗る。 */
 .gradient-stops { position: relative; height: 40px; }
