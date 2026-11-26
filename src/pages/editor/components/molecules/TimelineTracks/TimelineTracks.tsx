@@ -17,6 +17,16 @@ export function rulerTicks(duration: number): { time: number; label: string }[] 
   });
 }
 
+// スクロールの進み具合（0〜1）を、遅延と繰り返しを含む時刻に直す。進み具合は遅延のあと、全体の長さを動く。
+export function scrollTime(animation: Animation, progress: number): number {
+  return animation.delay + Math.min(Math.max(progress, 0), 1) * animation.duration * animation.repeat;
+}
+
+// 1回分の長さの中の時刻を、スクロールの進み具合に直す。1回目の繰り返しの中に置く。
+export function scrollProgressAt(animation: Animation, local: number): number {
+  return Math.min(Math.max(local / (animation.duration * animation.repeat), 0), 1);
+}
+
 // 再生位置（遅延と繰り返しを含む時刻）を、1回分の長さの中の時刻に直す。
 export function localTime(animation: Animation, playhead: number): number {
   const elapsed = Math.max(0, playhead - animation.delay);
@@ -34,18 +44,18 @@ const percent = (time: number, duration: number) => `${(Math.min(Math.max(time /
 type TimelineTracksProps = {
   animation: Animation;
   node: DocumentNode;
-  playhead: number;
+  // 再生位置の線を置く、1回分の長さの中の時刻。スクロールのトリガーでは進み具合を時刻に直したもの。
+  current: number;
   selected: KeyframeRef | null;
   onSelect(keyframe: KeyframeRef): void;
-  onSeek(playhead: number): void;
+  onSeek(local: number): void;
   onAddTrack(property: AnimatableProperty, keyframe: Keyframe): void;
 };
 
 // 時間の目盛り、プロパティごとのトラックと菱形のキーフレーム、再生位置の線とつまみ、トラックの追加を描く。目盛りかトラックを押すとその時刻へ動かす。
-export function TimelineTracks({ animation, node, playhead, selected, onSelect, onSeek, onAddTrack }: TimelineTracksProps) {
+export function TimelineTracks({ animation, node, current, selected, onSelect, onSeek, onAddTrack }: TimelineTracksProps) {
   const area = useRef<HTMLDivElement>(null);
   const { duration } = animation;
-  const current = localTime(animation, playhead);
   const missing = ANIMATABLE_PROPERTIES.filter((property) => !animation.tracks.some((track) => track.property === property));
   const addEntries: MenuEntry[] = missing.map((property) => ({ type: "item", label: PROPERTY_LABELS[property],
     onSelect: () => onAddTrack(property, { time: Math.round(current), value: baseValue(node, property), easing: "linear" }) }));
@@ -53,7 +63,7 @@ export function TimelineTracks({ animation, node, playhead, selected, onSelect, 
     const rect = area.current?.getBoundingClientRect();
     if (!rect || rect.width <= 0) return;
     const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
-    onSeek(animation.delay + Math.round(ratio * duration));
+    onSeek(Math.round(ratio * duration));
   }
   return <div className="timeline-tracks">
     <div className="timeline-labels">
@@ -81,8 +91,8 @@ export function TimelineTracks({ animation, node, playhead, selected, onSelect, 
         tabIndex={0} style={{ left: percent(current, duration) }}
         onKeyDown={(event) => {
           const step = event.shiftKey ? 100 : 10;
-          if (event.key === "ArrowLeft") { event.preventDefault(); onSeek(animation.delay + Math.max(0, current - step)); }
-          if (event.key === "ArrowRight") { event.preventDefault(); onSeek(animation.delay + Math.min(duration, current + step)); }
+          if (event.key === "ArrowLeft") { event.preventDefault(); onSeek(Math.max(0, current - step)); }
+          if (event.key === "ArrowRight") { event.preventDefault(); onSeek(Math.min(duration, current + step)); }
         }}>
         <span className="timeline-playhead-handle" />
       </div>
