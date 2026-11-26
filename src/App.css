@@ -894,8 +894,11 @@ button {
 .canvas-world { position: absolute; width: 100%; height: 100%; transform-origin: top left; pointer-events: none; }
 .canvas-world > :is(.canvas-frame, .canvas-node, .canvas-text, .canvas-image) { pointer-events: auto; }
 .canvas-surface.is-drawing { cursor: crosshair; }
-.draw-preview { position: absolute; border: 2px dashed var(--accent); border-radius: 2px; background: var(--accent-translucent); pointer-events: none; z-index: 10; }
-.draw-preview.is-ellipse { border-radius: 50%; }
+/* 描いている途中の形。外接する枠・四隅のつまみ・寸法の札を、選択枠と同じ見た目で出す。 */
+.draw-preview { position: absolute; outline: calc(1px / var(--canvas-zoom)) solid var(--accent); pointer-events: none; z-index: 10; }
+.draw-preview .resize-handle { pointer-events: none; }
+.draw-preview-shape { position: absolute; inset: 0; background: var(--accent-translucent); }
+.draw-preview-shape.is-ellipse { border: calc(1px / var(--canvas-zoom)) solid var(--accent); border-radius: 50%; }
 .pen-preview { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; color: var(--accent); pointer-events: none; z-index: 11; }
 .path-controls { position: absolute; overflow: visible; pointer-events: none; z-index: 12; }
 .frame-contents > .path-controls { pointer-events: none; }

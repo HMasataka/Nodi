@@ -113,8 +113,11 @@ export function Canvas(props: CanvasProps) {
                 {Number(textIcon.measurement.offset.toFixed(1))} px
               </text>
             </svg>}
-            {drawing && preview && <div className={`draw-preview${drawing.tool === "ellipse" ? " is-ellipse" : ""}`}
-               style={drawPreviewStyle(preview, drawing.parentTransform)} />}
+            {drawing && preview && <div className="draw-preview" style={drawPreviewStyle(preview, drawing.parentTransform)}>
+              <span className={`draw-preview-shape${drawing.tool === "ellipse" ? " is-ellipse" : ""}`} />
+              {RESIZE_CORNERS.map((corner) => <ResizeHandle key={`${corner.x}${corner.y}`} corner={corner} onPointerDown={() => {}} />)}
+              <span className="canvas-size-label" aria-hidden="true">{sizeLabel(preview.width, preview.height)}</span>
+            </div>}
             {pen && <svg className="pen-preview" aria-hidden="true">
               <polyline points={[...penPoints, ...(penCursor ? [penCursor] : [])].map((point) => `${point.x},${point.y}`).join(" ")}
                 fill="none" stroke="currentColor" strokeWidth={2 / zoom} strokeDasharray={`${5 / zoom} ${3 / zoom}`} />
