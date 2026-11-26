@@ -150,8 +150,8 @@ test("分割後のキャンバス・レイヤー・プロパティが同じ要�
     assert.match(clipped, /<foreignObject[^>]+clip-path="url\(#[^)]+\)"/);
     assert.match(clipped, /<img[^>]+style="object-fit:contain;object-position:20% 80%"/);
     assert.match(renderToStaticMarkup(createElement(Inspector, { selected: clippedImage, onImageStyle: noOp,
-      onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp })), /左上[^]*右上[^]*右下[^]*左下/);
-    assert.match(frameInspector, /左上[^]*右上[^]*右下[^]*左下/);
+      onRename: noOp, onGeometry: noOp, onTextContent: noOp, onTextStyle: noOp, onShapeStyle: noOp, onDuplicate: noOp, onDelete: noOp })), /左上[^]*右上[^]*左下[^]*右下/);
+    assert.match(frameInspector, /aria-label="4隅を別々に入力"[^>]*aria-pressed="false"/);
 
 
     const recovery = renderToStaticMarkup(createElement(RecoveryDialog, {

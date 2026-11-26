@@ -1,12 +1,12 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis, TextIconAlignment } from "@/document/commands/index.ts";
-import type { DocumentNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, PathNode, RectangleNode, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import type { ReactNode } from "react";
 
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
+import { FillEditor } from "@/pages/editor/components/molecules/FillEditor";
 import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayoutEditor";
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
-import { FrameStyleEditor } from "@/pages/editor/components/molecules/FrameStyleEditor";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { ImageStyleEditor } from "@/pages/editor/components/molecules/ImageStyleEditor";
@@ -15,11 +15,11 @@ import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { PathPointEditor } from "@/pages/editor/components/molecules/PathPointEditor";
 import { ShadowEditor } from "@/pages/editor/components/molecules/ShadowEditor";
-import { ShapeStyleEditor } from "@/pages/editor/components/molecules/ShapeStyleEditor";
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearance";
 
 import { blurOnEnter, Field } from "@/pages/editor/components/atoms/Field";
+import { DEFAULT_STROKE, hasStroke, StrokeEditor } from "@/pages/editor/components/molecules/StrokeEditor";
 import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 import { SectionHeader, type SectionHeaderAction } from "@/pages/editor/components/molecules/SectionHeader";
 
@@ -92,6 +92,28 @@ export function moreMenuEntries(node: DocumentNode, selectedCount: number, isExp
 export function belowAlignedEnd(opener: HTMLElement): { top: number; left: number } {
   const rect = opener.getBoundingClientRect();
   return { top: rect.bottom + 8, left: Math.max(8, rect.right - 200) };
+}
+
+// 見た目の節。塗りと線は未設定なら＋で足し、設定済みなら−で外す。角丸は矩形とフレームだけが持つ。
+function AppearanceSections({ node, onStyle }: { node: FrameNode | RectangleNode | EllipseNode | PathNode; onStyle(style: Partial<RectangleStyle>): void }) {
+  const style = node.style;
+  const stroked = hasStroke(style);
+  const defaultFill = node.type === "frame" ? "#ffffff" : "#d9d9d9";
+  return <>
+    <Section id="fill" title="塗り" action={style.fill === null
+      ? { kind: "add", label: "塗りを追加", onClick: () => onStyle({ fill: defaultFill }) }
+      : { kind: "remove", label: "塗りを外す", onClick: () => onStyle({ fill: null }) }}>
+      {style.fill !== null && <FillEditor label="種類" fill={style.fill} onChange={(fill) => onStyle({ fill })} />}
+    </Section>
+    <Section id="stroke" title="線" action={stroked
+      ? { kind: "remove", label: "線を外す", onClick: () => onStyle("border" in style ? { stroke: null, border: {} } : { stroke: null }) }
+      : { kind: "add", label: "線を追加", onClick: () => onStyle({ stroke: { ...DEFAULT_STROKE } }) }}>
+      {stroked && <StrokeEditor key={node.id} style={style} onChange={onStyle} />}
+    </Section>
+    {"cornerRadii" in style && <Section id="corners" title="角丸">
+      <CornerRadiiEditor key={node.id} radii={style.cornerRadii} onChange={(cornerRadii) => onStyle({ cornerRadii })} />
+    </Section>}
+  </>;
 }
 
 // プロパティの節。見出しと中身を一組にし、節の間は CSS で区切り線を引く。
@@ -200,6 +222,9 @@ export function Inspector(props: InspectorProps) {
         {node.type === "frame" && <Section id="layout" title="自動レイアウト">
           <FrameLayoutEditor key={`${node.id}:${node.layoutMode}:${node.padding}:${node.gap}:${node.paddingRef}:${node.gapRef}:${spacingTokens.map((token) => `${token.id}:${token.name}:${token.value}`).join(":")}:${node.alignItems}:${node.justifyContent}`}
             node={node} tokens={spacingTokens} onChange={onFrameLayout} />
+          <label className="frame-overflow-label">はみ出しを表示
+            <input type="checkbox" checked={!node.clipContent} onChange={(event) => onFrameStyle({ clipContent: !event.currentTarget.checked })} />
+          </label>
         </Section>}
         {node.type === "text" && <Section id="text" title="テキスト">
           <TextAppearance key={node.id} node={node} onTextContent={onTextContent} onTextStyle={onTextStyle} onTextMarkRange={onTextMarkRange} />
@@ -226,14 +251,10 @@ export function Inspector(props: InspectorProps) {
             <InstanceOverrides node={componentNode} overrides={node.overrides} onSetOverride={onSetOverride} onResetOverride={onResetOverride} />
           </Section>}
         </>}
-        {node.type === "frame" && <Section id="appearance" title="見た目">
-          <FrameStyleEditor key={`${node.id}:${JSON.stringify(node.style)}:${node.clipContent}`} node={node} onChange={onFrameStyle} />
-        </Section>}
-        {(node.type === "rectangle" || node.type === "ellipse" || node.type === "path") && <Section id="appearance" title="見た目">
-          <ShapeStyleEditor key={`${node.id}:${JSON.stringify(node.style)}`} node={node} onChange={onShapeStyle} />
-        </Section>}
+        {(node.type === "frame" || node.type === "rectangle" || node.type === "ellipse" || node.type === "path") && <AppearanceSections node={node}
+          onStyle={node.type === "frame" ? onFrameStyle : onShapeStyle} />}
         {node.type === "image" && <Section id="corners" title="角丸">
-          <CornerRadiiEditor key={`${node.id}:${JSON.stringify(node.style.cornerRadii)}`} radii={node.style.cornerRadii} onChange={(cornerRadii) => onImageStyle({ cornerRadii })} />
+          <CornerRadiiEditor key={node.id} radii={node.style.cornerRadii} onChange={(cornerRadii) => onImageStyle({ cornerRadii })} />
         </Section>}
         <Section id="effects" title="効果">
           <ShadowEditor key={`${node.id}:${JSON.stringify(node.shadow)}`} shadow={node.shadow} onChange={onShadow} />
