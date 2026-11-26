@@ -63,5 +63,5 @@ test("SVGとPNGは同じローカル方向と半透明のストップを用い�
   success(await renderFramePng(node, { createCanvas: () => canvas as unknown as HTMLCanvasElement, loadImage: async () => ({}) as HTMLImageElement }));
   assert.deepEqual(gradients[0], { points: [50, 0, 150, 100], stops: [[0, "#11223380"], [0.4, "#ff0000"], [1, "#445566ff"]] });
   assert.deepEqual(gradients[1].points, [25, 0, 75, 50]);
-  assert.match(renderToStaticMarkup(<FillEditor label="塗り" fill={gradient} onChange={() => {}} />), /色ストップを追加/);
+  assert.match(renderToStaticMarkup(<FillEditor fill={gradient} onChange={() => {}} />), /帯をクリックすると色の位置を足します/);
 });

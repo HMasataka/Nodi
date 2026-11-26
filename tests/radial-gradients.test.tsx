@@ -59,5 +59,5 @@ test("SVGとPNGは短辺基準の円形半径と同じ色ストップを使う",
   success(await renderFramePng(node, { createCanvas: () => canvas as unknown as HTMLCanvasElement, loadImage: async () => ({}) as HTMLImageElement }));
   assert.deepEqual(gradients[0], { points: [50, 75, 0, 50, 75, 40], stops: [[0, "#ff000080"], [0.5, "#112233"], [1, "#0000ff"]] });
   assert.deepEqual(gradients[1].points, [25, 75, 0, 25, 75, 40]);
-  assert.match(renderToStaticMarkup(<FillEditor label="塗り" fill={gradient} onChange={() => {}} />), /半径 %/);
+  assert.match(renderToStaticMarkup(<FillEditor fill={gradient} onChange={() => {}} />), />半径<\/label>/);
 });
