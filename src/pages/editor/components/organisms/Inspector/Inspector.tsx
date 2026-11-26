@@ -1,7 +1,7 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis, TextIconAlignment } from "@/document/commands/index.ts";
 import type { DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, PathNode, RectangleNode, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
@@ -10,7 +10,6 @@ import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayo
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
-import { ImageStyleEditor } from "@/pages/editor/components/molecules/ImageStyleEditor";
 import { InstanceOverrides } from "@/pages/editor/components/molecules/InstanceOverrides";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
@@ -21,6 +20,7 @@ import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearan
 import { blurOnEnter, Field } from "@/pages/editor/components/atoms/Field";
 import { DEFAULT_STROKE, hasStroke, StrokeEditor } from "@/pages/editor/components/molecules/StrokeEditor";
 import { EffectsEditor, nextEffect } from "@/pages/editor/components/molecules/EffectsEditor";
+import { ImageAdjustments, ImageStyleEditor } from "@/pages/editor/components/molecules/ImageStyleEditor";
 import { Menu, type MenuEntry } from "@/pages/editor/components/molecules/Menu";
 import { SectionHeader, type SectionHeaderAction } from "@/pages/editor/components/molecules/SectionHeader";
 
@@ -171,6 +171,8 @@ export function Inspector(props: InspectorProps) {
   const { selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle,
     onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder,
     onExportFrame, onCopyId, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
+  // 色調整の下位の画面を開いている画像の ID。別の要素を選ぶと閉じる。
+  const [adjusting, setAdjusting] = useState<string | null>(null);
   if (!selected) {
     return <aside className="sidebar inspector" aria-label="プロパティ">
       <p className="panel-empty">キャンバス上の要素を選択すると、ここに詳細が表示されます。</p>
@@ -193,6 +195,8 @@ export function Inspector(props: InspectorProps) {
             copyId: () => onCopyId(node.id),
           })} trigger={(trigger) => <IconButton {...trigger} icon="more" label="要素の操作" />} />
         </div>
+        {node.type === "image" && adjusting === node.id ? <ImageAdjustments filters={node.style.filters}
+          onChange={(filters) => onImageStyle({ filters })} onBack={() => setAdjusting(null)} /> : <>
         {selectedCount > 1 && <SelectionTools selectedCount={selectedCount} onAlign={props.onAlign} textIcon={props.textIcon}
           onAlignTextIcon={props.onAlignTextIcon} spacing={props.spacing} onDistribute={props.onDistribute} />}
         <Section id="geometry" title="位置とサイズ">
@@ -217,8 +221,7 @@ export function Inspector(props: InspectorProps) {
           <ColorField label="色" value={node.style.color} fallback="#222222" onChange={(color) => onTextStyle({ color })} />
         </Section>}
         {node.type === "image" && <Section id="image" title="画像">
-          <ImageStyleEditor key={`${node.id}:${node.style.fit}:${JSON.stringify(node.style.focalPoint)}`} node={node} onChange={onImageStyle} />
-          <p className="property-help">画像データは `.nodi` ファイル内に埋め込まれています。</p>
+          <ImageStyleEditor node={node} onChange={onImageStyle} onOpenAdjustments={() => setAdjusting(node.id)} />
         </Section>}
         {(node.type === "rectangle" || node.type === "ellipse") && <Section id="mask" title="マスク">
           <label className="mask-control">
@@ -253,6 +256,7 @@ export function Inspector(props: InspectorProps) {
         {node.type === "frame" && <Section id="preview" title="プレビュー">
           <FramePreview key={node.id} frame={node} spacing={spacingTokens} />
         </Section>}
+        </>}
       </div>
     </aside>
   );
