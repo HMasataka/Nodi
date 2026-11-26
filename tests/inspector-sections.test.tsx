@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { renderToStaticMarkup } from "react-dom/server";
 import { test } from "vitest";
 
@@ -10,7 +11,7 @@ const noOp = () => {};
 const handlers = { onRename: noOp, onGeometry: noOp, onRotation: noOp, onOpacity: noOp, onShadow: noOp, onBlur: noOp, onMask: noOp,
   onTextContent: noOp, onTextStyle: noOp, onTextMarkRange: noOp, onShapeStyle: noOp, onFrameStyle: noOp, onFrameLayout: noOp,
   onSizeConstraint: noOp, onImageStyle: noOp, onPath: noOp, onDuplicate: noOp, onDelete: noOp, onReorder: noOp, onExportFrame: noOp,
-  onCopyId: noOp, isExporting: false, onCreateComponent: noOp, onGoToDefinition: noOp, onSetOverride: noOp, onResetOverride: noOp, onDetach: noOp };
+  onCopyId: noOp, onOpenAnimation: noOp, onAddAnimation: noOp, isExporting: false, onCreateComponent: noOp, onGoToDefinition: noOp, onSetOverride: noOp, onResetOverride: noOp, onDetach: noOp };
 
 function sections(selected: DocumentNode, extra: Record<string, unknown> = {}): string[] {
   const markup = renderToStaticMarkup(<Inspector {...handlers} selected={selected} {...extra} />);
@@ -18,14 +19,14 @@ function sections(selected: DocumentNode, extra: Record<string, unknown> = {}): 
 }
 
 test("どの種類でも、位置とサイズ・種類ごとの節・見た目の節・効果の順に並べ、持たない節は出さない", () => {
-  assert.deepEqual(sections(frame()), ["位置とサイズ", "自動レイアウト", "塗り", "線", "角丸", "効果", "プレビュー"]);
-  assert.deepEqual(sections(text()), ["位置とサイズ", "テキスト", "文字色", "効果"]);
-  assert.deepEqual(sections(image()), ["位置とサイズ", "画像", "角丸", "効果"]);
-  assert.deepEqual(sections(rectangle()), ["位置とサイズ", "マスク", "塗り", "線", "角丸", "効果"]);
-  assert.deepEqual(sections(ellipse()), ["位置とサイズ", "マスク", "塗り", "線", "効果"]);
-  assert.deepEqual(sections(path()), ["位置とサイズ", "パス", "塗り", "線", "効果"]);
-  assert.deepEqual(sections(instance({ componentRef: "c" }), { componentNode: frame() }), ["位置とサイズ", "コンポーネント", "上書き", "効果"]);
-  assert.deepEqual(sections(rectangle(), { selectedCount: 2 }), ["2 個を選択中", "位置とサイズ", "マスク", "塗り", "線", "角丸", "効果"]);
+  assert.deepEqual(sections(frame()), ["位置とサイズ", "自動レイアウト", "塗り", "線", "角丸", "効果", "アニメーション", "プレビュー"]);
+  assert.deepEqual(sections(text()), ["位置とサイズ", "テキスト", "文字色", "効果", "アニメーション"]);
+  assert.deepEqual(sections(image()), ["位置とサイズ", "画像", "角丸", "効果", "アニメーション"]);
+  assert.deepEqual(sections(rectangle()), ["位置とサイズ", "マスク", "塗り", "線", "角丸", "効果", "アニメーション"]);
+  assert.deepEqual(sections(ellipse()), ["位置とサイズ", "マスク", "塗り", "線", "効果", "アニメーション"]);
+  assert.deepEqual(sections(path()), ["位置とサイズ", "パス", "塗り", "線", "効果", "アニメーション"]);
+  assert.deepEqual(sections(instance({ componentRef: "c" }), { componentNode: frame() }), ["位置とサイズ", "コンポーネント", "上書き", "効果", "アニメーション"]);
+  assert.deepEqual(sections(rectangle(), { selectedCount: 2 }), ["2 個を選択中", "位置とサイズ", "マスク", "塗り", "線", "角丸", "効果", "アニメーション"]);
 });
 
 test("見出しに種類と名前と「⋯」を出し、列から操作のボタンを外す", () => {
@@ -57,4 +58,27 @@ test("「⋯」メニューから各操作を実行でき、フレームだけ�
   assert.deepEqual(rect.filter((item) => item.disabled).map((item) => item.label), ["コンポーネントを作成", "PNG に書き出す"]);
   assert.ok(rect.some((item) => item.label === "選択中を削除"));
   assert.ok(moreMenuEntries(frame(), 1, true, actions).some((item) => item.type === "item" && item.label === "PNG を生成中…" && item.disabled));
+});
+
+test("アニメーションの節に名前とトリガーの行を並べ、押した行と＋で足したアニメーションを開く", () => {
+  const opened: string[] = [];
+  let added = 0;
+  const animations = [
+    { id: "a1", name: "Fade in", trigger: "load" as const, duration: 800, delay: 0, repeat: 1, tracks: [] },
+    { id: "a2", name: "Hover lift", trigger: "hover" as const, duration: 200, delay: 0, repeat: 1, tracks: [] },
+  ];
+  const markup = renderToStaticMarkup(<Inspector {...handlers} selected={frame({ animations })} onOpenAnimation={(id: string) => opened.push(id)}
+    onAddAnimation={() => { added += 1; }} />);
+  assert.deepEqual([...markup.matchAll(/class="animation-row-name">([^<]+)<\/span><span class="animation-row-trigger">([^<]+)</g)].map(([, name, trigger]) => `${name}:${trigger}`),
+    ["Fade in:読み込み", "Hover lift:ホバー"]);
+  assert.match(markup, /aria-label="アニメーションを追加"/);
+  assert.equal(added, 0);
+  assert.deepEqual(opened, []);
+});
+
+test("行を押すとタイムラインを開いてそのアニメーションを選び、＋で足したアニメーションもタイムラインで開く", async () => {
+  const page = await readFile(new URL("../src/pages/editor/index.tsx", import.meta.url), "utf8");
+  assert.match(page, /onOpenAnimation=\{\(id\) => \{ setActiveAnimationId\(id\); if \(!panels\.layout\.timeline\) panels\.toggle\("timeline"\); \}\}/);
+  const add = page.slice(page.indexOf("onAddAnimation={() => {"), page.indexOf("onAddAnimation={() => {") + 300);
+  assert.match(add, /const id = actions\.timeline\.onAddAnimation\(\);[^]*setActiveAnimationId\(id\);[^]*panels\.toggle\("timeline"\)/);
 });

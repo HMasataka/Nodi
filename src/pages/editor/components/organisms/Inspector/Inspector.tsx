@@ -1,5 +1,5 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis, TextIconAlignment } from "@/document/commands/index.ts";
-import type { DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, PathNode, RectangleNode, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { Animation, DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, PathNode, RectangleNode, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { type ReactNode, useState } from "react";
 
@@ -20,6 +20,7 @@ import { PathPointEditor } from "@/pages/editor/components/molecules/PathPointEd
 import { Segmented } from "@/pages/editor/components/atoms/Segmented";
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearance";
+import { TRIGGERS } from "@/pages/editor/components/molecules/TimelineHeader";
 
 import { blurOnEnter, Field } from "@/pages/editor/components/atoms/Field";
 import { DEFAULT_STROKE, hasStroke, StrokeEditor } from "@/pages/editor/components/molecules/StrokeEditor";
@@ -58,6 +59,8 @@ interface InspectorProps {
   onDistribute?(axis: SpacingAxis, mode: "equal" | number): void;
   onExportFrame(): void;
   onCopyId(id: string): void;
+  onOpenAnimation(id: string): void;
+  onAddAnimation(): void;
   isExporting: boolean;
   onCreateComponent(): void;
   onGoToDefinition(): void;
@@ -133,6 +136,17 @@ function SubScreen({ title, onBack, children }: { title: string; onBack(): void;
   </div>;
 }
 
+// アニメーションの一覧。名前とトリガーの行を並べ、押すとタイムラインでそのアニメーションを開く。設定はタイムラインで行う。
+function AnimationList({ animations, onOpen }: { animations: readonly Animation[]; onOpen(id: string): void }) {
+  if (animations.length === 0) return null;
+  return <div className="animation-rows">
+    {animations.map((animation) => <button key={animation.id} type="button" className="animation-row" onClick={() => onOpen(animation.id)}>
+      <span className="animation-row-name">{animation.name}</span>
+      <span className="animation-row-trigger">{TRIGGERS.find((trigger) => trigger.value === animation.trigger)?.label}</span>
+    </button>)}
+  </div>;
+}
+
 // プロパティの節。見出しと中身を一組にし、節の間は CSS で区切り線を引く。
 function Section({ id, title, action, children }: { id: string; title: string; action?: SectionHeaderAction; children: ReactNode }) {
   return <section className="inspector-section" aria-labelledby={`inspector-${id}`}>
@@ -186,7 +200,7 @@ function SelectionTools({ selectedCount, onAlign, textIcon, onAlignTextIcon, spa
 export function Inspector(props: InspectorProps) {
   const { selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle,
     onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder,
-    onExportFrame, onCopyId, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
+    onExportFrame, onCopyId, onOpenAnimation, onAddAnimation, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
   // 開いている下位の画面（画像の色調整かパスの点の編集）と、その要素の ID。別の要素を選ぶと閉じる。
   const [subScreen, setSubScreen] = useState<{ id: string; kind: "adjustments" | "points" } | null>(null);
   if (!selected) {
@@ -272,6 +286,9 @@ export function Inspector(props: InspectorProps) {
           else if (added?.blur !== undefined) onBlur(added.blur);
         } }}>
           <EffectsEditor key={node.id} shadow={node.shadow} blur={node.blur} onShadow={onShadow} onBlur={onBlur} />
+        </Section>
+        <Section id="animations" title="アニメーション" action={{ kind: "add", label: "アニメーションを追加", onClick: onAddAnimation }}>
+          <AnimationList animations={node.animations} onOpen={onOpenAnimation} />
         </Section>
         {/* プレビューのモード（#331）ができるまで、フレームの縮小表示をここに残す。 */}
         {node.type === "frame" && <Section id="preview" title="プレビュー">

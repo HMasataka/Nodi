@@ -11,7 +11,7 @@ const noOp = () => {};
 const inspect = (selected: DocumentNode) => renderToStaticMarkup(<Inspector selected={selected} onShapeStyle={noOp} onFrameStyle={noOp} onRename={noOp}
   onGeometry={noOp} onRotation={noOp} onOpacity={noOp} onShadow={noOp} onBlur={noOp} onMask={noOp} onTextContent={noOp} onTextStyle={noOp}
   onTextMarkRange={noOp} onFrameLayout={noOp} onSizeConstraint={noOp} onImageStyle={noOp} onPath={noOp} onDuplicate={noOp} onDelete={noOp}
-  onReorder={noOp} onExportFrame={noOp} onCopyId={noOp} isExporting={false} onCreateComponent={noOp} onGoToDefinition={noOp}
+  onReorder={noOp} onExportFrame={noOp} onCopyId={noOp} onOpenAnimation={noOp} onAddAnimation={noOp} isExporting={false} onCreateComponent={noOp} onGoToDefinition={noOp}
   onSetOverride={noOp} onResetOverride={noOp} onDetach={noOp} />);
 
 test("矩形と楕円はマスクの節に「マスクとして使う」のチェックボックスを置く", () => {
