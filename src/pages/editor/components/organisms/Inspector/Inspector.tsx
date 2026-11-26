@@ -9,7 +9,6 @@ import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FillEditor } from "@/pages/editor/components/molecules/FillEditor";
 import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayoutEditor";
-import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
 import { Icon } from "@/pages/editor/components/atoms/Icon";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
@@ -290,10 +289,6 @@ export function Inspector(props: InspectorProps) {
         <Section id="animations" title="アニメーション" action={{ kind: "add", label: "アニメーションを追加", onClick: onAddAnimation }}>
           <AnimationList animations={node.animations} onOpen={onOpenAnimation} />
         </Section>
-        {/* プレビューのモード（#331）ができるまで、フレームの縮小表示をここに残す。 */}
-        {node.type === "frame" && <Section id="preview" title="プレビュー">
-          <FramePreview key={node.id} frame={node} spacing={spacingTokens} />
-        </Section>}
         </>}
       </div>
     </aside>

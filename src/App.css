@@ -1188,14 +1188,6 @@ button {
 .text-icon-actions .file-button { margin-top: 5px; }
 .frame-layout-fields { display: flex; flex-direction: column; gap: var(--space-8); }
 .spacing-reference-note { margin: 0; color: var(--text-label); font-size: var(--font-size-11); line-height: var(--line-height-11); }
-.frame-preview { margin: 4px 0 8px; }
-.preview-controls { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
-.preview-controls .file-button { padding: 5px 8px; font-size: 10px; }
-.preview-controls .file-button.is-active { border-color: var(--accent); color: var(--accent); }
-.preview-width-field { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-subtle); }
-.preview-width-field input { width: 60px; }
-.preview-stage { position: relative; overflow: hidden; margin-top: 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--canvas-bg); }
-.preview-frame { position: absolute; top: 0; left: 0; transform-origin: top left; }
 /* タイムラインは左右のパネルの間で、キャンバスの下端から 228px を占める。作成ツールはキャンバスの下端から 12px なので、開くとタイムラインの 12px 上に移る。 */
 .timeline { display: flex; flex-direction: column; gap: 6px; flex: none; box-sizing: border-box; height: 228px; overflow: auto; padding: 0; border-top: 1px solid var(--line); background: var(--surface); }
 .timeline > :not(.timeline-header) { margin-inline: var(--space-16); }
