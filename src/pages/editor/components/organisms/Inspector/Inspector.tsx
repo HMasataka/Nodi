@@ -3,17 +3,20 @@ import type { DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageS
 
 import { type ReactNode, useState } from "react";
 
+import { Checkbox } from "@/pages/editor/components/atoms/Checkbox";
 import { ColorField } from "@/pages/editor/components/molecules/ColorField";
 import { CornerRadiiEditor } from "@/pages/editor/components/molecules/CornerRadiiEditor/CornerRadiiEditor";
 import { FillEditor } from "@/pages/editor/components/molecules/FillEditor";
 import { FrameLayoutEditor } from "@/pages/editor/components/molecules/FrameLayoutEditor";
 import { FramePreview } from "@/pages/editor/components/molecules/FramePreview";
 import { GeometryEditor } from "@/pages/editor/components/molecules/GeometryEditor";
+import { Icon } from "@/pages/editor/components/atoms/Icon";
 import { IconButton } from "@/pages/editor/components/atoms/IconButton";
 import { InstanceOverrides } from "@/pages/editor/components/molecules/InstanceOverrides";
 import { LayerIcon } from "@/pages/editor/components/atoms/LayerIcon";
 import { NameEditor } from "@/pages/editor/components/atoms/NameEditor";
 import { PathPointEditor } from "@/pages/editor/components/molecules/PathPointEditor";
+import { Segmented } from "@/pages/editor/components/atoms/Segmented";
 import { SizeConstraintEditor } from "@/pages/editor/components/molecules/SizeConstraintEditor";
 import { TextAppearance } from "@/pages/editor/components/molecules/TextAppearance";
 
@@ -117,6 +120,18 @@ function AppearanceSections({ node, onStyle }: { node: FrameNode | RectangleNode
   </>;
 }
 
+const FILL_RULES: readonly { value: PathFillRule; label: string }[] = [{ value: "nonzero", label: "非ゼロ" }, { value: "evenodd", label: "偶奇" }];
+
+// プロパティの見出しの下を置き換えて開く下位の画面。見出しの左で戻る。
+function SubScreen({ title, onBack, children }: { title: string; onBack(): void; children: ReactNode }) {
+  return <div className="sub-screen">
+    <div className="sub-screen-heading">
+      <button type="button" className="sub-screen-back" onClick={onBack}><Icon name="chevronLeft" /><span>{title}</span></button>
+    </div>
+    {children}
+  </div>;
+}
+
 // プロパティの節。見出しと中身を一組にし、節の間は CSS で区切り線を引く。
 function Section({ id, title, action, children }: { id: string; title: string; action?: SectionHeaderAction; children: ReactNode }) {
   return <section className="inspector-section" aria-labelledby={`inspector-${id}`}>
@@ -171,8 +186,8 @@ export function Inspector(props: InspectorProps) {
   const { selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle,
     onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder,
     onExportFrame, onCopyId, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
-  // 色調整の下位の画面を開いている画像の ID。別の要素を選ぶと閉じる。
-  const [adjusting, setAdjusting] = useState<string | null>(null);
+  // 開いている下位の画面（画像の色調整かパスの点の編集）と、その要素の ID。別の要素を選ぶと閉じる。
+  const [subScreen, setSubScreen] = useState<{ id: string; kind: "adjustments" | "points" } | null>(null);
   if (!selected) {
     return <aside className="sidebar inspector" aria-label="プロパティ">
       <p className="panel-empty">キャンバス上の要素を選択すると、ここに詳細が表示されます。</p>
@@ -195,8 +210,11 @@ export function Inspector(props: InspectorProps) {
             copyId: () => onCopyId(node.id),
           })} trigger={(trigger) => <IconButton {...trigger} icon="more" label="要素の操作" />} />
         </div>
-        {node.type === "image" && adjusting === node.id ? <ImageAdjustments filters={node.style.filters}
-          onChange={(filters) => onImageStyle({ filters })} onBack={() => setAdjusting(null)} /> : <>
+        {node.type === "image" && subScreen?.id === node.id && subScreen.kind === "adjustments" ? <ImageAdjustments filters={node.style.filters}
+          onChange={(filters) => onImageStyle({ filters })} onBack={() => setSubScreen(null)} />
+        : node.type === "path" && subScreen?.id === node.id && subScreen.kind === "points" ? <SubScreen title="点を編集" onBack={() => setSubScreen(null)}>
+          <PathPointEditor node={node} onChange={onPath} />
+        </SubScreen> : <>
         {selectedCount > 1 && <SelectionTools selectedCount={selectedCount} onAlign={props.onAlign} textIcon={props.textIcon}
           onAlignTextIcon={props.onAlignTextIcon} spacing={props.spacing} onDistribute={props.onDistribute} />}
         <Section id="geometry" title="位置とサイズ">
@@ -221,15 +239,16 @@ export function Inspector(props: InspectorProps) {
           <ColorField label="色" value={node.style.color} fallback="#222222" onChange={(color) => onTextStyle({ color })} />
         </Section>}
         {node.type === "image" && <Section id="image" title="画像">
-          <ImageStyleEditor node={node} onChange={onImageStyle} onOpenAdjustments={() => setAdjusting(node.id)} />
+          <ImageStyleEditor node={node} onChange={onImageStyle} onOpenAdjustments={() => setSubScreen({ id: node.id, kind: "adjustments" })} />
         </Section>}
         {(node.type === "rectangle" || node.type === "ellipse") && <Section id="mask" title="マスク">
-          <label className="mask-control">
-            <input type="checkbox" checked={node.isMask} onChange={(event) => onMask(event.currentTarget.checked)} />マスクとして使う
-          </label>
+          <Checkbox label="マスクとして使う" checked={node.isMask} onChange={onMask} />
         </Section>}
         {node.type === "path" && <Section id="path" title="パス">
-          <PathPointEditor node={node} onChange={onPath} />
+          <button type="button" className="link-row" onClick={() => setSubScreen({ id: node.id, kind: "points" })}>
+            <span>点を編集</span><span className="link-row-note">{node.commands.filter((command) => command.kind !== "close").length} 点</span><Icon name="pen" />
+          </button>
+          <Segmented<PathFillRule> label="塗りの規則" value={node.fillRule} options={FILL_RULES} onChange={(fillRule) => onPath({ fillRule })} />
         </Section>}
         {node.type === "instance" && <>
           <Section id="component" title="コンポーネント">
