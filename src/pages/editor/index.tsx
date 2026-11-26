@@ -1,5 +1,5 @@
 import { Result } from "@praha/byethrow";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
 import { countRenderedTextLines } from "@/pages/editor/textIconMeasurement.ts";
@@ -8,6 +8,7 @@ import { findNode } from "@/document/commands/index.ts";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
 import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
+import { PreviewStage } from "@/pages/editor/components/organisms/PreviewStage";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
 import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
@@ -51,6 +52,9 @@ function EditorPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
   // タイムラインで開いているアニメーション。プロパティのアニメーションの行からも切り換える。
   const [activeAnimationId, setActiveAnimationId] = useState<string | null>(null);
+  // プレビュー中か。選択がフレームでなくなったら（元に戻すなどで）プレビューを終える。
+  const [previewing, setPreviewing] = useState(false);
+  const closePreview = useCallback(() => setPreviewing(false), []);
   const actions = useEditorActions(session, { playhead: playback.playhead, scrollProgress });
   const interactionState = { hoveredIds: new Set(hoveredId ? [hoveredId] : []), clickedIds };
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
@@ -58,6 +62,7 @@ function EditorPage() {
     confirmation, recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
   const spacingUsages = Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]));
   const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
+  const previewFrame = previewing && selected?.type === "frame" ? selected : null;
   const selectedComponentName = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.name : undefined;
   const selectedComponentNode = selected?.type === "instance" ? design.components.find((component) => component.id === selected.componentRef)?.node : undefined;
   const spacingX = selectedIds.length >= 3 ? measureSelectionSpacing(design, selectedIds, "x") : null;
@@ -144,9 +149,11 @@ function EditorPage() {
             leftPanelOpen={panels.layout.left} onToggleLeftPanel={() => panels.toggle("left")}
             onOpen={() => { void openFile(); }} onSave={() => { void saveFile(); }} onImportSvg={actions.importSvg}
             onUndo={() => stepHistory("undo")} onRedo={() => stepHistory("redo")} />
-          <ActionChip zoom={zoom} rightPanelOpen={panels.layout.right} onToggleRightPanel={() => panels.toggle("right")} />
-          <FloatingTools drawTool={drawTool} onDrawToolChange={setDrawTool} onImportImage={actions.importImage}
-            timelineOpen={panels.layout.timeline} onToggleTimeline={() => panels.toggle("timeline")} />
+          {previewFrame && <PreviewStage frame={previewFrame} spacing={design.spacing} onClose={closePreview} />}
+          <ActionChip zoom={zoom} rightPanelOpen={panels.layout.right} onToggleRightPanel={() => panels.toggle("right")}
+            previewing={!!previewFrame} canPreview={selected?.type === "frame"} onTogglePreview={() => setPreviewing(!previewFrame)} />
+          {!previewFrame && <FloatingTools drawTool={drawTool} onDrawToolChange={setDrawTool} onImportImage={actions.importImage}
+            timelineOpen={panels.layout.timeline} onToggleTimeline={() => panels.toggle("timeline")} />}
           {error && <ErrorToast message={error} onClose={() => setError(null)} />}
         </div>
         {panels.layout.timeline && <Timeline node={selected} playback={playback} scrollProgress={scrollProgress} onScrollProgress={setScrollProgress} {...actions.timeline}
