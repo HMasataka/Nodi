@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { mapChildGroups } from "@/document/childGroups.ts";
 import { collectNodes, findNode, updateNode } from "@/document/commands/tree.ts";
 import { type Document, type DocumentNode, HEX_COLOR_PATTERN, type PaletteColor } from "@/document/types.ts";
 
@@ -44,8 +45,8 @@ export function renameTheme(document: Document, from: string, to: string): Resul
   if (typeof to !== "string" || to.trim() === "") return Result.fail(new Error("テーマ名は空にできません"));
   if (from === to) return Result.succeed(document);
   if (themes.includes(to)) return Result.fail(new Error(`テーマ名が重複しています: ${to}`));
-  const rename = (node: DocumentNode): DocumentNode => node.type !== "frame" ? node
-    : { ...node, ...(node.theme === from ? { theme: to } : {}), children: node.children.map(rename) };
+  const rename = (node: DocumentNode): DocumentNode => mapChildGroups(node.type === "frame" && node.theme === from ? { ...node, theme: to } : node,
+    (nodes) => nodes.map(rename));
   return Result.succeed({
     ...document,
     themes: themes.map((theme) => theme === from ? to : theme),

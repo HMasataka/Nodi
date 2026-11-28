@@ -69,6 +69,9 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_instance_override": return withInput(agentInputs.set_instance_override, args, ({ id, childId, ...patch }) => api.setInstanceOverride(id, childId, patch));
       case "reset_instance_override": return withInput(agentInputs.reset_instance_override, args, ({ id, childId }) => api.resetInstanceOverride(id, childId));
       case "detach_instance": return withInput(agentInputs.detach_instance, args, ({ id }) => api.detachInstance(id));
+      case "set_component_slot": return withInput(agentInputs.set_component_slot, args, ({ componentId, nodeId, slot }) => api.setComponentSlot(componentId, nodeId, slot));
+      case "fill_slot": return withInput(agentInputs.fill_slot, args, ({ id, slotId, nodeIds }) => api.fillSlot(id, slotId, nodeIds));
+      case "reset_slot": return withInput(agentInputs.reset_slot, args, ({ id, slotId }) => api.resetSlot(id, slotId));
       default: return Result.fail(new Error(`未知の操作です: ${method}`));
     }
   })();

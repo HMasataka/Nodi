@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { mapChildGroups } from "@/document/childGroups.ts";
 import { overrideTarget } from "@/document/overridePath.ts";
 import { validateName } from "@/document/commands/validation.ts";
 import { collectNodes, findNode, updateNode } from "@/document/commands/tree.ts";
@@ -121,4 +122,102 @@ export function detachInstance(document: Document, instanceId: string): Result.R
   const updated = updateNode(document, instanceId, () => detached);
   if (Result.isFailure(updated)) return updated;
   return Result.succeed({ document: updated.value, node: detached });
+}
+
+// 定義のツリーの中の要素を更新する。見つからなければ undefined。
+function updateDefinitionNode(node: DocumentNode, id: string, update: (node: DocumentNode) => DocumentNode): DocumentNode | undefined {
+  if (node.id === id) return update(node);
+  if (node.type !== "frame") return undefined;
+  for (const [index, child] of node.children.entries()) {
+    const updated = updateDefinitionNode(child, id, update);
+    if (updated) return { ...node, children: node.children.map((item, position) => position === index ? updated : item) };
+  }
+  return undefined;
+}
+
+// slot でなくなったフレームを指す差し替えを、文書と定義のすべてのインスタンスから外す（取り残さない）。
+function pruneSlots(document: Document): Document {
+  const definitionOf = (ref: string) => document.components.find((component) => component.id === ref)?.node;
+  const prune = (node: DocumentNode): DocumentNode => {
+    const pruned = mapChildGroups(node, (nodes) => nodes.map(prune));
+    if (pruned.type !== "instance" || !pruned.slots) return pruned;
+    const definition = definitionOf(pruned.componentRef);
+    const entries = Object.entries(pruned.slots).filter(([key]) => {
+      const target = definition ? overrideTarget(definition, key, definitionOf) : undefined;
+      return target?.type === "frame" && target.slot === true;
+    });
+    if (entries.length === Object.keys(pruned.slots).length) return pruned;
+    const { slots: _removed, ...rest } = pruned;
+    return entries.length === 0 ? rest : { ...rest, slots: Object.fromEntries(entries) };
+  };
+  return { ...document, children: document.children.map(prune), components: document.components.map((component) => ({ ...component, node: prune(component.node) })) };
+}
+
+/**
+ * コンポーネントの定義のフレームに slot の印を付ける・外す。子は既定の中身になる。
+ * 外したときは、そのフレームを指していたインスタンスの差し替えも一緒に外す。
+ */
+export function setComponentSlot(document: Document, componentId: string, nodeId: string, slot: boolean): Result.Result<Document, Error> {
+  const definition = document.components.find((component) => component.id === componentId);
+  if (!definition) return Result.fail(new Error(`コンポーネント定義が見つかりません: ${componentId}`));
+  if (typeof slot !== "boolean") return Result.fail(new Error("slot は true か false で指定してください"));
+  const target = collectNodes([definition.node]).find((node) => node.id === nodeId);
+  if (!target) return Result.fail(new Error(`定義の中に要素が見つかりません: ${nodeId}`));
+  if (target.type !== "frame") return Result.fail(new Error("slot はフレームにだけ付けられます"));
+  if ((target.slot === true) === slot) return Result.succeed(document);
+  const node = updateDefinitionNode(definition.node, nodeId, (current) => {
+    if (current.type !== "frame") return current;
+    const { slot: _removed, ...rest } = current;
+    return slot ? { ...rest, slot: true } : rest;
+  })!;
+  const updated = { ...document, components: document.components.map((component) => component.id === componentId ? { ...component, node } : component) };
+  return Result.succeed(slot ? updated : pruneSlots(updated));
+}
+
+function slotTarget(document: Document, instanceId: string, slotId: string): Result.Result<InstanceNode, Error> {
+  const instance = findNode(document, instanceId);
+  if (!instance || instance.type !== "instance") return Result.fail(new Error(`インスタンスが見つかりません: ${instanceId}`));
+  const definitionOf = (ref: string) => document.components.find((component) => component.id === ref)?.node;
+  const definition = definitionOf(instance.componentRef);
+  if (!definition) return Result.fail(new Error(`コンポーネント定義が見つかりません: ${instance.componentRef}`));
+  const target = overrideTarget(definition, slotId, definitionOf);
+  if (target?.type !== "frame" || !target.slot) return Result.fail(new Error(`slot が見つかりません: ${slotId}`));
+  return Result.succeed(instance);
+}
+
+/**
+ * インスタンスの slot の中身を、文書の要素 `nodeIds` に差し替える。要素は元の場所から移し、ID はそのまま保つ。
+ * 前の差し替えの中身のうち `nodeIds` に含めなかったものは消える。空の配列で slot を空にする。
+ */
+export function fillSlot(document: Document, instanceId: string, slotId: string, nodeIds: string[]): Result.Result<Document, Error> {
+  const target = slotTarget(document, instanceId, slotId);
+  if (Result.isFailure(target)) return target;
+  if (!Array.isArray(nodeIds) || new Set(nodeIds).size !== nodeIds.length) return Result.fail(new Error("移す要素の ID を重複なく指定してください"));
+  const nodes: DocumentNode[] = [];
+  for (const id of nodeIds) {
+    const node = findNode(document, id);
+    if (!node) return Result.fail(new Error(`要素が見つかりません: ${id}`));
+    const descendants = new Set(collectNodes([node]).map((item) => item.id));
+    if (descendants.has(instanceId)) return Result.fail(new Error(`インスタンス自身やその親は slot に入れられません: ${id}`));
+    if (nodeIds.some((other) => other !== id && descendants.has(other))) return Result.fail(new Error(`親と子を同時に指定できません: ${id}`));
+    nodes.push(node);
+  }
+  // 要素を元の場所から取り除いてから、slot の中身を置き換える。
+  const moving = new Set(nodeIds);
+  const remove = (items: DocumentNode[]): DocumentNode[] => items.flatMap((node) => moving.has(node.id) ? [] : [mapChildGroups(node, remove)]);
+  const removed = { ...document, children: remove(document.children) };
+  return updateNode(removed, instanceId, (node) => node.type === "instance" ? { ...node, slots: { ...node.slots, [slotId]: nodes } } : node);
+}
+
+/** インスタンスの slot の差し替えを外し、定義の既定の中身に戻す。 */
+export function resetSlot(document: Document, instanceId: string, slotId: string): Result.Result<Document, Error> {
+  const target = slotTarget(document, instanceId, slotId);
+  if (Result.isFailure(target)) return target;
+  if (!target.value.slots || !(slotId in target.value.slots)) return Result.fail(new Error(`slot は差し替えられていません: ${slotId}`));
+  return updateNode(document, instanceId, (node) => {
+    if (node.type !== "instance" || !node.slots) return node;
+    const { [slotId]: _removed, ...slots } = node.slots;
+    const { slots: _all, ...rest } = node;
+    return Object.keys(slots).length === 0 ? rest : { ...rest, slots };
+  });
 }

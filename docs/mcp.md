@@ -98,6 +98,9 @@ get_state {}
 - `set_instance_override`: `id`（インスタンス）・`childId`（定義の子要素 ID、または入れ子のインスタンスの中を指す `入れ子のインスタンスID/子のID`）と変更属性でオーバーライドする。属性は `content`・`fill`・`stroke`・`color`・`source`・`width`・`height`・`visible`・`opacity`・`cornerRadii`・フレームの `layoutMode`・`padding`・`gap`・`alignItems`・`justifyContent`・テキストの `fontSize`・`fontWeight`・`fontFamily`・`lineHeight`・`letterSpacing`・`textAlign`。要素の種類ごとに指定できる属性は [文書形式](document-format.md) のとおりで、合わない属性はエラーになる。`visible: true` で、定義では隠した子をこのインスタンスでだけ出せる。
 - `reset_instance_override`: 指定した子（パスも可）のオーバーライドを解除し、定義側の値へ戻す。存在しないパスはエラーになる。
 - `detach_instance`: インスタンスをその時点の解決済み表示のまま通常要素へ切り離す。切り離したツリーには新しい ID を割り当てる。
+- `set_component_slot`: `componentId`・`nodeId`（定義の中のフレーム）・`slot`（真偽値）で、定義のフレームに slot の印を付ける・外す。子は既定の中身になる。外すと、そのフレームを指していたインスタンスの差し替えも外れる。
+- `fill_slot`: `id`（インスタンス）・`slotId`（slot のフレームの ID、入れ子は `入れ子のインスタンスID/slotのID`）・`nodeIds` で、slot の中身を文書の要素に差し替える。要素は元の場所から移し、ID はそのまま保つ。前の中身のうち `nodeIds` に含めなかったものは消える。空の配列で slot を空にする。インスタンス自身やその親は入れられない。差し替えた中身の要素は要素一覧に並び（`parentId` はインスタンス）、普段のツールで個別に編集できる。インスタンスの要素参照は `slots`（slot ごとの直下の要素 ID）を返す。
+- `reset_slot`: `id`・`slotId` で差し替えを外し、定義の既定の中身に戻す。差し替えていた中身は消える。
 
 `get_state` を呼び、続けて `add_element` で名前付き矩形を追加する。返された名前と ID を使って `rename_element`・`move_element` を呼ぶと、画面にも変更が反映される。画面の「元に戻す」で操作を戻せることを確認する。存在しない ID を指定した場合はエラーとなり、ドキュメントは変わらない。
 

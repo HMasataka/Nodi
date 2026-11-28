@@ -1,3 +1,4 @@
+import { mapChildGroups } from "@/document/childGroups.ts";
 import { type Border, type BoxStyle, type Color, type Document, type DocumentNode, type Fill, HEX_COLOR_PATTERN, type InstanceOverride, type PaletteColor, type Shadow, type ShapeStyle, type Stroke, type TextMark, type TextStyle } from "@/document/types.ts";
 
 /** 直接の 6/8桁 HEX かパレット参照かを判定する。 */
@@ -151,7 +152,9 @@ function mapNode(node: DocumentNode, map: (color: Color) => Color): DocumentNode
         if (next !== override) changed = true;
         overrides[key] = next;
       }
-      return !changed && shadow === node.shadow ? node : { ...node, shadow, ...(changed ? { overrides } : {}) };
+      const mapped = !changed && shadow === node.shadow ? node : { ...node, shadow, ...(changed ? { overrides } : {}) };
+      // slot に差し替えた中身の色も文書の一部として変える。
+      return mapChildGroups(mapped, (nodes) => mapChildren(nodes, map));
     }
   }
 }

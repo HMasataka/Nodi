@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { mapChildGroups } from "@/document/childGroups.ts";
 import { validateName } from "@/document/commands/validation.ts";
 import { collectNodes, findNode } from "@/document/commands/tree.ts";
 import { type ComponentDefinition, type Document, type DocumentNode } from "@/document/types.ts";
@@ -14,11 +15,7 @@ function uniqueId(prefix: string, used: Set<string>): string {
 }
 
 function copyTree(node: DocumentNode, used: Set<string>): DocumentNode {
-  const id = uniqueId("nd_", used);
-  if (node.type === "frame") {
-    return { ...node, id, children: node.children.map((child) => copyTree(child, used)) };
-  }
-  return { ...node, id };
+  return mapChildGroups({ ...node, id: uniqueId("nd_", used) }, (nodes) => nodes.map((child) => copyTree(child, used)));
 }
 
 export function createComponent(

@@ -1,9 +1,10 @@
 import { Result } from "@praha/byethrow";
 
+import { childNodes } from "@/document/childGroups.ts";
 import { importSvgIcon } from "@/document/commands/svgImport.ts";
 import { resolvedSpacing } from "@/document/spacing.ts";
 import type { SvgIcon } from "@/document/svgPath.ts";
-import { addNode, type AddNodeInput, addPaletteColor, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, moveNode, removeComponent, removePaletteColor, removeSpacingToken, renameComponent, renameNode, renamePaletteColor, renameSpacingToken, renameTheme, resetInstanceOverride, setBlur, setBorder, setFrameLayout, setFrameStyle, setFrameTheme, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPaletteColor, setPaletteThemeColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle, setThemes, setVisible } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, addPaletteColor, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, duplicatePaletteColor, fillSlot, type FrameLayoutPatch, moveNode, removeComponent, removePaletteColor, removeSpacingToken, renameComponent, renameNode, renamePaletteColor, renameSpacingToken, renameTheme, resetInstanceOverride, resetSlot, setBlur, setBorder, setComponentSlot, setFrameLayout, setFrameStyle, setFrameTheme, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPaletteColor, setPaletteThemeColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle, setThemes, setVisible } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PaletteColor, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -40,6 +41,9 @@ export interface ElementReference {
   source?: string;
   componentRef?: string;
   overrides?: Record<string, InstanceOverride>;
+  /** slot に差し替えた中身の、直下の要素の ID。中身の要素は要素一覧にも並び、parentId はこのインスタンス。 */
+  slots?: Record<string, string[]>;
+  slot?: true;
 }
 
 export interface EditorPort {
@@ -86,9 +90,11 @@ export function listElements(document: Document, includeImageSource = false): El
           ...(node.paddingRef ? { paddingRef: node.paddingRef } : {}), ...(node.gapRef ? { gapRef: node.gapRef } : {}),
           ...(node.theme === undefined ? {} : { theme: node.theme }) } : {}),
         ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
-        ...(node.type === "instance" ? { componentRef: node.componentRef, overrides: structuredClone(node.overrides) } : {}),
+        ...(node.type === "instance" ? { componentRef: node.componentRef, overrides: structuredClone(node.overrides),
+          ...(node.slots ? { slots: Object.fromEntries(Object.entries(node.slots).map(([key, nodes]) => [key, nodes.map((child) => child.id)])) } : {}) } : {}),
+        ...(node.type === "frame" && node.slot ? { slot: true as const } : {}),
       });
-      if (node.type === "frame") visit(node.children, path, node.id);
+      visit(childNodes(node), path, node.id);
     }
   }
   visit(document.children, [], null);
@@ -345,6 +351,21 @@ export function createAgentApi(port: EditorPort) {
     },
     resetInstanceOverride(id: string, childId: string) {
       return applyToElement(id, resetInstanceOverride(port.getDocument(), id, childId));
+    },
+    setComponentSlot(componentId: string, nodeId: string, slot: boolean) {
+      const result = setComponentSlot(port.getDocument(), componentId, nodeId, slot);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      if (result.value !== port.getDocument()) port.apply(result.value);
+      const component = result.value.components.find((item) => item.id === componentId)!;
+      return Result.succeed({ id: component.id, name: component.name, node: structuredClone(component.node) });
+    },
+    fillSlot(id: string, slotId: string, nodeIds: string[]) {
+      return applyToElement(id, fillSlot(port.getDocument(), id, slotId, nodeIds));
+    },
+    resetSlot(id: string, slotId: string) {
+      return applyToElement(id, resetSlot(port.getDocument(), id, slotId));
     },
     detachInstance(id: string) {
       const result = detachInstance(port.getDocument(), id);

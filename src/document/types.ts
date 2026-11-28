@@ -175,6 +175,8 @@ export interface FrameNode extends NodeGeometry {
   gapRef?: string;
   /** フレーム自身と子孫の色参照を解決するテーマ。未指定なら親に従い、最上位では文書の最初のテーマ。 */
   theme?: string;
+  /** コンポーネントの定義の中で、インスタンスごとに中身（子）を差し替えられる場所にする。子は既定の中身。 */
+  slot?: true;
   alignItems: LayoutAlignment;
   justifyContent: LayoutJustify;
   children: DocumentNode[];
@@ -262,6 +264,8 @@ export interface InstanceNode extends NodeGeometry {
   type: "instance";
   componentRef: string;
   overrides: Record<string, InstanceOverride>;
+  /** slot に差し替えた中身。キーは定義の slot のフレームを指すパス（オーバーライドと同じ書き方）。 */
+  slots?: Record<string, DocumentNode[]>;
 }
 
 export type DocumentNode = FrameNode | RectangleNode | EllipseNode | PathNode | TextNode | ImageNode | InstanceNode;

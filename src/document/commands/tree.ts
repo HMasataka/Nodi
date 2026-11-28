@@ -1,21 +1,21 @@
 import { Result } from "@praha/byethrow";
+
+import { childNodes, mapChildGroups } from "@/document/childGroups.ts";
 import type { Document, DocumentNode } from "@/document/types.ts";
 
 export function findNode(document: Document, id: string): DocumentNode | undefined {
   function search(nodes: DocumentNode[]): DocumentNode | undefined {
     for (const node of nodes) {
       if (node.id === id) return node;
-      if (node.type === "frame") {
-        const child = search(node.children);
-        if (child) return child;
-      }
+      const child = search(childNodes(node));
+      if (child) return child;
     }
   }
   return search(document.children);
 }
 
 export function collectNodes(nodes: DocumentNode[]): DocumentNode[] {
-  return nodes.flatMap((node) => [node, ...(node.type === "frame" ? collectNodes(node.children) : [])]);
+  return nodes.flatMap((node) => [node, ...collectNodes(childNodes(node))]);
 }
 
 export function updateNode(
@@ -31,9 +31,7 @@ export function updateNode(
         found = true;
         return update(node);
       }
-      if (node.type !== "frame") return node;
-      const children = updateChildren(node.children);
-      return children === node.children ? node : { ...node, children };
+      return mapChildGroups(node, updateChildren);
     });
     return updated.every((node, index) => node === nodes[index]) ? nodes : updated;
   }

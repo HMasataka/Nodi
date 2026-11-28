@@ -1,3 +1,4 @@
+import { mapChildGroups } from "@/document/childGroups.ts";
 import { Result } from "@praha/byethrow";
 import { collectNodes, findNode } from "@/document/commands/tree.ts";
 import type { Document, DocumentNode } from "@/document/types.ts";
@@ -11,7 +12,7 @@ export function deleteNodes(document: Document, ids: string[]): Result.Result<Do
   function remove(nodes: DocumentNode[]): DocumentNode[] {
     return nodes.flatMap((node) => {
       if (selected.has(node.id)) return [];
-      return [node.type === "frame" ? { ...node, children: remove(node.children) } : node];
+      return [mapChildGroups(node, remove)];
     });
   }
   return Result.succeed({ ...document, children: remove(document.children) });
@@ -31,11 +32,7 @@ export function reorderNode(document: Document, id: string, direction: LayerDire
       result.splice(nextIndex, 0, result.splice(index, 1)[0]);
       return result;
     }
-    const updated = nodes.map((node) => {
-      if (node.type !== "frame") return node;
-      const children = reorder(node.children);
-      return children === node.children ? node : { ...node, children };
-    });
+    const updated = nodes.map((node) => mapChildGroups(node, reorder));
     return updated.every((node, position) => node === nodes[position]) ? nodes : updated;
   }
   const children = reorder(document.children);
@@ -68,16 +65,15 @@ export function duplicateNode(
     ids.add(nextId);
     const geometry = root ? { x: node.x + 24, y: node.y + 24 } : {};
     const copiedName = root ? name : node.name;
-    return node.type === "frame"
-      ? { ...node, ...geometry, id: nextId, name: copiedName, children: node.children.map((child) => copy(child)) }
-      : { ...node, ...geometry, id: nextId, name: copiedName };
+    // フレームの子も、インスタンスの slot に差し替えた中身も、新しい ID で写す。
+    return mapChildGroups({ ...node, ...geometry, id: nextId, name: copiedName }, (nodes) => nodes.map((child) => copy(child)));
   }
 
   const duplicated = copy(source, true);
   function insert(nodes: DocumentNode[]): DocumentNode[] {
     return nodes.flatMap((node) => {
       if (node.id === id) return [node, duplicated];
-      return [node.type === "frame" ? { ...node, children: insert(node.children) } : node];
+      return [mapChildGroups(node, insert)];
     });
   }
   return Result.succeed({ document: { ...document, children: insert(document.children) }, node: duplicated });
