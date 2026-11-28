@@ -43,6 +43,7 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("set_element_geometry", "ID で要素の親基準 x・y・width・height を変更（px）", agentInputs.set_element_geometry, true);
   tool("set_rotation", "ID で要素を中心基準で時計回りに回転（度）", agentInputs.set_rotation, true);
   tool("set_mask", "矩形・楕円をマスクに設定または解除", agentInputs.set_mask, true);
+  tool("set_visible", "要素を表示するか隠すかを切り替える。隠した要素は描画・PNG 書き出し・自動レイアウトから外れ、レイヤー一覧には残る", agentInputs.set_visible, true);
   tool("set_opacity", "要素全体の不透明度を0〜1で設定", agentInputs.set_opacity, true);
   tool("set_shadow", "要素全体の外側影を設定または解除（色は直接HEXまたはパレット参照）", agentInputs.set_shadow, true);
   tool("set_blur", "要素全体のぼかし量をpxで設定", agentInputs.set_blur, true);
@@ -73,7 +74,7 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("remove_component", "未使用のコンポーネント定義を削除（使用中は拒否）", agentInputs.remove_component, true);
   tool("duplicate_component", "コンポーネント定義を複製し、新しい ID を割り当てる", agentInputs.duplicate_component, true);
   tool("add_instance", "コンポーネント定義を参照するインスタンスを配置", agentInputs.add_instance, true);
-  tool("set_instance_override", "インスタンスの子要素にオーバーライド（文言・色・画像・サイズ）を設定", agentInputs.set_instance_override, true);
+  tool("set_instance_override", "インスタンスの子要素にオーバーライド（文言・色・画像・サイズ・表示）を設定", agentInputs.set_instance_override, true);
   tool("reset_instance_override", "インスタンスのオーバーライドを解除して定義の値へ戻す", agentInputs.reset_instance_override, true);
   tool("detach_instance", "インスタンスをその時点の表示のまま通常の要素へ切り離す", agentInputs.detach_instance, true);
   return server;

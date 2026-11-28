@@ -12,4 +12,4 @@ export { createComponent, duplicateComponent, removeComponent, renameComponent }
 export { createInstance, type CreateInstanceInput, detachInstance, resetInstanceOverride, setInstanceOverride } from "@/document/commands/instance.ts";
 export { importSvgIcon } from "@/document/commands/svgImport.ts";
 export { findNode } from "@/document/commands/tree.ts";
-export { moveNode, moveNodes, renameNode, setBlur, setMask, setNodeGeometry, setOpacity, setRotation, setShadow } from "@/document/commands/update.ts";
+export { moveNode, moveNodes, renameNode, setBlur, setMask, setNodeGeometry, setOpacity, setRotation, setShadow, setVisible } from "@/document/commands/update.ts";

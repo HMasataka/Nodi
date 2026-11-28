@@ -45,6 +45,8 @@ export const DEFAULT_ANIMATION_DELAY = 0;
 export const DEFAULT_ANIMATION_REPEAT = 1;
 
 export interface NodeGeometry extends RotatedGeometry {
+  /** false のとき描画・PNG 書き出し・自動レイアウトから外す。レイヤー一覧には残す。 */
+  visible: boolean;
   opacity: number;
   shadow: Shadow | null;
   blur: number;
@@ -233,6 +235,7 @@ export interface InstanceOverride {
   source?: string;
   width?: number;
   height?: number;
+  visible?: boolean;
 }
 
 export interface InstanceNode extends NodeGeometry {

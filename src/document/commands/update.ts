@@ -68,6 +68,11 @@ export function setOpacity(document: Document, id: string, opacity: number): Res
   return updateNode(document, id, (node) => node.opacity === opacity ? node : { ...node, opacity });
 }
 
+export function setVisible(document: Document, id: string, visible: boolean): Result.Result<Document, Error> {
+  if (typeof visible !== "boolean") return Result.fail(new Error("表示は true か false で指定してください"));
+  return updateNode(document, id, (node) => node.visible === visible ? node : { ...node, visible });
+}
+
 export function setShadow(document: Document, id: string, shadow: Shadow | null): Result.Result<Document, Error> {
   if (shadow !== null && (!shadow || typeof shadow !== "object" || Array.isArray(shadow) ||
     Object.keys(shadow).sort().join() !== "blur,color,offsetX,offsetY" ||

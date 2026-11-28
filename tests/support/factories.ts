@@ -37,7 +37,7 @@ export function component(overrides: Partial<ComponentDefinition> = {}): Compone
 
 export function frame({ style, ...overrides }: NodeOverrides<FrameNode> = {}): FrameNode {
   return {
-    id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 300, height: 200, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    id: "frame", name: "画面", type: "frame", x: 0, y: 0, width: 300, height: 200, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     style: { ...structuredClone(DEFAULT_FRAME_STYLE), ...style }, clipContent: true,
     layoutMode: "none", padding: 0, gap: 0, alignItems: "start", justifyContent: "start",
@@ -47,7 +47,7 @@ export function frame({ style, ...overrides }: NodeOverrides<FrameNode> = {}): F
 
 export function rectangle({ style, ...overrides }: NodeOverrides<RectangleNode> = {}): RectangleNode {
   return {
-    id: "rectangle", name: "矩形", type: "rectangle", x: 0, y: 0, width: 100, height: 50, rotation: 0, opacity: 1, shadow: null, blur: 0, isMask: false,
+    id: "rectangle", name: "矩形", type: "rectangle", x: 0, y: 0, width: 100, height: 50, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0, isMask: false,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     style: { ...structuredClone(DEFAULT_RECTANGLE_STYLE), ...style }, ...overrides,
   };
@@ -55,7 +55,7 @@ export function rectangle({ style, ...overrides }: NodeOverrides<RectangleNode> 
 
 export function ellipse({ style, ...overrides }: NodeOverrides<EllipseNode> = {}): EllipseNode {
   return {
-    id: "ellipse", name: "楕円", type: "ellipse", x: 0, y: 0, width: 100, height: 100, rotation: 0, opacity: 1, shadow: null, blur: 0, isMask: false,
+    id: "ellipse", name: "楕円", type: "ellipse", x: 0, y: 0, width: 100, height: 100, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0, isMask: false,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     style: { fill: "#f3d9c8", stroke: { color: "#d9bbaa", width: 1 }, ...style }, ...overrides,
   };
@@ -63,7 +63,7 @@ export function ellipse({ style, ...overrides }: NodeOverrides<EllipseNode> = {}
 
 export function path({ style, ...overrides }: NodeOverrides<PathNode> = {}): PathNode {
   return {
-    id: "path", name: "パス", type: "path", x: 0, y: 0, width: 100, height: 100, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    id: "path", name: "パス", type: "path", x: 0, y: 0, width: 100, height: 100, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     commands: [{ kind: "move", x: 0, y: 0 }, { kind: "line", x: 1, y: 0 }, { kind: "line", x: 0.5, y: 1 }, { kind: "close" }],
     fillRule: "nonzero", style: { fill: "#f3d9c8", stroke: { color: "#d9bbaa", width: 1 }, ...style }, ...overrides,
@@ -72,7 +72,7 @@ export function path({ style, ...overrides }: NodeOverrides<PathNode> = {}): Pat
 
 export function text({ style, ...overrides }: NodeOverrides<TextNode> = {}): TextNode {
   return {
-    id: "text", name: "テキスト", type: "text", x: 0, y: 0, width: 200, height: 40, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    id: "text", name: "テキスト", type: "text", x: 0, y: 0, width: 200, height: 40, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     content: "テキスト", style: { ...DEFAULT_TEXT_STYLE, ...style }, ...overrides,
   };
@@ -80,7 +80,7 @@ export function text({ style, ...overrides }: NodeOverrides<TextNode> = {}): Tex
 
 export function image({ style, ...overrides }: NodeOverrides<ImageNode> = {}): ImageNode {
   return {
-    id: "image", name: "画像", type: "image", x: 0, y: 0, width: 100, height: 100, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    id: "image", name: "画像", type: "image", x: 0, y: 0, width: 100, height: 100, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     source: "data:image/png;base64,aGVsbG8=", style: { ...structuredClone(DEFAULT_IMAGE_STYLE), ...style }, ...overrides,
   };
@@ -89,7 +89,7 @@ export function image({ style, ...overrides }: NodeOverrides<ImageNode> = {}): I
 export function instance(overrides: Partial<InstanceNode> = {}): InstanceNode {
   return {
     id: "instance", name: "インスタンス", type: "instance", componentRef: "cp1", overrides: {},
-    x: 0, y: 0, width: 100, height: 50, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    x: 0, y: 0, width: 100, height: 50, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
     ...overrides,
   };

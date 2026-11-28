@@ -61,6 +61,7 @@ get_state {}
 - `set_element_geometry`: ID と親基準の `x`・`y`・`width`・`height`（px）で位置と寸法を変更。
 - `set_shape_style`: 矩形・楕円の `fill`（`#RRGGBB` または `null`）・`stroke`（`{ color, width }` または `null`）、矩形の `cornerRadii`（`topLeft`・`topRight`・`bottomRight`・`bottomLeft`）を変更。線は均一な内側線。
 - `set_mask`: 矩形・楕円の `isMask` を真偽値で切り替える。マスクは後続の同じ親の兄弟を、次のマスクまでクリップする。未選択時のマスクはレイヤー一覧から選択する。
+- `set_visible`: 要素の表示 `visible` を真偽値で切り替える。隠した要素は編集画面・PNG 書き出しに描かず、範囲選択・スナップ・自動レイアウトの計算からも外す。レイヤー一覧と `get_state` の要素一覧には残る。隠したマスクは兄弟を切り抜かない。
 - `set_opacity`: 要素全体の不透明度 `opacity` を0〜1で設定する。フレームは子を含むグループに適用する。
 - `set_shadow`: 要素全体の外側影を `{ color, offsetX, offsetY, blur }` で設定する。`null` で解除する。色は6桁／8桁HEX、ぼかしは0以上。
 - `set_blur`: 要素全体のぼかしの標準偏差 `blur` を0以上のpx値で指定する。0で解除する。画像の色調整フィルターとは別。
@@ -89,7 +90,7 @@ get_state {}
 - `remove_component`: 未使用の定義を削除する。インスタンスが参照している定義は拒否する（先に `detach_instance` または削除が必要）。
 - `duplicate_component`: 定義を複製し、定義と子ツリーに新しい ID を割り当てる。
 - `add_instance`: `componentRef`・`x`・`y`（省略可能な `width`・`height`・`parentId`・`name`）でインスタンスを配置する。幅・高さの省略時は定義の寸法を使う。
-- `set_instance_override`: `id`（インスタンス）・`childId`（定義の子要素 ID）と変更属性（`content`・`fill`・`stroke`・`color`・`source`・`width`・`height`）でオーバーライドする。
+- `set_instance_override`: `id`（インスタンス）・`childId`（定義の子要素 ID）と変更属性（`content`・`fill`・`stroke`・`color`・`source`・`width`・`height`・`visible`）でオーバーライドする。`visible: true` で、定義では隠した子をこのインスタンスでだけ出せる。
 - `reset_instance_override`: 指定した子のオーバーライドを解除し、定義側の値へ戻す。
 - `detach_instance`: インスタンスをその時点の解決済み表示のまま通常要素へ切り離す。切り離したツリーには新しい ID を割り当てる。
 
@@ -99,7 +100,7 @@ get_state {}
 
 ### 要素のスタイルと v1 の破壊的変更
 
-要素参照（`ElementReference`）は `id`・`name`・`path`・`parentId`・`type`・座標・寸法と、種別ごとの `style` を返す。文字の `content`・`marks`、フレームの `clipContent`、画像の `source` はノード直下にある。画像の `source` は `get_element` で取得でき、要素一覧では省略する。
+要素参照（`ElementReference`）は `id`・`name`・`path`・`parentId`・`type`・座標・寸法・表示（`visible`）と、種別ごとの `style` を返す。文字の `content`・`marks`、フレームの `clipContent`、画像の `source` はノード直下にある。画像の `source` は `get_element` で取得でき、要素一覧では省略する。
 
 応答は既定値補完済み。たとえば線なしは `style.stroke: null`、角丸なしは4隅とも 0、標準の文字は `style.fontFamily: "default"`・`fontWeight: 400`・`lineHeight: 1.4`・`letterSpacing: 0` を返す。保存用 JSON ではこれらを省略するが、MCP の応答では省略しない。
 
@@ -108,6 +109,7 @@ get_state {}
 ```text
 set_shape_style {"id":"nd_...","fill":null,"stroke":{"color":"#123456","width":2}}
 set_mask {"id":"nd_...","isMask":true}
+set_visible {"id":"nd_...","visible":false}
 set_frame_style {"id":"nd_...","fill":"#ffffff","stroke":null,"clipContent":false}
 set_image_filters {"id":"nd_...","filters":{"brightness":1.2,"sepia":0.3}}
 ```

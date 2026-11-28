@@ -33,6 +33,7 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_shadow": return withInput(agentInputs.set_shadow, args, ({ id, shadow }) => api.setShadow(id, shadow));
       case "set_blur": return withInput(agentInputs.set_blur, args, ({ id, blur }) => api.setBlur(id, blur));
       case "set_mask": return withInput(agentInputs.set_mask, args, ({ id, isMask }) => api.setMask(id, isMask));
+      case "set_visible": return withInput(agentInputs.set_visible, args, ({ id, visible }) => api.setVisible(id, visible));
       case "set_shape_style": return withInput(agentInputs.set_shape_style, args, ({ id, ...style }) => api.setShapeStyle(id, style));
       case "set_path": return withInput(agentInputs.set_path, args, ({ id, ...path }) => api.setPath(id, path));
       case "set_frame_style": return withInput(agentInputs.set_frame_style, args, ({ id, ...style }) => api.setFrameStyle(id, style));

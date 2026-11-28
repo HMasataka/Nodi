@@ -41,7 +41,7 @@ export function createInstance(document: Document, input: CreateInstanceInput): 
 
   const node: InstanceNode = {
     id, name, type: "instance", componentRef: input.componentRef, overrides: {},
-    x: input.x, y: input.y, width, height, rotation: 0, opacity: 1, shadow: null, blur: 0,
+    x: input.x, y: input.y, width, height, rotation: 0, visible: true, opacity: 1, shadow: null, blur: 0,
     widthConstraint: { mode: "fixed" }, heightConstraint: { mode: "fixed" }, animations: [],
   };
 
@@ -59,6 +59,7 @@ function validOverride(patch: InstanceOverride): boolean {
   if (Object.keys(patch).length === 0) return false;
   if (patch.width !== undefined && (!Number.isFinite(patch.width) || patch.width <= 0)) return false;
   if (patch.height !== undefined && (!Number.isFinite(patch.height) || patch.height <= 0)) return false;
+  if (patch.visible !== undefined && typeof patch.visible !== "boolean") return false;
   return true;
 }
 
