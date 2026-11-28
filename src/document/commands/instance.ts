@@ -1,10 +1,10 @@
 import { Result } from "@praha/byethrow";
 
 import { overrideTarget } from "@/document/overridePath.ts";
-import { resolveInstanceNode } from "@/document/instances.ts";
 import { validateName } from "@/document/commands/validation.ts";
 import { collectNodes, findNode, updateNode } from "@/document/commands/tree.ts";
-import type { Document, DocumentNode, InstanceNode, InstanceOverride } from "@/document/types.ts";
+import { type Document, type DocumentNode, type InstanceNode, type InstanceOverride, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, TEXT_FONT_FAMILIES } from "@/document/types.ts";
+import { resolveInstanceNode, unsupportedOverrideKeys } from "@/document/instances.ts";
 
 export interface CreateInstanceInput {
   componentRef: string;
@@ -56,22 +56,38 @@ export function createInstance(document: Document, input: CreateInstanceInput): 
   return Result.succeed({ document: updated.value, node });
 }
 
-function validOverride(patch: InstanceOverride): boolean {
-  if (Object.keys(patch).length === 0) return false;
-  if (patch.width !== undefined && (!Number.isFinite(patch.width) || patch.width <= 0)) return false;
-  if (patch.height !== undefined && (!Number.isFinite(patch.height) || patch.height <= 0)) return false;
-  if (patch.visible !== undefined && typeof patch.visible !== "boolean") return false;
-  return true;
+const positive = (value: number | undefined) => value === undefined || (Number.isFinite(value) && value > 0);
+const nonNegative = (value: number | undefined) => value === undefined || (Number.isFinite(value) && value >= 0);
+const oneOf = <T>(value: T | undefined, values: readonly T[]) => value === undefined || values.includes(value);
+
+// 値の範囲は保存形式と同じにする。範囲外の値は保存できないので、編集の時点で拒否する。
+function overrideValueIssue(patch: InstanceOverride): string | null {
+  if (!positive(patch.width) || !positive(patch.height)) return "幅と高さは正の数で指定してください";
+  if (patch.visible !== undefined && typeof patch.visible !== "boolean") return "表示は true か false で指定してください";
+  if (patch.opacity !== undefined && !(Number.isFinite(patch.opacity) && patch.opacity >= 0 && patch.opacity <= 1)) return "不透明度は 0 から 1 で指定してください";
+  if (patch.cornerRadii !== undefined && !Object.values(patch.cornerRadii).every((value) => nonNegative(value))) return "角丸は 0 以上で指定してください";
+  if (!oneOf(patch.layoutMode, LAYOUT_MODES) || !oneOf(patch.alignItems, LAYOUT_ALIGNMENTS) || !oneOf(patch.justifyContent, LAYOUT_JUSTIFIES)) return "レイアウトの指定が不正です";
+  if (!nonNegative(patch.padding) || !nonNegative(patch.gap)) return "余白と間隔は 0 以上で指定してください";
+  if (!positive(patch.fontSize) || !positive(patch.lineHeight)) return "文字サイズと行高は正の数で指定してください";
+  if (patch.fontWeight !== undefined && !(Number.isInteger(patch.fontWeight) && patch.fontWeight >= 100 && patch.fontWeight <= 900 && patch.fontWeight % 100 === 0)) return "太さは 100〜900 の 100 刻みで指定してください";
+  if (!oneOf(patch.fontFamily, TEXT_FONT_FAMILIES) || !oneOf(patch.textAlign, ["left", "center", "right"] as const)) return "書体または揃えの指定が不正です";
+  if (patch.letterSpacing !== undefined && !Number.isFinite(patch.letterSpacing)) return "字間は有限の数で指定してください";
+  return null;
 }
 
 export function setInstanceOverride(document: Document, instanceId: string, childId: string, patch: InstanceOverride): Result.Result<Document, Error> {
-  if (!validOverride(patch)) return Result.fail(new Error("変更する属性を指定してください"));
+  if (Object.keys(patch).length === 0) return Result.fail(new Error("変更する属性を指定してください"));
+  const issue = overrideValueIssue(patch);
+  if (issue) return Result.fail(new Error(issue));
   const instance = findNode(document, instanceId);
   if (!instance || instance.type !== "instance") return Result.fail(new Error(`インスタンスが見つかりません: ${instanceId}`));
   const definition = document.components.find((component) => component.id === instance.componentRef);
   if (!definition) return Result.fail(new Error(`コンポーネント定義が見つかりません: ${instance.componentRef}`));
   const definitionOf = (ref: string) => document.components.find((component) => component.id === ref)?.node;
-  if (!overrideTarget(definition.node, childId, definitionOf)) return Result.fail(new Error(`オーバーライド対象が見つかりません: ${childId}`));
+  const target = overrideTarget(definition.node, childId, definitionOf);
+  if (!target) return Result.fail(new Error(`オーバーライド対象が見つかりません: ${childId}`));
+  const unsupported = unsupportedOverrideKeys(target.type, patch);
+  if (unsupported.length > 0) return Result.fail(new Error(`${target.type} には上書きできない属性です: ${unsupported.join(", ")}`));
   const overrides = { ...instance.overrides, [childId]: { ...instance.overrides[childId], ...patch } };
   return updateNode(document, instanceId, (node) => node.type === "instance" ? { ...node, overrides } : node);
 }
