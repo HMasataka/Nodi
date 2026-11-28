@@ -5,10 +5,10 @@ import { test } from "vitest";
 import { CanvasNode } from "../src/pages/editor/components/molecules/CanvasNode/CanvasNode.tsx";
 import { ColorResolverContext } from "../src/pages/editor/colorContext.ts";
 import { renderFramePng } from "../src/export/framePng.ts";
+import { createColorResolver, resolveColor, resolveDocumentColors } from "../src/document/colorRef.ts";
 import { detachPaletteColor, removePaletteColor } from "../src/document/commands/index.ts";
 import { document, frame, paletteColor, rectangle, success, text } from "./support/factories.ts";
 import { parseDocument, serializeDocument } from "../src/persistence/format.ts";
-import { resolveColor, resolveDocumentColors } from "../src/document/colorRef.ts";
 
 const ref = { type: "palette" as const, id: "pc1" };
 
@@ -87,7 +87,7 @@ test("編集画面と PNG は同じ解決色を使う", async () => {
   const root = frame({ id: "root", width: 100, height: 50, style: { fill: null }, children: [box] });
   const noOp = () => {};
   const markup = renderToStaticMarkup(
-    <ColorResolverContext.Provider value={(color) => resolveColor(color, palette)}>
+    <ColorResolverContext.Provider value={createColorResolver(palette)}>
       <CanvasNode node={root} selectedId={null}
         interaction={{ onNodePointerDown: noOp, onResizePointerDown: noOp, onNodePointerMove: noOp, onNodePointerUp: noOp, onImageError: noOp }} />
     </ColorResolverContext.Provider>,

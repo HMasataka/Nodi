@@ -78,9 +78,14 @@ get_state {}
 - `rename_palette_color`: ID と新しい `name` で改名。参照は ID なので、名前を変えても壊れない。
 - `set_palette_color`: ID と6/8桁HEXの `color` で色を変更し、参照する要素へ一括反映。
 - `remove_palette_color`: ID で削除。参照している要素は解決済みの直接 HEX に変換してから削除する。
-- `duplicate_palette_color`: ID で複製し、新しい ID を割り当てる（名前は「◯ のコピー」）。
+- `duplicate_palette_color`: ID で複製し、新しい ID を割り当てる（名前は「◯ のコピー」）。テーマごとの値も写す。
+- `list_themes`: テーマ名の一覧 `{ themes }` を取得する。最初のテーマが既定。
+- `set_themes`: `themes`（テーマ名の配列）で一覧を置き換える。パレット色の `color` は最初のテーマの値になる。外したテーマと新しい最初のテーマの、パレット色の値は消える。フレームが使っているテーマは外せない。空の配列でテーマをなくす。
+- `rename_theme`: `from`・`to` でテーマの名前を変え、パレット色の値とフレームの `theme` も付け替える。
+- `set_palette_theme_color`: `id`・`theme`・`color`（6/8桁HEX）で、パレット色の最初以外のテーマの値を設定する。`color: null` で値を外し、`color` を使うようにする。最初のテーマの値は `set_palette_color` で変える。
+- `set_frame_theme`: `id`・`theme` でフレームのテーマを指定し、自身と子孫の色参照をそのテーマで解決する。`theme: null` で指定を外し、親のテーマに従う。
 
-色は直接の6/8桁HEXか、`{ "type": "palette", "id": "pc_..." }` のパレット参照で指定できる。参照の ID は `list_palette` で得る。名前を変えても参照は ID で解決されるため壊れない。`get_state` / `get_element` は色参照とパレット一覧（解決後の HEX）を返し、編集画面・PNG と同じ色に解決する。参照を直接指定へ戻すには、その色に直接 HEX を指定し直す。存在しない ID への参照は保存・読み込みで拒否する。
+色は直接の6/8桁HEXか、`{ "type": "palette", "id": "pc_..." }` のパレット参照で指定できる。参照の ID は `list_palette` で得る。名前を変えても参照は ID で解決されるため壊れない。`get_state` はテーマ名の一覧 `themes` も返す。パレット一覧の各色はテーマごとの値 `themes` を含み、フレームの要素参照はテーマの指定 `theme` を含む。`get_state` / `get_element` は色参照とパレット一覧（解決後の HEX）を返し、編集画面・PNG と同じ色に解決する。参照を直接指定へ戻すには、その色に直接 HEX を指定し直す。存在しない ID への参照は保存・読み込みで拒否する。
 
 ### コンポーネントとインスタンス
 

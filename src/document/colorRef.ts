@@ -8,10 +8,30 @@ export function validColor(value: unknown): value is Color {
   return ref.type === "palette" && typeof ref.id === "string" && ref.id.trim().length > 0;
 }
 
-/** 色参照を解決して 6/8桁 HEX を返す。参照先が見つからない場合は不透明な黒を返す（検証済み文書では発生しない）。 */
-export function resolveColor(color: Color, palette: readonly PaletteColor[]): string {
+/**
+ * 色参照を解決して 6/8桁 HEX を返す。`theme` を渡すと、そのテーマの値があればそれを使い、なければ `color`（最初のテーマの値）を使う。
+ * 参照先が見つからない場合は不透明な黒を返す（検証済み文書では発生しない）。
+ */
+export function resolveColor(color: Color, palette: readonly PaletteColor[], theme?: string): string {
   if (typeof color === "string") return color;
-  return palette.find((item) => item.id === color.id)?.color ?? "#000000";
+  const item = palette.find((entry) => entry.id === color.id);
+  if (!item) return "#000000";
+  return (theme === undefined ? undefined : item.themes?.[theme]) ?? item.color;
+}
+
+/** テーマに沿って色参照を解決する関数。`withTheme` で、テーマを指定したフレームとその子孫に使う解決関数を作る。 */
+export interface ThemedColorResolver {
+  (color: Color): string;
+  readonly theme: string | undefined;
+  withTheme(theme: string | undefined): ThemedColorResolver;
+}
+
+/** 編集画面と PNG 書き出しが共用する色の解決関数を作る。 */
+export function createColorResolver(palette: readonly PaletteColor[], theme?: string): ThemedColorResolver {
+  const resolve = (color: Color) => resolveColor(color, palette, theme);
+  const withTheme = (next: string | undefined): ThemedColorResolver => next === undefined || next === theme ? resolver : createColorResolver(palette, next);
+  const resolver: ThemedColorResolver = Object.assign(resolve, { theme, withTheme });
+  return resolver;
 }
 
 function mapFill(fill: Fill, map: (color: Color) => Color): Fill {

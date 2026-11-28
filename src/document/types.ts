@@ -84,7 +84,10 @@ export const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?$/;
 export interface PaletteColor {
   id: string;
   name: string;
+  /** 文書の最初のテーマ（テーマがなければ唯一）の値。 */
   color: string;
+  /** 最初以外のテーマごとの値。キーはテーマ名。値がないテーマでは `color` を使う。 */
+  themes?: Record<string, string>;
 }
 
 export interface SpacingToken { id: string; name: string; value: number }
@@ -170,6 +173,8 @@ export interface FrameNode extends NodeGeometry {
   gap: number;
   paddingRef?: string;
   gapRef?: string;
+  /** フレーム自身と子孫の色参照を解決するテーマ。未指定なら親に従い、最上位では文書の最初のテーマ。 */
+  theme?: string;
   alignItems: LayoutAlignment;
   justifyContent: LayoutJustify;
   children: DocumentNode[];
@@ -260,4 +265,6 @@ export interface Document {
   palette: PaletteColor[];
   spacing: SpacingToken[];
   components: ComponentDefinition[];
+  /** テーマ名の一覧。最初のテーマが既定。空または未指定ならテーマを持たない。 */
+  themes?: string[];
 }

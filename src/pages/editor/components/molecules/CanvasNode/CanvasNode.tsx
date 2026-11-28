@@ -2,9 +2,9 @@ import { Fragment, type PointerEvent, type ReactNode, useId, useMemo } from "rea
 
 import type { PathPointPart } from "@/document/pathEdit.ts";
 import { ResizeHandle } from "@/pages/editor/components/atoms/ResizeHandle";
-import { useColorResolver } from "@/pages/editor/colorContext.ts";
 import type { Border, Color, DocumentNode, PathNode, TextNode } from "@/document/types";
 import { borderPaths, boxShape, ellipseShape, pathToString, roundedRectPath, type ShapePaths, vectorShape } from "@/document/shapePath.ts";
+import { ColorResolverContext, useColorResolver } from "@/pages/editor/colorContext.ts";
 import { frameContentsStyle, frameNodeStyle, imageContentStyle, imageNodeStyle, shapeNodeStyle, textLineStyle, textMarkStyle, textNodeStyle } from "@/pages/editor/canvasStyles";
 import { layoutTextLines, type TextLine } from "@/rendering/textLayout";
 import { maskGroups, maskPath } from "@/document/masks.ts";
@@ -135,7 +135,9 @@ export function CanvasNodes({ nodes, selectedId, selectedIds = selectedId ? [sel
 }
 
 export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selectedId] : [], interaction, zoom = 1 }: CanvasNodeProps) {
-  const resolve = useColorResolver();
+  // テーマを指定したフレームは、自身と子孫の色参照をそのテーマで解決する。
+  const inherited = useColorResolver();
+  const resolve = node.type === "frame" ? inherited.withTheme(node.theme) : inherited;
   const { onNodePointerDown, onResizePointerDown, onNodePointerMove, onNodePointerUp, onImageError } = interaction;
   const lines = useMemo(() => node.type === "text" ? visibleTextLines(node) : null, [node]);
   const clipId = useId();
@@ -162,7 +164,9 @@ export function CanvasNode({ node, selectedId, selectedIds = selectedId ? [selec
       {...pointerEvents}>
        {shapeSvg(boxShape(node.width, node.height, node.style, resolve), clipId, node.width, node.height)}
       <div className="frame-contents" style={frameContentsStyle(node)}>
-        <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
+        <ColorResolverContext.Provider value={resolve}>
+          <CanvasNodes nodes={node.children} selectedId={selectedId} selectedIds={selectedIds} interaction={interaction} zoom={zoom} />
+        </ColorResolverContext.Provider>
       </div>
       {borderSvg(node.width, node.height, node.style.border, resolve)}
       {handle}

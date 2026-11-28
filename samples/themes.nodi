@@ -1,0 +1,1116 @@
+{
+  "version": 1,
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "children": [
+    {
+      "id": "nd_theme_light",
+      "name": "テーマ / ライト",
+      "type": "frame",
+      "x": 80,
+      "y": 80,
+      "width": 390,
+      "height": 640,
+      "style": {
+        "fill": {
+          "type": "palette",
+          "id": "pc_theme_background"
+        },
+        "cornerRadii": {
+          "topLeft": 28,
+          "topRight": 28,
+          "bottomRight": 28,
+          "bottomLeft": 28
+        }
+      },
+      "children": [
+        {
+          "id": "nd_theme_light_time",
+          "name": "時刻",
+          "type": "text",
+          "x": 24,
+          "y": 14,
+          "width": 60,
+          "height": 20,
+          "content": "9:41",
+          "style": {
+            "fontSize": 14,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_ink"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "id": "nd_theme_light_title",
+          "name": "見出し",
+          "type": "text",
+          "x": 20,
+          "y": 56,
+          "width": 300,
+          "height": 40,
+          "content": "設定",
+          "style": {
+            "fontSize": 30,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_ink"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 800,
+            "lineHeight": 1.4,
+            "letterSpacing": -0.5
+          }
+        },
+        {
+          "id": "nd_theme_light_lead",
+          "name": "説明",
+          "type": "text",
+          "x": 20,
+          "y": 98,
+          "width": 350,
+          "height": 22,
+          "content": "テーマはフレームの指定だけで切り換わります。",
+          "style": {
+            "fontSize": 13,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_muted"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 400,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "id": "nd_theme_light_profile",
+          "name": "プロフィール",
+          "type": "instance",
+          "componentRef": "cp_theme_card",
+          "x": 20,
+          "y": 136,
+          "width": 350,
+          "height": 128
+        },
+        {
+          "id": "nd_theme_light_section",
+          "name": "節の見出し",
+          "type": "text",
+          "x": 20,
+          "y": 290,
+          "width": 200,
+          "height": 20,
+          "content": "通知",
+          "style": {
+            "fontSize": 12,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_muted"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 700,
+            "lineHeight": 1.4,
+            "letterSpacing": 1.5
+          }
+        },
+        {
+          "id": "nd_theme_light_settings",
+          "name": "通知の設定",
+          "type": "frame",
+          "x": 20,
+          "y": 318,
+          "width": 350,
+          "height": 186,
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "pc_theme_surface"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "pc_theme_line"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
+          "children": [
+            {
+              "id": "nd_theme_light_push_label",
+              "name": "プッシュ通知の見出し",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 220,
+              "height": 22,
+              "content": "プッシュ通知",
+              "style": {
+                "fontSize": 15,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_ink"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 600,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_light_push_detail",
+              "name": "プッシュ通知の説明",
+              "type": "text",
+              "x": 20,
+              "y": 38,
+              "width": 240,
+              "height": 20,
+              "content": "新しいコメントと招待",
+              "style": {
+                "fontSize": 13,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_light_push_track",
+              "name": "プッシュ通知のトグル",
+              "type": "rectangle",
+              "x": 266,
+              "y": 24,
+              "width": 46,
+              "height": 26,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_accent"
+                },
+                "cornerRadii": {
+                  "topLeft": 13,
+                  "topRight": 13,
+                  "bottomRight": 13,
+                  "bottomLeft": 13
+                }
+              }
+            },
+            {
+              "id": "nd_theme_light_push_knob",
+              "name": "プッシュ通知のつまみ",
+              "type": "ellipse",
+              "x": 290,
+              "y": 27,
+              "width": 20,
+              "height": 20,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_surface"
+                }
+              }
+            },
+            {
+              "id": "nd_theme_light_divider",
+              "name": "区切り",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 310,
+              "height": 1,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_line"
+                },
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              }
+            },
+            {
+              "id": "nd_theme_light_mail_label",
+              "name": "メールの要約の見出し",
+              "type": "text",
+              "x": 20,
+              "y": 92,
+              "width": 220,
+              "height": 22,
+              "content": "メールの要約",
+              "style": {
+                "fontSize": 15,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_ink"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 600,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_light_mail_detail",
+              "name": "メールの要約の説明",
+              "type": "text",
+              "x": 20,
+              "y": 114,
+              "width": 240,
+              "height": 20,
+              "content": "毎週月曜にまとめて届く",
+              "style": {
+                "fontSize": 13,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_light_mail_track",
+              "name": "メールの要約のトグル",
+              "type": "rectangle",
+              "x": 266,
+              "y": 100,
+              "width": 46,
+              "height": 26,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_line"
+                },
+                "cornerRadii": {
+                  "topLeft": 13,
+                  "topRight": 13,
+                  "bottomRight": 13,
+                  "bottomLeft": 13
+                }
+              }
+            },
+            {
+              "id": "nd_theme_light_mail_knob",
+              "name": "メールの要約のつまみ",
+              "type": "ellipse",
+              "x": 270,
+              "y": 103,
+              "width": 20,
+              "height": 20,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_surface"
+                }
+              }
+            },
+            {
+              "id": "nd_theme_light_divider_2",
+              "name": "区切り",
+              "type": "rectangle",
+              "x": 20,
+              "y": 150,
+              "width": 310,
+              "height": 1,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_line"
+                },
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              }
+            },
+            {
+              "id": "nd_theme_light_storage",
+              "name": "使用量",
+              "type": "text",
+              "x": 20,
+              "y": 158,
+              "width": 240,
+              "height": 20,
+              "content": "ストレージ 12.4 / 20 GB",
+              "style": {
+                "fontSize": 12,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nd_theme_light_button_back",
+          "name": "ボタン",
+          "type": "rectangle",
+          "x": 20,
+          "y": 532,
+          "width": 350,
+          "height": 52,
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "pc_theme_accent"
+            },
+            "cornerRadii": {
+              "topLeft": 14,
+              "topRight": 14,
+              "bottomRight": 14,
+              "bottomLeft": 14
+            }
+          }
+        },
+        {
+          "id": "nd_theme_light_button",
+          "name": "ボタンの文言",
+          "type": "text",
+          "x": 20,
+          "y": 547,
+          "width": 350,
+          "height": 22,
+          "content": "変更を保存",
+          "style": {
+            "fontSize": 16,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_on_accent"
+            },
+            "textAlign": "center",
+            "fontFamily": "system",
+            "fontWeight": 700,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "id": "nd_theme_light_caption",
+          "name": "画面の札",
+          "type": "text",
+          "x": 20,
+          "y": 604,
+          "width": 350,
+          "height": 20,
+          "content": "テーマ / ライト",
+          "style": {
+            "fontSize": 12,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_muted"
+            },
+            "textAlign": "center",
+            "fontFamily": "monospace",
+            "fontWeight": 400,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "nd_theme_dark",
+      "name": "テーマ / ダーク",
+      "type": "frame",
+      "x": 530,
+      "y": 80,
+      "width": 390,
+      "height": 640,
+      "style": {
+        "fill": {
+          "type": "palette",
+          "id": "pc_theme_background"
+        },
+        "cornerRadii": {
+          "topLeft": 28,
+          "topRight": 28,
+          "bottomRight": 28,
+          "bottomLeft": 28
+        }
+      },
+      "children": [
+        {
+          "id": "nd_theme_dark_time",
+          "name": "時刻",
+          "type": "text",
+          "x": 24,
+          "y": 14,
+          "width": 60,
+          "height": 20,
+          "content": "9:41",
+          "style": {
+            "fontSize": 14,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_ink"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 600,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "id": "nd_theme_dark_title",
+          "name": "見出し",
+          "type": "text",
+          "x": 20,
+          "y": 56,
+          "width": 300,
+          "height": 40,
+          "content": "設定",
+          "style": {
+            "fontSize": 30,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_ink"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 800,
+            "lineHeight": 1.4,
+            "letterSpacing": -0.5
+          }
+        },
+        {
+          "id": "nd_theme_dark_lead",
+          "name": "説明",
+          "type": "text",
+          "x": 20,
+          "y": 98,
+          "width": 350,
+          "height": 22,
+          "content": "テーマはフレームの指定だけで切り換わります。",
+          "style": {
+            "fontSize": 13,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_muted"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 400,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "id": "nd_theme_dark_profile",
+          "name": "プロフィール",
+          "type": "instance",
+          "componentRef": "cp_theme_card",
+          "x": 20,
+          "y": 136,
+          "width": 350,
+          "height": 128
+        },
+        {
+          "id": "nd_theme_dark_section",
+          "name": "節の見出し",
+          "type": "text",
+          "x": 20,
+          "y": 290,
+          "width": 200,
+          "height": 20,
+          "content": "通知",
+          "style": {
+            "fontSize": 12,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_muted"
+            },
+            "textAlign": "left",
+            "fontFamily": "system",
+            "fontWeight": 700,
+            "lineHeight": 1.4,
+            "letterSpacing": 1.5
+          }
+        },
+        {
+          "id": "nd_theme_dark_settings",
+          "name": "通知の設定",
+          "type": "frame",
+          "x": 20,
+          "y": 318,
+          "width": 350,
+          "height": 186,
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "pc_theme_surface"
+            },
+            "stroke": {
+              "color": {
+                "type": "palette",
+                "id": "pc_theme_line"
+              },
+              "width": 1
+            },
+            "cornerRadii": {
+              "topLeft": 16,
+              "topRight": 16,
+              "bottomRight": 16,
+              "bottomLeft": 16
+            }
+          },
+          "children": [
+            {
+              "id": "nd_theme_dark_push_label",
+              "name": "プッシュ通知の見出し",
+              "type": "text",
+              "x": 20,
+              "y": 16,
+              "width": 220,
+              "height": 22,
+              "content": "プッシュ通知",
+              "style": {
+                "fontSize": 15,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_ink"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 600,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_dark_push_detail",
+              "name": "プッシュ通知の説明",
+              "type": "text",
+              "x": 20,
+              "y": 38,
+              "width": 240,
+              "height": 20,
+              "content": "新しいコメントと招待",
+              "style": {
+                "fontSize": 13,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_dark_push_track",
+              "name": "プッシュ通知のトグル",
+              "type": "rectangle",
+              "x": 266,
+              "y": 24,
+              "width": 46,
+              "height": 26,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_accent"
+                },
+                "cornerRadii": {
+                  "topLeft": 13,
+                  "topRight": 13,
+                  "bottomRight": 13,
+                  "bottomLeft": 13
+                }
+              }
+            },
+            {
+              "id": "nd_theme_dark_push_knob",
+              "name": "プッシュ通知のつまみ",
+              "type": "ellipse",
+              "x": 290,
+              "y": 27,
+              "width": 20,
+              "height": 20,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_surface"
+                }
+              }
+            },
+            {
+              "id": "nd_theme_dark_divider",
+              "name": "区切り",
+              "type": "rectangle",
+              "x": 20,
+              "y": 76,
+              "width": 310,
+              "height": 1,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_line"
+                },
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              }
+            },
+            {
+              "id": "nd_theme_dark_mail_label",
+              "name": "メールの要約の見出し",
+              "type": "text",
+              "x": 20,
+              "y": 92,
+              "width": 220,
+              "height": 22,
+              "content": "メールの要約",
+              "style": {
+                "fontSize": 15,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_ink"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 600,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_dark_mail_detail",
+              "name": "メールの要約の説明",
+              "type": "text",
+              "x": 20,
+              "y": 114,
+              "width": 240,
+              "height": 20,
+              "content": "毎週月曜にまとめて届く",
+              "style": {
+                "fontSize": 13,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            },
+            {
+              "id": "nd_theme_dark_mail_track",
+              "name": "メールの要約のトグル",
+              "type": "rectangle",
+              "x": 266,
+              "y": 100,
+              "width": 46,
+              "height": 26,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_line"
+                },
+                "cornerRadii": {
+                  "topLeft": 13,
+                  "topRight": 13,
+                  "bottomRight": 13,
+                  "bottomLeft": 13
+                }
+              }
+            },
+            {
+              "id": "nd_theme_dark_mail_knob",
+              "name": "メールの要約のつまみ",
+              "type": "ellipse",
+              "x": 270,
+              "y": 103,
+              "width": 20,
+              "height": 20,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_surface"
+                }
+              }
+            },
+            {
+              "id": "nd_theme_dark_divider_2",
+              "name": "区切り",
+              "type": "rectangle",
+              "x": 20,
+              "y": 150,
+              "width": 310,
+              "height": 1,
+              "style": {
+                "fill": {
+                  "type": "palette",
+                  "id": "pc_theme_line"
+                },
+                "cornerRadii": {
+                  "topLeft": 0,
+                  "topRight": 0,
+                  "bottomRight": 0,
+                  "bottomLeft": 0
+                }
+              }
+            },
+            {
+              "id": "nd_theme_dark_storage",
+              "name": "使用量",
+              "type": "text",
+              "x": 20,
+              "y": 158,
+              "width": 240,
+              "height": 20,
+              "content": "ストレージ 12.4 / 20 GB",
+              "style": {
+                "fontSize": 12,
+                "color": {
+                  "type": "palette",
+                  "id": "pc_theme_muted"
+                },
+                "textAlign": "left",
+                "fontFamily": "system",
+                "fontWeight": 400,
+                "lineHeight": 1.4,
+                "letterSpacing": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "nd_theme_dark_button_back",
+          "name": "ボタン",
+          "type": "rectangle",
+          "x": 20,
+          "y": 532,
+          "width": 350,
+          "height": 52,
+          "style": {
+            "fill": {
+              "type": "palette",
+              "id": "pc_theme_accent"
+            },
+            "cornerRadii": {
+              "topLeft": 14,
+              "topRight": 14,
+              "bottomRight": 14,
+              "bottomLeft": 14
+            }
+          }
+        },
+        {
+          "id": "nd_theme_dark_button",
+          "name": "ボタンの文言",
+          "type": "text",
+          "x": 20,
+          "y": 547,
+          "width": 350,
+          "height": 22,
+          "content": "変更を保存",
+          "style": {
+            "fontSize": 16,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_on_accent"
+            },
+            "textAlign": "center",
+            "fontFamily": "system",
+            "fontWeight": 700,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        },
+        {
+          "id": "nd_theme_dark_caption",
+          "name": "画面の札",
+          "type": "text",
+          "x": 20,
+          "y": 604,
+          "width": 350,
+          "height": 20,
+          "content": "テーマ / ダーク",
+          "style": {
+            "fontSize": 12,
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_muted"
+            },
+            "textAlign": "center",
+            "fontFamily": "monospace",
+            "fontWeight": 400,
+            "lineHeight": 1.4,
+            "letterSpacing": 0
+          }
+        }
+      ],
+      "theme": "dark"
+    }
+  ],
+  "palette": [
+    {
+      "id": "pc_theme_background",
+      "name": "背景",
+      "color": "#f4f5f7",
+      "themes": {
+        "dark": "#0f1115"
+      }
+    },
+    {
+      "id": "pc_theme_surface",
+      "name": "面",
+      "color": "#ffffff",
+      "themes": {
+        "dark": "#1a1d24"
+      }
+    },
+    {
+      "id": "pc_theme_ink",
+      "name": "本文",
+      "color": "#15181e",
+      "themes": {
+        "dark": "#f1f2f5"
+      }
+    },
+    {
+      "id": "pc_theme_muted",
+      "name": "補足",
+      "color": "#6b7280",
+      "themes": {
+        "dark": "#9aa1ad"
+      }
+    },
+    {
+      "id": "pc_theme_line",
+      "name": "線",
+      "color": "#e3e6ea",
+      "themes": {
+        "dark": "#2b2f39"
+      }
+    },
+    {
+      "id": "pc_theme_accent",
+      "name": "アクセント",
+      "color": "#5b4cf0",
+      "themes": {
+        "dark": "#9d93ff"
+      }
+    },
+    {
+      "id": "pc_theme_accent_soft",
+      "name": "アクセントの淡い面",
+      "color": "#ecebfe",
+      "themes": {
+        "dark": "#2a2650"
+      }
+    },
+    {
+      "id": "pc_theme_on_accent",
+      "name": "アクセント上の文字",
+      "color": "#ffffff",
+      "themes": {
+        "dark": "#0f1115"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": "cp_theme_card",
+      "name": "プロフィールカード",
+      "node": {
+        "id": "nd_theme_card",
+        "name": "プロフィールカード",
+        "type": "frame",
+        "x": 0,
+        "y": 0,
+        "width": 350,
+        "height": 128,
+        "style": {
+          "fill": {
+            "type": "palette",
+            "id": "pc_theme_surface"
+          },
+          "stroke": {
+            "color": {
+              "type": "palette",
+              "id": "pc_theme_line"
+            },
+            "width": 1
+          },
+          "cornerRadii": {
+            "topLeft": 16,
+            "topRight": 16,
+            "bottomRight": 16,
+            "bottomLeft": 16
+          }
+        },
+        "children": [
+          {
+            "id": "nd_theme_avatar",
+            "name": "アバター",
+            "type": "ellipse",
+            "x": 20,
+            "y": 24,
+            "width": 56,
+            "height": 56,
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "pc_theme_accent_soft"
+              }
+            }
+          },
+          {
+            "id": "nd_theme_initial",
+            "name": "イニシャル",
+            "type": "text",
+            "x": 20,
+            "y": 39,
+            "width": 56,
+            "height": 26,
+            "content": "KM",
+            "style": {
+              "fontSize": 18,
+              "color": {
+                "type": "palette",
+                "id": "pc_theme_accent"
+              },
+              "textAlign": "center",
+              "fontFamily": "system",
+              "fontWeight": 700,
+              "lineHeight": 1.4,
+              "letterSpacing": 0
+            }
+          },
+          {
+            "id": "nd_theme_name",
+            "name": "名前",
+            "type": "text",
+            "x": 92,
+            "y": 26,
+            "width": 220,
+            "height": 26,
+            "content": "Kana Mori",
+            "style": {
+              "fontSize": 18,
+              "color": {
+                "type": "palette",
+                "id": "pc_theme_ink"
+              },
+              "textAlign": "left",
+              "fontFamily": "system",
+              "fontWeight": 700,
+              "lineHeight": 1.4,
+              "letterSpacing": 0
+            }
+          },
+          {
+            "id": "nd_theme_role",
+            "name": "役割",
+            "type": "text",
+            "x": 92,
+            "y": 52,
+            "width": 240,
+            "height": 22,
+            "content": "Product Designer · Tokyo",
+            "style": {
+              "fontSize": 13,
+              "color": {
+                "type": "palette",
+                "id": "pc_theme_muted"
+              },
+              "textAlign": "left",
+              "fontFamily": "system",
+              "fontWeight": 400,
+              "lineHeight": 1.4,
+              "letterSpacing": 0
+            }
+          },
+          {
+            "id": "nd_theme_badge_back",
+            "name": "プランの札",
+            "type": "rectangle",
+            "x": 92,
+            "y": 84,
+            "width": 76,
+            "height": 24,
+            "style": {
+              "fill": {
+                "type": "palette",
+                "id": "pc_theme_accent_soft"
+              },
+              "cornerRadii": {
+                "topLeft": 12,
+                "topRight": 12,
+                "bottomRight": 12,
+                "bottomLeft": 12
+              }
+            }
+          },
+          {
+            "id": "nd_theme_badge",
+            "name": "プランの文言",
+            "type": "text",
+            "x": 92,
+            "y": 87,
+            "width": 76,
+            "height": 18,
+            "content": "PRO",
+            "style": {
+              "fontSize": 12,
+              "color": {
+                "type": "palette",
+                "id": "pc_theme_accent"
+              },
+              "textAlign": "center",
+              "fontFamily": "system",
+              "fontWeight": 700,
+              "lineHeight": 1.4,
+              "letterSpacing": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -11,5 +11,6 @@ export { addPaletteColor, detachPaletteColor, duplicatePaletteColor, importPalet
 export { createComponent, duplicateComponent, removeComponent, renameComponent } from "@/document/commands/component.ts";
 export { createInstance, type CreateInstanceInput, detachInstance, resetInstanceOverride, setInstanceOverride } from "@/document/commands/instance.ts";
 export { importSvgIcon } from "@/document/commands/svgImport.ts";
+export { renameTheme, setFrameTheme, setPaletteThemeColor, setThemes } from "@/document/commands/theme.ts";
 export { findNode } from "@/document/commands/tree.ts";
 export { moveNode, moveNodes, renameNode, setBlur, setMask, setNodeGeometry, setOpacity, setRotation, setShadow, setVisible } from "@/document/commands/update.ts";

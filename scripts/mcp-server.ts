@@ -61,6 +61,11 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("set_palette_color", "カラーパレットの色の6/8桁HEXを変更し、参照する要素へ一括反映", agentInputs.set_palette_color, true);
   tool("remove_palette_color", "カラーパレットの色を削除し、参照先を直接HEXへ変換", agentInputs.remove_palette_color, true);
   tool("duplicate_palette_color", "カラーパレットの色を複製し新しいIDを付ける", agentInputs.duplicate_palette_color, true);
+  tool("list_themes", "テーマ名の一覧（ライト・ダークなど、最初が既定）を取得", agentInputs.list_themes);
+  tool("set_themes", "テーマ名の一覧を置き換える。最初のテーマが既定で、パレットの色の color がその値になる。外したテーマの色の値は消え、フレームが使っているテーマは外せない", agentInputs.set_themes, true);
+  tool("rename_theme", "テーマの名前を変え、パレットの色の値とフレームのテーマ指定も付け替える", agentInputs.rename_theme, true);
+  tool("set_palette_theme_color", "パレットの色の、最初以外のテーマの6/8桁HEXを設定する。null で外すと color を使う", agentInputs.set_palette_theme_color, true);
+  tool("set_frame_theme", "フレームのテーマを指定し、自身と子孫の色参照をそのテーマで解決する。null で親に従う", agentInputs.set_frame_theme, true);
   tool("set_border", "矩形・フレームの4辺の内側線を置換（省略した辺は線なし、角丸との併用不可。色は直接HEXまたはパレット参照）", agentInputs.set_border, true);
   tool("set_image_style", "画像のフィット・焦点位置・4隅の角丸を変更", agentInputs.set_image_style, true);
   tool("set_image_filters", "画像の明るさ・コントラスト・彩度・グレースケール・セピア・色相を変更", agentInputs.set_image_filters, true);

@@ -60,7 +60,7 @@ export function duplicatePaletteColor(document: Document, id: string): Result.Re
   let name = `${source.name} のコピー`;
   let number = 2;
   while (names.has(name)) name = `${source.name} のコピー ${number++}`;
-  const color: PaletteColor = { id: uniqueId(new Set(document.palette.map((item) => item.id))), name, color: source.color };
+  const color: PaletteColor = { id: uniqueId(new Set(document.palette.map((item) => item.id))), name, color: source.color, ...(source.themes ? { themes: { ...source.themes } } : {}) };
   return Result.succeed({ document: { ...document, palette: [...document.palette, color] }, color });
 }
 
