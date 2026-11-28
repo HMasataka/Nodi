@@ -3,7 +3,7 @@ import { Result } from "@praha/byethrow";
 import { importSvgIcon } from "@/document/commands/svgImport.ts";
 import { resolvedSpacing } from "@/document/spacing.ts";
 import type { SvgIcon } from "@/document/svgPath.ts";
-import { addNode, type AddNodeInput, addPaletteColor, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, moveNode, removeComponent, removePaletteColor, removeSpacingToken, renameComponent, renameNode, renamePaletteColor, renameSpacingToken, resetInstanceOverride, setBlur, setBorder, setFrameLayout, setFrameStyle, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPaletteColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle, setVisible } from "@/document/commands/index.ts";
+import { addNode, type AddNodeInput, addPaletteColor, addSpacingToken, createComponent, createInstance, type CreateInstanceInput, deleteNode, detachInstance, duplicateComponent, duplicateNode, duplicatePaletteColor, type FrameLayoutPatch, moveNode, removeComponent, removePaletteColor, removeSpacingToken, renameComponent, renameNode, renamePaletteColor, renameSpacingToken, renameTheme, resetInstanceOverride, setBlur, setBorder, setFrameLayout, setFrameStyle, setFrameTheme, setImageFilters, setImageStyle, setInstanceOverride, setMask, setNodeGeometry, setNodeStyle, setOpacity, setPaletteColor, setPaletteThemeColor, setPath, setRotation, setShadow, setSpacingToken, setTextContent, setTextMarks, setTextStyle, setThemes, setVisible } from "@/document/commands/index.ts";
 import { type Border, type Document, type DocumentNode, type FrameStyle, type Geometry, type ImageFilters, type ImageStylePatch, type InstanceNode, type InstanceOverride, type PaletteColor, type PathFillRule, type RectangleStyle, type Shadow, type TextMark, type TextStyle, type VectorPathCommand } from "@/document/types.ts";
 import { compareElementRevisions, measureElementAtRevision, measureRelativeAtRevision } from "@/document/measure.ts";
 import { type DocumentHistory, listRevisions } from "@/document/history.ts";
@@ -36,6 +36,7 @@ export interface ElementReference {
   gap?: number;
   paddingRef?: string;
   gapRef?: string;
+  theme?: string;
   source?: string;
   componentRef?: string;
   overrides?: Record<string, InstanceOverride>;
@@ -82,7 +83,8 @@ export function listElements(document: Document, includeImageSource = false): El
         ...(node.type === "path" ? { commands: structuredClone(node.commands), fillRule: node.fillRule } : {}),
         ...(node.type === "frame" ? { clipContent: node.clipContent, layoutMode: node.layoutMode,
           padding: resolvedSpacing(document, node, "padding"), gap: resolvedSpacing(document, node, "gap"),
-          ...(node.paddingRef ? { paddingRef: node.paddingRef } : {}), ...(node.gapRef ? { gapRef: node.gapRef } : {}) } : {}),
+          ...(node.paddingRef ? { paddingRef: node.paddingRef } : {}), ...(node.gapRef ? { gapRef: node.gapRef } : {}),
+          ...(node.theme === undefined ? {} : { theme: node.theme }) } : {}),
         ...(node.type === "image" && includeImageSource ? { source: node.source } : {}),
         ...(node.type === "instance" ? { componentRef: node.componentRef, overrides: structuredClone(node.overrides) } : {}),
       });
@@ -107,6 +109,14 @@ export function createAgentApi(port: EditorPort) {
     return getElement(id);
   }
 
+  function applyThemes(result: Result.Result<Document, Error>): Result.Result<{ themes: string[]; palette: PaletteColor[] }, Error> {
+    if (Result.isFailure(result)) return result;
+    const editable = port.canEdit?.();
+    if (editable && Result.isFailure(editable)) return editable;
+    if (result.value !== port.getDocument()) port.apply(result.value);
+    return Result.succeed({ themes: [...(result.value.themes ?? [])], palette: paletteSnapshot(result.value) });
+  }
+
   function applyNewNode(result: Result.Result<{ document: Document; node: DocumentNode }, Error>): Result.Result<ElementReference, Error> {
     if (Result.isFailure(result)) return result;
     const editable = port.canEdit?.();
@@ -120,7 +130,7 @@ export function createAgentApi(port: EditorPort) {
       const document = port.getDocument();
       const elements = listElements(document);
       const selected = elements.find((item) => item.id === port.getSelectedId()) ?? null;
-      return Result.succeed({ document: structuredClone(document), palette: paletteSnapshot(document), selected, elements });
+      return Result.succeed({ document: structuredClone(document), palette: paletteSnapshot(document), themes: [...(document.themes ?? [])], selected, elements });
     },
     getElement,
     select(id: string) {
@@ -209,6 +219,26 @@ export function createAgentApi(port: EditorPort) {
       if (editable && Result.isFailure(editable)) return editable;
       if (result.value !== port.getDocument()) port.apply(result.value);
       return Result.succeed(patch.remove ? { ...original, deleted: true } : result.value.spacing.find((token) => token.id === id)!);
+    },
+    listThemes() {
+      return Result.succeed({ themes: [...(port.getDocument().themes ?? [])] });
+    },
+    setThemes(themes: string[]) {
+      return applyThemes(setThemes(port.getDocument(), themes));
+    },
+    renameTheme(from: string, to: string) {
+      return applyThemes(renameTheme(port.getDocument(), from, to));
+    },
+    setPaletteThemeColor(id: string, theme: string, color: string | null) {
+      const result = setPaletteThemeColor(port.getDocument(), id, theme, color);
+      if (Result.isFailure(result)) return result;
+      const editable = port.canEdit?.();
+      if (editable && Result.isFailure(editable)) return editable;
+      if (result.value !== port.getDocument()) port.apply(result.value);
+      return Result.succeed(result.value.palette.find((item) => item.id === id)!);
+    },
+    setFrameTheme(id: string, theme: string | null) {
+      return applyToElement(id, setFrameTheme(port.getDocument(), id, theme));
     },
     listPalette() {
       return Result.succeed(paletteSnapshot(port.getDocument()));

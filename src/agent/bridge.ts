@@ -48,6 +48,11 @@ export function dispatchAgentRequest(api: AgentApi, method: string, args: unknow
       case "set_palette_color": return withInput(agentInputs.set_palette_color, args, ({ id, color }) => api.changePaletteColor(id, { color }));
       case "remove_palette_color": return withInput(agentInputs.remove_palette_color, args, ({ id }) => api.changePaletteColor(id, { remove: true }));
       case "duplicate_palette_color": return withInput(agentInputs.duplicate_palette_color, args, ({ id }) => api.changePaletteColor(id, { duplicate: true }));
+      case "list_themes": return withInput(agentInputs.list_themes, args, () => api.listThemes());
+      case "set_themes": return withInput(agentInputs.set_themes, args, ({ themes }) => api.setThemes(themes));
+      case "rename_theme": return withInput(agentInputs.rename_theme, args, ({ from, to }) => api.renameTheme(from, to));
+      case "set_palette_theme_color": return withInput(agentInputs.set_palette_theme_color, args, ({ id, theme, color }) => api.setPaletteThemeColor(id, theme, color));
+      case "set_frame_theme": return withInput(agentInputs.set_frame_theme, args, ({ id, theme }) => api.setFrameTheme(id, theme));
       case "set_border": return withInput(agentInputs.set_border, args, ({ id, border }) => api.setBorder(id, border));
       case "set_image_style": return withInput(agentInputs.set_image_style, args, ({ id, ...style }) => api.setImageStyle(id, style));
       case "set_image_filters": return withInput(agentInputs.set_image_filters, args, ({ id, filters }) => api.setImageFilters(id, filters));

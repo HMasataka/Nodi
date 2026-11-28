@@ -1,8 +1,10 @@
 import { Result } from "@praha/byethrow";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Canvas } from "@/pages/editor/components/organisms/Canvas";
 import { countRenderedTextLines } from "@/pages/editor/textIconMeasurement.ts";
+import { createColorResolver } from "@/document/colorRef.ts";
+import type { DocumentNode } from "@/document/types.ts";
 import { ErrorToast } from "@/pages/editor/components/molecules/ErrorToast";
 import { findNode } from "@/document/commands/index.ts";
 import { Inspector } from "@/pages/editor/components/organisms/Inspector";
@@ -10,7 +12,6 @@ import { LayersPanel } from "@/pages/editor/components/organisms/LayersPanel";
 import { measureNode } from "@/rendering/measure.ts";
 import { PreviewStage } from "@/pages/editor/components/organisms/PreviewStage";
 import { RecoveryDialog } from "@/pages/editor/components/organisms/RecoveryDialog";
-import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { spacingTokenUsage } from "@/document/spacing.ts";
@@ -22,7 +23,6 @@ import { useEditorShortcuts } from "@/pages/editor/hooks/useEditorShortcuts";
 import { usePanelLayout } from "@/pages/editor/hooks/usePanelLayout";
 import { usePlayback } from "@/pages/editor/hooks/usePlayback";
 import { activeAnimationTriggers, applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
-import type { Color, DocumentNode } from "@/document/types.ts";
 import { ColorResolverContext, PaletteContext } from "@/pages/editor/colorContext.ts";
 import { measureSelectionSpacing, measureTextIconAlignment } from "@/document/commands/index.ts";
 import "@/App.css";
@@ -60,6 +60,7 @@ function EditorPage() {
   const resolveTriggers = (node: DocumentNode) => activeAnimationTriggers(node, interactionState);
   const { history, design, selectedId, selectedIds, selected, error, setError, filePath, isBusy, isDirty,
     confirmation, recoveryStatus, restoreRecovery, discardRecovery, openFile, saveFile } = session;
+  const colorResolver = useMemo(() => createColorResolver(design.palette), [design.palette]);
   const spacingUsages = Object.fromEntries(design.spacing.map((token) => [token.id, spacingTokenUsage(design, token.id)]));
   const fileName = filePath?.split(/[\\/]/).pop() ?? "無題のドキュメント";
   const previewFrame = previewing && selected?.type === "frame" ? selected : null;
@@ -109,7 +110,7 @@ function EditorPage() {
     },
   });
 
-  return <ColorResolverContext.Provider value={(color: Color) => resolveColor(color, design.palette)}>
+  return <ColorResolverContext.Provider value={colorResolver}>
     <PaletteContext.Provider value={design.palette}>
     <main className="app-shell">
     <div className="workspace" style={{ gridTemplateColumns: workspaceColumns(panels.layout) }}>

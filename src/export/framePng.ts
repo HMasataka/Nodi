@@ -2,13 +2,13 @@ import { blurPixels } from "@/document/blur.ts";
 import { graphemeSegments } from "@/document/textLayout.ts";
 import { imagePlacement } from "@/document/imagePlacement.ts";
 import { RENDER_COLORS } from "@/rendering/colors.ts";
-import { resolveColor } from "@/document/colorRef.ts";
 import { resolveDocumentInstances } from "@/document/instances.ts";
 import { resolveDocumentLayout } from "@/document/layout.ts";
 import { Result } from "@praha/byethrow";
 import { applyAnimations, applyScrollAnimations } from "@/document/animation.ts";
 import type { Border, Color, ComponentDefinition, Document, DocumentNode, FrameNode, PaletteColor, SpacingToken } from "@/document/types.ts";
 import { borderPaths, boxShape, ellipseShape, roundedRectPath, type ShapePaths, tracePath, vectorShape } from "@/document/shapePath.ts";
+import { createColorResolver, type ThemedColorResolver } from "@/document/colorRef.ts";
 import { createLayoutMeasure, layoutTextLines, textFragmentStyle } from "@/rendering/textLayout.ts";
 import { filterPixels, hasImageFilters } from "@/document/imageFilters.ts";
 import { maskGroups, maskPath } from "@/document/masks.ts";
@@ -71,7 +71,7 @@ function paintBorder(ctx: CanvasRenderingContext2D, width: number, height: numbe
   }
 }
 
-async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], environment: PngRenderEnvironment, resolve: (color: Color) => string): Promise<Result.Result<void, Error>> {
+async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[], environment: PngRenderEnvironment, resolve: ThemedColorResolver): Promise<Result.Result<void, Error>> {
   for (const group of maskGroups(nodes)) {
     if (group.mask) {
       ctx.save();
@@ -90,7 +90,9 @@ async function paintChildren(ctx: CanvasRenderingContext2D, nodes: DocumentNode[
   return Result.succeed();
 }
 
-async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment, resolve: (color: Color) => string): Promise<Result.Result<void, Error>> {
+async function paintNode(ctx: CanvasRenderingContext2D, node: DocumentNode, environment: PngRenderEnvironment, inherited: ThemedColorResolver): Promise<Result.Result<void, Error>> {
+  // テーマを指定したフレームは、自身と子孫の色参照をそのテーマで解決する（編集画面と同じ規則）。
+  const resolve = node.type === "frame" ? inherited.withTheme(node.theme) : inherited;
   if (node.opacity === 0) return Result.succeed();
   if (node.opacity < 1 || node.shadow || node.blur > 0) {
     // 描画済みのグループをぼかしてから影を付け、最後に透明度を一度だけ掛ける。
@@ -254,7 +256,7 @@ export async function renderFramePng(frame: FrameNode, environment: PngRenderEnv
     canvas.height = Math.round(frame.height);
     const ctx = canvas.getContext("2d");
     if (!ctx) return Result.fail(new Error("PNG の描画領域を作成できません"));
-    const resolve = (color: Color) => resolveColor(color, palette);
+    const resolve = createColorResolver(palette);
     // 編集画面と同じ解決エンジンを通し、インスタンスと自動レイアウトを解決してから描画する。
     const document: Document = { version: 1, children: [{ ...frame, x: 0, y: 0 }], palette, spacing: options.spacing ?? [], components: options.components ?? [] };
     const resolved = resolveDocumentLayout(resolveDocumentInstances(document),
