@@ -5,8 +5,11 @@ import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
 import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, type PaletteColor, SIZE_MODES, type SizeConstraint, type SpacingToken, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
+import { OVERRIDE_PATH_SEPARATOR, overrideTarget } from "@/document/overridePath.ts";
 
 const id = z.string().refine((value) => value.trim().length > 0, "ID は空にできません");
+// 要素の ID は、入れ子のインスタンスを指すオーバーライドのパスの区切りと紛れないよう `/` を含められない。
+const nodeId = id.refine((value) => !value.includes(OVERRIDE_PATH_SEPARATOR), `要素の ID に ${OVERRIDE_PATH_SEPARATOR} は使えません`);
 const name = z.string().refine((value) => value.trim().length > 0, "名前は空にできません");
 const coordinate = z.number().finite();
 const dimension = z.number().finite().positive();
@@ -132,15 +135,15 @@ export interface WireDocument { version: 1; children: WireNode[]; palette?: Pale
 
 const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
   z.discriminatedUnion("type", [
-    z.strictObject({ id, name, type: z.literal("rectangle"), ...wireGeometry, isMask: z.literal(true).optional(), style: boxStyle }),
-    z.strictObject({ id, name, type: z.literal("ellipse"), ...wireGeometry, isMask: z.literal(true).optional(), style: shapeStyle }),
-    z.strictObject({ id, name, type: z.literal("path"), ...wireGeometry, commands: vectorCommands, fillRule: fillRule.optional(), style: shapeStyle }),
-    z.strictObject({ id, name, type: z.literal("image"), ...wireGeometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-    z.strictObject({ id, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(),
+    z.strictObject({ id: nodeId, name, type: z.literal("rectangle"), ...wireGeometry, isMask: z.literal(true).optional(), style: boxStyle }),
+    z.strictObject({ id: nodeId, name, type: z.literal("ellipse"), ...wireGeometry, isMask: z.literal(true).optional(), style: shapeStyle }),
+    z.strictObject({ id: nodeId, name, type: z.literal("path"), ...wireGeometry, commands: vectorCommands, fillRule: fillRule.optional(), style: shapeStyle }),
+    z.strictObject({ id: nodeId, name, type: z.literal("image"), ...wireGeometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
+    z.strictObject({ id: nodeId, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(),
       layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
       children: z.array(nodeSchema) }),
-    z.strictObject({ id, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
-    z.strictObject({ id, name, type: z.literal("instance"), ...wireGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride).optional() }),
+    z.strictObject({ id: nodeId, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
+    z.strictObject({ id: nodeId, name, type: z.literal("instance"), ...wireGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride).optional() }),
   ]),
 );
 
@@ -167,6 +170,28 @@ function checkUniqueIds(
 }
 
 // テーマ名は重複させない。パレット色のテーマごとの値は最初以外のテーマだけに持たせ、フレームのテーマは宣言済みの名前に限る。
+// オーバーライドのキーは、定義のツリー（入れ子のインスタンスはその定義）の中の要素を指さなければならない。
+function checkOverrideKeys(
+  document: { children: (WireNode | DocumentNode)[]; components?: { id: string; node: WireNode | DocumentNode }[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const components = new Map((document.components ?? []).map((component) => [component.id, component.node]));
+  const definitionOf = (ref: string) => components.get(ref);
+  function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
+    nodes.forEach((node, index) => {
+      if (node.type === "frame") visit(node.children, [...path, index, "children"]);
+      if (node.type !== "instance") return;
+      const definition = components.get(node.componentRef);
+      if (!definition) return;
+      for (const key of Object.keys(node.overrides ?? {})) {
+        if (!overrideTarget(definition, key, definitionOf)) context.addIssue({ code: "custom", path: [...path, index, "overrides", key], message: `オーバーライド対象が見つかりません: ${key}` });
+      }
+    });
+  }
+  visit(document.children, ["children"]);
+  (document.components ?? []).forEach((component, index) => visit([component.node], ["components", index, "node"]));
+}
+
 function checkThemes(
   document: { children: (WireNode | DocumentNode)[]; palette?: PaletteColor[]; components?: { node: WireNode | DocumentNode }[]; themes?: string[] },
   context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
@@ -358,22 +383,22 @@ function checkPaletteReferences(
   (document.components ?? []).forEach((component, index) => visitNode(component.node, ["components", index, "node"]));
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional(), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional(), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkOverrideKeys).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, visible: z.boolean(), opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
-  z.strictObject({ id, name, type: z.literal("rectangle"), ...internalGeometry, isMask: z.boolean(), style: normalizedBoxStyle }),
-  z.strictObject({ id, name, type: z.literal("ellipse"), ...internalGeometry, isMask: z.boolean(), style: normalizedShapeStyle }),
-  z.strictObject({ id, name, type: z.literal("path"), ...internalGeometry, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
-  z.strictObject({ id, name, type: z.literal("image"), ...internalGeometry, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-  z.strictObject({ id, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
-  z.strictObject({ id, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
-  z.strictObject({ id, name, type: z.literal("instance"), ...internalGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride) }),
+  z.strictObject({ id: nodeId, name, type: z.literal("rectangle"), ...internalGeometry, isMask: z.boolean(), style: normalizedBoxStyle }),
+  z.strictObject({ id: nodeId, name, type: z.literal("ellipse"), ...internalGeometry, isMask: z.boolean(), style: normalizedShapeStyle }),
+  z.strictObject({ id: nodeId, name, type: z.literal("path"), ...internalGeometry, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
+  z.strictObject({ id: nodeId, name, type: z.literal("image"), ...internalGeometry, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
+  z.strictObject({ id: nodeId, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
+  z.strictObject({ id: nodeId, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
+  z.strictObject({ id: nodeId, name, type: z.literal("instance"), ...internalGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride) }),
 ]));
 
 const internalComponentDefinition = z.strictObject({ id, name, node: internalNodeSchema });
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkOverrideKeys).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {

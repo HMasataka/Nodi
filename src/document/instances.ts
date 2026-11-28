@@ -1,3 +1,4 @@
+import { scopedOverrides } from "@/document/overridePath.ts";
 import type { Document, DocumentNode, InstanceNode, InstanceOverride } from "@/document/types.ts";
 
 /**
@@ -50,7 +51,14 @@ export function applyOverride(node: DocumentNode, override: InstanceOverride | u
 
 function resolveNode(node: DocumentNode, document: Document, stack: Set<string>, overrides?: Record<string, InstanceOverride>): DocumentNode {
   const base = overrides ? applyOverride(node, overrides[node.id]) : node;
-  if (base.type === "instance") return resolveInstance(base, document, stack);
+  if (base.type === "instance") {
+    // 外側のオーバーライドのうち `このインスタンスID/…` を内側へ渡す。同じ子への指定は外側を優先する。
+    const outer = overrides ? scopedOverrides(overrides, base.id) : {};
+    if (Object.keys(outer).length === 0) return resolveInstance(base, document, stack);
+    const merged = { ...base.overrides };
+    for (const [key, value] of Object.entries(outer)) merged[key] = { ...merged[key], ...value };
+    return resolveInstance({ ...base, overrides: merged }, document, stack);
+  }
   if (base.type === "frame") return { ...base, children: base.children.map((child) => resolveNode(child, document, stack, overrides)) };
   return base;
 }

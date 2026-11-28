@@ -167,7 +167,7 @@ function EditorPage() {
       </div>
       {panels.layout.right && <Inspector selected={selected} selectedCount={selectedIds.length} spacing={spacing} textIcon={textIcon} spacingTokens={design.spacing}
         {...actions.inspector}
-        componentName={selectedComponentName} componentNode={selectedComponentNode}
+        componentName={selectedComponentName} componentNode={selectedComponentNode} components={design.components}
         onCreateComponent={actions.components.onCreateFromSelected}
         onOpenAnimation={(id) => { setActiveAnimationId(id); if (!panels.layout.timeline) panels.toggle("timeline"); }}
         onAddAnimation={() => {

@@ -1,5 +1,5 @@
 import type { Alignment, FrameLayoutPatch, LayerDirection, SelectionSpacing, SizeAxis, SizeConstraintPatch, SpacingAxis, TextIconAlignment } from "@/document/commands/index.ts";
-import type { Animation, DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, PathNode, RectangleNode, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
+import type { Animation, ComponentDefinition, DocumentNode, EllipseNode, FrameNode, FrameStyle, Geometry, ImageStyle, InstanceOverride, PathFillRule, PathNode, RectangleNode, RectangleStyle, Shadow, SpacingToken, TextMarkRangeEdit, TextStyle, VectorPathCommand } from "@/document/types";
 
 import { type ReactNode, useState } from "react";
 
@@ -65,6 +65,7 @@ interface InspectorProps {
   onGoToDefinition(): void;
   componentName?: string;
   componentNode?: DocumentNode;
+  components?: readonly ComponentDefinition[];
   onSetOverride(childId: string, patch: InstanceOverride): void;
   onResetOverride(childId: string): void;
   onDetach(): void;
@@ -199,7 +200,7 @@ function SelectionTools({ selectedCount, onAlign, textIcon, onAlignTextIcon, spa
 export function Inspector(props: InspectorProps) {
   const { selected, selectedCount = 1, spacingTokens = [], onRename, onGeometry, onRotation, onOpacity, onShadow, onBlur, onMask, onTextContent, onTextStyle,
     onTextMarkRange, onShapeStyle, onFrameStyle, onFrameLayout, onSizeConstraint, onImageStyle, onPath, onDuplicate, onDelete, onReorder,
-    onExportFrame, onCopyId, onOpenAnimation, onAddAnimation, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, onSetOverride, onResetOverride, onDetach } = props;
+    onExportFrame, onCopyId, onOpenAnimation, onAddAnimation, isExporting, onCreateComponent, onGoToDefinition, componentName, componentNode, components, onSetOverride, onResetOverride, onDetach } = props;
   // 開いている下位の画面（画像の色調整かパスの点の編集）と、その要素の ID。別の要素を選ぶと閉じる。
   const [subScreen, setSubScreen] = useState<{ id: string; kind: "adjustments" | "points" } | null>(null);
   if (!selected) {
@@ -272,7 +273,7 @@ export function Inspector(props: InspectorProps) {
             <Button onClick={onDetach}>切り離す</Button>
           </Section>
           {componentNode && <Section id="overrides" title="上書き">
-            <InstanceOverrides node={componentNode} overrides={node.overrides} onSetOverride={onSetOverride} onResetOverride={onResetOverride} />
+            <InstanceOverrides node={componentNode} overrides={node.overrides} components={components} onSetOverride={onSetOverride} onResetOverride={onResetOverride} />
           </Section>}
         </>}
         {(node.type === "frame" || node.type === "rectangle" || node.type === "ellipse" || node.type === "path") && <AppearanceSections node={node}
