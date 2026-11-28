@@ -95,8 +95,8 @@ get_state {}
 - `remove_component`: 未使用の定義を削除する。インスタンスが参照している定義は拒否する（先に `detach_instance` または削除が必要）。
 - `duplicate_component`: 定義を複製し、定義と子ツリーに新しい ID を割り当てる。
 - `add_instance`: `componentRef`・`x`・`y`（省略可能な `width`・`height`・`parentId`・`name`）でインスタンスを配置する。幅・高さの省略時は定義の寸法を使う。
-- `set_instance_override`: `id`（インスタンス）・`childId`（定義の子要素 ID）と変更属性（`content`・`fill`・`stroke`・`color`・`source`・`width`・`height`・`visible`）でオーバーライドする。`visible: true` で、定義では隠した子をこのインスタンスでだけ出せる。
-- `reset_instance_override`: 指定した子のオーバーライドを解除し、定義側の値へ戻す。
+- `set_instance_override`: `id`（インスタンス）・`childId`（定義の子要素 ID、または入れ子のインスタンスの中を指す `入れ子のインスタンスID/子のID`）と変更属性（`content`・`fill`・`stroke`・`color`・`source`・`width`・`height`・`visible`）でオーバーライドする。`visible: true` で、定義では隠した子をこのインスタンスでだけ出せる。
+- `reset_instance_override`: 指定した子（パスも可）のオーバーライドを解除し、定義側の値へ戻す。存在しないパスはエラーになる。
 - `detach_instance`: インスタンスをその時点の解決済み表示のまま通常要素へ切り離す。切り離したツリーには新しい ID を割り当てる。
 
 `get_state` を呼び、続けて `add_element` で名前付き矩形を追加する。返された名前と ID を使って `rename_element`・`move_element` を呼ぶと、画面にも変更が反映される。画面の「元に戻す」で操作を戻せることを確認する。存在しない ID を指定した場合はエラーとなり、ドキュメントは変わらない。

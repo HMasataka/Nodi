@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { overrideTarget } from "@/document/overridePath.ts";
 import { resolveInstanceNode } from "@/document/instances.ts";
 import { validateName } from "@/document/commands/validation.ts";
 import { collectNodes, findNode, updateNode } from "@/document/commands/tree.ts";
@@ -69,8 +70,8 @@ export function setInstanceOverride(document: Document, instanceId: string, chil
   if (!instance || instance.type !== "instance") return Result.fail(new Error(`インスタンスが見つかりません: ${instanceId}`));
   const definition = document.components.find((component) => component.id === instance.componentRef);
   if (!definition) return Result.fail(new Error(`コンポーネント定義が見つかりません: ${instance.componentRef}`));
-  const childIds = new Set(collectNodes([definition.node]).map((node) => node.id));
-  if (!childIds.has(childId)) return Result.fail(new Error(`オーバーライド対象が見つかりません: ${childId}`));
+  const definitionOf = (ref: string) => document.components.find((component) => component.id === ref)?.node;
+  if (!overrideTarget(definition.node, childId, definitionOf)) return Result.fail(new Error(`オーバーライド対象が見つかりません: ${childId}`));
   const overrides = { ...instance.overrides, [childId]: { ...instance.overrides[childId], ...patch } };
   return updateNode(document, instanceId, (node) => node.type === "instance" ? { ...node, overrides } : node);
 }
