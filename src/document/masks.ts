@@ -5,11 +5,13 @@ import { ellipsePath, roundedRectPath, transformPath } from "@/document/shapePat
 export type MaskNode = RectangleNode | EllipseNode;
 export interface MaskGroup { mask: MaskNode | null; children: DocumentNode[] }
 
+// 描画・PNG 書き出し・当たり判定はこの分け方を共有する。隠した要素はどの組にも入れず、隠したマスクは切り抜かない。
 export function maskGroups(nodes: DocumentNode[]): MaskGroup[] {
   const groups: MaskGroup[] = [];
   let mask: MaskNode | null = null;
   let children: DocumentNode[] = [];
   for (const node of nodes) {
+    if (!node.visible) continue;
     if ((node.type === "rectangle" || node.type === "ellipse") && node.isMask) {
       if (children.length > 0 || mask) groups.push({ mask, children });
       mask = node;

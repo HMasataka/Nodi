@@ -34,11 +34,18 @@ function naturalHeight(child: DocumentNode, width: number, measure?: LayoutMeasu
 }
 
 /**
- * フレームの直接の子を、レイアウト設定とサイズ制約から位置・サイズを解決して返す。
+ * フレームの直接の子を、レイアウト設定とサイズ制約から位置・サイズを解決して返す。隠した子は並びに含めない。
  * テキストの高さは幅に依存するため、まず幅を解決してから高さを決める。
  * 子がフレームの場合は解決後のサイズで再帰的に子を解決する。
  */
 function resolveFrameChildren(frame: FrameNode, measure?: LayoutMeasure): DocumentNode[] {
+  // 隠した子は並びの計算から外し、位置とサイズを保ったまま元の順に戻す。
+  const placed = resolveVisibleChildren({ ...frame, children: frame.children.filter((child) => child.visible) }, measure);
+  let index = 0;
+  return frame.children.map((child) => child.visible ? placed[index++] : resolveNode(child, measure));
+}
+
+function resolveVisibleChildren(frame: FrameNode, measure?: LayoutMeasure): DocumentNode[] {
   const horizontal = frame.layoutMode === "horizontal";
   const innerW = Math.max(0, frame.width - frame.padding * 2);
   const innerH = Math.max(0, frame.height - frame.padding * 2);

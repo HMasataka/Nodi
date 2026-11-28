@@ -53,6 +53,7 @@ export const agentInputs = {
   set_shadow: z.strictObject({ id, shadow: z.strictObject({ color, offsetX: z.number().finite(), offsetY: z.number().finite(), blur: z.number().finite().nonnegative() }).nullable() }),
   set_blur: z.strictObject({ id, blur: z.number().finite().nonnegative() }),
   set_mask: z.strictObject({ id, isMask: z.boolean() }),
+  set_visible: z.strictObject({ id, visible: z.boolean() }),
   set_shape_style: z.strictObject({ id, ...boxStyle }).refine(hasChange, "変更するスタイルを指定してください"),
   set_path: z.strictObject({ id, commands: pathCommands.optional(), fillRule: pathFillRule.optional() }).refine(hasChange, "変更するパスを指定してください"),
   set_frame_style: z.strictObject({ id, ...boxStyle, clipContent: z.boolean().optional() }).refine(hasChange, "変更するスタイルを指定してください"),
@@ -88,8 +89,8 @@ export const agentInputs = {
   add_instance: z.strictObject({ componentRef: id, name: z.string().optional(), parentId: id.optional(), x: z.number(), y: z.number(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional() }),
   set_instance_override: z.strictObject({ id, childId: id, content: z.string().optional(),
     fill: z.union([z.string(), gradient, radialGradient]).nullable().optional(), stroke: stroke.nullable().optional(), color: z.string().optional(),
-    source: z.string().optional(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional() })
-    .refine((value) => ["content", "fill", "stroke", "color", "source", "width", "height"].some((key) => key in value), "変更する属性を指定してください"),
+    source: z.string().optional(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional(), visible: z.boolean().optional() })
+    .refine((value) => ["content", "fill", "stroke", "color", "source", "width", "height", "visible"].some((key) => key in value), "変更する属性を指定してください"),
   reset_instance_override: z.strictObject({ id, childId: id }),
   detach_instance: idInput,
 } as const;

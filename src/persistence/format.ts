@@ -42,7 +42,7 @@ const normalizedAnimationTrack = z.strictObject({ property: animatableProperty, 
   .refine((track) => track.keyframes.every((item, index) => index === 0 || track.keyframes[index - 1].time <= item.time), "キーフレームを時刻順に指定してください");
 const normalizedAnimation = z.strictObject({ id, name, trigger: animationTrigger, duration: dimension, delay: animationTime, repeat: z.number().int().positive(), tracks: z.array(normalizedAnimationTrack).min(1) })
   .refine((value) => new Set(value.tracks.map((track) => track.property)).size === value.tracks.length, "同じ属性のトラックを複数指定できません");
-const wireGeometry = { ...geometry, shadow: shadow.nullable().optional(), blur: blur.optional(), widthConstraint: sizeConstraint.optional(), heightConstraint: sizeConstraint.optional(), animations: z.array(animation).optional() };
+const wireGeometry = { ...geometry, visible: z.boolean().optional(), shadow: shadow.nullable().optional(), blur: blur.optional(), widthConstraint: sizeConstraint.optional(), heightConstraint: sizeConstraint.optional(), animations: z.array(animation).optional() };
 const unit = z.number().finite().min(0).max(1);
 const point = z.strictObject({ x: unit, y: unit });
 const stop = z.strictObject({ position: unit, color });
@@ -102,6 +102,7 @@ const instanceOverride = z.strictObject({
   source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN).optional(),
   width: dimension.optional(),
   height: dimension.optional(),
+  visible: z.boolean().optional(),
 });
 
 // 共通項目の省略可否はスキーマを型の情報源にする。
@@ -329,7 +330,7 @@ function checkPaletteReferences(
 
 export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional() }).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
-const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
+const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, visible: z.boolean(), opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
   z.strictObject({ id, name, type: z.literal("rectangle"), ...internalGeometry, isMask: z.boolean(), style: normalizedBoxStyle }),
   z.strictObject({ id, name, type: z.literal("ellipse"), ...internalGeometry, isMask: z.boolean(), style: normalizedShapeStyle }),
@@ -359,6 +360,7 @@ function normalizeAnimation(input: z.infer<typeof animation>): Animation {
 function normalizeNode(node: WireNode): DocumentNode {
   const common = {
     rotation: normalizeRotation(node.rotation ?? 0),
+    visible: node.visible ?? true,
     opacity: node.opacity ?? 1,
     shadow: node.shadow ?? null,
     blur: node.blur ?? 0,
@@ -444,6 +446,7 @@ function compactCommonFields(node: DocumentNode): WireCommonFields {
   return {
     id: node.id, name: node.name, x: node.x, y: node.y, width: node.width, height: node.height,
     ...(rotation === 0 ? {} : { rotation }),
+    ...(node.visible ? {} : { visible: false }),
     ...(node.opacity === 1 ? {} : { opacity: node.opacity }),
     ...(node.shadow === null ? {} : { shadow: node.shadow }),
     ...(node.blur === 0 ? {} : { blur: node.blur }),

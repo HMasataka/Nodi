@@ -1,7 +1,7 @@
 import type { Document, DocumentNode, InstanceNode, InstanceOverride } from "@/document/types.ts";
 
 /**
- * インスタンスのオーバーライドを定義ツリーのノードへ適用する。サイズは全ノード、
+ * インスタンスのオーバーライドを定義ツリーのノードへ適用する。サイズと表示は全ノード、
  * 文言・文字色はテキスト、画像は source、塗り・線は図形とフレームにのみ適用する。
  */
 export function applyOverride(node: DocumentNode, override: InstanceOverride | undefined): DocumentNode {
@@ -39,6 +39,7 @@ export function applyOverride(node: DocumentNode, override: InstanceOverride | u
       result = node;
       break;
   }
+  if (override.visible !== undefined) result = { ...result, visible: override.visible };
   if (override.width !== undefined || override.height !== undefined) {
     result = { ...result,
       ...(override.width !== undefined ? { width: override.width } : {}),
@@ -61,8 +62,8 @@ function resolveInstance(instance: InstanceNode, document: Document, stack: Set<
   const nextStack = new Set(stack);
   nextStack.add(instance.componentRef);
   const resolved = resolveNode(definition.node, document, nextStack, instance.overrides);
-  // 解決後もインスタンス自身の ID と名前を保持し、キャンバスでの選択・操作をインスタンスに紐付ける。
-  return { ...resolved, id: instance.id, name: instance.name, x: instance.x, y: instance.y, width: instance.width, height: instance.height };
+  // 解決後もインスタンス自身の ID と名前を保持し、キャンバスでの選択・操作をインスタンスに紐付ける。表示もインスタンス自身の値に従う。
+  return { ...resolved, id: instance.id, name: instance.name, x: instance.x, y: instance.y, width: instance.width, height: instance.height, visible: instance.visible };
 }
 
 /**
