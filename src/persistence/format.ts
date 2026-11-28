@@ -5,6 +5,7 @@ import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
 import { unsupportedOverrideKeys } from "@/document/instances.ts";
 import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, type PaletteColor, SIZE_MODES, type SizeConstraint, type SpacingToken, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
+import { childGroups, childNodes } from "@/document/childGroups.ts";
 import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
 import { OVERRIDE_PATH_SEPARATOR, overrideTarget } from "@/document/overridePath.ts";
 
@@ -141,8 +142,8 @@ export type WireNode = WireCommonFields & (
   | { type: "path"; style: z.infer<typeof shapeStyle>; commands: z.infer<typeof vectorCommands>; fillRule?: z.infer<typeof fillRule> }
   | { type: "image"; style: z.infer<typeof imageStyle>; source: string }
   | { type: "text"; style: z.infer<typeof textStyle>; content: string; marks?: z.infer<typeof textMark>[] }
-  | { type: "instance"; componentRef: string; overrides?: Record<string, z.infer<typeof instanceOverride>> }
-  | ({ type: "frame"; style: z.infer<typeof boxStyle>; clipContent?: boolean; children: WireNode[] } & WireFrameLayout)
+  | { type: "instance"; componentRef: string; overrides?: Record<string, z.infer<typeof instanceOverride>>; slots?: Record<string, WireNode[]> }
+  | ({ type: "frame"; style: z.infer<typeof boxStyle>; clipContent?: boolean; slot?: true; children: WireNode[] } & WireFrameLayout)
 );
 export interface WireComponentDefinition { id: string; name: string; node: WireNode }
 export interface WireDocument { version: 1; children: WireNode[]; palette?: PaletteColor[]; spacing?: SpacingToken[]; components?: WireComponentDefinition[]; themes?: string[] }
@@ -154,10 +155,10 @@ const nodeSchema: z.ZodType<WireNode> = z.lazy(() =>
     z.strictObject({ id: nodeId, name, type: z.literal("path"), ...wireGeometry, commands: vectorCommands, fillRule: fillRule.optional(), style: shapeStyle }),
     z.strictObject({ id: nodeId, name, type: z.literal("image"), ...wireGeometry, style: imageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
     z.strictObject({ id: nodeId, name, type: z.literal("frame"), ...wireGeometry, style: boxStyle, clipContent: z.boolean().optional(),
-      layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
+      layoutMode: layoutMode.optional(), padding: layoutPadding.optional(), gap: layoutGap.optional(), paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), slot: z.literal(true).optional(), alignItems: layoutAlignment.optional(), justifyContent: layoutJustify.optional(),
       children: z.array(nodeSchema) }),
     z.strictObject({ id: nodeId, name, type: z.literal("text"), ...wireGeometry, content: z.string(), style: textStyle, marks: z.array(textMark).optional() }),
-    z.strictObject({ id: nodeId, name, type: z.literal("instance"), ...wireGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride).optional() }),
+    z.strictObject({ id: nodeId, name, type: z.literal("instance"), ...wireGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride).optional(), slots: z.record(z.string(), z.array(nodeSchema)).optional() }),
   ]),
 );
 
@@ -177,13 +178,38 @@ function checkUniqueIds(
         const issue = textMarkIssue(node.content, node.marks);
         if (issue) context.addIssue({ code: "custom", path: [...nodePath, "marks"], message: issue });
       }
-      if (node.type === "frame") visit(node.children, [...nodePath, "children"]);
+      for (const group of childGroups(node)) visit(group.nodes, [...nodePath, ...group.path]);
     });
   }
   visit(document.children, ["children"]);
 }
 
-// テーマ名は重複させない。パレット色のテーマごとの値は最初以外のテーマだけに持たせ、フレームのテーマは宣言済みの名前に限る。
+// slot はコンポーネントの定義の中のフレームだけに付けられる。インスタンスの slot のキーは、定義の slot のフレームを指さなければならない。
+function checkSlots(
+  document: { children: (WireNode | DocumentNode)[]; components?: { id: string; node: WireNode | DocumentNode }[] },
+  context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
+) {
+  const components = new Map((document.components ?? []).map((component) => [component.id, component.node]));
+  const definitionOf = (ref: string) => components.get(ref);
+  function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[], inDefinition: boolean) {
+    nodes.forEach((node, index) => {
+      const nodePath = [...path, index];
+      if (node.type === "frame" && node.slot && !inDefinition) context.addIssue({ code: "custom", path: [...nodePath, "slot"], message: "slot はコンポーネントの定義の中のフレームにだけ付けられます" });
+      if (node.type === "frame") visit(node.children, [...nodePath, "children"], inDefinition);
+      if (node.type !== "instance") return;
+      const definition = components.get(node.componentRef);
+      for (const [key, content] of Object.entries(node.slots ?? {})) {
+        const target = definition ? overrideTarget(definition, key, definitionOf) : undefined;
+        if (definition && !(target?.type === "frame" && target.slot)) context.addIssue({ code: "custom", path: [...nodePath, "slots", key], message: `slot が見つかりません: ${key}` });
+        // 差し替えた中身は定義の外のものなので、その中に slot は置けない。
+        visit(content, [...nodePath, "slots", key], false);
+      }
+    });
+  }
+  visit(document.children, ["children"], false);
+  (document.components ?? []).forEach((component, index) => visit([component.node], ["components", index, "node"], true));
+}
+
 // オーバーライドのキーは、定義のツリー（入れ子のインスタンスはその定義）の中の要素を指さなければならない。
 function checkOverrideKeys(
   document: { children: (WireNode | DocumentNode)[]; components?: { id: string; node: WireNode | DocumentNode }[] },
@@ -193,7 +219,7 @@ function checkOverrideKeys(
   const definitionOf = (ref: string) => components.get(ref);
   function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
     nodes.forEach((node, index) => {
-      if (node.type === "frame") visit(node.children, [...path, index, "children"]);
+      for (const group of childGroups(node)) visit(group.nodes, [...path, index, ...group.path]);
       if (node.type !== "instance") return;
       const definition = components.get(node.componentRef);
       if (!definition) return;
@@ -209,6 +235,7 @@ function checkOverrideKeys(
   (document.components ?? []).forEach((component, index) => visit([component.node], ["components", index, "node"]));
 }
 
+// テーマ名は重複させない。パレット色のテーマごとの値は最初以外のテーマだけに持たせ、フレームのテーマは宣言済みの名前に限る。
 function checkThemes(
   document: { children: (WireNode | DocumentNode)[]; palette?: PaletteColor[]; components?: { node: WireNode | DocumentNode }[]; themes?: string[] },
   context: { addIssue(issue: { code: "custom"; path: (string | number)[]; message: string }): void },
@@ -227,9 +254,8 @@ function checkThemes(
   });
   function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
     nodes.forEach((node, index) => {
-      if (node.type !== "frame") return;
-      if (node.theme !== undefined && !seen.has(node.theme)) context.addIssue({ code: "custom", path: [...path, index, "theme"], message: `テーマが見つかりません: ${node.theme}` });
-      visit(node.children, [...path, index, "children"]);
+      if (node.type === "frame" && node.theme !== undefined && !seen.has(node.theme)) context.addIssue({ code: "custom", path: [...path, index, "theme"], message: `テーマが見つかりません: ${node.theme}` });
+      for (const group of childGroups(node)) visit(group.nodes, [...path, index, ...group.path]);
     });
   }
   visit(document.children, ["children"]);
@@ -258,11 +284,12 @@ function checkSpacingReferences(
   });
   function visit(nodes: (WireNode | DocumentNode)[], path: (string | number)[]) {
     nodes.forEach((node, index) => {
-      if (node.type !== "frame") return;
-      for (const key of ["paddingRef", "gapRef"] as const) {
-        if (node[key] !== undefined && !ids.has(node[key])) context.addIssue({ code: "custom", path: [...path, index, key], message: `余白値が見つかりません: ${node[key]}` });
+      if (node.type === "frame") {
+        for (const key of ["paddingRef", "gapRef"] as const) {
+          if (node[key] !== undefined && !ids.has(node[key])) context.addIssue({ code: "custom", path: [...path, index, key], message: `余白値が見つかりません: ${node[key]}` });
+        }
       }
-      visit(node.children, [...path, index, "children"]);
+      for (const group of childGroups(node)) visit(group.nodes, [...path, index, ...group.path]);
     });
   }
   visit(document.children, ["children"]);
@@ -283,7 +310,7 @@ function checkUniqueComponentIds(
         const issue = textMarkIssue(node.content, node.marks);
         if (issue) context.addIssue({ code: "custom", path: [...nodePath, "marks"], message: issue });
       }
-      if (node.type === "frame") visitNodes(node.children, [...nodePath, "children"]);
+      for (const group of childGroups(node)) visitNodes(group.nodes, [...nodePath, ...group.path]);
     });
   }
   (document.components ?? []).forEach((component, index) => {
@@ -295,7 +322,7 @@ function checkUniqueComponentIds(
 
 function collectInstanceRefs(node: WireNode | DocumentNode, refs: Set<string>) {
   if (node.type === "instance") refs.add(node.componentRef);
-  if (node.type === "frame") node.children.forEach((child) => collectInstanceRefs(child, refs));
+  childNodes(node).forEach((child) => collectInstanceRefs(child, refs));
 }
 
 function checkComponentReferences(
@@ -310,7 +337,7 @@ function checkComponentReferences(
       if (node.type === "instance" && !componentIds.has(node.componentRef)) {
         context.addIssue({ code: "custom", path: [...nodePath, "componentRef"], message: `コンポーネント定義が見つかりません: ${node.componentRef}` });
       }
-      if (node.type === "frame") checkDangling(node.children, [...nodePath, "children"]);
+      for (const group of childGroups(node)) checkDangling(group.nodes, [...nodePath, ...group.path]);
     });
   }
   checkDangling(document.children, ["children"]);
@@ -395,12 +422,17 @@ function checkPaletteReferences(
     if (node.type === "frame" && Array.isArray(node.children)) {
       node.children.forEach((child, index) => visitNode(child, [...path, "children", index]));
     }
+    if (node.type === "instance" && node.slots && typeof node.slots === "object") {
+      for (const [key, nodes] of Object.entries(node.slots as Record<string, unknown>)) {
+        if (Array.isArray(nodes)) nodes.forEach((child, index) => visitNode(child, [...path, "slots", key, index]));
+      }
+    }
   };
   document.children.forEach((node, index) => visitNode(node, ["children", index]));
   (document.components ?? []).forEach((component, index) => visitNode(component.node, ["components", index, "node"]));
 }
 
-export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional(), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkOverrideKeys).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
+export const documentSchema = z.strictObject({ version: z.literal(1), children: z.array(nodeSchema), palette: z.array(paletteColor).optional(), spacing: z.array(spacingToken).optional(), components: z.array(componentDefinition).optional(), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkOverrideKeys).superRefine(checkSlots).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
 const internalGeometry = { x: coordinate, y: coordinate, width: dimension, height: dimension, rotation: coordinate, visible: z.boolean(), opacity, shadow: shadow.nullable(), blur, widthConstraint: sizeConstraint, heightConstraint: sizeConstraint, animations: z.array(normalizedAnimation) };
 const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminatedUnion("type", [
@@ -408,14 +440,14 @@ const internalNodeSchema: z.ZodType<DocumentNode> = z.lazy(() => z.discriminated
   z.strictObject({ id: nodeId, name, type: z.literal("ellipse"), ...internalGeometry, isMask: z.boolean(), style: normalizedShapeStyle }),
   z.strictObject({ id: nodeId, name, type: z.literal("path"), ...internalGeometry, commands: vectorCommands, fillRule, style: normalizedShapeStyle }),
   z.strictObject({ id: nodeId, name, type: z.literal("image"), ...internalGeometry, style: normalizedImageStyle, source: z.string().max(MAX_IMAGE_SOURCE_LENGTH).regex(IMAGE_SOURCE_PATTERN) }),
-  z.strictObject({ id: nodeId, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
+  z.strictObject({ id: nodeId, name, type: z.literal("frame"), ...internalGeometry, style: normalizedBoxStyle, clipContent: z.boolean(), layoutMode, padding: layoutPadding, gap: layoutGap, paddingRef: id.optional(), gapRef: id.optional(), theme: themeName.optional(), slot: z.literal(true).optional(), alignItems: layoutAlignment, justifyContent: layoutJustify, children: z.array(internalNodeSchema) }),
   z.strictObject({ id: nodeId, name, type: z.literal("text"), ...internalGeometry, content: z.string(), style: normalizedTextStyle, marks: z.array(textMark).optional() }),
-  z.strictObject({ id: nodeId, name, type: z.literal("instance"), ...internalGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride) }),
+  z.strictObject({ id: nodeId, name, type: z.literal("instance"), ...internalGeometry, componentRef: id, overrides: z.record(z.string(), instanceOverride), slots: z.record(z.string(), z.array(internalNodeSchema)).optional() }),
 ]));
 
 const internalComponentDefinition = z.strictObject({ id, name, node: internalNodeSchema });
 
-export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkOverrideKeys).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
+export const internalDocumentSchema = z.strictObject({ version: z.literal(1), children: z.array(internalNodeSchema), palette: z.array(paletteColor), spacing: z.array(spacingToken), components: z.array(internalComponentDefinition), themes: z.array(themeName).optional() }).superRefine(checkThemes).superRefine(checkOverrideKeys).superRefine(checkSlots).superRefine(checkUniqueIds).superRefine(checkUniquePaletteIds).superRefine(checkUniqueComponentIds).superRefine(checkComponentReferences).superRefine(checkPaletteReferences).superRefine(checkSpacingReferences);
 
 function normalizeAnimation(input: z.infer<typeof animation>): Animation {
   return {
@@ -481,7 +513,12 @@ function normalizeNode(node: WireNode): DocumentNode {
       justifyContent: node.justifyContent ?? DEFAULT_LAYOUT_JUSTIFY,
       children: node.children.map(normalizeNode),
     };
-    case "instance": return { ...node, ...common, overrides: node.overrides ?? {} };
+    case "instance": {
+      const { slots, ...rest } = node;
+      const entries = Object.entries(slots ?? {});
+      return { ...rest, ...common, overrides: node.overrides ?? {},
+        ...(entries.length === 0 ? {} : { slots: Object.fromEntries(entries.map(([key, nodes]) => [key, nodes.map(normalizeNode)])) }) };
+    }
   }
 }
 
@@ -589,6 +626,7 @@ function compactNode(node: DocumentNode): WireNode {
       ...(node.paddingRef === undefined ? {} : { paddingRef: node.paddingRef }),
       ...(node.gapRef === undefined ? {} : { gapRef: node.gapRef }),
       ...(node.theme === undefined ? {} : { theme: node.theme }),
+      ...(node.slot ? { slot: true as const } : {}),
       ...(node.alignItems === DEFAULT_LAYOUT_ALIGNMENT ? {} : { alignItems: node.alignItems }),
       ...(node.justifyContent === DEFAULT_LAYOUT_JUSTIFY ? {} : { justifyContent: node.justifyContent }),
       children: node.children.map(compactNode),
@@ -596,6 +634,7 @@ function compactNode(node: DocumentNode): WireNode {
     case "instance": return {
       ...common, type: "instance", componentRef: node.componentRef,
       ...(Object.keys(node.overrides).length === 0 ? {} : { overrides: node.overrides }),
+      ...(node.slots && Object.keys(node.slots).length > 0 ? { slots: Object.fromEntries(Object.entries(node.slots).map(([key, nodes]) => [key, nodes.map(compactNode)])) } : {}),
     };
   }
 }

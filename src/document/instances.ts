@@ -74,18 +74,28 @@ function pick<K extends keyof InstanceOverride>(override: InstanceOverride, keys
   return Object.fromEntries(keys.flatMap((key) => override[key] === undefined ? [] : [[key, override[key]]])) as Partial<Pick<InstanceOverride, K>>;
 }
 
-function resolveNode(node: DocumentNode, document: Document, stack: Set<string>, overrides?: Record<string, InstanceOverride>): DocumentNode {
+type Slots = Record<string, DocumentNode[]>;
+
+// 外側の上書き・slot のうち `instanceId/…` を内側のインスタンスから見たキーに直し、内側の指定に重ねる（同じ子・slot は外側を優先する）。
+function mergeInner(base: InstanceNode, overrides?: Record<string, InstanceOverride>, slots?: Slots): InstanceNode {
+  const outerOverrides = overrides ? scopedOverrides(overrides, base.id) : {};
+  const outerSlots = slots ? scopedOverrides(slots, base.id) : {};
+  if (Object.keys(outerOverrides).length === 0 && Object.keys(outerSlots).length === 0) return base;
+  const merged = { ...base.overrides };
+  for (const [key, value] of Object.entries(outerOverrides)) merged[key] = { ...merged[key], ...value };
+  return { ...base, overrides: merged, slots: { ...base.slots, ...outerSlots } };
+}
+
+function resolveNode(node: DocumentNode, document: Document, stack: Set<string>, overrides?: Record<string, InstanceOverride>, slots?: Slots): DocumentNode {
   const base = overrides ? applyOverride(node, overrides[node.id]) : node;
-  if (base.type === "instance") {
-    // 外側のオーバーライドのうち `このインスタンスID/…` を内側へ渡す。同じ子への指定は外側を優先する。
-    const outer = overrides ? scopedOverrides(overrides, base.id) : {};
-    if (Object.keys(outer).length === 0) return resolveInstance(base, document, stack);
-    const merged = { ...base.overrides };
-    for (const [key, value] of Object.entries(outer)) merged[key] = { ...merged[key], ...value };
-    return resolveInstance({ ...base, overrides: merged }, document, stack);
-  }
-  if (base.type === "frame") return { ...base, children: base.children.map((child) => resolveNode(child, document, stack, overrides)) };
-  return base;
+  if (base.type === "instance") return resolveInstance(mergeInner(base, overrides, slots), document, stack);
+  if (base.type !== "frame") return base;
+  // slot のフレームは、インスタンスが中身を差し替えていればその中身を子にする。中身は定義の外のものなので、定義の上書きは掛けない。
+  const replaced = base.slot ? slots?.[base.id] : undefined;
+  const children = replaced
+    ? replaced.map((child) => resolveNode(child, document, new Set()))
+    : base.children.map((child) => resolveNode(child, document, stack, overrides, slots));
+  return { ...base, children };
 }
 
 function resolveInstance(instance: InstanceNode, document: Document, stack: Set<string>): DocumentNode {
@@ -94,7 +104,7 @@ function resolveInstance(instance: InstanceNode, document: Document, stack: Set<
   if (!definition || stack.has(instance.componentRef)) return instance;
   const nextStack = new Set(stack);
   nextStack.add(instance.componentRef);
-  const resolved = resolveNode(definition.node, document, nextStack, instance.overrides);
+  const resolved = resolveNode(definition.node, document, nextStack, instance.overrides, instance.slots);
   // 解決後もインスタンス自身の ID と名前を保持し、キャンバスでの選択・操作をインスタンスに紐付ける。表示もインスタンス自身の値に従う。
   return { ...resolved, id: instance.id, name: instance.name, x: instance.x, y: instance.y, width: instance.width, height: instance.height, visible: instance.visible };
 }

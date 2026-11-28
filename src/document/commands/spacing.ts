@@ -1,5 +1,6 @@
 import { Result } from "@praha/byethrow";
 
+import { mapChildGroups } from "@/document/childGroups.ts";
 import { validateName } from "@/document/commands/validation.ts";
 import type { Document, DocumentNode, SpacingToken } from "@/document/types.ts";
 
@@ -36,7 +37,7 @@ export function removeSpacingToken(document: Document, id: string): Result.Resul
   if (!token) return Result.fail(new Error(`余白値が見つかりません: ${id}`));
   const value = token.value;
   function detach(node: DocumentNode): DocumentNode {
-    if (node.type !== "frame") return node;
+    if (node.type !== "frame") return mapChildGroups(node, (nodes) => nodes.map(detach));
     const { paddingRef, gapRef, ...rest } = node;
     return { ...rest, padding: paddingRef === id ? value : node.padding, gap: gapRef === id ? value : node.gap,
       ...(paddingRef && paddingRef !== id ? { paddingRef } : {}), ...(gapRef && gapRef !== id ? { gapRef } : {}),

@@ -103,4 +103,7 @@ export const agentInputs = {
     .refine((value) => Object.keys(value).some((key) => key !== "id" && key !== "childId"), "変更する属性を指定してください"),
   reset_instance_override: z.strictObject({ id, childId: id }),
   detach_instance: idInput,
+  set_component_slot: z.strictObject({ componentId: id, nodeId: id, slot: z.boolean() }),
+  fill_slot: z.strictObject({ id, slotId: id, nodeIds: z.array(id) }),
+  reset_slot: z.strictObject({ id, slotId: id }),
 } as const;

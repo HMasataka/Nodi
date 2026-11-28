@@ -82,6 +82,9 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("set_instance_override", "インスタンスの子要素にオーバーライド（文言・色・画像・サイズ・表示・不透明度・角丸・フレームのレイアウト・文字のスタイル）を設定。要素の種類に合わない属性はエラー。入れ子のインスタンスの中は childId に「入れ子のインスタンスID/子のID」を指定する", agentInputs.set_instance_override, true);
   tool("reset_instance_override", "インスタンスのオーバーライドを解除して定義の値へ戻す", agentInputs.reset_instance_override, true);
   tool("detach_instance", "インスタンスをその時点の表示のまま通常の要素へ切り離す", agentInputs.detach_instance, true);
+  tool("set_component_slot", "コンポーネントの定義のフレームに slot の印を付ける・外す。子は既定の中身。外すとそのフレームへの差し替えも外れる", agentInputs.set_component_slot, true);
+  tool("fill_slot", "インスタンスの slot の中身を、文書の要素 nodeIds に差し替える（要素は元の場所から移し ID は保つ）。slotId は定義の slot のフレームの ID、入れ子は「入れ子のインスタンスID/slotのID」。空の配列で空にする", agentInputs.fill_slot, true);
+  tool("reset_slot", "インスタンスの slot の差し替えを外し、定義の既定の中身に戻す", agentInputs.reset_slot, true);
   return server;
 }
 
