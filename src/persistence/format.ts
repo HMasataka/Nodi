@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { normalizeRotation } from "@/document/transform.ts";
 import { textMarkIssue } from "@/document/textMarks.ts";
+import { unsupportedOverrideKeys } from "@/document/instances.ts";
 import { ANIMATABLE_PROPERTIES, type Animation, ANIMATION_TRIGGERS, DEFAULT_ANIMATION_DELAY, DEFAULT_ANIMATION_REPEAT, DEFAULT_EASING, DEFAULT_IMAGE_FILTERS, DEFAULT_IMAGE_STYLE, DEFAULT_LAYOUT_ALIGNMENT, DEFAULT_LAYOUT_GAP, DEFAULT_LAYOUT_JUSTIFY, DEFAULT_LAYOUT_MODE, DEFAULT_LAYOUT_PADDING, DEFAULT_SIZE_CONSTRAINT, DEFAULT_TEXT_STYLE, type Document, type DocumentNode, EASINGS, HEX_COLOR_PATTERN, IMAGE_SOURCE_PATTERN, LAYOUT_ALIGNMENTS, LAYOUT_JUSTIFIES, LAYOUT_MODES, MAX_IMAGE_SOURCE_LENGTH, type PaletteColor, SIZE_MODES, type SizeConstraint, type SpacingToken, TEXT_FONT_FAMILIES, ZERO_CORNER_RADII } from "@/document/types.ts";
 import { MAX_PATH_COMMANDS, vectorPathIssue } from "@/document/vectorPath.ts";
 import { OVERRIDE_PATH_SEPARATOR, overrideTarget } from "@/document/overridePath.ts";
@@ -107,6 +108,19 @@ const instanceOverride = z.strictObject({
   width: dimension.optional(),
   height: dimension.optional(),
   visible: z.boolean().optional(),
+  opacity: opacity.optional(),
+  cornerRadii: cornerRadii.optional(),
+  layoutMode: layoutMode.optional(),
+  padding: layoutPadding.optional(),
+  gap: layoutGap.optional(),
+  alignItems: layoutAlignment.optional(),
+  justifyContent: layoutJustify.optional(),
+  fontSize: z.number().finite().positive().optional(),
+  fontWeight: fontWeight.optional(),
+  fontFamily: fontFamily.optional(),
+  lineHeight: lineHeight.optional(),
+  letterSpacing: coordinate.optional(),
+  textAlign: z.enum(["left", "center", "right"]).optional(),
 });
 
 // 共通項目の省略可否はスキーマを型の情報源にする。
@@ -183,8 +197,11 @@ function checkOverrideKeys(
       if (node.type !== "instance") return;
       const definition = components.get(node.componentRef);
       if (!definition) return;
-      for (const key of Object.keys(node.overrides ?? {})) {
-        if (!overrideTarget(definition, key, definitionOf)) context.addIssue({ code: "custom", path: [...path, index, "overrides", key], message: `オーバーライド対象が見つかりません: ${key}` });
+      for (const [key, override] of Object.entries(node.overrides ?? {})) {
+        const target = overrideTarget(definition, key, definitionOf);
+        if (!target) { context.addIssue({ code: "custom", path: [...path, index, "overrides", key], message: `オーバーライド対象が見つかりません: ${key}` }); continue; }
+        const unsupported = unsupportedOverrideKeys(target.type, override);
+        if (unsupported.length > 0) context.addIssue({ code: "custom", path: [...path, index, "overrides", key], message: `${target.type} には上書きできない属性です: ${unsupported.join(", ")}` });
       }
     });
   }

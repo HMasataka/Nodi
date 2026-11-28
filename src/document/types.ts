@@ -241,6 +241,19 @@ export interface InstanceOverride {
   width?: number;
   height?: number;
   visible?: boolean;
+  opacity?: number;
+  cornerRadii?: CornerRadii;
+  layoutMode?: LayoutMode;
+  padding?: number;
+  gap?: number;
+  alignItems?: LayoutAlignment;
+  justifyContent?: LayoutJustify;
+  fontSize?: number;
+  fontWeight?: number;
+  fontFamily?: TextFontFamily;
+  lineHeight?: number;
+  letterSpacing?: number;
+  textAlign?: TextStyle["textAlign"];
 }
 
 export interface InstanceNode extends NodeGeometry {

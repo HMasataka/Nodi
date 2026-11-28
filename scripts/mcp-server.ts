@@ -79,7 +79,7 @@ export function createNodiMcpServer(request: NodiRequest = createNodiRequest()) 
   tool("remove_component", "未使用のコンポーネント定義を削除（使用中は拒否）", agentInputs.remove_component, true);
   tool("duplicate_component", "コンポーネント定義を複製し、新しい ID を割り当てる", agentInputs.duplicate_component, true);
   tool("add_instance", "コンポーネント定義を参照するインスタンスを配置", agentInputs.add_instance, true);
-  tool("set_instance_override", "インスタンスの子要素にオーバーライド（文言・色・画像・サイズ・表示）を設定。入れ子のインスタンスの中は childId に「入れ子のインスタンスID/子のID」を指定する", agentInputs.set_instance_override, true);
+  tool("set_instance_override", "インスタンスの子要素にオーバーライド（文言・色・画像・サイズ・表示・不透明度・角丸・フレームのレイアウト・文字のスタイル）を設定。要素の種類に合わない属性はエラー。入れ子のインスタンスの中は childId に「入れ子のインスタンスID/子のID」を指定する", agentInputs.set_instance_override, true);
   tool("reset_instance_override", "インスタンスのオーバーライドを解除して定義の値へ戻す", agentInputs.reset_instance_override, true);
   tool("detach_instance", "インスタンスをその時点の表示のまま通常の要素へ切り離す", agentInputs.detach_instance, true);
   return server;

@@ -1,52 +1,77 @@
 import { scopedOverrides } from "@/document/overridePath.ts";
 import type { Document, DocumentNode, InstanceNode, InstanceOverride } from "@/document/types.ts";
 
+const COMMON_KEYS = ["width", "height", "visible", "opacity"] as const;
+const SHAPE_KEYS = ["fill", "stroke"] as const;
+const TEXT_STYLE_KEYS = ["fontSize", "fontWeight", "fontFamily", "lineHeight", "letterSpacing", "textAlign"] as const;
+const FRAME_LAYOUT_KEYS = ["layoutMode", "padding", "gap", "alignItems", "justifyContent"] as const;
+
+/** 要素の種類ごとに、オーバーライドできる属性。入れ子のインスタンスそのものはサイズ・表示・不透明度だけ。 */
+export const OVERRIDE_KEYS: Record<DocumentNode["type"], readonly (keyof InstanceOverride)[]> = {
+  text: [...COMMON_KEYS, "content", "color", ...TEXT_STYLE_KEYS],
+  image: [...COMMON_KEYS, "source", "cornerRadii"],
+  rectangle: [...COMMON_KEYS, ...SHAPE_KEYS, "cornerRadii"],
+  ellipse: [...COMMON_KEYS, ...SHAPE_KEYS],
+  path: [...COMMON_KEYS, ...SHAPE_KEYS],
+  frame: [...COMMON_KEYS, ...SHAPE_KEYS, "cornerRadii", ...FRAME_LAYOUT_KEYS],
+  instance: [...COMMON_KEYS],
+};
+
+/** 種類に合わない属性を含むなら、その属性名を返す（黙って無視しない）。 */
+export function unsupportedOverrideKeys(type: DocumentNode["type"], override: object): string[] {
+  const allowed = new Set<string>(OVERRIDE_KEYS[type]);
+  return Object.keys(override).filter((key) => !allowed.has(key));
+}
+
 /**
- * インスタンスのオーバーライドを定義ツリーのノードへ適用する。サイズと表示は全ノード、
- * 文言・文字色はテキスト、画像は source、塗り・線は図形とフレームにのみ適用する。
+ * インスタンスのオーバーライドを定義ツリーのノードへ適用する。適用できる属性は `OVERRIDE_KEYS` のとおり。
+ * フレームの余白・間隔を直接指定すると、共通余白の参照は外す。
  */
 export function applyOverride(node: DocumentNode, override: InstanceOverride | undefined): DocumentNode {
   if (!override) return node;
   let result: DocumentNode;
   switch (node.type) {
     case "text": {
-      let updated = node;
-      if (override.content !== undefined) updated = { ...updated, content: override.content };
-      if (override.color !== undefined) updated = { ...updated, style: { ...updated.style, color: override.color } };
-      result = updated;
+      const style = { ...node.style,
+        ...(override.color !== undefined ? { color: override.color } : {}),
+        ...pick(override, TEXT_STYLE_KEYS) };
+      result = { ...node, ...(override.content !== undefined ? { content: override.content } : {}), style };
       break;
     }
     case "image": {
-      result = override.source !== undefined ? { ...node, source: override.source } : node;
+      result = { ...node, ...(override.source !== undefined ? { source: override.source } : {}),
+        style: { ...node.style, ...(override.cornerRadii !== undefined ? { cornerRadii: override.cornerRadii } : {}) } };
       break;
     }
-    case "rectangle":
+    case "rectangle": {
+      result = { ...node, style: { ...node.style, ...pick(override, SHAPE_KEYS),
+        ...(override.cornerRadii !== undefined ? { cornerRadii: override.cornerRadii } : {}) } };
+      break;
+    }
     case "frame": {
-      const style = { ...node.style,
-        ...(override.fill !== undefined ? { fill: override.fill } : {}),
-        ...(override.stroke !== undefined ? { stroke: override.stroke } : {}) };
-      result = { ...node, style };
+      const { paddingRef, gapRef, ...rest } = node;
+      result = { ...rest,
+        ...(override.padding === undefined && paddingRef !== undefined ? { paddingRef } : {}),
+        ...(override.gap === undefined && gapRef !== undefined ? { gapRef } : {}),
+        ...pick(override, FRAME_LAYOUT_KEYS),
+        style: { ...node.style, ...pick(override, SHAPE_KEYS),
+          ...(override.cornerRadii !== undefined ? { cornerRadii: override.cornerRadii } : {}) } };
       break;
     }
     case "ellipse":
     case "path": {
-      const style = { ...node.style,
-        ...(override.fill !== undefined ? { fill: override.fill } : {}),
-        ...(override.stroke !== undefined ? { stroke: override.stroke } : {}) };
-      result = { ...node, style };
+      result = { ...node, style: { ...node.style, ...pick(override, SHAPE_KEYS) } };
       break;
     }
     case "instance":
       result = node;
       break;
   }
-  if (override.visible !== undefined) result = { ...result, visible: override.visible };
-  if (override.width !== undefined || override.height !== undefined) {
-    result = { ...result,
-      ...(override.width !== undefined ? { width: override.width } : {}),
-      ...(override.height !== undefined ? { height: override.height } : {}) };
-  }
-  return result;
+  return { ...result, ...pick(override, COMMON_KEYS) };
+}
+
+function pick<K extends keyof InstanceOverride>(override: InstanceOverride, keys: readonly K[]): Partial<Pick<InstanceOverride, K>> {
+  return Object.fromEntries(keys.flatMap((key) => override[key] === undefined ? [] : [[key, override[key]]])) as Partial<Pick<InstanceOverride, K>>;
 }
 
 function resolveNode(node: DocumentNode, document: Document, stack: Set<string>, overrides?: Record<string, InstanceOverride>): DocumentNode {

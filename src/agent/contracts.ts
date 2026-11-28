@@ -94,8 +94,13 @@ export const agentInputs = {
   add_instance: z.strictObject({ componentRef: id, name: z.string().optional(), parentId: id.optional(), x: z.number(), y: z.number(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional() }),
   set_instance_override: z.strictObject({ id, childId: id, content: z.string().optional(),
     fill: z.union([z.string(), gradient, radialGradient]).nullable().optional(), stroke: stroke.nullable().optional(), color: z.string().optional(),
-    source: z.string().optional(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional(), visible: z.boolean().optional() })
-    .refine((value) => ["content", "fill", "stroke", "color", "source", "width", "height", "visible"].some((key) => key in value), "変更する属性を指定してください"),
+    source: z.string().optional(), width: z.number().finite().positive().optional(), height: z.number().finite().positive().optional(), visible: z.boolean().optional(),
+    opacity: z.number().finite().min(0).max(1).optional(), cornerRadii: cornerRadii.optional(),
+    layoutMode: z.enum(["none", "horizontal", "vertical"]).optional(), padding: z.number().finite().nonnegative().optional(), gap: z.number().finite().nonnegative().optional(),
+    alignItems: z.enum(["start", "center", "end"]).optional(), justifyContent: z.enum(["start", "center", "end", "space-between"]).optional(),
+    fontSize: z.number().finite().positive().optional(), fontWeight: z.number().optional(), fontFamily: z.enum(["default", "system", "serif", "monospace"]).optional(),
+    lineHeight: z.number().finite().positive().optional(), letterSpacing: z.number().finite().optional(), textAlign: z.enum(["left", "center", "right"]).optional() })
+    .refine((value) => Object.keys(value).some((key) => key !== "id" && key !== "childId"), "変更する属性を指定してください"),
   reset_instance_override: z.strictObject({ id, childId: id }),
   detach_instance: idInput,
 } as const;

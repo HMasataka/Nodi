@@ -14,20 +14,42 @@ interface InstanceOverridesProps {
   onResetOverride(childId: string): void;
 }
 
+interface OverrideTarget { key: string; label: string; node: DocumentNode; inner?: InstanceOverride }
 interface OverrideText { key: string; label: string; text: TextNode; base: string }
 
-// 上書きできるテキストを集める。入れ子のインスタンスの中は `インスタンスID/子のID` のキーで指し、名前を「Legend › ラベル」のように出す。
-// 入れ子のインスタンス自身の上書きは、その中のテキストの既定の文言として扱う。
-export function overrideTexts(node: DocumentNode, components: readonly ComponentDefinition[], prefix = "", labels: string[] = [],
-  inner: Record<string, InstanceOverride> = {}, stack: ReadonlySet<string> = new Set()): OverrideText[] {
-  if (node.type === "text") return [{ key: prefix + node.id, label: [...labels, node.name].join(" › "), text: node, base: inner[node.id]?.content ?? node.content }];
-  if (node.type === "frame") return node.children.flatMap((child) => overrideTexts(child, components, prefix, labels, inner, stack));
-  if (node.type !== "instance" || stack.has(node.componentRef)) return [];
+// 上書きできる要素を集める。入れ子のインスタンスの中は `インスタンスID/子のID` のキーで指し、名前を「Legend › ラベル」のように出す。
+// 入れ子のインスタンス自身の上書きは、その中の要素の既定値（inner）として扱う。
+function overrideTargets(node: DocumentNode, components: readonly ComponentDefinition[], prefix = "", labels: string[] = [],
+  inner: Record<string, InstanceOverride> = {}, stack: ReadonlySet<string> = new Set()): OverrideTarget[] {
+  const self: OverrideTarget = { key: prefix + node.id, label: [...labels, node.name].join(" › "), node, inner: inner[node.id] };
+  if (node.type === "frame") return [self, ...node.children.flatMap((child) => overrideTargets(child, components, prefix, labels, inner, stack))];
+  if (node.type !== "instance" || stack.has(node.componentRef)) return [self];
   const definition = components.find((component) => component.id === node.componentRef);
-  if (!definition) return [];
+  if (!definition) return [self];
   const merged: Record<string, InstanceOverride> = { ...node.overrides };
   for (const [key, value] of Object.entries(scopedOverrides(inner, node.id))) merged[key] = { ...merged[key], ...value };
-  return overrideTexts(definition.node, components, prefix + node.id + OVERRIDE_PATH_SEPARATOR, [...labels, node.name], merged, new Set([...stack, node.componentRef]));
+  return [self, ...overrideTargets(definition.node, components, prefix + node.id + OVERRIDE_PATH_SEPARATOR, [...labels, node.name], merged, new Set([...stack, node.componentRef]))];
+}
+
+/** 文言を上書きできるテキストの一覧。 */
+export function overrideTexts(node: DocumentNode, components: readonly ComponentDefinition[]): OverrideText[] {
+  return overrideTargets(node, components).flatMap(({ key, label, node: target, inner }) =>
+    target.type === "text" ? [{ key, label, text: target, base: inner?.content ?? target.content }] : []);
+}
+
+const OVERRIDE_LABELS: Record<Exclude<keyof InstanceOverride, "content">, string> = {
+  fill: "塗り", stroke: "線", color: "文字色", source: "画像", width: "幅", height: "高さ", visible: "表示", opacity: "不透明度",
+  cornerRadii: "角丸", layoutMode: "並べ方", padding: "余白", gap: "間隔", alignItems: "揃え", justifyContent: "配置",
+  fontSize: "文字サイズ", fontWeight: "太さ", fontFamily: "書体", lineHeight: "行高", letterSpacing: "字間", textAlign: "文字揃え",
+};
+
+/** 文言以外に上書きしている属性の一覧。キーごとに、名前と属性名を返す。 */
+export function overriddenAttributes(node: DocumentNode, components: readonly ComponentDefinition[], overrides: Record<string, InstanceOverride>) {
+  const labels = new Map(overrideTargets(node, components).map(({ key, label }) => [key, label]));
+  return Object.entries(overrides).flatMap(([key, override]) => {
+    const names = (Object.keys(override) as (keyof InstanceOverride)[]).flatMap((attribute) => attribute === "content" ? [] : [OVERRIDE_LABELS[attribute]]);
+    return names.length === 0 ? [] : [{ key, label: labels.get(key) ?? key, names }];
+  });
 }
 
 // 上書きの1行。名前・値・戻すを並べ、値は blur か Enter で確定する。上書きしていないときは戻せない。
@@ -49,12 +71,19 @@ function OverrideRow({ item, override, onSet, onReset }: { item: OverrideText; o
   </div>;
 }
 
-// インスタンスの上書きの行。参照元のテキスト（入れ子のインスタンスの中も含む）ごとに1行を並べる。
+// インスタンスの上書きの行。参照元のテキスト（入れ子のインスタンスの中も含む）ごとに文言の行を並べ、
+// 続けて文言以外を上書きした要素ごとに、上書きした属性の名前と戻すボタンの行を並べる。
 export function InstanceOverrides({ node, overrides, components = [], onSetOverride, onResetOverride }: InstanceOverridesProps) {
   const texts = overrideTexts(node, components);
-  if (texts.length === 0) return <p className="property-help">参照元に上書きできるテキストがありません。</p>;
+  const attributes = overriddenAttributes(node, components, overrides);
+  if (texts.length === 0 && attributes.length === 0) return <p className="property-help">参照元に上書きできるテキストがありません。</p>;
   return <div className="override-rows">
     {texts.map((item) => <OverrideRow key={item.key} item={item} override={overrides[item.key]}
       onSet={(content) => onSetOverride(item.key, { content })} onReset={() => onResetOverride(item.key)} />)}
+    {attributes.map(({ key, label, names }) => <div key={`attributes-${key}`} className="override-row is-overridden">
+      <span className="override-row-name" title={label}>{label}</span>
+      <span className="override-row-value override-row-summary">{names.join("・")}</span>
+      <IconButton icon="reset" label={`${label}の上書きを元に戻す`} onClick={() => onResetOverride(key)} />
+    </div>)}
   </div>;
 }
